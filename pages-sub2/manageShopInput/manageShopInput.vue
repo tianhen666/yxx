@@ -1,11 +1,10 @@
 <template>
 	<view class="container">
 		<uni-forms class="form" v-model="formData" label-position="left" label-width="200rpx">
-			<uni-forms-item label-width="0px" label-position="top" name="pics">
+			<uni-forms-item labelWidth="0px" label-position="top" name="pics">
 				<!-- 图片上传 all视频图片，image图片，video视频 -->
 				<view class="title">商品图片</view>
 				<htz-image-upload :max="5" v-model="pics" mediaType="image" @chooseSuccess="chooseSuccess" />
-				<view class="blank20"></view>
 			</uni-forms-item>
 			<view class="blank32"></view>
 
@@ -26,8 +25,6 @@
 				/>
 			</uni-forms-item>
 
-			
-
 			<uni-forms-item label="商品促销价" name="price">
 				<uni-easyinput
 					type="number"
@@ -36,13 +33,12 @@
 					placeholderStyle="color:#999999;font-size:14px;"
 				/>
 			</uni-forms-item>
-			
+
 			<uni-forms-item label="商品库存" name="avaliableCount">
 				<uni-number-box :step="10" :max="10000" v-model="formData.avaliableCount" />
-				<view class="blank32"></view>
 			</uni-forms-item>
 			<view class="blank32"></view>
-			
+
 			<uni-forms-item label="推广佣金" name="sharePrice">
 				<uni-easyinput
 					type="number"
@@ -67,11 +63,11 @@
 					placeholder="请输入限购数量"
 					placeholderStyle="color:#999999;font-size:14px;"
 				/>
-				<view class="blank32"></view>
 			</uni-forms-item>
 			<view class="blank32"></view>
 
-			<uni-forms-item label="使用规则" name="notice">
+			<uni-forms-item labelWidth="0px" name="notice">
+				<view class="title">使用规则</view>
 				<uni-easyinput
 					type="textarea"
 					autoHeight
@@ -81,7 +77,8 @@
 				/>
 			</uni-forms-item>
 
-			<uni-forms-item label="商品详情" name="detail">
+			<uni-forms-item labelWidth="0px" name="detail">
+				<view class="title">商品详情</view>
 				<uni-easyinput
 					type="number"
 					v-model="formData.sort"
@@ -89,16 +86,19 @@
 					placeholderStyle="color:#999999;font-size:14px;"
 				/>
 			</uni-forms-item>
-			<uni-forms-item label="序号" name="orderNum"><uni-number-box :min="1" :max="255" v-model="formData.orderNum" /></uni-forms-item>
+			<view class="blank32"></view>
+			
+			<uni-forms-item label="排序" name="orderNum" class="aaa">
+				<uni-number-box :min="1" :max="255" v-model="formData.orderNum" />
+			</uni-forms-item>
 		</uni-forms>
-		<view class="blank40"></view>
 		<m-btn-fix-bottom text="保存信息" @btnClick="saveClick" />
 	</view>
 </template>
 
 <script setup>
 import { computed, ref, watch } from 'vue'
-import { onLoad, onUnload } from '@dcloudio/uni-app'
+import { onLoad, onUnload, onShow } from '@dcloudio/uni-app'
 import { _storeproductSave, _storeproductGetinfo } from '@/api/yxxApi'
 import { isVideo, queryURLparamsRegEs5 } from '@/utils/index'
 import { navigateTo, navigateBackRefresh } from '@/utils/uniApp'
@@ -120,7 +120,7 @@ const formData = ref({
 const shopId = ref(0)
 // 页面加载
 onLoad(optios => {
-	shopId.value = parseInt(optios.id)
+	shopId.value = parseInt(optios.id) || 0
 	// 是否存在商品ID
 	if (shopId.value > 0) {
 		// 拉取数据
@@ -165,35 +165,32 @@ const chooseSuccess = res => {
 		return
 	}
 	// 去裁剪图片页面
-	// imgUrl需要裁剪图片地址
+	// res需要裁剪图片地址列表
 	// ratio 比例
 	// url 服务器上传地址
 	uni.navigateTo({
-		url: `/pages-sub2/cropper/cropper?imgUrl=${res[0]}&ratio=${1 / 1}&url=/storeproduct/uploadimage`
+		url: `/pages-sub2/cropper/cropper?imgUrls=${res}&ratio=${1 / 1}&url=/storeproduct/uploadimage`
 	})
 }
-// 页面加载
-onLoad(option => {
-	// 注册裁剪完成事件
-	uni.$on('cropper', data => {
-		const imgUrl = JSON.parse(data.imgUrl)
-		if (!formData.value.pics) {
-			formData.value.pics = imgUrl.data
+import { useCropperStore } from '@/stores/main'
+// cropperStore裁剪状态管理
+const cropperStore = useCropperStore()
+// 监听裁剪后的url变化
+watch(
+	() => cropperStore.imgUrls,
+	(newValue, oldValue) => {
+		if (formData.value.pics) {
+			formData.value.pics += ',' + newValue.join(',')
 		} else {
-			formData.value.pics += `,${imgUrl.data}`
+			formData.value.pics = newValue.join(',')
 		}
-	})
-})
-// 页面卸载
-onUnload(() => {
-	// 卸载裁剪完成事件
-	uni.$off('cropper')
-})
+	}
+)
 </script>
 
 <style lang="scss" scoped>
 :global(page) {
-	background-color: #fff;
+	background-color: $uni-bg-color;
 }
 
 .container {
@@ -205,11 +202,9 @@ onUnload(() => {
 	}
 }
 :deep(.uni-forms) {
-	background-color: $uni-bg-color;
 	.uni-forms-item {
 		margin-bottom: 0 !important;
 		padding: 32rpx;
-		padding-bottom: 0;
 		background-color: #fff;
 		&__label {
 			font-size: 32rpx !important;
