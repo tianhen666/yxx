@@ -1,37 +1,54 @@
 <template>
-	<view class="content"><poster-diy :posterData="poster"></poster-diy></view>
+	<!-- 标题栏 -->
+	<uni-nav-bar title="xxx门诊" statusBar fixed color="#ffffff" :border="false"></uni-nav-bar>
+	
+	<!-- 轮播 -->
+	<m-carousel></m-carousel>
+	<view class="blank30"></view>
+	
+	<!-- 门诊信息 -->
+	<m-info></m-info>
+	<view class="blank30"></view>
+
+	<!-- 门诊活动 -->
+	<m-activity-list>
+		<template #title>
+			<m-title2 title="热门活动" hot path="/pages-sub1/activityList/activityList"></m-title2>
+		</template>
+	</m-activity-list>
+	<view class="blank30"></view>
+
+	<!-- 门诊服务 -->
+	<m-serve-list>
+		<template #title>
+			<m-title2 title="门诊服务"></m-title2>
+		</template>
+	</m-serve-list>
+	<view class="blank40"></view>
 </template>
 
 <script setup>
-import { reactive, toRefs, isProxy } from 'vue'
-// 海报数据
-const poster = reactive({
-	id_1: {
-		type: 'text',
-		value: '文字文字文字文字一',
-		x: 0,
-		y: 10,
-		z: 1000,
-		w: 100,
-		h: 0,
-		style: { fontSize: '20px' }
-	},
-	id_2: {
-		type: 'text',
-		value: '文字文字文字文字二',
-		x: 0,
-		y: 100,
-		z: 0,
-		w: 50,
-		h: 0,
-		style: { fontSize: '25px' }
-	},
-	id_3: { type: 'img', value: '../../static/tup4.jpg', x: 0, y: 200, z: 1000000, w: 100, h: 100, style: {} }
+import mInfo from './components/m-info/m-info.vue'
+import mServeList from './components/m-serveList/m-serveList.vue'
+import { onLoad,onShareAppMessage } from '@dcloudio/uni-app'
+
+onShareAppMessage(()=>{
+	return{
+		title:"xxx口腔门诊",
+		path:"/pages/index/index"
+	}
 })
 </script>
+<style lang="scss" scoped>
+:global(page) {
+	background-color: #f5f5f5;
+}
 
-<style scoped>
-	:global(page){
-		background-color: #f1f1f1;
-	}
+/* 图标颜色 */
+:global(.uniui-paperplane-filled) {
+	color: $main-color !important;
+}
+:global(.uniui-phone-filled) {
+	color: $main-color !important;
+}
 </style>

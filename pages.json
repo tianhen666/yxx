@@ -1,17 +1,248 @@
 {
-	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+	// 主包
+	"pages": [{
+		"path": "pages/index/index",
+		"style": {
+			"navigationBarTitleText": "首页",
+			"enablePullDownRefresh": false,
+			"navigationStyle": "custom"
+		}
+	}, {
+		"path": "pages/shop/shop",
+		"style": {
+			"navigationBarTitleText": "商城",
+			"enablePullDownRefresh": false,
+			"navigationStyle": "custom"
+		}
+	}, {
+		"path": "pages/info/info",
+		"style": {
+			"navigationBarTitleText": "门诊信息",
+			"enablePullDownRefresh": false,
+			"navigationStyle": "custom"
+		}
+	}, {
+		"path": "pages/case/case",
+		"style": {
+			"navigationBarTitleText": "科普案例",
+			"enablePullDownRefresh": false,
+			"navigationStyle": "custom"
+		}
+	}, {
+		"path": "pages/user/user",
+		"style": {
+			"navigationBarTitleText": "我的",
+			"enablePullDownRefresh": false,
+			"navigationStyle": "custom"
+		}
+	}],
+
+	// 子包 
+	"subPackages": [{
+			"root": "pages-sub1",
+			"pages": [{
+				"path": "aaa/aaa",
+				"style": {
+					"navigationBarTitleText": "",
+					"enablePullDownRefresh": false
+				}
+			}, {
+				"path": "activityList/activityList",
+				"style": {
+					"navigationBarTitleText": "活动列表",
+					"enablePullDownRefresh": false
+				}
+			}, {
+				"path": "activityInfo/activityInfo",
+				"style": {
+					"navigationBarTitleText": "活动详情",
+					"enablePullDownRefresh": false
+				}
+			}, {
+				"path": "serveInfo/serveInfo",
+				"style": {
+					"navigationBarTitleText": "服务详情",
+					"enablePullDownRefresh": false
+				}
+			}, {
+				"path": "goodsInfo/goodsInfo",
+				"style": {
+					"navigationBarTitleText": "商品详情",
+					"enablePullDownRefresh": false
+				}
+			}, {
+				"path": "commentList/commentList",
+				"style": {
+					"navigationBarTitleText": "评论详情",
+					"enablePullDownRefresh": false
+				}
+			}, {
+				"path": "confirmOrder/confirmOrder",
+				"style": {
+					"navigationBarTitleText": "确认订单",
+					"enablePullDownRefresh": false
+				}
+			}, {
+				"path": "dentistInfo/dentistInfo",
+				"style": {
+					"navigationBarTitleText": "医生信息",
+					"enablePullDownRefresh": false
+				}
+			}, {
+				"path": "caseInfo/caseInfo",
+				"style": {
+					"navigationBarTitleText": "案例详情",
+					"enablePullDownRefresh": false
+				}
+			}, {
+				"path": "articleInfo/articleInfo",
+				"style": {
+					"navigationBarTitleText": "科普详情",
+					"enablePullDownRefresh": false
+				}
+			}, {
+				"path": "orderList/orderList",
+				"style": {
+					"navigationBarTitleText": "我的订单",
+					"enablePullDownRefresh": false
+				}
+			}, {
+				"path": "orderDetails/orderDetails",
+				"style": {
+					"navigationBarTitleText": "订单详情",
+					"enablePullDownRefresh": false,
+					"navigationStyle": "custom"
+				}
+			}, {
+				"path": "invitationList/invitationList",
+				"style": {
+					"navigationBarTitleText": "我的邀请",
+					"enablePullDownRefresh": false,
+					"navigationStyle": "custom"
+				}
+			}, {
+				"path": "profitList/profitList",
+				"style": {
+					"navigationBarTitleText": "我的收益",
+					"enablePullDownRefresh": false,
+					"navigationStyle": "custom"
+				}
+			}, {
+				"path": "vip/vip",
+				"style": {
+					"navigationBarTitleText": "会员中心",
+					"enablePullDownRefresh": false,
+					"navigationStyle": "custom"
+				}
+			}]
+		},
 		{
-			"path": "pages/index/index",
-			"style": {
-				"navigationBarTitleText": "uni-app"
-			}
+			"root": "pages-sub2",
+			"pages": [{
+				"path": "manageInfo/manageInfo",
+				"style": {
+					"navigationBarTitleText": "门诊管理",
+					"enablePullDownRefresh": false
+				}
+			}, {
+				"path": "manageActivity/manageActivity",
+				"style": {
+					"navigationBarTitleText": "活动管理",
+					"enablePullDownRefresh": false
+				}
+			}, {
+				"path": "manageBannerList/manageBannerList",
+				"style": {
+					"navigationBarTitleText": "banner管理",
+					"enablePullDownRefresh": false
+				}
+			}, {
+				"path": "manageBannerInput/manageBannerInput",
+				"style": {
+					"navigationBarTitleText": "banner管理",
+					"enablePullDownRefresh": false
+				}
+			}, {
+				"path": "cropper/cropper",
+				"style": {
+					"navigationBarTitleText": "图片裁剪",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "selectShopItem/selectShopItem",
+				"style": {
+					"navigationBarTitleText": "选择商品",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "manageShopInput/manageShopInput",
+				"style": {
+					"navigationBarTitleText": "添加商品",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "manageShopList/manageShopList",
+				"style": {
+					"navigationBarTitleText": "商品管理",
+					"enablePullDownRefresh": false
+				}
+
+			}]
 		}
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "uni-app",
-		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8"
+		"navigationBarTitleText": "",
+		"navigationBarBackgroundColor": "#ffffff",
+		"backgroundColor": "#ffffff",
+		// #ifdef APP-PLUS || H5 || MP-WEIXIN || MP-QQ
+		"usingComponents": {
+			"w-painter": "/wxcomponents/painter/painter",
+			"test": "/wxcomponents/test/test"
+		}
+		// #endif
 	},
-	"uniIdRouter": {}
+	"tabBar": {
+		"color": "#999999",
+		"selectedColor": "#4B8EFF",
+		"borderStyle": "black",
+		"backgroundColor": "#ffffff",
+		"list": [{
+			"pagePath": "pages/index/index",
+			"iconPath": "static/tabbar/index.png",
+			"selectedIconPath": "static/tabbar/slt_index.png",
+			"text": "首页"
+		}, {
+			"pagePath": "pages/shop/shop",
+			"iconPath": "static/tabbar/shop.png",
+			"selectedIconPath": "static/tabbar/slt_shop.png",
+			"text": "商城"
+		}, {
+			"pagePath": "pages/info/info",
+			"iconPath": "static/tabbar/info.png",
+			"selectedIconPath": "static/tabbar/slt_info.png",
+			"text": "门诊信息"
+		}, {
+			"pagePath": "pages/case/case",
+			"iconPath": "static/tabbar/case.png",
+			"selectedIconPath": "static/tabbar/slt_case.png",
+			"text": "科普案例"
+		}, {
+			"pagePath": "pages/user/user",
+			"iconPath": "static/tabbar/user.png",
+			"selectedIconPath": "static/tabbar/slt_user.png",
+			"text": "我的"
+		}]
+	},
+	"condition": { //模式配置，仅开发期间生效
+		"current": 0, //当前激活的模式(list 的索引项)
+		"list": [{
+			"name": "", //模式名称
+			"path": "pages/index/index", //启动页面，必选
+			"query": "" //启动参数，在页面的onLoad函数里面得到
+		}]
+	}
 }

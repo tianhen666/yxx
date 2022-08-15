@@ -1,17 +1,35 @@
-<script>
-	export default {
-		onLaunch: function() {
-			console.log('App Launch')
-		},
-		onShow: function() {
-			console.log('App Show')
-		},
-		onHide: function() {
-			console.log('App Hide')
-		}
+<script setup>
+import { _wxLogin } from '@/api/yxxApi.js'
+import { onLaunch } from '@dcloudio/uni-app'
+
+onLaunch(option => {
+	const openId = uni.getStorageSync('openId')
+	// 微信授权登录
+	if (!openId) {
+		uni.login().then(val => {
+			_wxLogin({
+				code: val.code
+			})
+				.then(res => {
+					uni.setStorageSync('storeId', 1)
+					uni.setStorageSync('openId', res.data.openid)
+					uni.setStorageSync('unionId', res.data.unionid)
+				})
+				.catch(err => {
+					console.log(err)
+				})
+		})
 	}
+})
+
+// 设置全局系统信息
+const globalData = {
+	systemInfo: {
+		...uni.getSystemInfoSync()
+	}
+}
 </script>
 
-<style>
-	/*每个页面公共css */
+<style lang="scss">
+@import '/common/global.scss';
 </style>
