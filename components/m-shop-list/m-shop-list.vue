@@ -46,7 +46,7 @@
 
 <script setup>
 import { ref, reactive, computed,toRef } from 'vue'
-import { navigateTo } from '@/utils/uniApp'
+import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
 
 const emits = defineEmits(['selectClick'])
 

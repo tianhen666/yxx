@@ -75,6 +75,12 @@
 			},
 			modelValue(val) {
 				this.inputValue = +val;
+			},
+			inputValue(val) {
+				// TODO vue2 兼容
+				this.$emit("input", +this.inputValue);
+				// TODO vue3 兼容
+				this.$emit("update:modelValue", +this.inputValue);
 			}
 		},
 		created() {

@@ -6,17 +6,17 @@
 		'uni-date-x--border': border}">
 					<view v-if="!isRange" class="uni-date-x uni-date-single">
 						<uni-icons type="calendar" color="#c0c4cc" size="22"></uni-icons>
-						<input class="uni-date__x-input" type="text" v-model="singleVal"
+						<input placeholder-class="uni-easyinput__placeholder-class" class="uni-date__x-input" type="text" v-model="singleVal"
 							:placeholder="singlePlaceholderText" :disabled="true" />
 					</view>
 					<view v-else class="uni-date-x uni-date-range">
 						<uni-icons type="calendar" color="#c0c4cc" size="22"></uni-icons>
-						<input class="uni-date__x-input t-c" type="text" v-model="range.startDate"
+						<input placeholder-class="uni-easyinput__placeholder-class" class="uni-date__x-input t-c" type="text" v-model="range.startDate"
 							:placeholder="startPlaceholderText" :disabled="true" />
 						<slot>
 							<view class="">{{rangeSeparator}}</view>
 						</slot>
-						<input class="uni-date__x-input t-c" type="text" v-model="range.endDate"
+						<input placeholder-class="uni-easyinput__placeholder-class" class="uni-date__x-input t-c" type="text" v-model="range.endDate"
 							:placeholder="endPlaceholderText" :disabled="true" />
 					</view>
 					<view v-if="showClearIcon" class="uni-date__icon-clear" @click.stop="clear">
@@ -31,11 +31,11 @@
 			<view v-if="!isRange" class="uni-date-single--x" :style="popover">
 				<view class="uni-popper__arrow"></view>
 				<view v-if="hasTime" class="uni-date-changed popup-x-header">
-					<input class="uni-date__input t-c" type="text" v-model="tempSingleDate"
+					<input placeholder-class="uni-easyinput__placeholder-class" class="uni-date__input t-c" type="text" v-model="tempSingleDate"
 						:placeholder="selectDateText" />
 					<time-picker type="time" v-model="time" :border="false" :disabled="!tempSingleDate"
 						:start="reactStartTime" :end="reactEndTime" :hideSecond="hideSecond" style="width: 100%;">
-						<input class="uni-date__input t-c" type="text" v-model="time" :placeholder="selectTimeText"
+						<input placeholder-class="uni-easyinput__placeholder-class" class="uni-date__input t-c" type="text" v-model="time" :placeholder="selectTimeText"
 							:disabled="!tempSingleDate" />
 					</time-picker>
 				</view>
@@ -53,22 +53,22 @@
 				<view class="uni-popper__arrow"></view>
 				<view v-if="hasTime" class="popup-x-header uni-date-changed">
 					<view class="popup-x-header--datetime">
-						<input class="uni-date__input uni-date-range__input" type="text" v-model="tempRange.startDate"
+						<input placeholder-class="uni-easyinput__placeholder-class" class="uni-date__input uni-date-range__input" type="text" v-model="tempRange.startDate"
 							:placeholder="startDateText" />
 						<time-picker type="time" v-model="tempRange.startTime" :start="reactStartTime" :border="false"
 							:disabled="!tempRange.startDate" :hideSecond="hideSecond">
-							<input class="uni-date__input uni-date-range__input" type="text"
+							<input placeholder-class="uni-easyinput__placeholder-class" class="uni-date__input uni-date-range__input" type="text"
 								v-model="tempRange.startTime" :placeholder="startTimeText"
 								:disabled="!tempRange.startDate" />
 						</time-picker>
 					</view>
 					<uni-icons type="arrowthinright" color="#999" style="line-height: 40px;"></uni-icons>
 					<view class="popup-x-header--datetime">
-						<input class="uni-date__input uni-date-range__input" type="text" v-model="tempRange.endDate"
+						<input placeholder-class="uni-easyinput__placeholder-class" class="uni-date__input uni-date-range__input" type="text" v-model="tempRange.endDate"
 							:placeholder="endDateText" />
 						<time-picker type="time" v-model="tempRange.endTime" :end="reactEndTime" :border="false"
 							:disabled="!tempRange.endDate" :hideSecond="hideSecond">
-							<input class="uni-date__input uni-date-range__input" type="text" v-model="tempRange.endTime"
+							<input placeholder-class="uni-easyinput__placeholder-class" class="uni-date__input uni-date-range__input" type="text" v-model="tempRange.endTime"
 								:placeholder="endTimeText" :disabled="!tempRange.endDate" />
 						</time-picker>
 					</view>

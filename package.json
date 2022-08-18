@@ -1,5 +1,5 @@
 {
-	"dependencies": {
-		"lodash-es": "^4.17.21"
-	}
+  "dependencies": {
+    "dayjs": "^1.11.5"
+  }
 }

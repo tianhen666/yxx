@@ -373,8 +373,8 @@ export default {
 			//console.log('imgAdd')
 			let nowNum = Math.abs(this.uploadLists.length - this.max)
 			let thisNum = this.chooseNum > nowNum ? nowNum : this.chooseNum //可选数量
-			//console.log('nowNum', nowNum)
-			//console.log('thisNum', thisNum)
+			// console.log('nowNum', nowNum)
+			// console.log('thisNum', thisNum)
 			// #ifdef APP-PLUS
 			if (this.sourceType.length > 1) {
 				uni.showActionSheet({
@@ -401,7 +401,7 @@ export default {
 			// #endif
 			//#ifndef APP-PLUS
 			uni.chooseImage({
-				count: thisNum,
+				count: thisNum || 1,
 				sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
 				sourceType: this.sourceType,
 				success: res => {
@@ -753,6 +753,7 @@ export default {
  自定义样式 
 */
 .htz-image-upload-list.one {
+	width: 100%;
 	.htz-image-upload-Item {
 		width: 100% !important;
 		height: auto !important;
@@ -865,14 +866,13 @@ export default {
 .htz-image-upload-list {
 	display: flex;
 	flex-wrap: wrap;
-	margin: 0 -13rpx;
 }
 
 .htz-image-upload-Item {
 	width: 160rpx;
 	height: 160rpx;
-	margin: 13rpx;
 	border-radius: 10rpx;
+	overflow: hidden;
 	position: relative;
 }
 

@@ -1,0 +1,112 @@
+/* 全局样式 */
+page {
+	font-family: 'PingFangSC-Medium', 'PingFang SC', -apple-system, 'BlinkMacSystemFont', sans-serif;
+	min-height: 100%;
+	line-height: 1;
+	background-color: $uni-bg-color;
+	width: 100%;
+}
+text {
+	display: inline-block;
+}
+image {
+	display: block;
+}
+input,
+textarea {
+	font-family: 'PingFangSC-Medium', 'PingFang SC', -apple-system, 'BlinkMacSystemFont', sans-serif;
+}
+.container {
+	overflow: hidden;
+}
+
+/* 间隔 */
+.blank_main_color {
+	background-color: $main-color;
+}
+.blank_bg_color {
+	background-color: $uni-bg-color;
+}
+.blank20 {
+	height: 20rpx;
+}
+.blank30 {
+	height: 30rpx;
+}
+.blank32 {
+	height: 32rpx;
+}
+.blank40 {
+	height: 40rpx;
+}
+
+/* 修复button设置颜色后点击状态消失 */
+.button-hover {
+	&:after {
+		background-color: rgba(0, 0, 0, 0.2);
+	}
+}
+
+/* uni组件样式覆盖 */
+
+/* 页面标题组件 */
+.uni-status-bar {
+	background-color: $main-color;
+}
+.uni-navbar__header {
+	background-color: $main-color !important;
+	.uni-nav-bar-text {
+		font-size: 32rpx !important;
+	}
+}
+
+/* 分段器组件 */
+.segmented-control {
+	background-color: #fff;
+}
+.control--segmented-control__text {
+	font-size: 30rpx !important;
+	border-bottom-style: solid;
+	border-bottom-width: 2px;
+	border-bottom-color: transparent;
+}
+.segmented-control__item--text {
+	font-size: 30rpx !important;
+	color: $main-color !important;
+	border-bottom-color: $main-color !important;
+}
+/* 图标 */
+.uniui-forward {
+	color: $text-color-grey !important;
+}
+/* scroll-view隐藏滚动条 */
+::-webkit-scrollbar {
+	display: none;
+}
+
+.uni-forms {
+	overflow: hidden;
+}
+/* .uni-easyinput__placeholder-class 样式覆盖 */
+.uni-easyinput__placeholder-class {
+	font-size: 26rpx !important;
+	color: #999999 !important;
+}
+
+/* 表单样式覆盖 */
+.uni-forms {
+	.is-direction-left {
+		align-items: center;
+	}
+	.uni-forms-item {
+		margin: 32rpx 0;
+		padding: 0 32rpx;
+		background-color: #fff;
+		&__label {
+			font-size: 32rpx !important;
+		}
+		&__content {
+			width: 100% !important;
+		}
+	}
+}

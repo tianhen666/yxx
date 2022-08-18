@@ -1,0 +1,53 @@
+@import './mixin/flex.scss'; // flex(主轴,交叉轴,方向,换行,多轴线对齐) / flex-self(对齐,(布满||固定),顺序)
+@import './mixin/text-overflow.scss'; // 文本格式化超出省略号  参数：宽度,单行/多行
+@import './mixin/position-absolute.scss'; // 绝对定位  参数：上,右,下,左
+@import './mixin/triangle.scss'; // 画三角形  参数：宽度,朝向,颜色
+@import './mixin/hr.scss'; // 添加分割线  参数：位置,间隔
+@import './mixin/price-before.scss'; //价格¥前加
+
+/* 主颜色 */
+$main-color: #4b8eff;
+$sub-color: #f73639;
+
+/* 页面主体宽度 */
+$main-width: 686rpx;
+/* 阴影 */
+$box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.2);
+
+/* 文字颜色 */
+$text-color: #333333;
+$text-color-grey: #999999;
+$text-color-inverse: #ffffff;
+
+/* 内填充 */
+$padding: 32rpx;
+
+/* 边框，线颜色 */
+$border-color: #dddddd;
+
+/* flex布局 */
+@mixin mFlex($direction: row) {
+	/* #ifndef APP-NVUE */
+	display: flex;
+	/* #endif */
+	flex-direction: $direction;
+	align-items: center;
+	justify-content: center;
+}
+/* 多行文本超出隐藏 */
+@mixin textOverHidden($lineClamp: 2) {
+	height: auto;
+	display: -webkit-box;
+	overflow: hidden; /*超出隐藏*/
+	text-overflow: ellipsis; /*隐藏后添加省略号*/
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: $lineClamp; /* 想显示多少行 */
+	word-wrap: break-word; /* 强制换行 */
+}
+/* 单行文本超出隐藏 */
+@mixin singleLineTextOverHidden() {
+	height: auto;
+	overflow: hidden; /*超出隐藏*/
+	text-overflow: ellipsis; /*隐藏后添加省略号*/
+	white-space: nowrap; /*强制不换行*/
+}

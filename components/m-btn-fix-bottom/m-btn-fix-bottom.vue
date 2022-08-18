@@ -28,9 +28,10 @@ const btnClick = () => {
 	padding-bottom: constant(safe-area-inset-bottom);
 	padding-bottom: env(safe-area-inset-bottom);
 	height: 128rpx;
+	box-sizing: content-box;
 	.fix_warpper {
 		position: fixed;
-		z-index: 1000;
+		z-index: 88;
 		width: 100%;
 		padding: $padding;
 		padding-top: 0;
