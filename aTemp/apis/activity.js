@@ -37,7 +37,7 @@ export function _enrollformDisable(data) {
 }
 
 // 上架活动
-export function _enrollformEnablee(data) {
+export function _enrollformEnable(data) {
 	return http.post({
 		url: '/enrollform/enable',
 		data

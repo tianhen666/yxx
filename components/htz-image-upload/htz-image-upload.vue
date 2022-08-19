@@ -1,56 +1,44 @@
 <template>
-	<view class="htz-image-upload-list" :class="{ one: max === 1 }">
-		<view
-			class="htz-image-upload-Item"
-			v-for="(item, index) in uploadLists"
-			:key="index"
-			:style="{ paddingTop: max === 1 ? ratio : 0 }"
-		>
+	<view class="htz-image-upload-list">
+		<view class="htz-image-upload-Item" v-for="(item, index) in uploadLists" :key="index">
 			<view class="htz-image-upload-Item-video" v-if="isVideo(item)">
 				<!-- #ifndef APP-PLUS -->
-				<video class="video" :disabled="false" :controls="false" :src="getFileUrl(item)">
-					<view class="htz-image-upload-Item-video-fixed" @click="previewVideo(getFileUrl(item))"></view>
+				<video :disabled="false" :controls="false" :src="getFileUrl(item)">
+					<cover-view class="htz-image-upload-Item-video-fixed" @click="previewVideo(getFileUrl(item))"></cover-view>
 
-					<view
+					<cover-view
 						class="htz-image-upload-Item-del-cover"
-						v-if="remove && previewVideoSrc == '' && max > 1"
+						v-if="remove && previewVideoSrc == ''"
 						@click="imgDel(index)"
 					>
 						×
-					</view>
+					</cover-view>
 				</video>
 				<!-- #endif -->
 				<!-- #ifdef APP-PLUS -->
 				<view class="htz-image-upload-Item-video-fixed" @click="previewVideo(getFileUrl(item))"></view>
-				<image
-					class="image"
-					class="htz-image-upload-Item-video-app-poster"
-					mode="widthFix"
-					:src="appVideoPoster"
-				></image>
+				<image class="htz-image-upload-Item-video-app-poster" mode="widthFix" :src="appVideoPoster"></image>
 				<!-- #endif -->
 			</view>
 
-			<image class="image" v-else :src="getFileUrl(item)" @click="imgPreview(getFileUrl(item))"></image>
+			<image v-else :src="getFileUrl(item)" @click="imgPreview(getFileUrl(item))"></image>
 
-			<view class="htz-image-upload-Item-del" v-if="remove && max > 1" @click="imgDel(index)">×</view>
-
-			<!-- 点击更换 -->
-			<view class="htz-image-upload-Item-replace" v-if="max === 1" @click.stop.prevent="imgReplace(index)">
-				点击更换
-			</view>
+			<view class="htz-image-upload-Item-del" v-if="remove" @click="imgDel(index)">×</view>
 		</view>
 		<view
 			class="htz-image-upload-Item htz-image-upload-Item-add"
-			:style="{ paddingTop: max === 1 ? ratio : 0 }"
 			v-if="uploadLists.length < max && add"
 			@click="chooseFile"
 		>
 			+
 		</view>
+		<!-- 占位 -->
+		<view class="htz-image-upload-Item" v-if="uploadLists.length < 2" style="border: none;"></view>
+		<view class="htz-image-upload-Item" v-if="uploadLists.length < 3" style="border: none;"></view>
+
 		<view class="preview-full" v-if="previewVideoSrc != ''">
-			<video class="video" :autoplay="true" :src="previewVideoSrc" :show-fullscreen-btn="false">
-				<view class="preview-full-close" @click="previewVideoClose">×</view>
+			<video :autoplay="true" :src="previewVideoSrc" :show-fullscreen-btn="false">
+				<cover-view class="preview-full-close" @click="previewVideoClose">×</cover-view>
 			</video>
 		</view>
 
@@ -78,13 +66,6 @@
 export default {
 	name: 'htz-image-upload',
 	props: {
-		/*
-		 * 自定义扩展
-		 */
-		ratio: {
-			type: String,
-			default: '100%'
-		},
 		max: {
 			//展示图片最大值
 			type: Number,
@@ -233,7 +214,7 @@ export default {
 		// #endif
 		// #ifdef VUE3
 		modelValue(val, oldVal) {
-			// console.log('value',val, oldVal)
+			//console.log('value',val, oldVal)
 			this.uploadLists = val
 		}
 		// #endif
@@ -292,9 +273,6 @@ export default {
 				}
 			})
 		},
-		imgReplace(index) {
-			this.chooseFile()
-		},
 		imgPreview(index) {
 			var imgData = []
 
@@ -321,7 +299,7 @@ export default {
 					break
 				case 2: //全部
 					uni.showActionSheet({
-						itemList: ['图片', '视频'],
+						itemList: ['相册', '视频'],
 						success: res => {
 							if (res.tapIndex == 1) {
 								this.videoAdd()
@@ -373,8 +351,8 @@ export default {
 			//console.log('imgAdd')
 			let nowNum = Math.abs(this.uploadLists.length - this.max)
 			let thisNum = this.chooseNum > nowNum ? nowNum : this.chooseNum //可选数量
-			// console.log('nowNum', nowNum)
-			// console.log('thisNum', thisNum)
+			//console.log('nowNum', nowNum)
+			//console.log('thisNum', thisNum)
 			// #ifdef APP-PLUS
 			if (this.sourceType.length > 1) {
 				uni.showActionSheet({
@@ -401,7 +379,7 @@ export default {
 			// #endif
 			//#ifndef APP-PLUS
 			uni.chooseImage({
-				count: thisNum || 1,
+				count: thisNum,
 				sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
 				sourceType: this.sourceType,
 				success: res => {
@@ -488,7 +466,7 @@ export default {
 							src: item,
 							quality: this.quality,
 							success: res => {
-								// console.log('compressImage', res.tempFilePath)
+								//console.log('compressImage', res.tempFilePath)
 								results.push(res.tempFilePath)
 								resolve(res.tempFilePath)
 							},
@@ -747,66 +725,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-/*
- *
- 自定义样式 
-*/
-.htz-image-upload-list.one {
-	width: 100%;
-	.htz-image-upload-Item {
-		width: 100% !important;
-		height: auto !important;
-		.image {
-			position: absolute;
-			left: 0;
-			top: 0;
-			width: 100%;
-			height: 100%;
-		}
-	}
-	.htz-image-upload-Item-video {
-		position: absolute;
-		left: 0;
-		top: 0;
-		width: 100%;
-		height: 100%;
-	}
-	.htz-image-upload-Item-add {
-		font-size: 0 !important;
-		&:after {
-			position: absolute;
-			left: 0;
-			top: 0;
-			width: 100%;
-			height: 100%;
-			content: '+';
-			font-size: 150rpx;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-		}
-	}
-	.htz-image-upload-Item-replace {
-		position: absolute;
-		left: 0;
-		bottom: 0;
-		right: 0;
-		top: 0;
-		margin: auto;
-		width: 240rpx;
-		height: 66rpx;
-		z-index: 997;
-		color: #fff;
-		background-color: rgba(0, 0, 0, 0.8);
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		font-size: 28rpx;
-		border-radius: 10rpx;
-	}
-}
-
+<style>
 .preview-full {
 	position: fixed;
 	top: 0;
@@ -817,7 +736,7 @@ export default {
 	z-index: 1002;
 }
 
-.preview-full .video {
+.preview-full video {
 	width: 100%;
 	height: 100%;
 	z-index: 1002;
@@ -864,25 +783,28 @@ export default {
 	} */
 
 .htz-image-upload-list {
+	margin-top: -32rpx;
 	display: flex;
 	flex-wrap: wrap;
+	justify-content: space-between;
 }
 
 .htz-image-upload-Item {
+	margin-top: 32rpx;
 	width: 160rpx;
 	height: 160rpx;
 	border-radius: 10rpx;
-	overflow: hidden;
 	position: relative;
+	border: 1px dashed #d9d9d9;
 }
 
-.htz-image-upload-Item .image {
+.htz-image-upload-Item image {
 	width: 100%;
 	height: 100%;
 	border-radius: 10rpx;
 }
 
-.htz-image-upload-Item-.video {
+.htz-image-upload-Item-video {
 	width: 100%;
 	height: 100%;
 	border-radius: 10rpx;
@@ -900,7 +822,7 @@ export default {
 	z-index: 996;
 }
 
-.htz-image-upload-Item .video {
+.htz-image-upload-Item video {
 	width: 100%;
 	height: 100%;
 	border-radius: 10rpx;
@@ -913,7 +835,6 @@ export default {
 	font-size: 105rpx;
 	/* line-height: 160rpx; */
 	text-align: center;
-	border: 1px dashed #d9d9d9;
 	color: #d9d9d9;
 }
 

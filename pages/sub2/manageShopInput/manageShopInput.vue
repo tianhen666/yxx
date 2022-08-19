@@ -1,21 +1,25 @@
 <template>
 	<view class="container">
 		<view class="blank32 blank_bg_color"></view>
-		<uni-forms :rules="rules" ref="formObj" v-model="formData" label-position="left" label-width="200rpx">
+		<uni-forms :rules="rules" ref="formObj" v-model="formData" label-position="left" label-width="220rpx">
+			<!-- 商品轮播图 -->
 			<uni-forms-item :label="rules.pics.label" label-position="top" name="pics">
 				<!-- 图片上传 all视频图片，image图片，video视频 -->
-				<htz-image-upload :max="selectNum" v-model="pics" mediaType="image" @chooseSuccess="chooseSuccess" />
+				<htz-image-upload :max="selectNum1" v-model="picList1" mediaType="image" @chooseSuccess="chooseSuccess1" />
 			</uni-forms-item>
 			<view class="blank32 blank_bg_color"></view>
 
+			<!-- 商品标题 -->
 			<uni-forms-item :label="rules.title.label" name="title">
 				<uni-easyinput v-model="formData.title" :placeholder="rules.title.rules[0].errorMessage" />
 			</uni-forms-item>
 
+			<!-- 商品价格 -->
 			<uni-forms-item :label="rules.price.label" name="price">
 				<uni-easyinput type="digit" v-model="formData.price" :placeholder="rules.price.rules[0].errorMessage" />
 			</uni-forms-item>
 
+			<!-- 商品原价 -->
 			<uni-forms-item :label="rules.priceNormal.label" name="priceNormal">
 				<uni-easyinput
 					type="digit"
@@ -23,11 +27,34 @@
 					:placeholder="rules.priceNormal.rules[0].errorMessage"
 				/>
 			</uni-forms-item>
+
+			<!-- 商品库存 -->
 			<uni-forms-item :label="rules.avaliableCount.label" name="avaliableCount">
 				<uni-number-box :min="1" :step="10" :max="10000" v-model="formData.avaliableCount" />
 			</uni-forms-item>
+
+			<!-- 是否限购 -->
+			<uni-forms-item label="是否限购">
+				<switch
+					color="#4b8eff"
+					:checked="parseInt(formData.limitCount) > 0"
+					style="transform:scale(0.8)"
+					@change="formData.limitCount = parseInt(formData.limitCount) > 0 ? 0 : 1"
+				/>
+			</uni-forms-item>
+
+			<!-- 限购数量 -->
+			<uni-forms-item :label="rules.limitCount.label" name="limitCount" v-if="parseInt(formData.limitCount) > 0">
+				<uni-number-box :min="1" :max="255" v-model="formData.limitCount" />
+			</uni-forms-item>
+
+			<!-- 排序 -->
+			<uni-forms-item :label="rules.orderNum.label" name="orderNum">
+				<uni-number-box :min="1" :max="255" v-model="formData.orderNum" />
+			</uni-forms-item>
 			<view class="blank32 blank_bg_color"></view>
 
+			<!-- 商品分享金额 -->
 			<uni-forms-item :label="rules.sharePrice.label" name="sharePrice">
 				<uni-easyinput
 					type="digit"
@@ -36,37 +63,37 @@
 				/>
 			</uni-forms-item>
 
-			<uni-forms-item label="限购">
-				<switch
-					color="#4b8eff"
-					:checked="parseInt(formData.limitCount) > 0"
-					style="transform:scale(0.8)"
-					@change="formData.limitCount = parseInt(formData.limitCount) > 0 ? 0 : 1"
-				/>
-			</uni-forms-item>
-			<uni-forms-item :label="rules.limitCount.label" name="limitCount" v-if="parseInt(formData.limitCount) > 0">
-				<uni-number-box :min="1" :max="255" v-model="formData.limitCount" />
-			</uni-forms-item>
-
-			<uni-forms-item :label="rules.orderNum.label" name="orderNum">
-				<uni-number-box :min="1" :max="255" v-model="formData.orderNum" />
+			<!-- 商品分享图 -->
+			<uni-forms-item :label="rules.sharePic.label" label-position="top" name="sharePic">
+				<htz-image-upload :max="selectNum2" v-model="picList2" mediaType="image" @chooseSuccess="chooseSuccess2" />
 			</uni-forms-item>
 			<view class="blank32 blank_bg_color"></view>
 
-			<uni-forms-item :label="rules.notice.label" label-position="top" name="notice">
+			<!-- 商品介绍 -->
+			<uni-forms-item :label="rules.detail.label" label-position="top" name="detail">
 				<uni-easyinput
 					type="textarea"
 					:cursor-spacing="80"
 					autoHeight
-					v-model="formData.notice"
-					:placeholder="rules.notice.rules[0].errorMessage"
+					v-model="formData.detail"
+					:placeholder="rules.detail.rules[0].errorMessage"
 				/>
 			</uni-forms-item>
 			<view class="blank32 blank_bg_color"></view>
-			<uni-forms-item :label="rules.detail.label" label-position="top" name="detail">
-				<mp-html :content="formData.detail" />
+
+			<!-- 商品详情图 -->
+			<uni-forms-item :label="rules.postPic.label" label-position="top" name="postPic">
+				<htz-image-upload
+					:max="selectNum3"
+					v-model="picList3"
+					mediaType="image"
+					:action="uploadimageURL3"
+					@uploadSuccess="uploadSuccess3"
+				/>
 			</uni-forms-item>
 		</uni-forms>
+
+		<!-- 保存信息 -->
 		<m-btn-fix-bottom text="保存信息" @btnClick="saveClick" />
 	</view>
 </template>
@@ -101,8 +128,8 @@ onLoad(optios => {
 // 表单校验
 const rules = {
 	pics: {
-		rules: [{ required: true, errorMessage: '请上传商品图片' }],
-		label: '商品图片'
+		rules: [{ required: true, errorMessage: '请上传商品轮播图' }],
+		label: '商品轮播图'
 	},
 	title: {
 		rules: [{ required: true, errorMessage: '请输入商品标题' }],
@@ -121,24 +148,28 @@ const rules = {
 		label: '商品库存'
 	},
 	sharePrice: {
-		rules: [{ errorMessage: '请输入推广佣金' }],
-		label: '推广佣金'
+		rules: [{ errorMessage: '请输入分享佣金' }],
+		label: '分享佣金'
+	},
+	sharePic: {
+		rules: [{ errorMessage: '请上传商品分享图' }],
+		label: '分享图'
 	},
 	limitCount: {
-		rules: [{ errorMessage: '请输入限购数量' }],
+		rules: [{ required: true, errorMessage: '请输入限购数量' }],
 		label: '限购数量'
 	},
 	orderNum: {
 		rules: [{ errorMessage: '请输入排序' }],
 		label: '排序'
 	},
-	notice: {
-		rules: [{ required: true, errorMessage: '请输入使用规则' }],
-		label: '使用规则'
-	},
 	detail: {
-		rules: [{ errorMessage: '请输入商品详情' }],
-		label: '商品详情'
+		rules: [{ required: true, errorMessage: '请输入商品介绍' }],
+		label: '商品介绍'
+	},
+	postPic: {
+		rules: [{ required: true, errorMessage: '请上传商品详情图' }],
+		label: '商品详情图'
 	}
 }
 
@@ -153,8 +184,35 @@ const { saveClick } = useSaveApi(formObj, formData, _storeproductSave)
  * 图片选择功能
  */
 import useHtzImageUpload from '@/aTemp/mixins/useHtzImageUpload.js'
+
 // 组合式函数引入
-const { chooseSuccess, pics, selectNum } = useHtzImageUpload(1 / 1, '/storeproduct/uploadimage', formData, 'pics', 5)
+const { chooseSuccess: chooseSuccess1, picList: picList1, selectNum: selectNum1 } = useHtzImageUpload({
+	ratio: 1 / 1,
+	url: '/storeproduct/uploadimage',
+	refData: formData,
+	param: 'pics',
+	selectNum: 5
+})
+
+const { chooseSuccess: chooseSuccess2, picList: picList2, selectNum: selectNum2 } = useHtzImageUpload({
+	ratio: 5 / 4,
+	url: '/storeproduct/uploadimage',
+	refData: formData,
+	param: 'sharePic',
+	selectNum: 1
+})
+
+const {
+	uploadSuccess: uploadSuccess3,
+	picList: picList3,
+	selectNum: selectNum3,
+	uploadimageURL: uploadimageURL3
+} = useHtzImageUpload({
+	url: '/storeproduct/uploadimage',
+	refData: formData,
+	param: 'postPic',
+	selectNum: 5
+})
 </script>
 
 <style lang="scss" scoped>

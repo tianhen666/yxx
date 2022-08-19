@@ -1,7 +1,7 @@
 <template>
 	<!-- tab切换 -->
 	<uni-segmented-control :current="currentIndex" :values="items" style-type="text" @clickItem="onClickItem" />
-	<view class="blank20"></view>
+	<view class="blank32"></view>
 
 	<!-- tab内容 -->
 	<pinapp-empty-page v-if="listData.length === 0" />
@@ -9,44 +9,44 @@
 		<view v-for="(item, index) in listData" :key="index" class="tab_content_item">
 			<!-- 商品信息 -->
 			<view class="tab_content_item_wrapper">
-				<image class="image" :src="item.pics[0]" mode="scaleToFill" @tap="previewImage(item.pics)"></image>
-				<view class="center">
-					<!-- 标题 -->
-					<view class="title">{{ item.title }}</view>
-					<!-- 价格 -->
-					<view class="price_wrapper">
-						<view class="price">
-							<text class="price_cn">￥</text>
-							<text>{{ item.price }}</text>
-						</view>
-						<view class="originalPrice">
-							<text>￥</text>
-							<text class="originalPrice_through">{{ item.priceNormal || item.price }}</text>
-						</view>
+				<view class="image_box">
+					<image class="image" :src="item.mainPic" mode="scaleToFill" @tap="previewImage([item.mainPic])"></image>
+					<view class="type">
+						<view class="type_item">{{ type[item.type].text }}</view>
 					</view>
 				</view>
-				<view class="right">
-					<view class="inventory">库存{{ item.avaliableCount || 0 }}</view>
+				<view class="center">
+					<!-- 时间 -->
+					<view class="time">
+						{{ dayjs(item.startDt).format('YYYY年MM月DD日') + '--' + dayjs(item.endDt).format('YYYY年MM月DD日') }}
+						<text class="color1">{{ dayjs(item.endDt).valueOf() < Date.now() ? '(已结束)' : '' }}</text>
+					</view>
+					<!-- 标题 -->
+					<view class="title">{{ item.title }}</view>
 				</view>
 			</view>
 
 			<!-- 按钮 -->
 			<view class="box">
-				<view class="sales">已售{{ item.sold || 0 }}</view>
+				<view class="sales">已参与{{ item.sold || 0 }}</view>
 
 				<view class="btn">
-					<view class="btn_item style2" @tap="storeproductDisable(item, index)" v-if="item.status === 0">放入仓库</view>
+					<view class="btn_item style2" @tap="enrollformDisable(item, index)" v-if="item.status === 0">
+						下架
+					</view>
 					<view
 						v-if="item.status === 1"
 						class="btn_item style1"
 						@tap="
-							navigateTo(`/pages/sub2/manageActivityIpnut/manageActivityIpnut?id=${item.id}&prevCurrentIndex=${currentIndex}`)
+							navigateTo(
+								`/pages/sub2/manageActivityIpnut/manageActivityIpnut?id=${item.id}&prevCurrentIndex=${currentIndex}`
+							)
 						"
 					>
 						编辑
 					</view>
-					<view class="btn_item style2" @tap="storeproductEnable(item, index)" v-if="item.status === 1">上架</view>
-					<view class="btn_item style3" @tap="storeproductDelete(item, index)" v-if="item.status === 1">删除</view>
+					<view class="btn_item style2" @tap="enrollformEnable(item, index)" v-if="item.status === 1">启用</view>
+					<view class="btn_item style3" @tap="enrollformDelete(item, index)" v-if="item.status === 1">删除</view>
 				</view>
 			</view>
 		</view>
@@ -62,25 +62,39 @@
 <script setup>
 import { ref, reactive, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
-import { _enrollformGetlist } from '@/aTemp/apis/activity.js'
+import { _enrollformGetlist, _enrollformDelete, _enrollformEnable, _enrollformDisable } from '@/aTemp/apis/activity.js'
 import { showModal, previewImage, navigateTo } from '@/aTemp/utils/uniAppTools.js'
-
+import dayjs from 'dayjs'
 // 数据列表
 const listData = ref([])
 // tab选项
 const items = ref(['启用中', '仓库'])
 //tab当前索引，0:启用中，1:仓库
 const currentIndex = ref(0)
+/*
+	活动类型
+ */
+const type = [
+	{
+		text: '义诊',
+		value: 0
+	},
+	{
+		text: '限时',
+		value: 1
+	},
+	{
+		text: '拼团',
+		value: 2
+	}
+]
 
 // 拉取列表数据
 const getListData = data => {
 	_enrollformGetlist(data).then(res => {
 		const { code, data, msg } = res
 		// 将返回数据中的商品图片转化为数组
-		listData.value = data.map((item, index, arr) => {
-			item.pics = item.pics ? item.pics.split(',') : []
-			return item
-		})
+		listData.value = data
 	})
 }
 
@@ -101,36 +115,36 @@ const onClickItem = e => {
 	}
 }
 
-// // 放入仓库
-// const storeproductDisable = (item, index) => {
-// 	showModal('是否放入仓库？').then(res => {
-// 		if (res.confirm) {
-// 			_storeproductDisable({ id: item.id }).then(() => {
-// 				listData.value.splice(index, 1)
-// 			})
-// 		}
-// 	})
-// }
-// // 删除
-// const storeproductDelete = (item, index) => {
-// 	showModal('是否删除？').then(res => {
-// 		if (res.confirm) {
-// 			_storeproductDelete({ id: item.id }).then(() => {
-// 				listData.value.splice(index, 1)
-// 			})
-// 		}
-// 	})
-// }
-// // 启用
-// const storeproductEnable = (item, index) => {
-// 	showModal('是否启用？').then(res => {
-// 		if (res.confirm) {
-// 			_storeproductEnable({ id: item.id }).then(() => {
-// 				listData.value.splice(index, 1)
-// 			})
-// 		}
-// 	})
-// }
+// 放入仓库
+const enrollformDisable = (item, index) => {
+	showModal('是否放入仓库？').then(res => {
+		if (res.confirm) {
+			_enrollformDisable({ id: item.id }).then(() => {
+				listData.value.splice(index, 1)
+			})
+		}
+	})
+}
+// 删除
+const enrollformDelete = (item, index) => {
+	showModal('是否删除？').then(res => {
+		if (res.confirm) {
+			_enrollformDelete({ id: item.id }).then(() => {
+				listData.value.splice(index, 1)
+			})
+		}
+	})
+}
+// 启用
+const enrollformEnable = (item, index) => {
+	showModal('是否启用？').then(res => {
+		if (res.confirm) {
+			_enrollformEnable({ id: item.id }).then(() => {
+				listData.value.splice(index, 1)
+			})
+		}
+	})
+}
 </script>
 
 <style lang="scss" scoped>
@@ -140,75 +154,61 @@ const onClickItem = e => {
 .tab_content {
 	&_item {
 		background-color: #ffffff;
-		padding: $padding;
-		border-bottom: 1px solid $uni-border-4;
+		margin: 0 $padding;
+		border-radius: 16rpx;
+		overflow: hidden;
+		margin-bottom: 32rpx;
 		&:last-child {
-			border: none;
+			margin-bottom: 0;
 		}
 		&_wrapper {
-			@include mFlex;
-			align-items: stretch;
-			justify-content: space-between;
-			> .image {
-				width: 120rpx;
-				height: 120rpx;
-				flex: none;
-				border-radius: 8rpx;
+			> .image_box {
+				width: 100%;
+				padding-top: 50%;
+				position: relative;
+				overflow: hidden;
+				> .image {
+					position: absolute;
+					top: 0;
+					left: 0;
+					width: 100%;
+					height: 100%;
+				}
+				> .type {
+					position: absolute;
+					bottom: 20rpx;
+					left: 20rpx;
+					> .type_item {
+						display: inline-block;
+						color: #ffffff;
+						background-color: $uni-mask;
+						padding: 10rpx 20rpx;
+						font-size: 26rpx;
+						border-radius: 8rpx;
+					}
+				}
 			}
 			> .center {
-				flex: auto;
-				margin: 0 30rpx;
 				overflow: hidden;
-				@include mFlex;
-				flex-direction: column;
-				justify-content: space-between;
-				align-items: flex-start;
+				margin: $padding;
+				> .time {
+					font-size: 28rpx;
+					color: $uni-base-color;
+					.color1 {
+						color: $uni-error;
+					}
+				}
 				> .title {
+					margin-top: 32rpx;
+					font-weight: bold;
 					color: $uni-main-color;
 					font-size: 30rpx;
 					@include singleLineTextOverHidden;
 				}
-				> .price_wrapper {
-					white-space: nowrap;
-					@include mFlex;
-					justify-content: left;
-					flex-wrap: wrap;
-					overflow: hidden;
-					> .price {
-						color: $sub-color;
-						font-size: 36rpx;
-						margin-right: 15rpx;
-						font-weight: bold;
-						.price_cn {
-							font-size: 26rpx;
-						}
-					}
-					> .originalPrice {
-						margin-top: 15rpx;
-						color: $uni-secondary-color;
-						font-size: 26rpx;
-						.originalPrice_through {
-							text-decoration: line-through;
-						}
-					}
-				}
-			}
-			> .right {
-				width: 150rpx;
-				flex: none;
-				overflow: hidden;
-				@include mFlex;
-				flex-direction: column;
-				justify-content: space-between;
-				align-items: flex-end;
-				> .inventory {
-					color: $uni-secondary-color;
-					font-size: 26rpx;
-				}
 			}
 		}
 		> .box {
-			margin-top: 30rpx;
+			margin: $padding;
 			@include mFlex;
 			justify-content: space-between;
 			> .sales {

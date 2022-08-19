@@ -31,7 +31,8 @@ const btnClick = () => {
 	box-sizing: content-box;
 	.fix_warpper {
 		position: fixed;
-		z-index: 88;
+		// z-index: 88;
+		z-index: 999999999;
 		width: 100%;
 		padding: $padding;
 		padding-top: 0;

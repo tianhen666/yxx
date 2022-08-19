@@ -3,6 +3,7 @@ import {
 	watch,
 	ref
 } from 'vue'
+
 import {
 	_storeCropper
 } from '@/aTemp/store/storeCropper.js'
@@ -11,60 +12,103 @@ import {
 	isVideo
 } from '@/aTemp/utils/tools'
 
-// 裁剪完成的图片列表
-const storeCropper = _storeCropper()
+// 获取请求地址
+import config from '@/global-config.js'
 
-export default function(ratio = (1 / 1), url = "", refData = ref({}), params = '', _selectNum = 1) {
-	// 选择数量
-	const selectNum = _selectNum
 
-	// 图片地址字符串转列表
-	const pics = computed({
-		get: () => (refData.value[params] ? refData.value[params].split(',') : []),
+
+// 不需要裁剪直接上传
+
+const picList2 = computed({
+	get: () => (formData.value.postPic ? formData.value.postPic.split(',') : []),
+	set: val => {
+		formData.value.postPic = val.join(',')
+	}
+})
+
+
+export default function(paramsObj) {
+	const {
+		ratio,
+		url,
+		refData,
+		param,
+		selectNum
+	} = paramsObj
+
+
+	/* 
+		逗号分割的字符串转图片列表
+	 */
+	const picList = computed({
+		get: () => (refData.value[param] ? refData.value[param].split(',') : []),
 		set: val => {
-			refData.value[params] = val.join(',')
+			refData.value[param] = val.join(',')
 		}
 	})
 
-	const chooseSuccess = res => {
-		// 判断是否为视频
-		if (isVideo(res[0])) {
-			refData.value[params].push(res[0])
-			return
-		}
-		// 去裁剪图片页面
-		// res需要裁剪图片地址列表
-		// ratio 比例
-		// url 服务器上传地址
-		uni.navigateTo({
-			url: `/pages/sub2/cropper/cropper?imgUrls=${res}&ratio=${ratio}&url=${url}`
-		})
-	}
 
-	// 监听裁剪后storeCropper的变化
-	watch(
-		() => storeCropper.imgUrls,
-		(newValue, oldValue) => {
-			
-			// 如果只选择一个直接替换
-			if (selectNum === 1) {
-				refData.value[params] = newValue[0]
+	/*
+	 * 选择图片,不自动上传,需要裁剪图片
+	 */
+	if (ratio && url) {
+		const chooseSuccess = res => {
+			// 判断是否为视频
+			if (isVideo(res[0])) {
+				refData.value[param].push(res[0])
 				return
 			}
-			
-			// 如果选选择多个拼接字符串
-			if (refData.value[params]) {
-				refData.value[params] += ',' + newValue.join(',')
-			} else {
-				refData.value[params] = newValue.join(',')
-			}
-
+			// 去裁剪图片页面
+			// res需要裁剪图片地址列表
+			// ratio 比例
+			// url 服务器上传地址
+			uni.navigateTo({
+				url: `/pages/sub2/cropper/cropper?imgUrls=${res}&ratio=${ratio}&url=${url}&param=${param}`
+			})
 		}
-	)
+
+		// 裁剪完成的图片列表
+		const storeCropper = _storeCropper()
+		// 监听裁剪后storeCropper的变化
+		watch(
+			() => storeCropper[param],
+			(newValue, oldValue) => {
+
+				if (refData.value[param]) {
+					refData.value[param] += ',' + newValue.join(',')
+				} else {
+					refData.value[param] = newValue.join(',')
+				}
+			}
+		)
+
+		return {
+			chooseSuccess, //图片选择函数
+			picList, //图片选择的的列表
+			selectNum, // 选择图片的数量
+		}
+
+	}
+
+
+	/*
+	 * 自动上传图片
+	 */
+	const uploadimageURL = config.BASE_URL + url
+
+	const uploadSuccess = res => {
+		console.log(res)
+		if (refData.value[param]) {
+			refData.value[param] += ',' + JSON.parse(res.data).data
+		} else {
+			refData.value[param] = JSON.parse(res.data).data
+		}
+	}
 
 	return {
-		chooseSuccess,
-		pics,
-		selectNum
+		picList, //图片选择的的列表
+		selectNum, // 选择图片的数量
+		uploadSuccess, //图片自动上传成功的函数
+		uploadimageURL //上传图片的地址
 	}
 }

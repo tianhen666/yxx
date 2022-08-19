@@ -35,7 +35,9 @@
 				<view class="sales">已售{{ item.sold || 0 }}</view>
 
 				<view class="btn">
-					<view class="btn_item style2" @tap="storeproductDisable(item, index)" v-if="item.status === 0">放入仓库</view>
+					<view class="btn_item style2" @tap="storeproductDisable(item, index)" v-if="item.status === 0">
+						下架
+					</view>
 					<view
 						v-if="item.status === 1"
 						class="btn_item style1"

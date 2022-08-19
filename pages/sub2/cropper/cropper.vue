@@ -30,10 +30,12 @@ const ratio = ref(1) //裁剪比例
 const url = ref('') // 上传服务器url
 const resImageSrcs = ref([]) //裁剪完成的图片
 const cropper = ref(null) //裁剪组件对象
+const param = ref('') //裁剪store参数
 
 onLoad(option => {
 	imageSrcs.value = option.imgUrls ? decodeURIComponent(option.imgUrls).split(',') : []
 	ratio.value = parseFloat(option.ratio)
+	param.value = option.param || 'imgUrls'
 	url.value = baseURL + decodeURIComponent(option.url)
 })
 
@@ -61,7 +63,7 @@ const crop = () => {
 					if (imageSrcs.value.length > resImageSrcs.value.length) {
 						imageSrcIndex.value++
 					} else {
-						storeCropper.imgUrls = [...resImageSrcs.value]
+						storeCropper[param.value] = [...resImageSrcs.value]
 						uni.navigateBack()
 					}
 				}
