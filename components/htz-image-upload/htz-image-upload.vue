@@ -21,7 +21,7 @@
 				<!-- #endif -->
 			</view>
 
-			<image v-else :src="getFileUrl(item)" @click="imgPreview(getFileUrl(item))"></image>
+			<image mode="aspectFit" v-else :src="getFileUrl(item)" @click="imgPreview(getFileUrl(item))"></image>
 
 			<view class="htz-image-upload-Item-del" v-if="remove" @click="imgDel(index)">×</view>
 		</view>

@@ -15,13 +15,19 @@ instance.interceptors.request.use(
 	config => {
 		// 当前页面显示导航条加载动画
 		uni.showNavigationBarLoading()
-		
+
+		// 如果是undefined 赋值为对象
+		if (!config.data) {
+			config.data = {}
+		}
+
+
 		// 配置门诊ID请求参数
 		const storeId = uni.getStorageSync("storeId")
 		if (storeId) {
 			config.data.storeId = storeId
 		}
-		
+
 		return config
 	},
 	error => {
@@ -36,7 +42,7 @@ instance.interceptors.response.use(
 	response => {
 		// 当前页面隐藏导航条加载动画
 		uni.hideNavigationBarLoading()
-		
+
 		const {
 			code,
 			data,

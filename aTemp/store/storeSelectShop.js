@@ -2,11 +2,13 @@ import {
 	defineStore
 } from 'pinia'
 
-// 图片裁剪
-export const _storeSelectShop = defineStore('cropper', {
+// 相关商品选择
+export const _storeSelectShop = defineStore('selectShop', {
 	state: () => {
 		return {
-			shopList: []
+			selectQuantity: 1,
+			selectListId: [],
+			selectListData: {},
 		}
 	}
 })

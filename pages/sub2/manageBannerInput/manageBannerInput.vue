@@ -1,168 +1,118 @@
 <template>
 	<view class="container">
-		<uni-forms v-model="formData" label-position="top" label-width="100%">
-			<uni-forms-item label="banner图" name="banner">
+		<uni-forms :rules="rules" ref="formObj" v-model="formData" label-width="220rpx">
+			<!-- banner图 -->
+			<uni-forms-item :label="rules.banner.label" name="banner" label-position="top">
 				<!-- 图片上传 all -->
-				<htz-image-upload ratio="60%" :max="1" v-model="bannerArray" mediaType="image" @chooseSuccess="chooseSuccess" />
+				<htz-image-upload :max="selectNum1" v-model="picList1" mediaType="image" @chooseSuccess="chooseSuccess1" />
 			</uni-forms-item>
+			<view class="blank32 blank_bg_color"></view>
 
-			<uni-forms-item label="排序" name="sort">
-				<uni-easyinput
-					type="number"
-					v-model="formData.sort"
-					placeholder="请输入排序"
-					placeholderStyle="color:#999999;font-size:14px;"
-				/>
-				<view class="blank32"></view>
+			<!-- 排序 -->
+			<uni-forms-item :label="rules.sort.label" name="sort">
+				<uni-number-box :min="1" :max="255" v-model="formData.sort" />
 			</uni-forms-item>
-			<view class="blank20"></view>
+			<view class="blank32 blank_bg_color"></view>
 
-			<uni-forms-item label="相关商品" name="banurl">
-				<!-- 选项 -->
-				<m-xiangguan-goods
-					@delClick="delSelectShopList"
-					v-if="selectShopListData.length > 0"
-					:shopListData="selectShopListData"
-				/>
-				<!-- 提示 -->
-				<view class="xiangguang" v-else>
-					<view class="xiangguang_tips">添加相关商品</view>
-					<view class="xiangguang_tips">点击banner图跳转到这个商品</view>
-				</view>
-				<!-- 去选择页面按钮 -->
-				<view
-					class="xiangguang_box1"
-					v-if="selectShopQuantity > selectShopListData.length"
-					@tap="
-						navigateTo(
-							`/pages-sub2/selectShopItem/selectShopItem?selectQuantity=${selectShopQuantity}&selectListId=${selectShoplist}`
-						)
-					"
-				>
-					<image class="image" src="/static/default/add.png" mode="aspectFill"></image>
-					<view class="text">添加相关商品</view>
-				</view>
+			<!-- 相关商品 -->
+			<uni-forms-item :label="rules.banurl.label" name="banurl" label-position="top">
+				<m-xiangguan-goods />
 			</uni-forms-item>
 		</uni-forms>
-		<view class="blank40"></view>
-		<m-btn-fix-bottom text="保存信息" @btnClick="bannerSaveClick" />
+
+		<!-- 保存 -->
+		<m-btn-fix-bottom text="保存信息" @btnClick="saveClick" />
 	</view>
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { toRefs, ref, watch } from 'vue'
 import { onLoad, onUnload } from '@dcloudio/uni-app'
 import { _bannerSave, _bannerList } from '@/aTemp/apis/banner'
-import { isVideo, queryURLparamsRegEs5 } from '@/aTemp/utils/tools'
 import { navigateTo, navigateBackRefresh } from '@/aTemp/utils/uniAppTools'
 
+import { _storeSelectShop } from '@/aTemp/store/storeSelectShop.js'
+
+// 商品选择的列表
+const storeSelectShop = _storeSelectShop()
+// 选着数量,选中列表ID,选中列表数据
+const { selectQuantity, selectListId } = toRefs(storeSelectShop)
+// 重置数据
+storeSelectShop.$reset()
+// 设置可选择数量
+selectQuantity.value = 1
+// 监听选中的商品ID变化
+watch(selectListId.value, (newValue, oldValue) => {
+	console.log(newValue.join(','))
+	formData.value.banurl = newValue.join(',')
+})
+
+// 表单校验
+const rules = {
+	banner: {
+		rules: [{ required: true, errorMessage: '请上传banner图' }],
+		label: 'banner图'
+	},
+	sort: {
+		rules: [{ required: true, errorMessage: '请输入序号' }],
+		label: '排序'
+	},
+	banurl: {
+		rules: [{ errorMessage: '请选择相关商品' }],
+		label: '相关商品'
+	}
+}
+
+// 数据ID
+const dataId = ref(0)
 // 表单数据
 const formData = ref({})
+// 获取表单对象
+const formObj = ref(null)
 
-// bannerID
-const bannerId = ref(0)
 // 页面加载
 onLoad(optios => {
-	bannerId.value = parseInt(optios.id)
-	// 是否存在bannerId
-	if (bannerId.value > 0) {
+	dataId.value = parseInt(optios.id)
+	// 是否存在dataId
+	if (dataId.value > 0) {
 		// 拉取数据
-		_bannerList({ id: bannerId.value }).then(res => {
+		_bannerList({ id: dataId.value }).then(res => {
 			const { data } = res
-			formData.value = { ...data }
-			formData.value.banurl = '/pages-sub1/goodsInfo/goodsInfo?id=3'
+			formData.value = data
+			// 初始化选择的商品
+			selectListId.value.push(...formData.value.banurl.split(','))
 		})
 	}
 })
 
 /*
  * 保存banenr信息功能
- *
+ * 组合式函数引入
  */
-// 前一个页面tab索引
-const prevCurrentIndex = ref(0)
-onLoad(optios => {
-	prevCurrentIndex.value = parseInt(optios.prevCurrentIndex)
-})
-// 保存信息
-const bannerSaveClick = () => {
-	_bannerSave(formData.value).then(res => {
-		// 返回上一级并且重载noload
-		navigateBackRefresh({ currentIndex: prevCurrentIndex.value })
-	})
-}
+import useSaveApi from '@/aTemp/mixins/useSaveApi.js'
+const { saveClick } = useSaveApi(formObj, formData, _bannerSave)
 
 /*
- * 图片选择，和图片裁剪功能
- *
- *
+ * 图片选择功能
+ * 组合式函数引入
  */
+import useHtzImageUpload from '@/aTemp/mixins/useHtzImageUpload.js'
 
-// 渲染时banner列表
-const bannerArray = computed(() => {
-	return formData.value.banner ? [formData.value.banner] : []
+// 商品图片上传
+const { chooseSuccess: chooseSuccess1, picList: picList1, selectNum: selectNum1 } = useHtzImageUpload({
+	ratio: 2 / 1,
+	url: '/serve/uploadimage',
+	refData: formData,
+	param: 'banner',
+	selectNum: 1
 })
-// 图片选择接口
-const chooseSuccess = res => {
-	if (isVideo(res[0])) {
-		formData.value.banner = res[0]
-		return
-	}
-	// 去裁剪图片页面
-	// imgUrl需要裁剪图片地址
-	// ratio 比例
-	// url 服务器上传地址
-	uni.navigateTo({
-		url: `/pages-sub2/cropper/cropper?imgUrl=${res[0]}&ratio=${5 / 3}&url=/banner/uploadimage`
-	})
-}
-
-// 页面加载
-onLoad(option => {
-	// 注册裁剪完成事件
-	uni.$on('cropper', data => {
-		const imgUrl = JSON.parse(data.imgUrl)
-		formData.value.banner = imgUrl.data
-	})
-})
-// 页面卸载
-onUnload(() => {
-	// 卸载裁剪完成事件
-	uni.$off('cropper')
-})
-
-/*
- * 选择相关商品功能
- *
- */
-
 </script>
 
 <style lang="scss" scoped>
 :global(page) {
-	background-color: #f5f5f5;
+	background-color: #fff;
 }
 .container {
 	width: 750rpx;
-}
-
-.xiangguang {
-	text-align: center;
-	&_tips {
-		color: $text-color-grey;
-		margin-bottom: 15rpx;
-	}
-}
-.xiangguang_box1 {
-	@include mFlex;
-	margin-top: 52rpx;
-	> .image {
-		width: 40rpx;
-		height: 40rpx;
-	}
-	> .text {
-		color: $main-color;
-		margin-left: 15rpx;
-	}
 }
 </style>

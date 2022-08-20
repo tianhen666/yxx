@@ -11,6 +11,10 @@ import {
 import {
 	isVideo
 } from '@/aTemp/utils/tools'
+import {
+	showToastText
+} from '@/aTemp/utils/uniAppTools.js'
+
 
 // 获取请求地址
 import config from '@/global-config.js'
@@ -95,13 +99,23 @@ export default function(paramsObj) {
 	 * 自动上传图片
 	 */
 	const uploadimageURL = config.BASE_URL + url
-
+	// 自动上传成功回调
 	const uploadSuccess = res => {
-		console.log(res)
+		const {
+			code,
+			data,
+			msg
+		} = JSON.parse(res.data)
+
+		if (code !== 0) {
+			showToastText("上传失败~")
+			return
+		}
+
 		if (refData.value[param]) {
-			refData.value[param] += ',' + JSON.parse(res.data).data
+			refData.value[param] += ',' + data
 		} else {
-			refData.value[param] = JSON.parse(res.data).data
+			refData.value[param] = data
 		}
 	}
 

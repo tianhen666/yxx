@@ -47,7 +47,7 @@ const module1 = reactive({
 		{
 			imgUrl: '/static/default/haibao.png',
 			name: '服务项目',
-			path: '/page/index/index'
+			path: '/pages/sub2/manageServiceList/manageServiceList'
 		},
 		{
 			imgUrl: '/static/default/haibao.png',

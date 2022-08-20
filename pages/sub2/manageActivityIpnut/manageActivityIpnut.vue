@@ -2,15 +2,9 @@
 	<view class="container">
 		<view class="blank32 blank_bg_color"></view>
 		<uni-forms :rules="rules" ref="formObj" :model="formData" label-position="left" label-width="220rpx">
+			<!-- 活动封面图上传 -->
 			<uni-forms-item :label="rules.mainPic.label" label-position="top" name="mainPic">
-				<!-- 图片上传 all视频图片，image图片，video视频 -->
-				<htz-image-upload
-					ratio="50%"
-					:max="selectNum"
-					v-model="pics"
-					mediaType="image"
-					@chooseSuccess="chooseSuccess"
-				/>
+				<htz-image-upload :max="selectNum1" v-model="picList1" mediaType="image" @chooseSuccess="chooseSuccess1" />
 			</uni-forms-item>
 			<view class="blank32 blank_bg_color"></view>
 
@@ -69,6 +63,8 @@
 					:placeholder="rules.sharePrice.rules[0].errorMessage"
 				/>
 			</uni-forms-item>
+
+			<!-- 前端是否显示分佣价格 -->
 			<uni-forms-item v-if="formData.type === 1" :label="rules.showShare.label" name="showShare">
 				<switch
 					color="#4b8eff"
@@ -101,6 +97,7 @@
 					@change="formData.limitCount = parseInt(formData.limitCount) > 0 ? 0 : 1"
 				/>
 			</uni-forms-item>
+
 			<!-- 限购数量 -->
 			<uni-forms-item
 				:label="rules.limitCount.label"
@@ -111,17 +108,28 @@
 			</uni-forms-item>
 			<view class="blank32 blank_bg_color"></view>
 
+			<!-- 排序 -->
+			<uni-forms-item :label="rules.sort.label" name="sort">
+				<uni-number-box :min="1" :max="255" v-model="formData.sort" />
+			</uni-forms-item>
+			<view class="blank32 blank_bg_color"></view>
+
 			<!-- 活动分享图 -->
 			<uni-forms-item :label="rules.sharePic.label" label-position="top" name="sharePic">
-				<!-- 图片上传 all视频图片，image图片，video视频 -->
+				<htz-image-upload :max="selectNum2" v-model="picList2" mediaType="image" @chooseSuccess="chooseSuccess2" />
+			</uni-forms-item>
+
+			<!-- 活动海报图 -->
+			<uni-forms-item :label="rules.postPic.label" label-position="top" name="postPic">
 				<htz-image-upload
-					ratio="80%"
-					:max="selectNum2"
-					v-model="pics2"
+					:max="selectNum3"
+					v-model="picList3"
 					mediaType="image"
-					@chooseSuccess="chooseSuccess2"
+					:action="uploadimageURL3"
+					@uploadSuccess="uploadSuccess3"
 				/>
 			</uni-forms-item>
+			<view class="blank32 blank_bg_color"></view>
 
 			<!-- 活动介绍 -->
 			<uni-forms-item label-position="top" :label="rules.content.label" name="content">
@@ -134,14 +142,13 @@
 			</uni-forms-item>
 
 			<!-- 活动详情 -->
-			<uni-forms-item label-position="top" :label="rules.postPic.label" name="postPic">
+			<uni-forms-item label-position="top" :label="rules.details.label" name="details">
 				<htz-image-upload
-					ratio="100%"
-					:max="1"
-					v-model="pics3"
+					:max="selectNum4"
+					v-model="picList4"
 					mediaType="image"
-					:action="baseURL + '/enrollform/uploadimage'"
-					@uploadSuccess="uploadSuccess"
+					:action="uploadimageURL4"
+					@uploadSuccess="uploadSuccess4"
 				/>
 			</uni-forms-item>
 		</uni-forms>
@@ -156,8 +163,6 @@ import { _enrollformSave, _enrollformGetinfo } from '@/aTemp/apis/activity.js'
 import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
 import dayjs from 'dayjs'
 
-
-
 // 数据ID
 const dataId = ref(0)
 // 表单数据
@@ -167,7 +172,8 @@ const formData = ref({
 	endDt: dayjs(Date.now() + 30 * 24 * 60 * 60 * 1000).format('YYYY-MM-DD HH:mm:ss'), //活动结束默认值
 	quantity: 1000, // 活动数量默认
 	least: 2, //最低拼团人数
-	showShare: 0 //是否显示分佣
+	showShare: 0, //是否显示分佣
+	sort: 1 //排序
 })
 // 获取表单对象
 const formObj = ref(null)
@@ -196,7 +202,6 @@ onLoad(optios => {
 		// 拉取数据
 		_enrollformGetinfo({ id: dataId.value }).then(res => {
 			const { data } = res
-			console.log(data)
 			// 数据赋值
 			formData.value = data
 		})
@@ -257,11 +262,19 @@ const rules = {
 		rules: [{ errorMessage: '请输上传活动分享图' }],
 		label: '活动分享图'
 	},
+	sort: {
+		rules: [{ errorMessage: '请输入序号' }],
+		label: '排序'
+	},
+	postPic: {
+		rules: [{ errorMessage: '请上传活动海报图' }],
+		label: '活动海报图'
+	},
 	content: {
 		rules: [{ required: true, errorMessage: '请输入活动介绍' }],
 		label: '活动介绍'
 	},
-	postPic: {
+	details: {
 		rules: [{ required: true, errorMessage: '请上传活动详情图' }],
 		label: '活动详情图'
 	}
@@ -269,51 +282,58 @@ const rules = {
 
 /*
  * 保存banenr信息功能
+ * 组合式函数引入
  */
 import useSaveApi from '@/aTemp/mixins/useSaveApi.js'
-// 组合式函数引入
+// 保存信息
 const { saveClick } = useSaveApi(formObj, formData, _enrollformSave)
 
 /*
  * 图片选择功能
+ * 组合式函数引入
  */
 import useHtzImageUpload from '@/aTemp/mixins/useHtzImageUpload.js'
-// 组合式函数引入
-const { chooseSuccess, pics, selectNum } = useHtzImageUpload(2 / 1, '/enrollform/uploadimage', formData, 'mainPic', 1)
-const { chooseSuccess: chooseSuccess2, pics: pics2, selectNum: selectNum2 } = useHtzImageUpload(
-	5 / 4,
-	'/enrollform/uploadimage',
-	formData,
-	'sharePic',
-	1
-)
 
-
-
-// 不需要裁剪直接上传
-// 获取请求地址
-import config from '@/global-config.js'
-const baseURL = config.BASE_URL
-
-const pics3 = computed({
-	get: () => (formData.value.postPic ? formData.value.postPic.split(',') : []),
-	set: val => {
-		formData.value.postPic = val.join(',')
-	}
+// 活动封面图上传
+const { chooseSuccess: chooseSuccess1, picList: picList1, selectNum: selectNum1 } = useHtzImageUpload({
+	ratio: 2 / 1,
+	url: '/enrollform/uploadimage',
+	refData: formData,
+	param: 'mainPic',
+	selectNum: 1
 })
-
-/* 上传成功 */
-const uploadSuccess = res => {
-	// 上传一个图片直接替换
-	formData.value.postPic = JSON.parse(res.data).data
-
-	// 上传多个图片
-	// if (formData.value.postPic) {
-	// 	formData.value.postPic += ',' + JSON.parse(res.data).data
-	// } else {
-	// 	formData.value.postPic = JSON.parse(res.data).data
-	// }
-}
+// 活动分享图上传
+const { chooseSuccess: chooseSuccess2, picList: picList2, selectNum: selectNum2 } = useHtzImageUpload({
+	ratio: 5 / 4,
+	url: '/enrollform/uploadimage',
+	refData: formData,
+	param: 'sharePic',
+	selectNum: 1
+})
+// 活动海报图
+const {
+	uploadSuccess: uploadSuccess3,
+	picList: picList3,
+	selectNum: selectNum3,
+	uploadimageURL: uploadimageURL3
+} = useHtzImageUpload({
+	url: '/enrollform/uploadimage',
+	refData: formData,
+	param: 'postPic',
+	selectNum: 1
+})
+// 活动详情图
+const {
+	uploadSuccess: uploadSuccess4,
+	picList: picList4,
+	selectNum: selectNum4,
+	uploadimageURL: uploadimageURL4
+} = useHtzImageUpload({
+	url: '/enrollform/uploadimage',
+	refData: formData,
+	param: 'details',
+	selectNum: 5
+})
 </script>
 
 <style lang="scss" scoped>

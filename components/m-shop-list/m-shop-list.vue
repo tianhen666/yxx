@@ -6,24 +6,34 @@
 
 		<!-- 详情列表 -->
 		<view class="container_item" v-for="(item, index) in props.listData" :key="index">
+			<!-- 勾选选项 -->
 			<view
 				class="select_option"
 				v-if="selectOption"
-				:class="props.selectListId.includes(item.id+'') ? 'select_option_color' : ''"
+				:class="props.selectListId.includes(item.id + '') ? 'select_option_color' : ''"
 			>
-				<image class="image" src="/static/default/duigou.png" mode="aspectFill"></image>
+				<image
+					class="image"
+					v-if="props.selectListId.includes(item.id + '')"
+					src="/static/default/duigou.png"
+					mode="aspectFill"
+				></image>
 				<view class="select_cover" @tap.stop="selectClick(item)"></view>
 			</view>
 
+			<!-- 图片 -->
 			<image
 				class="image"
-				:src="item.img"
+				:src="item.pics[0]"
 				mode="aspectFill"
-				@tap.stop="navigateTo('/pages-sub1/goodsInfo/goodsInfo')"
+				@tap.stop="navigateTo(`/pages/sub1/goodsInfo/goodsInfo?id=${item.id}`)"
 			></image>
-			<view class="right" @tap.stop="navigateTo('/pages-sub1/goodsInfo/goodsInfo')">
+
+			<!-- 商品数据 -->
+			<view class="right" @tap.stop="navigateTo(`/pages/sub1/goodsInfo/goodsInfo?id=${item.id}`)">
 				<view class="title">{{ item.title }}</view>
-				<view class="desc">{{ item.desc }}</view>
+				<view class="desc">{{ item.descData }}</view>
+
 				<!-- 价格 -->
 				<view class="box">
 					<view class="price_wrapper">
@@ -33,10 +43,11 @@
 						</view>
 						<view class="originalPrice">
 							<text>￥</text>
-							<text class="originalPrice_through">{{ item.originalPrice }}</text>
+							<text class="originalPrice_through">{{ item.priceNormal || item.price }}</text>
 						</view>
 					</view>
 
+					<!-- 购买按钮 -->
 					<view class="right" v-if="props.showBtn">立即购买</view>
 				</view>
 			</view>
@@ -45,17 +56,14 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed,toRef } from 'vue'
 import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
 
 const emits = defineEmits(['selectClick'])
 
-// 选中事件
-const selectClick = item => {
-	emits('selectClick',item)
-}
-
 const props = defineProps({
+	/*
+	 * 是否显示购买按钮
+	 */
 	showBtn: {
 		type: Boolean,
 		default: false
@@ -74,12 +82,21 @@ const props = defineProps({
 		type: Array,
 		default: () => []
 	},
-
+	/*
+	 * 数据列表
+	 */
 	listData: {
 		type: Array,
 		default: () => []
 	}
 })
+
+/*
+ *选中事件
+ */
+const selectClick = item => {
+	emits('selectClick', item)
+}
 </script>
 
 <style lang="scss" scoped>

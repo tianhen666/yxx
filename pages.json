@@ -199,7 +199,25 @@
 					"navigationBarTitleText": "活动管理",
 					"enablePullDownRefresh": false
 				}
-			}]
+			}    ,{
+                    "path" : "manageServiceList/manageServiceList",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "服务管理",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
+                ,{
+                    "path" : "manageServiceInput/manageServiceInput",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "服务管理",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
+            ]
 		}
 	],
 	"globalStyle": {

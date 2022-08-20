@@ -37,7 +37,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue'
+import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { _bannerList, _bannerDisable, _bannerDelete, _bannerEnable } from '@/aTemp/apis/banner'
 import { showModal, previewImage, navigateTo } from '@/aTemp/utils/uniAppTools'

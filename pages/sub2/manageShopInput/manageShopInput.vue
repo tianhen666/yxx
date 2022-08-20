@@ -67,22 +67,33 @@
 			<uni-forms-item :label="rules.sharePic.label" label-position="top" name="sharePic">
 				<htz-image-upload :max="selectNum2" v-model="picList2" mediaType="image" @chooseSuccess="chooseSuccess2" />
 			</uni-forms-item>
+
+			<!-- 海报图 -->
+			<uni-forms-item :label="rules.postPic.label" label-position="top" name="postPic">
+				<htz-image-upload
+					:max="selectNum4"
+					v-model="picList4"
+					mediaType="image"
+					:action="uploadimageURL4"
+					@uploadSuccess="uploadSuccess4"
+				/>
+			</uni-forms-item>
 			<view class="blank32 blank_bg_color"></view>
 
 			<!-- 商品介绍 -->
-			<uni-forms-item :label="rules.detail.label" label-position="top" name="detail">
+			<uni-forms-item :label="rules.descData.label" label-position="top" name="descData">
 				<uni-easyinput
 					type="textarea"
 					:cursor-spacing="80"
 					autoHeight
-					v-model="formData.detail"
-					:placeholder="rules.detail.rules[0].errorMessage"
+					v-model="formData.descData"
+					:placeholder="rules.descData.rules[0].errorMessage"
 				/>
 			</uni-forms-item>
 			<view class="blank32 blank_bg_color"></view>
 
 			<!-- 商品详情图 -->
-			<uni-forms-item :label="rules.postPic.label" label-position="top" name="postPic">
+			<uni-forms-item :label="rules.detail.label" label-position="top" name="detail">
 				<htz-image-upload
 					:max="selectNum3"
 					v-model="picList3"
@@ -155,6 +166,10 @@ const rules = {
 		rules: [{ errorMessage: '请上传商品分享图' }],
 		label: '分享图'
 	},
+	postPic: {
+		rules: [{ errorMessage: '请上传海报图' }],
+		label: '海报图'
+	},
 	limitCount: {
 		rules: [{ required: true, errorMessage: '请输入限购数量' }],
 		label: '限购数量'
@@ -163,11 +178,11 @@ const rules = {
 		rules: [{ errorMessage: '请输入排序' }],
 		label: '排序'
 	},
-	detail: {
+	descData: {
 		rules: [{ required: true, errorMessage: '请输入商品介绍' }],
 		label: '商品介绍'
 	},
-	postPic: {
+	detail: {
 		rules: [{ required: true, errorMessage: '请上传商品详情图' }],
 		label: '商品详情图'
 	}
@@ -182,10 +197,11 @@ const { saveClick } = useSaveApi(formObj, formData, _storeproductSave)
 
 /*
  * 图片选择功能
+ * 组合式函数引入
  */
 import useHtzImageUpload from '@/aTemp/mixins/useHtzImageUpload.js'
 
-// 组合式函数引入
+// 商品图片上传
 const { chooseSuccess: chooseSuccess1, picList: picList1, selectNum: selectNum1 } = useHtzImageUpload({
 	ratio: 1 / 1,
 	url: '/storeproduct/uploadimage',
@@ -194,6 +210,7 @@ const { chooseSuccess: chooseSuccess1, picList: picList1, selectNum: selectNum1 
 	selectNum: 5
 })
 
+// 分享图片上传
 const { chooseSuccess: chooseSuccess2, picList: picList2, selectNum: selectNum2 } = useHtzImageUpload({
 	ratio: 5 / 4,
 	url: '/storeproduct/uploadimage',
@@ -202,6 +219,7 @@ const { chooseSuccess: chooseSuccess2, picList: picList2, selectNum: selectNum2 
 	selectNum: 1
 })
 
+// 商品详情图片上传
 const {
 	uploadSuccess: uploadSuccess3,
 	picList: picList3,
@@ -210,9 +228,23 @@ const {
 } = useHtzImageUpload({
 	url: '/storeproduct/uploadimage',
 	refData: formData,
-	param: 'postPic',
+	param: 'detail',
 	selectNum: 5
 })
+
+// 海报图片上传
+const {
+	uploadSuccess: uploadSuccess4,
+	picList: picList4,
+	selectNum: selectNum4,
+	uploadimageURL: uploadimageURL4
+} = useHtzImageUpload({
+	url: '/storeproduct/uploadimage',
+	refData: formData,
+	param: 'postPic',
+	selectNum: 1
+})
+
 </script>
 
 <style lang="scss" scoped>

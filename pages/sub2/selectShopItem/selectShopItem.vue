@@ -1,91 +1,75 @@
 <template>
+	<!-- 商品列表 -->
 	<m-shop-list selectOption :selectListId="selectListId" :listData="listData" @selectClick="selectClick" />
+
+	<!-- 返回上一页 -->
 	<m-btn-fix-bottom
 		v-if="listData.length > 0"
-		:text="`${selectListId.length > 0 ? '确认选择 ' + selectListId.length + '件 商品' : '不选择商品'}`"
+		:text="`${selectListId.length > 0 ? '确认选择商品(' + selectListId.length + ')' : '不选择商品'}`"
 		@btnClick="confirmSelection"
 	/>
-	<m-btn-fix-bottom v-else :text="`添加商品`" @btnClick="navigateTo('/pages-sub2/manageShopInput/manageShopInput')" />
+
+	<!-- 去商品管理页面 -->
+	<m-btn-fix-bottom
+		v-else
+		:text="`去上架商品`"
+		@btnClick="navigateTo('/pages/sub2/manageShopList/manageShopList?currentIndex=1')"
+	/>
 </template>
 
 <script setup>
-import { ref, reactive, toRaw,computed } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
+import { ref, toRefs } from 'vue'
+import { onShow } from '@dcloudio/uni-app'
 import { navigateTo, navigateBack } from '@/aTemp/utils/uniAppTools.js'
-// 选着数量
-const selectQuantity = ref(1)
-// 选中列表ID
-const selectListId = ref([])
-// 选中列表数据
-const selectListData = reactive({})
-// 商品列表
-const listData = reactive([
-	{
-		id: 1,
-		title: '1测试标题测试标题测试标题测试标题测试标题测试标题',
-		desc: '商品描述测试标题测试标题测试标题测试标题测试标题测试标题测试标题',
-		time: '2022.08.18-2022.08.28',
-		img: '/static/default/banner.png',
-		price: 5980,
-		originalPrice: 2980,
-		jion: 99,
-		type: '拼团'
-	},
-	{
-		id: 2,
-		title: '2测试标题测试标题测试标题测试标题测试标题测试标题',
-		desc: '商品描述测试标题测试标题测试标题测试标题测试标题测试标题测试标题',
-		time: '2022.08.18-2022.08.28',
-		img: '/static/default/banner.png',
-		price: 5980,
-		originalPrice: 2980,
-		jion: 99,
-		type: '拼团'
-	},
-	{
-		id: 3,
-		title: '3测试标题测试标题测试标题测试标题测试标题测试标题',
-		desc: '商品描述测试标题测试标题测试标题测试标题测试标题测试标题测试标题',
-		time: '2022.08.18-2022.08.28',
-		img: '/static/default/banner.png',
-		price: 5980,
-		originalPrice: 2980,
-		jion: 99,
-		type: '拼团'
-	}
-])
+import { _storeproductGetlist } from '@/aTemp/apis/shop.js'
+import { _storeSelectShop } from '@/aTemp/store/storeSelectShop.js'
 
+// 商品列表
+const listData = ref([])
+
+// 拉取商品列表数据
+const getListData = data => {
+	_storeproductGetlist(data).then(res => {
+		const { code, data, msg } = res
+		// 将返回数据中的商品图片转化为数组
+		listData.value = data.map((item, index, arr) => {
+			item.pics = item.pics ? item.pics.split(',') : []
+			return item
+		})
+	})
+}
+
+/* 页面显示 */
+onShow(options => {
+	getListData({ status: 0 })
+})
+
+// 商品选择的列表
+const storeSelectShop = toRefs(_storeSelectShop())
+// 选着数量,选中列表ID,选中列表数据
+const { selectQuantity, selectListId, selectListData } = storeSelectShop
 
 // 选中事件
 const selectClick = item => {
-	const index = selectListId.value.indexOf(item.id+'')
+	const index = selectListId.value.indexOf(item.id + '')
 	if (index != -1) {
 		selectListId.value.splice(index, 1)
-		delete selectListData[`id_${item.id}`]
+		delete selectListData.value[`id_${item.id}`]
 	} else {
-		// 如果设定数量selectQuantit小于等于选中列表selectListId数量
+		// 如果设定数量selectQuantit小于等于选中列表selectListId.value数量
 		if (selectQuantity.value <= selectListId.value.length) {
 			const resShift = selectListId.value.shift()
-			delete selectListData[`id_${resShift}`]
+			delete selectListData.value[`id_${resShift}`]
 		}
-		selectListId.value.push(item.id+'')
-		selectListData[`id_${item.id}`] = item
+		selectListId.value.push(item.id + '')
+		selectListData.value[`id_${item.id}`] = item
 	}
 }
+
 // 确认选择
 const confirmSelection = () => {
-	const rawSelectListId = toRaw(selectListId.value)
-	const rawSelectListData = toRaw(selectListData)
-
-	// 触发全局事件
-	uni.$emit('shopSelection', { selectListId: rawSelectListId, selectListData: rawSelectListData })
 	navigateBack()
 }
-
-onLoad(option => {
-	selectQuantity.value = parseInt(option.selectQuantity) || 1
-	selectListId.value = option?.selectListId.split(',') || []
-})
 </script>
 
 <style lang="scss" scoped></style>

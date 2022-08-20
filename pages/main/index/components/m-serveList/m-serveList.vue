@@ -66,7 +66,7 @@ const list = [
 ]
 const jumpClick = ()=>{
 	uni.navigateTo({
-		url:'/pages-sub1/serveInfo/serveInfo'
+		url:'/pages/sub1/serveInfo/serveInfo'
 	})
 }
 </script>

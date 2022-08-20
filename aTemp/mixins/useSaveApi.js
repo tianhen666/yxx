@@ -1,6 +1,5 @@
 import {
-	ref,
-	computed
+	ref
 } from "vue";
 import {
 	onLoad
@@ -24,7 +23,7 @@ export default function(formObj, dataObj, _apiSave) {
 		prevCurrentIndex.value = parseInt(optios.prevCurrentIndex) || 0
 	})
 
-	// 保存函数
+	// 保存函数 防抖
 	const saveClick = _debounce(() => {
 		formObj.value
 			.validate()
