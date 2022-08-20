@@ -82,23 +82,36 @@ bt-cropper，指定ratio即可设置裁切框的宽高比，如果你想让用�
 
 ## API
 
-### Popup Props 
+### cropper Props 
 
 |属性名|类型|默认值|说明|
 |:-:|:-:|:-:|:-:|
 |ratio|number|0|裁切图像的宽高比，0表示自由比例|
-|dWidth|number|1000|生成的图片的宽度,单位：px|
-|imageSrc|String|''|原图的路径，支持本地路径和网络路径|
+|dWidth|number|0|生成的图片的宽度,单位：px,如果传入0的话就是按原像素的比例裁剪，也就是说，输出图片的清晰度和输入图片的清晰度一样|
+|imageSrc|String|''|原图的路径，支持本地路径和网络路径，如果是网络路径，小程序要注意配置下载域名，H5要注意跨域问题|
 |fileType|String|'jpg'|目标文件的类型，只支持 'jpg' 或 'png'。默认为 'jpg'|
 |quality|Number|1|图片的质量，取值范围为 (0, 1]，不在范围内时当作1.0处理|
 |showGrid|Boolean|false|是否显示中心网格线，默认不显示|
+|initPosition|object|null|图片自定义的初始的位置，内容格式见change事件|
+|compress|Boolean|false|是否开启图像压缩，开启后，用户拖动的图片会被压缩，可以一定程度上提升用户操作的流畅度，但是最终输出的图片质量不会受到影响|
+|autoZoom|Boolean|true|是否开启操作结束后自动放大到窗口大小|
 
-### Popup Methods
+
+### cropper Methods
 
 |方法名称|说明|参数|
 |:-:|:-:|:-:|
 |crop|裁剪图片|crop() ，开始绘制并开始裁剪图片，返回Promise对象|
-|resetCropperPosition|重置裁剪框的位置和大小|-|
+|resetCropper|重置裁剪框的位置和大小到初始的位置和大小|-|
+|resetImage|重置裁剪框和图片的位置和大小到初始的位置和大小|-|
+
+### cropper Events
+
+|方法名称|说明|返回值|
+|:-:|:-:|:-:|
+|change|当裁剪框和图片的相对位置发生变化的时候触发，返回裁剪框与图片的相对位置|ev={left:number,top:number,width:number,height:number}|
+|cropStart|当裁开始时触发| - |
+|cropEnd|当裁结束时触发|ev=[err, res]|
 
 ## 帮助
 在使用中如遇到无法解决的问题，请提 [Issues](https://gitee.com/xiaojiang1996/better-uni-cropper/issues) 或者加我 微信:1097122362。

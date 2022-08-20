@@ -3,14 +3,14 @@ export function getTouchPoints(touchs) {
 		return [ev.clientX, ev.clientY]
 	})
 }
+// 函数防抖
 export function debounce(fn, wait = 200) {
 	var timer = null;
-	console.log('debounce')
-	return function() {
+	return function (){
 		if (timer !== null) {
 			clearTimeout(timer);
 		}
-		timer = setTimeout(fn, wait);
+		timer = setTimeout(fn.bind(this), wait);
 	}
 }
 
@@ -22,4 +22,10 @@ export function sleep(time = 200) {
 	return new Promise(resolve => {
 		setTimeout(resolve, time)
 	})
+}
+
+export function log(message,type='log'){
+	if(process.env.NODE_ENV === 'development'){
+		console[type](message)
+	}
 }

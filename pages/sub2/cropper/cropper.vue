@@ -1,6 +1,6 @@
 <template>
 	<view class="container">
-		<bt-cropper ref="cropper" showGrid :quality="0.8" :ratio="ratio" :imageSrc="imageSrcs[imageSrcIndex]">
+		<bt-cropper ref="cropper" showGrid compress :quality="0.8" :ratio="ratio" :imageSrc="imageSrcs[imageSrcIndex]">
 			<!-- 你想插入的内容 -->
 			<m-btn-fix-bottom :text="`正在裁剪第${imageSrcIndex + 1}张图片(共${imageSrcs.length})`" @btnClick="crop" />
 		</bt-cropper>
@@ -12,9 +12,9 @@
 }
 </style>
 <script setup>
-import { showToastText } from '@/aTemp/utils/uniAppTools'
-import { computed, ref, watch } from 'vue'
-import { onLoad, onUnload } from '@dcloudio/uni-app'
+import { showToastText, navigateBack } from '@/aTemp/utils/uniAppTools'
+import { ref } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
 
 // cropperStore裁剪状态管理
 import { _storeCropper } from '@/aTemp/store/storeCropper.js'
@@ -30,7 +30,7 @@ const ratio = ref(1) //裁剪比例
 const url = ref('') // 上传服务器url
 const resImageSrcs = ref([]) //裁剪完成的图片
 const cropper = ref(null) //裁剪组件对象
-const param = ref('') //裁剪store参数
+const param = ref('') //裁剪store字段参数
 
 onLoad(option => {
 	imageSrcs.value = option.imgUrls ? decodeURIComponent(option.imgUrls).split(',') : []
@@ -40,10 +40,10 @@ onLoad(option => {
 })
 
 const crop = () => {
-	uni.showLoading({
-		title: '裁剪，上传中',
-		mask: true
-	})
+	// uni.showLoading({
+	// 	title: '裁剪，上传中',
+	// 	mask: true
+	// })
 	// 通过组件定义的ref调用cropper方法，返回一个promise对象
 	cropper.value.crop().then(([err, res]) => {
 		if (!err) {
@@ -64,7 +64,7 @@ const crop = () => {
 						imageSrcIndex.value++
 					} else {
 						storeCropper[param.value] = [...resImageSrcs.value]
-						uni.navigateBack()
+						navigateBack()
 					}
 				}
 			})

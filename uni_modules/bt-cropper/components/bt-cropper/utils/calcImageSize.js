@@ -1,5 +1,5 @@
 import ratio from "./ratio.js"
-export default async function(imageInfo, container = {
+export default function(imageInfo, container = {
 	width: 9,
 	height: 16
 }) {
