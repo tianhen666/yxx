@@ -133,12 +133,7 @@
 
 			<!-- 活动介绍 -->
 			<uni-forms-item label-position="top" :label="rules.content.label" name="content">
-				<uni-easyinput
-					type="textarea"
-					autoHeight
-					v-model="formData.content"
-					:placeholder="rules.content.rules[0].errorMessage"
-				/>
+				<fuck-textarea v-model="formData.content" :placeholder="rules.content.rules[0].errorMessage"/>
 			</uni-forms-item>
 
 			<!-- 活动详情 -->
@@ -152,7 +147,7 @@
 				/>
 			</uni-forms-item>
 		</uni-forms>
-		<m-btn-fix-bottom text="保存信息" @btnClick="saveClick" />
+		<m-btn-fix-bottom :loading="loading" text="保存信息" @btnClick="saveClick" />
 	</view>
 </template>
 
@@ -286,7 +281,7 @@ const rules = {
  */
 import useSaveApi from '@/aTemp/mixins/useSaveApi.js'
 // 保存信息
-const { saveClick } = useSaveApi(formObj, formData, _enrollformSave)
+const { saveClick, loading } = useSaveApi(formObj, formData, _enrollformSave)
 
 /*
  * 图片选择功能

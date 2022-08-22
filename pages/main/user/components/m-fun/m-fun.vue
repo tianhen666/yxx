@@ -11,6 +11,8 @@
 					<text>{{ item.name }}</text>
 				</view>
 			</view>
+			
+			
 		</view>
 	</view>
 </template>
@@ -21,27 +23,7 @@ const props = defineProps({
 		type: Object,
 		required: true,
 		default() {
-			return {
-				title: '管理工具',
-				path: '/pages-sub1/orderList/orderList',
-				sub: [
-					{
-						imgUrl: '/static/order/fukuan.png',
-						name: '待付款',
-						path: '/page/index/index'
-					},
-					{
-						imgUrl: '/static/order/shiyong.png',
-						name: '待使用',
-						path: '/page/index/index'
-					},
-					{
-						imgUrl: '/static/order/pingjia.png',
-						name: '待评价',
-						path: '/page/index/index'
-					}
-				]
-			}
+			return {}
 		}
 	}
 })
@@ -57,28 +39,17 @@ const itemClick = item => {
 	.c_wrapper {
 		width: $main-width;
 		padding: $padding;
-		box-sizing: border-box;
 		margin: auto;
 		border-radius: 16rpx;
 		background-color: #ffffff;
-		> .more {
-			@include mFlex;
-			justify-content: space-between;
-			.title {
-				color: $text-color;
-			}
-			.right {
-				@include mFlex;
-				color: $text-color-grey;
-				font-size: 26rpx;
-			}
-		}
 		.btn_box {
 			@include mFlex;
 			justify-content: space-between;
 			overflow: hidden;
 			flex-wrap: wrap;
+			margin-top: -40rpx;
 			&_item {
+				margin-top: 40rpx;
 				@include mFlex(column);
 				width: 25%;
 				font-size: 26rpx;

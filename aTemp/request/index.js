@@ -2,6 +2,9 @@
 import ajax from '@/uni_modules/u-ajax/js_sdk/index'
 // 全局基础配置
 import config from '@/global-config.js'
+import {
+	showToastText
+} from '@/aTemp/utils/uniAppTools.js';
 
 // 创建请求实例
 const instance = ajax.create({
@@ -56,6 +59,11 @@ instance.interceptors.response.use(
 		}
 	},
 	error => {
+		// 当前页面隐藏导航条加载动画
+		uni.hideNavigationBarLoading()
+		showToastText("请求出错了,请稍后重试~")
+	
+
 		// 对响应错误做些什么
 		return Promise.reject(error)
 	}

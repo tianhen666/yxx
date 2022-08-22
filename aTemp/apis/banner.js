@@ -10,7 +10,14 @@ export function _bannerSave(data) {
 		data
 	})
 }
-// 查询指定门诊banner
+// 获取指定的门诊banner图详情
+export function _bannerInfo(data) {
+	return http.get({
+		url: '/banner/info',
+		data
+	})
+}
+// 获取门诊列表
 export function _bannerList(data) {
 	return http.get({
 		url: '/banner/list',

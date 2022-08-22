@@ -7,7 +7,7 @@
 			<!-- 文字信息 -->
 			<view class="tab_content_item_wrapper">
 				<view class="image_box">
-					<image class="image" :src="item.pic" mode="scaleToFill" @tap="previewImage([item.pic])"></image>
+					<image class="image" :src="item.mainPic" mode="scaleToFill" @tap="previewImage([item.mainPic])"></image>
 				</view>
 				<view class="center">
 					<!-- 标题 -->
@@ -22,31 +22,36 @@
 				<view class="btn">
 					<view
 						class="btn_item style1"
-						@tap="navigateTo(`/pages/sub2/manageServiceInput/manageServiceInput?id=${item.id}`)"
+						@tap="navigateTo(`/pages/sub2/manageCaseInput/manageCaseInput?id=${item.id}`)"
 					>
 						编辑
 					</view>
-					<view class="btn_item style3" @tap="serveDelete(item, index)">删除</view>
+					<view class="btn_item style3" @tap="storecaseDelete(item, index)">删除</view>
 				</view>
 			</view>
 		</view>
 	</view>
 
-	<!-- 添加活动 -->
-	<m-btn-fix-bottom text="添加活动" @btnClick="navigateTo(`/pages/sub2/manageServiceInput/manageServiceInput`)" />
+	<!-- 添加案例 -->
+	<m-btn-fix-bottom-category
+		text1="管理分类"
+		text2="添加案例"
+		@btnClick1="navigateTo(`/pages/sub2/manageCaseCategoryList/manageCaseCategoryList`)"
+		@btnClick2="navigateTo(`/pages/sub2/manageCaseInput/manageCaseInput`)"
+	/>
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue'
+import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
-import { _serveGetlist, _serveDelete } from '@/aTemp/apis/service.js'
+import { _storecaseGetlist, _storecaseDelete } from '@/aTemp/apis/case'
 import { showModal, previewImage, navigateTo } from '@/aTemp/utils/uniAppTools.js'
 // 数据列表
 const listData = ref([])
 
 // 拉取列表数据
 const getListData = data => {
-	_serveGetlist(data).then(res => {
+	_storecaseGetlist(data).then(res => {
 		const { code, data, msg } = res
 		// 返回的数据赋值
 		listData.value = data
@@ -60,10 +65,10 @@ onLoad(option => {
 })
 
 // 删除
-const serveDelete = (item, index) => {
+const storecaseDelete = (item, index) => {
 	showModal('是否删除？').then(res => {
 		if (res.confirm) {
-			_serveDelete({ id: item.id }).then(() => {
+			_storecaseDelete({ id: item.id }).then(() => {
 				listData.value.splice(index, 1)
 			})
 		}

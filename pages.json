@@ -139,9 +139,9 @@
 		{
 			"root": "pages/sub2",
 			"pages": [{
-				"path": "manageInfo/manageInfo",
+				"path": "manageInfoInput/manageInfoInput",
 				"style": {
-					"navigationBarTitleText": "门诊管理",
+					"navigationBarTitleText": "门诊信息",
 					"enablePullDownRefresh": false
 				}
 			}, {
@@ -199,20 +199,51 @@
 					"navigationBarTitleText": "活动管理",
 					"enablePullDownRefresh": false
 				}
+			}, {
+				"path": "manageServiceList/manageServiceList",
+				"style": {
+					"navigationBarTitleText": "服务管理",
+					"enablePullDownRefresh": false
+				}
+			}, {
+				"path": "manageServiceInput/manageServiceInput",
+				"style": {
+					"navigationBarTitleText": "服务管理",
+					"enablePullDownRefresh": false
+				}
+			}, {
+				"path": "manageCaseList/manageCaseList",
+				"style": {
+					"navigationBarTitleText": "案例管理",
+					"enablePullDownRefresh": false
+				}
+			}, {
+				"path": "manageCaseInput/manageCaseInput",
+				"style": {
+					"navigationBarTitleText": "案例管理",
+					"enablePullDownRefresh": false
+				}
+			}, {
+				"path": "manageCaseCategoryList/manageCaseCategoryList",
+				"style": {
+					"navigationBarTitleText": "案例分类",
+					"enablePullDownRefresh": false
+				}
+
 			}    ,{
-                    "path" : "manageServiceList/manageServiceList",
+                    "path" : "manageDoctorList/manageDoctorList",
                     "style" :                                                                                    
                 {
-                    "navigationBarTitleText": "服务管理",
+                    "navigationBarTitleText": "医生管理",
                     "enablePullDownRefresh": false
                 }
                 
                 }
                 ,{
-                    "path" : "manageServiceInput/manageServiceInput",
+                    "path" : "manageDoctorInput/manageDoctorInput",
                     "style" :                                                                                    
                 {
-                    "navigationBarTitleText": "服务管理",
+                    "navigationBarTitleText": "医生管理",
                     "enablePullDownRefresh": false
                 }
                 

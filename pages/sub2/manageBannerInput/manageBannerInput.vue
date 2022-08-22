@@ -15,20 +15,20 @@
 			<view class="blank32 blank_bg_color"></view>
 
 			<!-- 相关商品 -->
-			<uni-forms-item :label="rules.banurl.label" name="banurl" label-position="top">
+			<uni-forms-item :label="rules.productId.label" name="productId" label-position="top">
 				<m-xiangguan-goods />
 			</uni-forms-item>
 		</uni-forms>
 
 		<!-- 保存 -->
-		<m-btn-fix-bottom text="保存信息" @btnClick="saveClick" />
+		<m-btn-fix-bottom :loading="loading" text="保存信息" @btnClick="saveClick" />
 	</view>
 </template>
 
 <script setup>
 import { toRefs, ref, watch } from 'vue'
 import { onLoad, onUnload } from '@dcloudio/uni-app'
-import { _bannerSave, _bannerList } from '@/aTemp/apis/banner'
+import { _bannerSave, _bannerInfo } from '@/aTemp/apis/banner'
 import { navigateTo, navigateBackRefresh } from '@/aTemp/utils/uniAppTools'
 
 import { _storeSelectShop } from '@/aTemp/store/storeSelectShop.js'
@@ -36,15 +36,14 @@ import { _storeSelectShop } from '@/aTemp/store/storeSelectShop.js'
 // 商品选择的列表
 const storeSelectShop = _storeSelectShop()
 // 选着数量,选中列表ID,选中列表数据
-const { selectQuantity, selectListId } = toRefs(storeSelectShop)
+const { selectQuantity, selectListId, selectListData } = toRefs(storeSelectShop)
 // 重置数据
 storeSelectShop.$reset()
 // 设置可选择数量
 selectQuantity.value = 1
 // 监听选中的商品ID变化
 watch(selectListId.value, (newValue, oldValue) => {
-	console.log(newValue.join(','))
-	formData.value.banurl = newValue.join(',')
+	formData.value.productId = newValue.join(',')
 })
 
 // 表单校验
@@ -57,7 +56,7 @@ const rules = {
 		rules: [{ required: true, errorMessage: '请输入序号' }],
 		label: '排序'
 	},
-	banurl: {
+	productId: {
 		rules: [{ errorMessage: '请选择相关商品' }],
 		label: '相关商品'
 	}
@@ -76,11 +75,25 @@ onLoad(optios => {
 	// 是否存在dataId
 	if (dataId.value > 0) {
 		// 拉取数据
-		_bannerList({ id: dataId.value }).then(res => {
+		_bannerInfo({ id: dataId.value }).then(res => {
 			const { data } = res
+			if (Array.isArray(data.productList)) {
+				// 初始化选择的商品
+				data.productList = data.productList.map((item, index, arr) => {
+					// 图片转数组
+					item.pics = item.pics ? item.pics.split(',') : [],
+					// 选中的商品赋值
+					selectListId.value.push(item.id + '')
+					selectListData.value[`id_${item.id}`] = item
+					return item
+				})
+			}
+			
+			// 过滤不用上传数据
+			delete data.productList
+			
+			// 数据赋值
 			formData.value = data
-			// 初始化选择的商品
-			selectListId.value.push(...formData.value.banurl.split(','))
 		})
 	}
 })
@@ -90,7 +103,7 @@ onLoad(optios => {
  * 组合式函数引入
  */
 import useSaveApi from '@/aTemp/mixins/useSaveApi.js'
-const { saveClick } = useSaveApi(formObj, formData, _bannerSave)
+const { saveClick, loading } = useSaveApi(formObj, formData, _bannerSave)
 
 /*
  * 图片选择功能

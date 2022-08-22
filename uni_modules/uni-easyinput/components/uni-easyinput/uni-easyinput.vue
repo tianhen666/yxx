@@ -508,10 +508,6 @@ $uni-border-1: #dcdfe6 !default;
 	/* #endif */
 	flex-direction: row;
 	align-items: center;
-	// 处理border动画刚开始显示黑色的问题
-	border-color: #fff;
-	transition-property: border-color;
-	transition-duration: 0.3s;
 }
 
 .uni-easyinput__content-input {

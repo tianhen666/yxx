@@ -34,13 +34,7 @@
 
 			<!-- 服务介绍 -->
 			<uni-forms-item :label="rules.descData.label" label-position="top" name="descData">
-				<uni-easyinput
-					type="textarea"
-					:cursor-spacing="80"
-					autoHeight
-					v-model="formData.descData"
-					:placeholder="rules.descData.rules[0].errorMessage"
-				/>
+				<fuck-textarea :placeholder="rules.descData.rules[0].errorMessage" v-model="formData.descData" />
 			</uni-forms-item>
 			<view class="blank32 blank_bg_color"></view>
 
@@ -57,7 +51,7 @@
 		</uni-forms>
 
 		<!-- 保存信息 -->
-		<m-btn-fix-bottom text="保存信息" @btnClick="saveClick" />
+		<m-btn-fix-bottom :loading="loading" text="保存信息" @btnClick="saveClick" />
 	</view>
 </template>
 
@@ -70,7 +64,7 @@ import { _storeSelectShop } from '@/aTemp/store/storeSelectShop.js'
 // 商品选择的列表
 const storeSelectShop = _storeSelectShop()
 // 选着数量,选中列表ID,选中列表数据
-const { selectQuantity, selectListId } = toRefs(storeSelectShop)
+const { selectQuantity, selectListId, selectListData } = toRefs(storeSelectShop)
 // 重置数据
 storeSelectShop.$reset()
 // 设置可选择数量
@@ -95,11 +89,26 @@ onLoad(optios => {
 		// 拉取数据
 		_serveGetinfo({ id: dataId.value }).then(res => {
 			const { data } = res
+			
+
+			// 初始化选中商品的数据
+			if (Array.isArray(data.productList)) {
+				// 图片列表转为数组
+				data.productList = data.productList.map((item, index, arr) => {
+					// 图片转数组
+					item.pics = item.pics ? item.pics.split(',') : [],
+					// 选中的商品赋值
+					selectListId.value.push(item.id + '')
+					selectListData.value[`id_${item.id}`] = item
+					return item
+				})
+			}
+			
+			// 过滤不用上传数据
+			delete data.productList
+			
 			// 数据赋值
 			formData.value = data
-			
-			// 初始化选择的商品
-			selectListId.value.push(...formData.value.banurl.split(','))
 		})
 	}
 })
@@ -141,7 +150,7 @@ const rules = {
  * 组合式函数引入
  */
 import useSaveApi from '@/aTemp/mixins/useSaveApi.js'
-const { saveClick } = useSaveApi(formObj, formData, _serveSave)
+const { saveClick, loading } = useSaveApi(formObj, formData, _serveSave)
 
 /*
  * 图片选择功能

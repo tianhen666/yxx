@@ -58,7 +58,7 @@
 	background-color: #ffffff;
 	color: #2c405a;
 	opacity: 0.5;
-	z-index: 100;
+	z-index: 77;
 }
 </style>
 
@@ -733,13 +733,13 @@ export default {
 	bottom: 0;
 	width: 100%;
 	height: 100%;
-	z-index: 1002;
+	z-index: 77;
 }
 
 .preview-full video {
 	width: 100%;
 	height: 100%;
-	z-index: 1002;
+	z-index: 77;
 }
 
 .preview-full-close {
@@ -750,7 +750,7 @@ export default {
 	height: 80rpx;
 	line-height: 60rpx;
 	text-align: center;
-	z-index: 1003;
+	z-index: 78;
 	/* 	background-color: #808080; */
 	color: #fff;
 	font-size: 65rpx;
@@ -819,7 +819,7 @@ export default {
 	width: 100%;
 	height: 100%;
 	border-radius: 10rpx;
-	z-index: 996;
+	z-index: 66;
 }
 
 .htz-image-upload-Item video {
@@ -848,7 +848,7 @@ export default {
 	text-align: center;
 	top: 0;
 	right: 0;
-	z-index: 997;
+	z-index: 67;
 	color: #fff;
 }
 
@@ -868,7 +868,7 @@ export default {
 	/* #ifndef APP-PLUS */
 	line-height: 35rpx;
 	/* #endif */
-	z-index: 997;
+	z-index: 68;
 }
 
 .htz-image-upload-Item-video-app-poster {

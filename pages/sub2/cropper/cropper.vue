@@ -40,10 +40,10 @@ onLoad(option => {
 })
 
 const crop = () => {
-	// uni.showLoading({
-	// 	title: '裁剪，上传中',
-	// 	mask: true
-	// })
+	uni.showLoading({
+		title: '裁剪，上传中',
+		mask: true
+	})
 	// 通过组件定义的ref调用cropper方法，返回一个promise对象
 	cropper.value.crop().then(([err, res]) => {
 		if (!err) {

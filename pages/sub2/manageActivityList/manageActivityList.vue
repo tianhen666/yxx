@@ -93,7 +93,6 @@ const type = [
 const getListData = data => {
 	_enrollformGetlist(data).then(res => {
 		const { code, data, msg } = res
-		// 将返回数据中的商品图片转化为数组
 		listData.value = data
 	})
 }

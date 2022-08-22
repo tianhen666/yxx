@@ -1,28 +1,33 @@
 <template>
 	<view class="fix">
 		<view class="fix_warpper">
-			<button :loading="props.loading" class="btn" @tap="btnClick">{{ props.text }}</button>
+			<button class="btn btn1" @tap="btnClick1">{{ props.text1 }}</button>
+			<button class="btn btn2" @tap="btnClick2">{{ props.text2 }}</button>
 		</view>
 	</view>
 </template>
 
 <script setup>
 const props = defineProps({
-	text: {
+	text1: {
+		required: true,
+		type: String,
+		default: '分类'
+	},
+	text2: {
 		required: true,
 		type: String,
 		default: '按钮'
-	},
-	loading: {
-		type: Boolean,
-		default: false
 	}
 })
 
-const emits = defineEmits(['btnClick'])
+const emits = defineEmits(['btnClick1', 'btnClick2'])
 
-const btnClick = () => {
-	emits('btnClick')
+const btnClick1 = () => {
+	emits('btnClick1')
+}
+const btnClick2 = () => {
+	emits('btnClick2')
 }
 </script>
 
@@ -35,7 +40,8 @@ const btnClick = () => {
 	box-sizing: content-box;
 	.fix_warpper {
 		position: fixed;
-		z-index: 88;
+		// z-index: 88;
+		z-index: 999999999;
 		width: 100%;
 		padding: $padding;
 		padding-top: 0;
@@ -44,7 +50,12 @@ const btnClick = () => {
 		bottom: 40rpx;
 		padding-bottom: constant(safe-area-inset-bottom);
 		padding-bottom: env(safe-area-inset-bottom);
+		@include mFlex;
+		justify-content: space-between;
 		> .btn {
+			flex: none;
+			margin: 0;
+			width: 300rpx;
 			font-size: 32rpx;
 			height: 88rpx;
 			line-height: 88rpx;

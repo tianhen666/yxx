@@ -82,13 +82,7 @@
 
 			<!-- 商品介绍 -->
 			<uni-forms-item :label="rules.descData.label" label-position="top" name="descData">
-				<uni-easyinput
-					type="textarea"
-					:cursor-spacing="80"
-					autoHeight
-					v-model="formData.descData"
-					:placeholder="rules.descData.rules[0].errorMessage"
-				/>
+				<fuck-textarea :placeholder="rules.descData.rules[0].errorMessage" v-model="formData.descData" />
 			</uni-forms-item>
 			<view class="blank32 blank_bg_color"></view>
 
@@ -105,7 +99,7 @@
 		</uni-forms>
 
 		<!-- 保存信息 -->
-		<m-btn-fix-bottom text="保存信息" @btnClick="saveClick" />
+		<m-btn-fix-bottom :loading="loading" text="保存信息" @btnClick="saveClick" />
 	</view>
 </template>
 
@@ -193,7 +187,7 @@ const rules = {
  */
 import useSaveApi from '@/aTemp/mixins/useSaveApi.js'
 // 组合式函数引入
-const { saveClick } = useSaveApi(formObj, formData, _storeproductSave)
+const { saveClick,loading } = useSaveApi(formObj, formData, _storeproductSave)
 
 /*
  * 图片选择功能

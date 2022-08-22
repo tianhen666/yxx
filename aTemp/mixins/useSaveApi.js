@@ -5,7 +5,8 @@ import {
 	onLoad
 } from '@dcloudio/uni-app'
 import {
-	navigateBackRefresh
+	navigateBackRefresh,
+	showToastText
 } from '@/aTemp/utils/uniAppTools'
 
 import {
@@ -17,6 +18,8 @@ import {
  dataObj 数据对象
  */
 export default function(formObj, dataObj, _apiSave) {
+	const loading = ref(false)
+
 	// 前一个页面索引
 	const prevCurrentIndex = ref(0)
 	onLoad(optios => {
@@ -30,6 +33,7 @@ export default function(formObj, dataObj, _apiSave) {
 			.then(formRes => {
 				// 保存商品接口
 				_apiSave(dataObj.value).then(res => {
+					loading.value = false
 					// 返回上一级并且重载noload
 					navigateBackRefresh({
 						currentIndex: prevCurrentIndex.value
@@ -37,11 +41,16 @@ export default function(formObj, dataObj, _apiSave) {
 				})
 			})
 			.catch(err => {
+				loading.value = false
+				showToastText(err[0].errorMessage)
 				console.log('表单错误信息：', err)
 			})
-	}, 1000)
+	}, 1000, loading)
+
+
 	return {
 		saveClick,
-		prevCurrentIndex
+		prevCurrentIndex,
+		loading
 	}
 }
