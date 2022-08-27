@@ -4,87 +4,72 @@
 		<m-carousel-goods></m-carousel-goods>
 
 		<!-- 标题 -->
-		<view class="title">{{ goods.title }}</view>
+		<view class="title">{{ dataObj.title }}</view>
 
+		<!-- 价格销量 -->
 		<view class="box1">
 			<!-- 价格 -->
 			<view class="price_wrapper">
 				<view class="price">
 					<text class="price_cn">￥</text>
-					<text>{{ goods.price }}</text>
+					<text>{{ dataObj.price }}</text>
 				</view>
 				<view class="originalPrice">
 					<text>￥</text>
-					<text class="through">{{ goods.originalPrice }}</text>
+					<text class="through">{{ dataObj.priceNormal || dataObj.price }}</text>
 				</view>
 			</view>
 			<!-- 销售量 -->
-			<view class="sale">已售：888件</view>
+			<view class="sale">已售：{{ dataObj.sold || 0 }}件</view>
 		</view>
 		<view class="blank20"></view>
 
+		<!-- 商品介绍 -->
 		<view class="box2">
-			<m-title2 title="购买须知"></m-title2>
+			<m-title2 title="商品介绍"></m-title2>
 
-			<!-- 商品限购 -->
-			<view class="inform">
-				<view class="left">商品限购</view>
-				<view class="right">
-					商品每人限购
-					<text class="text">1</text>
-					件，超出则该商品全部恢复非 活动价
-				</view>
-			</view>
-
-			<!-- 使用规则 -->
-			<view class="use_rule">
-				<view class="left">使用规则</view>
-				<view class="right">此活动为秒杀活动，售出后不予退还</view>
-			</view>
-
-			<!-- 提示 -->
-			<view class="tips">
-				<icon type="warn" size="26rpx" color="#F73639" />
-				<text class="text">购买后不可退换</text>
-			</view>
+			<text class="descData">{{ dataObj.descData }}</text>
 		</view>
 		<view class="blank20"></view>
 
 		<!-- 评论 -->
-		<m-comment-list>
+		<!-- 	<m-comment-list>
 			<template #title>
 				<m-title2 title="商品评价" moreText="查看全部" path="/pages-sub1/commentList/commentList"></m-title2>
 			</template>
 		</m-comment-list>
-		<view class="blank20"></view>
+		<view class="blank20"></view> -->
 
 		<!-- 商品详情 -->
 		<view class="goods_img">
 			<m-title1 title="商品详情"></m-title1>
-			<image class="image" src="/static/default/content.png" mode="widthFix"></image>
+			<image v-for="(item, index) in dataObj.detail" :key="index" class="image" :src="item" mode="widthFix"></image>
 		</view>
-		<view class="blank40"></view>
-
+		
 		<!-- 底部按钮 -->
-		<m-bottom-btn @handleBuy="handleBuy"></m-bottom-btn>
+		<m-shop-btn-bottom @clickBuy="navigateTo(`/pages/sub1/confirmOrder/confirmOrder?id=${dataId}`)"></m-shop-btn-bottom>
 	</view>
 </template>
 
 <script setup>
-const goods = {
-	title: '测试标题测试标题测试标题测试标题测试标题测试标题测试标题测试标题测试标题测试标题测试标题测试标题测试标题',
-	time: '2022.08.18-2022.08.28',
-	img: '/static/default/banner.png',
-	price: 888888888888,
-	originalPrice: 888888888888,
-	jion: 99,
-	type: '拼团'
-}
-const handleBuy = () => {
-	uni.navigateTo({
-		url:"/pages-sub1/confirmOrder/confirmOrder"
+import { ref } from 'vue'
+import { _storeproductGetinfo } from '@/aTemp/apis/shop.js'
+import { onLoad, onShow } from '@dcloudio/uni-app'
+import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
+
+// 数据ID
+const dataId = ref(0)
+// 数据对象
+const dataObj = ref({})
+
+onLoad(options => {
+	dataId.value = options.id || 0
+	_storeproductGetinfo({ id: dataId.value }).then(res => {
+		const { code, data, msg } = res
+		;(data.detail = data.detail ? data.detail.split(',') : []), (data.pics = data.pics ? data.pics.split(',') : [])
+		dataObj.value = data
 	})
-}
+})
 </script>
 
 <style lang="scss" scoped>
@@ -137,53 +122,13 @@ const handleBuy = () => {
 	> .box2 {
 		padding: $padding;
 		background-color: #fff;
-		font-size: 24rpx;
-		> .inform {
-			@include mFlex;
-			justify-content: left;
-			align-items: flex-start;
+		.descData {
+			font-size: 30rpx;
+			color: #666;
 			line-height: 1.6;
-			margin-bottom: 10rpx;
-			> .left {
-				flex: none;
-				color: $text-color-grey;
-				margin-right: 40rpx;
-			}
-			> .right {
-				flex: 1;
-				color: $text-color;
-				> .text {
-					color: $sub-color;
-				}
-			}
-		}
-		> .use_rule {
-			@include mFlex;
-			justify-content: left;
-			align-items: flex-start;
-			line-height: 1.6;
-			margin-bottom: 30rpx;
-			> .left {
-				flex: none;
-				color: $text-color-grey;
-				margin-right: 40rpx;
-			}
-			> .right {
-				flex: 1;
-				color: $text-color;
-			}
-		}
-
-		> .tips {
-			@include mFlex;
-			justify-content: left;
-			> .text {
-				color: $sub-color;
-				margin-left: 10rpx;
-				font-size: 24rpx;
-			}
 		}
 	}
+
 	> .goods_img {
 		background-color: #fff;
 		width: 750rpx;

@@ -48,12 +48,12 @@ const moreClick = () => {
 .container {
 	@include mFlex;
 	justify-content: space-between;
-	margin-bottom: 32rpx;
+	padding-bottom: 32rpx;
 	.title {
 		color: $text-color;
 		font-size: 34rpx;
 		@include mFlex;
-		>.image{
+		> .image {
 			width: 44rpx;
 			height: 44rpx;
 			margin-right: 10rpx;

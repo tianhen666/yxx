@@ -7,7 +7,7 @@
 					<uni-icons color="#c0c4cc" size="18" type="search" />
 				</slot>
 			</view>
-			<input v-if="show || searchVal" :focus="showSync" :disabled="readonly" :placeholder="placeholderText" :maxlength="maxlength"
+			<input v-if="show || searchVal" placeholder-class="uni-select__input-placeholder" :focus="showSync" :disabled="readonly" :placeholder="placeholderText" :maxlength="maxlength"
 				class="uni-searchbar__box-search-input" confirm-type="search" type="text" v-model="searchVal"
 				@confirm="confirm" @blur="blur" @focus="emitFocus" />
 			<text v-else class="uni-searchbar__text-placeholder">{{ placeholder }}</text>

@@ -253,7 +253,7 @@
 		display: flex;
 		align-items: center;
 		// padding: 15px;
-		cursor: pointer;
+		// cursor: pointer;
 		width: 100%;
 		flex: 1;
 		box-sizing: border-box;
@@ -361,7 +361,7 @@
 	.uni-select__selector-item {
 		/* #ifndef APP-NVUE */
 		display: flex;
-		cursor: pointer;
+		// cursor: pointer;
 		/* #endif */
 		line-height: 35px;
 		font-size: 14px;

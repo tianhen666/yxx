@@ -18,12 +18,12 @@
 </template>
 
 <script setup>
-import { ref, toRefs } from 'vue'
+import { ref } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
 import { navigateTo, navigateBack } from '@/aTemp/utils/uniAppTools.js'
 import { _storeproductGetlist } from '@/aTemp/apis/shop.js'
 import { _storeSelectShop } from '@/aTemp/store/storeSelectShop.js'
-
+import { storeToRefs } from 'pinia'
 // 商品列表
 const listData = ref([])
 
@@ -45,10 +45,10 @@ onShow(options => {
 })
 
 // 商品选择的列表
-const storeSelectShop = toRefs(_storeSelectShop())
+const storeSelectShop = _storeSelectShop()
 // 选着数量,选中列表ID,选中列表数据
-const { selectQuantity, selectListId, selectListData } = storeSelectShop
-
+const { selectQuantity, selectListId, selectListData } = storeToRefs(storeSelectShop)
+console.log(storeToRefs(storeSelectShop))
 // 选中事件
 const selectClick = item => {
 	const index = selectListId.value.indexOf(item.id + '')

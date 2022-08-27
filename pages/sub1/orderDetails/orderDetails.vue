@@ -9,6 +9,8 @@
 		color="#ffffff"
 		:border="false"
 	></uni-nav-bar>
+
+	<!-- 标识是否使用 -->
 	<view class="status_box">
 		<image class="image" src="/static/default/w_time.png" mode="aspectFill"></image>
 		<view class="text">已使用</view>
@@ -67,10 +69,18 @@
 			<text class="text">请在到店使用时出示核销码</text>
 		</view>
 	</view>
-	<view class="blank20"></view>
+	<view class="blank32"></view>
+
+	<!-- 套餐详情 -->
+	<view class="content_text">
+		<m-title2 title="套餐详情"></m-title2>
+		<text class="text">1、成年人洗牙4次\n1、成年人洗牙4次\n1、成年人洗牙4次</text>
+	</view>
+	<view class="blank32"></view>
 
 	<view class="box2">
 		<m-title2 title="订单信息"></m-title2>
+
 		<view class="box2_item">
 			<view class="left">订单金额</view>
 			<view class="right">￥88</view>
@@ -96,13 +106,8 @@
 			<view class="right">￥88</view>
 		</view>
 	</view>
-	<view class="blank20"></view>
+	<view class="blank32"></view>
 
-	<!-- 内容详情 -->
-	<view class="content_text">
-		<m-title2 title="内容详情"></m-title2>
-		<text class="text">1、成年人洗牙4次\n1、成年人洗牙4次\n1、成年人洗牙4次</text>
-	</view>
 	<view class="blank40"></view>
 	<view class="blank40"></view>
 
@@ -217,14 +222,14 @@ const clickLeft = () => {
 		@include mFlex;
 		justify-content: space-between;
 		margin-bottom: 32rpx;
-		&:last-child{
+		&:last-child {
 			margin-bottom: 0;
 		}
-		>.left {
+		> .left {
 			color: $text-color-grey;
 			font-size: 28rpx;
 		}
-		>.right {
+		> .right {
 			font-size: 28rpx;
 			color: $text-color-grey;
 		}

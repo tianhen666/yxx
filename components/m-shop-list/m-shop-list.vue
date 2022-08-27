@@ -30,7 +30,7 @@
 			></image>
 
 			<!-- 商品数据 -->
-			<view class="right" @tap.stop="navigateTo(`/pages/sub1/goodsInfo/goodsInfo?id=${item.id}`)">
+			<view class="right">
 				<view class="title">{{ item.title }}</view>
 				<view class="desc">{{ item.descData }}</view>
 
@@ -48,7 +48,13 @@
 					</view>
 
 					<!-- 购买按钮 -->
-					<view class="right" v-if="props.showBtn">立即购买</view>
+					<button
+						class="btn"
+						@tap.stop="navigateTo(`/pages/sub1/goodsInfo/goodsInfo?id=${item.id}`)"
+						v-if="props.showBtn"
+					>
+						购买
+					</button>
 				</view>
 			</view>
 		</view>
@@ -102,7 +108,7 @@ const selectClick = item => {
 <style lang="scss" scoped>
 .container {
 	width: $main-width;
-	margin: 32rpx auto;
+	margin: auto;
 	&_item {
 		overflow: hidden;
 		background-color: #ffffff;
@@ -152,22 +158,22 @@ const selectClick = item => {
 			> .title {
 				color: $uni-main-color;
 				text-align: justify;
-				font-size: 26rpx;
+				font-size: 30rpx;
 				@include singleLineTextOverHidden;
 			}
 			> .desc {
-				font-size: 24rpx;
+				font-size: 26rpx;
 				line-height: 1.5;
 				color: $uni-secondary-color;
 				text-align: justify;
-				margin-top: 20rpx;
+				margin-top: 15rpx;
 				min-height: 72rpx;
 				@include textOverHidden;
 			}
 			> .box {
 				@include mFlex;
 				justify-content: space-between;
-				margin-top: 20rpx;
+				margin-top: 15rpx;
 				> .price_wrapper {
 					flex: auto;
 					white-space: nowrap;
@@ -192,12 +198,13 @@ const selectClick = item => {
 						}
 					}
 				}
-				> .right {
+				> .btn {
 					margin-left: 20rpx;
+					line-height: 1;
 					flex: none;
 					color: #ffffff;
 					font-size: 24rpx;
-					width: 144rpx;
+					width: 80rpx;
 					text-align: center;
 					background-color: $sub-color;
 					padding: 15rpx 0;

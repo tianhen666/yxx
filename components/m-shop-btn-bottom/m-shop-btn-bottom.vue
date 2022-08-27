@@ -20,9 +20,9 @@
 </template>
 
 <script setup>
-const emits = defineEmits(['handleBuy'])
+const emits = defineEmits(['clickBuy'])
 const clickBuy = () => {
-	emits('handleBuy')
+	emits('clickBuy')
 }
 </script>
 
@@ -31,7 +31,9 @@ const clickBuy = () => {
 	height: 100rpx;
 	padding-bottom: constant(safe-area-inset-bottom);
 	padding-bottom: env(safe-area-inset-bottom);
+	box-sizing: content-box;
 	.flx_box {
+		box-sizing: content-box;
 		width: 750rpx;
 		height: 100rpx;
 		@include mFlex;

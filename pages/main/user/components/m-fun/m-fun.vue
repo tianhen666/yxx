@@ -6,13 +6,16 @@
 
 			<!-- 按钮 -->
 			<view class="btn_box">
-				<view class="btn_box_item" v-for="(item, index) in props.listData.sub" :key="index" @tap="itemClick(item)">
+				<view
+					class="btn_box_item"
+					v-for="(item, index) in props.listData.sub"
+					:key="index"
+					@tap="itemClick(item, index)"
+				>
 					<image class="image" :src="item.imgUrl" mode="aspectFill"></image>
 					<text>{{ item.name }}</text>
 				</view>
 			</view>
-			
-			
 		</view>
 	</view>
 </template>
@@ -27,10 +30,17 @@ const props = defineProps({
 		}
 	}
 })
-const itemClick = item => {
-	uni.navigateTo({
-		url: item.path
-	})
+
+const emits = defineEmits(['moduleFun'])
+const itemClick = (item, index) => {
+	if (item.path) {
+		uni.navigateTo({
+			url: item.path
+		})
+	}
+	if (item.fun) {
+		emits('moduleFun', index)
+	}
 }
 </script>
 

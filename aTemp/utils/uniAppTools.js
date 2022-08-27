@@ -99,3 +99,10 @@ export function navigateBack(index = 1) {
 		delta: index
 	})
 }
+
+// 拨打电话
+export function makePhoneCall(phoneNumber) {
+	uni.makePhoneCall({
+		phoneNumber: phoneNumber
+	});
+}

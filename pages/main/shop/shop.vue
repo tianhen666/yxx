@@ -1,28 +1,52 @@
 <template>
 	<!-- 标题栏 -->
 	<uni-nav-bar title="xxx门诊" statusBar fixed color="#ffffff" :border="false"></uni-nav-bar>
-
-	<!-- 轮播 -->
-	<m-carousel></m-carousel>
-	<view class="blank40"></view>
-
-	<!-- 三列布局 -->
-	<m-title1 title="推荐商品"></m-title1>
-	<m-three-columns></m-three-columns>
-	<view class="blank40"></view>
+	<view class="blank32"></view>
 
 	<!-- 商品列表 -->
-	<m-shop-list>
-		<template #title>
-			<m-title2 title="商品列表"></m-title2>
-		</template>
+	<m-shop-list :listData="listData" showBtn>
 	</m-shop-list>
-	<view class="blank40"></view>
+	<view class="blank32"></view>
+	
 </template>
 
 <script setup>
-import mShopList from './components/m-shop-list/m-shop-list.vue'
 import mThreeColumns from './components/m-three-columns/m-three-columns.vue'
+import { _storeproductGetlist } from '@/aTemp/apis/shop.js'
+import { onLoad, onShow } from '@dcloudio/uni-app'
+import { ref } from 'vue'
+import { _useMainStore } from '@/aTemp/store/storeMain.js'
+// 全局变量
+const useMainStore = _useMainStore()
+
+// 数据列表
+const listData = ref([])
+// 判断是否首次加载onload
+const onLoadStatus = ref(false)
+
+// 获取数据列表
+const getListData = (data = {}) => {
+	_storeproductGetlist(data).then(res => {
+		onLoadStatus.value = true
+		const { code, data, msg } = res
+		// 将返回数据中的商品图片转化为数组
+		listData.value = data.map((item, index, arr) => {
+			item.pics = item.pics ? item.pics.split(',') : []
+			return item
+		})
+	})
+}
+
+onLoad(options => {
+	getListData({ status: 0 })
+})
+
+onShow(() => {
+	// 首次打开页面避免多次拉取数据
+	if (onLoadStatus.value) {
+		getListData({ status: 0 })
+	}
+})
 </script>
 <style lang="scss" scoped>
 :global(page) {

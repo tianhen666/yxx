@@ -15,20 +15,10 @@ import {
 	showToastText
 } from '@/aTemp/utils/uniAppTools.js'
 
-
 // 获取请求地址
 import config from '@/global-config.js'
 
 
-
-// 不需要裁剪直接上传
-
-const picList2 = computed({
-	get: () => (formData.value.postPic ? formData.value.postPic.split(',') : []),
-	set: val => {
-		formData.value.postPic = val.join(',')
-	}
-})
 
 
 export default function(paramsObj) {

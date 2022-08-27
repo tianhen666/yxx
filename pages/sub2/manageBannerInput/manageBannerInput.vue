@@ -26,17 +26,15 @@
 </template>
 
 <script setup>
-import { toRefs, ref, watch } from 'vue'
-import { onLoad, onUnload } from '@dcloudio/uni-app'
+import { ref, watch } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
 import { _bannerSave, _bannerInfo } from '@/aTemp/apis/banner'
-import { navigateTo, navigateBackRefresh } from '@/aTemp/utils/uniAppTools'
-
 import { _storeSelectShop } from '@/aTemp/store/storeSelectShop.js'
-
+import { storeToRefs } from 'pinia'
 // 商品选择的列表
 const storeSelectShop = _storeSelectShop()
 // 选着数量,选中列表ID,选中列表数据
-const { selectQuantity, selectListId, selectListData } = toRefs(storeSelectShop)
+const { selectQuantity, selectListId, selectListData } = storeToRefs(storeSelectShop)
 // 重置数据
 storeSelectShop.$reset()
 // 设置可选择数量
@@ -81,17 +79,17 @@ onLoad(optios => {
 				// 初始化选择的商品
 				data.productList = data.productList.map((item, index, arr) => {
 					// 图片转数组
-					item.pics = item.pics ? item.pics.split(',') : [],
-					// 选中的商品赋值
-					selectListId.value.push(item.id + '')
+					;(item.pics = item.pics ? item.pics.split(',') : []),
+						// 选中的商品赋值
+						selectListId.value.push(item.id + '')
 					selectListData.value[`id_${item.id}`] = item
 					return item
 				})
 			}
-			
+
 			// 过滤不用上传数据
 			delete data.productList
-			
+
 			// 数据赋值
 			formData.value = data
 		})

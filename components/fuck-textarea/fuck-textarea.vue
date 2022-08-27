@@ -73,7 +73,7 @@ export default {
 			default: -1
 		}
 	},
-	emits: ['update:modelValue'],
+	emits: ['update:modelValue','input'],
 	data() {
 		return {
 			val: '',
@@ -128,7 +128,9 @@ export default {
 			this.Content = e.target.value
 		},
 		handleInput(e) {
+			// TODO 兼容 vue2
 			this.$emit('input', e.target.value)
+			// TODO　兼容　vue3
 			this.$emit('update:modelValue', e.target.value)
 		}
 	},
@@ -172,8 +174,8 @@ export default {
 }
 
 .fuck-textarea-edit-placeholder {
-	font-size: 26rpx;
-	color: #999999;
+	font-size: 28rpx;
+	color: #B3B3B3;
 }
 
 .inputlength {

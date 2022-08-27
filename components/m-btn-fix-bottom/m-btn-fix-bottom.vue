@@ -29,25 +29,23 @@ const btnClick = () => {
 <style lang="scss" scoped>
 .fix {
 	padding-top: 40rpx;
-	padding-bottom: constant(safe-area-inset-bottom);
-	padding-bottom: env(safe-area-inset-bottom);
-	height: 128rpx;
+	padding-bottom: 90rpx;
+	height: 92rpx;
 	box-sizing: content-box;
 	.fix_warpper {
 		position: fixed;
-		z-index: 88;
+		z-index: 77;
 		width: 100%;
-		padding: $padding;
-		padding-top: 0;
-		box-sizing: border-box;
 		left: 0;
-		bottom: 40rpx;
-		padding-bottom: constant(safe-area-inset-bottom);
-		padding-bottom: env(safe-area-inset-bottom);
+		bottom: 0;
+		padding-bottom: 90rpx;
 		> .btn {
+			width: $main-width;
+			border-radius: 16rpx;
+			margin: auto;
 			font-size: 32rpx;
-			height: 88rpx;
-			line-height: 88rpx;
+			height: 92rpx;
+			line-height: 92rpx;
 			color: #ffffff;
 			background-color: $main-color;
 		}

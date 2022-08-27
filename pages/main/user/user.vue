@@ -1,7 +1,6 @@
 <template>
 	<!-- 标题栏 -->
 	<uni-nav-bar title="个人中心" statusBar fixed color="#ffffff" :border="false"></uni-nav-bar>
-
 	<!-- 用户端显示 -->
 	<p-user v-if="false"></p-user>
 

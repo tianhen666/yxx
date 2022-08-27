@@ -1,6 +1,6 @@
 .hbuilderx
 unpackage
-
+__MACOSX
 .DS_Store
 node_modules
 dist

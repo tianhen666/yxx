@@ -19,18 +19,30 @@ instance.interceptors.request.use(
 		// 当前页面显示导航条加载动画
 		uni.showNavigationBarLoading()
 
-		// 如果是undefined 赋值为对象
+		// config.data如果是undefined 赋值为对象
 		if (!config.data) {
 			config.data = {}
 		}
 
+		// 获取第三方平台自定义的数据字段
+		// console.log(uni.getExtConfigSync())
 
-		// 配置门诊ID请求参数
-		const storeId = uni.getStorageSync("storeId")
+		// 获取本地登录信息
+		const loginStore = uni.getStorageSync("loginStore")
+
+		const {
+			storeId,
+			token
+		} = loginStore
+
+		// 设置店铺ID
 		if (storeId) {
 			config.data.storeId = storeId
 		}
-
+		// 设置token
+		if (token) {
+			config.header.authorization = token
+		}
 		return config
 	},
 	error => {
@@ -52,7 +64,7 @@ instance.interceptors.response.use(
 			msg
 		} = response.data
 		// 判断code是否正确
-		if (code === 0) {
+		if (parseInt(code) === 0) {
 			return response.data
 		} else {
 			return Promise.reject(response.data)
@@ -62,7 +74,7 @@ instance.interceptors.response.use(
 		// 当前页面隐藏导航条加载动画
 		uni.hideNavigationBarLoading()
 		showToastText("请求出错了,请稍后重试~")
-	
+
 
 		// 对响应错误做些什么
 		return Promise.reject(error)

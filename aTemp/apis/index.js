@@ -35,3 +35,13 @@ export function _storeGetone(data) {
 		data
 	})
 }
+
+
+// 获取手机号
+export function _wxMobile(data) {
+	return http.get({
+		url: '/wx/mobile',
+		data
+	})
+}
+

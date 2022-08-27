@@ -1,11 +1,11 @@
 <template>
 	<!-- 标题栏 -->
 	<uni-nav-bar title="xxx门诊" statusBar fixed color="#ffffff" :border="false"></uni-nav-bar>
-	
+
 	<!-- 轮播 -->
 	<m-carousel></m-carousel>
 	<view class="blank30"></view>
-	
+
 	<!-- 门诊信息 -->
 	<m-info></m-info>
 	<view class="blank30"></view>
@@ -30,12 +30,12 @@
 <script setup>
 import mInfo from './components/m-info/m-info.vue'
 import mServeList from './components/m-serveList/m-serveList.vue'
-import { onLoad,onShareAppMessage } from '@dcloudio/uni-app'
+import { onLoad, onShareAppMessage } from '@dcloudio/uni-app'
 
-onShareAppMessage(()=>{
-	return{
-		title:"xxx口腔门诊",
-		path:"/pages/index/index"
+onShareAppMessage(() => {
+	return {
+		title: 'xxx口腔门诊',
+		path: '/pages/index/index'
 	}
 })
 </script>

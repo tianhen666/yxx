@@ -2,7 +2,7 @@
 	<view class="uni-data-pickerview">
 		<scroll-view class="selected-area" scroll-x="true" scroll-y="false" :show-scrollbar="false">
 			<view class="selected-list">
-				<template v-for="(item,index) in selected">
+				<template v-for="(item,index) in selected" :key="index">
 					<view class="selected-item"
 						:class="{'selected-item-active':index==selectedIndex, 'selected-item-text-overflow': ellipsis}"
 						 v-if="item.text" @click="handleSelect(index)">
@@ -12,10 +12,10 @@
 			</view>
 		</scroll-view>
 		<view class="tab-c">
-			<template v-for="(child, i) in dataList" >
+			<template v-for="(child, i) in dataList" :key="i">
 				<scroll-view class="list" :key="i" v-if="i==selectedIndex" :scroll-y="true">
 					<view class="item" :class="{'is-disabled': !!item.disable}" v-for="(item, j) in child"
-						@click="handleNodeClick(item, i, j)">
+						@click="handleNodeClick(item, i, j)" :key="j">
 						<text class="item-text item-text-overflow">{{item[map.text]}}</text>
 						<view class="check" v-if="selected.length > i && item[map.value] == selected[i].value"></view>
 					</view>

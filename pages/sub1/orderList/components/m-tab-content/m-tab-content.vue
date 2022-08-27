@@ -1,61 +1,56 @@
 <template>
 	<view class="container">
-		<view class="container_item" v-for="(item, index) in props.listData" :key="index" @tap="toDetails">
+		<view class="container_item" v-for="(item, index) in props.listData" :key="index" @tap="navigateTo('/pages/sub1/orderDetails/orderDetails')">
 			<!-- 订单编号，订单状态 -->
-			<m-left-right-layout>
-				<template #left>
+			<view class="container_item_box">
+				<view class="container_item_box_left">
 					<view class="order_sn">订单号：{{ item.orderSN }}</view>
-				</template>
-				<template #right>
-					<view class="order_status order_status_color1" v-if="item.type === 1">待付款</view>
-					<view class="order_status order_status_color2" v-else-if="item.type === 2">待使用</view>
-					<view class="order_status  order_status_color3" v-else-if="item.type === 3">已完成</view>
-				</template>
-			</m-left-right-layout>
-			<view class="blank20"></view>
+				</view>
+				<view class="container_item_box_right">
+					<view class="order_status style1" v-if="item.type === 1">待付款</view>
+					<view class="order_status style2" v-else-if="item.type === 2">待使用</view>
+					<view class="order_status  style3" v-else-if="item.type === 3">已完成</view>
+				</view>
+			</view>
+			<view class="blank32"></view>
 
 			<!-- 图文信息 -->
-			<m-left-right-layout rightWidth="500rpx">
-				<template #left>
+			<view class="container_item_box1">
+				<view class="container_item_box1_left">
 					<image :src="item.url" mode="aspectFill" class="goods_img"></image>
-				</template>
+				</view>
+				<view class="container_item_box1_right">
+					<view class="title">{{ item.title }}</view>
 
-				<template #right>
-					<!-- 左右布局 -->
-					<m-left-right-layout rightWidth="150rpx" alignItems="flex-start">
-						<template #left>
-							<view class="title">{{ item.title }}</view>
-							<!-- 价格 -->
-							<text class="price">
-								<text class="text1">实际付款：</text>
-								<text class="price_cn">￥</text>
-								<text>{{ parseFloat(item.price) * parseInt(item.quantity) }}</text>
-							</text>
-						</template>
+					<view class="container_item_box1_right_box">
+						<!-- 价格 -->
+						<text class="price">
+							<text class="text1">实际付款：</text>
+							<text class="price_cn">￥</text>
+							<text>{{ parseFloat(item.price) * parseInt(item.quantity) }}</text>
+						</text>
+						<!-- 数量 -->
+						<view class="quantity">x{{ item.quantity }}</view>
+					</view>
+				</view>
+			</view>
 
-						<template #right>
-							<!-- 价格 -->
-							<view class="price">
-								<text class="price_cn">￥</text>
-								<text>{{ item.price }}</text>
-							</view>
-							<!-- 数量 -->
-							<view class="quantity">x{{ item.quantity }}</view>
-						</template>
-					</m-left-right-layout>
-				</template>
-			</m-left-right-layout>
-
+			<view class="blank32"></view>
 			<view class="order_btn_box">
-				<view class="item_btn item_btn_color1" v-if="item.type === 1">去付款</view>
-				<view class="item_btn item_btn_color2" v-else-if="item.type === 2">去使用</view>
-				<view class="item_btn  item_btn_color3" v-else-if="item.type === 3">去评价</view>
+				<view class="time">待支付: 剩余时间{{ showTime }}</view>
+				<view class="item_btn style1" v-if="item.type === 0">去付款</view>
+				<view class="item_btn style2" v-else-if="item.type === 1">去使用</view>
+				<view class="item_btn  style3" v-else-if="item.type === 2">去评价</view>
 			</view>
 		</view>
 	</view>
 </template>
 
 <script setup>
+import { ref } from 'vue'
+import dayjs from 'dayjs'
+import { countDown } from '@/aTemp/utils/tools.js'
+import {navigateTo} from '@/aTemp/utils/uniAppTools.js';
 const props = defineProps({
 	listData: {
 		type: Array,
@@ -91,75 +86,109 @@ const props = defineProps({
 	}
 })
 
-const toDetails = () => {
-	uni.navigateTo({
-		url: '/pages-sub1/orderDetails/orderDetails'
-	})
-}
+const time1 = dayjs().add(10, 'second')
+const showTime = ref('')
+countDown(time1, showTime)
 </script>
 
 <style lang="scss" scoped>
 .container {
+	padding-bottom: 90rpx;
 	.container_item {
 		padding: $padding;
 		background-color: #ffffff;
-		margin-bottom: 20rpx;
+		width: $main-width;
+		margin: auto;
+		margin-bottom: 32rpx;
+		border-radius: 16rpx;
 		&:last-child {
 			margin-bottom: 0;
 		}
-		.order_sn {
-			color: $text-color-grey;
-			font-size: 24rpx;
-		}
-		.order_status {
-			font-size: 24rpx;
-		}
-		.order_status_color1 {
-			color: $sub-color;
-		}
-		.order_status_color2 {
-			color: $text-color-grey;
-		}
-		.order_status_color3 {
-			color: $text-color-grey;
-		}
-		.goods_img {
-			width: 160rpx;
-			height: 160rpx;
-			border-radius: 8rpx;
-		}
-		
-		.title {
-			color: $text-color;
-			font-size: 28rpx;
-			@include textOverHidden;
-			line-height: 1.5;
-			margin-bottom: 20rpx;
-			text-align: justify;
-		}
-		.text1 {
-			color: $text-color-grey;
-			font-size: 24rpx;
-		}
-		.price {
-			color: $sub-color;
-			font-size: 28rpx;
-			text-align: right;
-			&_cn {
-				font-size: 24rpx;
+
+		&_box {
+			@include mFlex;
+			justify-content: space-between;
+			&_left {
+				flex: auto;
+				.order_sn {
+					color: $text-color-grey;
+					font-size: 26rpx;
+				}
+			}
+			&_right {
+				> .order_status {
+					font-size: 26rpx;
+				}
+				> .style1 {
+					color: $sub-color;
+				}
+				> .style2 {
+					color: $text-color-grey;
+				}
+				> .style3 {
+					color: $text-color-grey;
+				}
 			}
 		}
-		.quantity {
-			color: $text-color-grey;
-			font-size: 24rpx;
-			text-align: right;
-			margin-top: 30rpx;
+
+		&_box1 {
+			@include mFlex;
+			justify-content: space-between;
+			align-items: stretch;
+			&_left {
+				flex: none;
+				.goods_img {
+					width: 120rpx;
+					height: 120rpx;
+					border-radius: 8rpx;
+				}
+			}
+			&_right {
+				flex: auto;
+				overflow: hidden;
+				margin-left: 20rpx;
+				> .title {
+					color: $text-color;
+					font-size: 26rpx;
+					@include singleLineTextOverHidden;
+					margin-bottom: 40rpx;
+					margin-top: 10rpx;
+					text-align: justify;
+				}
+				&_box {
+					@include mFlex;
+					justify-content: space-between;
+					> .price {
+						flex: auto;
+						overflow: hidden;
+						color: $sub-color;
+						font-size: 28rpx;
+						.text1 {
+							color: $text-color-grey;
+							font-size: 24rpx;
+						}
+						&_cn {
+							font-size: 24rpx;
+						}
+					}
+					> .quantity {
+						color: $text-color-grey;
+						font-size: 26rpx;
+					}
+				}
+			}
 		}
+
 		.order_btn_box {
-			margin-top: 10rpx;
-			text-align: right;
+			@include mFlex;
+			justify-content: space-between;
+			> .time {
+				flex: auto;
+				margin-right: 20rpx;
+				color: $sub-color;
+				font-size: 26rpx;
+			}
 			.item_btn {
-				display: inline-block;
 				width: 120rpx;
 				height: 48rpx;
 				border-radius: 48rpx;
@@ -167,15 +196,15 @@ const toDetails = () => {
 				text-align: center;
 				font-size: 24rpx;
 			}
-			.item_btn_color1 {
+			> .style1 {
 				border: 1px solid $sub-color;
 				color: $sub-color;
 			}
-			.item_btn_color2 {
+			> .style2 {
 				border: 1px solid $text-color-grey;
 				color: $text-color-grey;
 			}
-			.item_btn_color3 {
+			> .style3 {
 				border: 1px solid $text-color-grey;
 				color: $text-color-grey;
 			}

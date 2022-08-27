@@ -133,7 +133,7 @@
 
 			<!-- 活动介绍 -->
 			<uni-forms-item label-position="top" :label="rules.content.label" name="content">
-				<fuck-textarea v-model="formData.content" :placeholder="rules.content.rules[0].errorMessage"/>
+				<fuck-textarea v-model="formData.content" :placeholder="rules.content.rules[0].errorMessage" />
 			</uni-forms-item>
 
 			<!-- 活动详情 -->
@@ -152,8 +152,8 @@
 </template>
 
 <script setup>
-import { computed, ref, watch, toRef, toRaw } from 'vue'
-import { onLoad, onUnload, onShow } from '@dcloudio/uni-app'
+import { ref } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
 import { _enrollformSave, _enrollformGetinfo } from '@/aTemp/apis/activity.js'
 import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
 import dayjs from 'dayjs'

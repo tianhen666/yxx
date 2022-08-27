@@ -4,12 +4,14 @@ page {
 	line-height: 1;
 	background-color: $uni-bg-color;
 	width: 100%;
+	min-height: 100%;
+	color: #333;
 }
 text {
 	display: inline-block;
 }
 image {
-	display: block;
+	display: block !important;
 }
 input,
 textarea {
@@ -80,23 +82,19 @@ textarea {
 .uniui-forward {
 	color: $text-color-grey !important;
 }
-/* scroll-view隐藏滚动条 */
-::-webkit-scrollbar {
-	display: none;
-}
 
 .uni-forms {
 	overflow: hidden;
 }
 /* .uni-easyinput__placeholder-class 样式覆盖 */
 .uni-easyinput__placeholder-class {
-	font-size: 26rpx !important;
-	color: #999999 !important;
+	font-size: 28rpx !important;
+	color: #B3B3B3 !important;
 }
 /* .uni-select__input-placeholder 样式覆盖 */
 .uni-select__input-placeholder {
-	font-size: 26rpx !important;
-	color: #999999 !important;
+	font-size: 28rpx !important;
+	color: #B3B3B3 !important;
 }
 
 /* 表单样式覆盖 */

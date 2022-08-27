@@ -56,15 +56,15 @@
 </template>
 
 <script setup>
-import { ref, toRefs, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { _serveSave, _serveGetinfo } from '@/aTemp/apis/service'
 import { _storeSelectShop } from '@/aTemp/store/storeSelectShop.js'
-
+import { storeToRefs } from 'pinia'
 // 商品选择的列表
 const storeSelectShop = _storeSelectShop()
 // 选着数量,选中列表ID,选中列表数据
-const { selectQuantity, selectListId, selectListData } = toRefs(storeSelectShop)
+const { selectQuantity, selectListId, selectListData } = storeToRefs(storeSelectShop)
 // 重置数据
 storeSelectShop.$reset()
 // 设置可选择数量
@@ -89,24 +89,23 @@ onLoad(optios => {
 		// 拉取数据
 		_serveGetinfo({ id: dataId.value }).then(res => {
 			const { data } = res
-			
 
 			// 初始化选中商品的数据
 			if (Array.isArray(data.productList)) {
 				// 图片列表转为数组
 				data.productList = data.productList.map((item, index, arr) => {
 					// 图片转数组
-					item.pics = item.pics ? item.pics.split(',') : [],
-					// 选中的商品赋值
-					selectListId.value.push(item.id + '')
+					;(item.pics = item.pics ? item.pics.split(',') : []),
+						// 选中的商品赋值
+						selectListId.value.push(item.id + '')
 					selectListData.value[`id_${item.id}`] = item
 					return item
 				})
 			}
-			
+
 			// 过滤不用上传数据
 			delete data.productList
-			
+
 			// 数据赋值
 			formData.value = data
 		})

@@ -2,23 +2,48 @@
 import { _wxLogin } from '@/aTemp/apis/login.js'
 import { onLaunch } from '@dcloudio/uni-app'
 import { init } from '@/aTemp/index.js'
+import router from '@/aTemp/router/index.js'
+import { _useMainStore } from '@/aTemp/store/storeMain.js'
 
-import a_router from '@/aTemp/router/index.js'
+// 全局信息变量
+const useMainStore = _useMainStore()
+
+// 每当它发生变化时，将整个状态持久化到本地存储
+useMainStore.$subscribe(
+	(mutation, state) => {
+		uni.setStorageSync('loginStore', state)
+	},
+	{ detached: true }
+)
+
+// 获取静态存储loginStore
+const old = uni.getStorageSync('loginStore')
+if (old) {
+	useMainStore.$state = old
+}
+
 onLaunch(options => {
 	init(options) // 初始化,检查是否更新
-	// a_router(options) // 路由拦截
+	// router(options) // 路由拦截
 
-	const openId = uni.getStorageSync('openId')
+	console.log()
 	// 微信授权登录
-	if (!openId) {
+	if (!useMainStore.isLogin) {
 		uni.login().then(val => {
 			_wxLogin({
 				code: val.code
 			})
 				.then(res => {
-					uni.setStorageSync('storeId', 1)
-					uni.setStorageSync('openId', res.data.openid)
-					uni.setStorageSync('unionId', res.data.unionid)
+					const { code, data, msg } = res
+					const { storeid, openid, unionid, token } = data
+					console.log(storeid)
+					// 获取到数据后赋值给全局变量
+					useMainStore.$patch({
+						storeId: storeid,
+						openId: openid,
+						unionId: unionid,
+						token: token
+					})
 				})
 				.catch(err => {
 					console.log(err)
@@ -26,13 +51,6 @@ onLaunch(options => {
 		})
 	}
 })
-
-// 设置全局系统信息
-const globalData = {
-	systemInfo: {
-		...uni.getSystemInfoSync()
-	}
-}
 </script>
 
 <style lang="scss">
