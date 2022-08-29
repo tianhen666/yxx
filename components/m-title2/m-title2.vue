@@ -1,12 +1,12 @@
 <template>
 	<view class="container">
 		<view class="title">
-			<image v-if="props.hot" class="image" src="/static/default/hot.png" mode="aspectFill"></image>
+			<slot name="icon"></slot>
 			<text>{{ props.title }}</text>
 		</view>
 		<view class="right" @tap="moreClick" v-if="props.path">
 			<text>{{ props.moreText }}</text>
-			<uni-icons type="forward" size="15"></uni-icons>
+			<uni-icons type="forward" size="15" color="#929292"></uni-icons>
 		</view>
 	</view>
 </template>
@@ -25,10 +25,6 @@ const props = defineProps({
 	moreText: {
 		type: String,
 		default: '查看更多'
-	},
-	hot: {
-		type: Boolean,
-		default: false
 	}
 })
 const moreClick = () => {
@@ -48,11 +44,15 @@ const moreClick = () => {
 .container {
 	@include mFlex;
 	justify-content: space-between;
-	padding-bottom: 32rpx;
+	padding-bottom: 24rpx;
 	.title {
+		flex: auto;
+		overflow: hidden;
 		color: $text-color;
-		font-size: 34rpx;
+		font-size: 32rpx;
+		font-weight: 500;
 		@include mFlex;
+		justify-content: flex-start;
 		> .image {
 			width: 44rpx;
 			height: 44rpx;
@@ -62,7 +62,9 @@ const moreClick = () => {
 	.right {
 		@include mFlex;
 		color: $text-color-grey;
-		font-size: 26rpx;
+		font-size: 24rpx;
+		font-weight: 400;
+		opacity: 0.68;
 	}
 }
 </style>

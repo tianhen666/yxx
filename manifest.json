@@ -81,5 +81,15 @@
     },
     "vueVersion" : "3",
     "fallbackLocale" : "zh-Hans",
-    "locale" : "zh-Hans"
+    "locale" : "zh-Hans",
+    "h5" : {
+        "optimization" : {
+            "treeShaking" : {
+                "enable" : true
+            }
+        },
+        "devServer" : {
+            "https" : false
+        }
+    }
 }

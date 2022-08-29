@@ -266,59 +266,54 @@
 					"enablePullDownRefresh": false,
 					"navigationStyle": "custom"
 				}
-			}    ,{
-                    "path" : "orderList/orderList",
-                    "style" :                                                                                    
-                {
-                    "navigationBarTitleText": "全部订单",
-                    "enablePullDownRefresh": false
-                }
-                
-                }
-                ,{
-                    "path" : "orderDetails/orderDetails",
-                    "style" :                                                                                    
-                {
-                    "navigationBarTitleText": "订单详情",
-                    "enablePullDownRefresh": false
-                }
-                
-                }
-                ,{
-                    "path" : "manageStaffList/manageStaffList",
-                    "style" :                                                                                    
-                {
-                    "navigationBarTitleText": "员工管理",
-                    "enablePullDownRefresh": false
-                }
-                
-                }
-                ,{
-                    "path" : "switchStore/switchStore",
-                    "style" :                                                                                    
-                {
-                    "navigationBarTitleText": "切换门店",
-                    "enablePullDownRefresh": false
-                }
-                
-                }
-            ]
+			}, {
+				"path": "orderList/orderList",
+				"style": {
+					"navigationBarTitleText": "全部订单",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "orderDetails/orderDetails",
+				"style": {
+					"navigationBarTitleText": "订单详情",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "manageStaffList/manageStaffList",
+				"style": {
+					"navigationBarTitleText": "员工管理",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "switchStore/switchStore",
+				"style": {
+					"navigationBarTitleText": "切换门店",
+					"enablePullDownRefresh": false
+				}
+
+			}]
 		}
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "",
 		"navigationBarBackgroundColor": "#ffffff",
-		"backgroundColor": "#f7f7f7",
+		"backgroundColor": "#f9f9f9",
 		"usingComponents": {
 			// #ifdef APP-PLUS || H5 || MP-WEIXIN || MP-QQ
 			"w-painter": "/wxcomponents/painter/painter",
 			"test": "/wxcomponents/test/test"
 			// #endif
+		},
+		"h5": {
+			"navigationStyle":"custom",
 		}
 	},
 	"tabBar": {
-		"color": "#999999",
+		"color": "#333333",
 		"selectedColor": "#4B8EFF",
 		"borderStyle": "black",
 		"backgroundColor": "#ffffff",

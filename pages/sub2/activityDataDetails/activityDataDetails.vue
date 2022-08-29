@@ -32,7 +32,7 @@
 			<view class="blank32"></view>
 
 			<!-- 用户列表 -->
-			<m-user-list></m-user-list>
+			<m-user-list activityShow></m-user-list>
 		</view>
 
 		<view class="blank40"></view>

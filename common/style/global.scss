@@ -33,6 +33,9 @@ textarea {
 .blank20 {
 	height: 20rpx;
 }
+.blank24 {
+	height: 24rpx;
+}
 .blank30 {
 	height: 30rpx;
 }
@@ -53,14 +56,11 @@ textarea {
 /* uni组件样式覆盖 */
 
 /* 页面标题组件 */
-.uni-status-bar {
-	background-color: $main-color;
+.uni-status-bar,.uni-navbar__content,.uni-navbar__header {
+	background-color: transparent !important;
 }
-.uni-navbar__header {
-	background-color: $main-color !important;
-	.uni-nav-bar-text {
-		font-size: 32rpx !important;
-	}
+.uni-nav-bar-text{
+	font-size: 32rpx !important;
 }
 
 /* 分段器组件 */
@@ -78,10 +78,6 @@ textarea {
 	color: $main-color !important;
 	border-bottom-color: $main-color !important;
 }
-/* 图标 */
-.uniui-forward {
-	color: $text-color-grey !important;
-}
 
 .uni-forms {
 	overflow: hidden;
@@ -89,12 +85,12 @@ textarea {
 /* .uni-easyinput__placeholder-class 样式覆盖 */
 .uni-easyinput__placeholder-class {
 	font-size: 28rpx !important;
-	color: #B3B3B3 !important;
+	color: #b3b3b3 !important;
 }
 /* .uni-select__input-placeholder 样式覆盖 */
 .uni-select__input-placeholder {
 	font-size: 28rpx !important;
-	color: #B3B3B3 !important;
+	color: #b3b3b3 !important;
 }
 
 /* 表单样式覆盖 */

@@ -1,39 +1,56 @@
 <template>
 	<view class="swiper_wrapper">
-		<view class="swiper_bg"></view>
-		<swiper class="swiper" indicator-dots autoplay circular skip-hidden-item-layout interval="5000">
-			<swiper-item>
-				<image class="image" src="/static/default/banner.png" mode="aspectFill"></image>
-			</swiper-item>
-			<swiper-item>
-				<image class="image" src="/static/default/banner.png" mode="aspectFill"></image>
-			</swiper-item>
-			<swiper-item>
-				<image class="image" src="/static/default/banner.png" mode="aspectFill"></image>
-			</swiper-item>
-		</swiper>
+		<uni-swiper-dot
+			:info="listData"
+			:current="current"
+			mode="round"
+			:dotsStyles="{
+				backgroundColor: 'rgba(0, 0, 0, .4)',
+				border: 'none',
+				selectedBackgroundColor: '#ffffff',
+				selectedBorder: 'none'
+			}"
+		>
+			<swiper class="swiper" autoplay circular interval="5000" @change="change">
+				<swiper-item v-for="(item, index) in listData" :key="index">
+					<image class="image" :src="item.url" mode="aspectFill" @tap="bannerTap(item)"></image>
+				</swiper-item>
+			</swiper>
+		</uni-swiper-dot>
 	</view>
 </template>
 
-<script setup></script>
+<script setup>
+import { ref } from 'vue'
+import { showToastText } from '@/aTemp/utils/uniAppTools.js'
+const bannerTap = item => {
+	showToastText('点击了banner')
+	console.log(item)
+}
+const change = e => {
+	current.value = e.detail.current
+}
+const listData = ref([
+	{
+		url: '/static/default/banner.jpg',
+		pId: '1'
+	},
+	{
+		url: '/static/default/banner.jpg',
+		pId: '1'
+	},
+	{
+		url: '/static/default/banner.jpg',
+		pId: '1'
+	}
+])
+const current = ref(0)
+</script>
 
 <style lang="scss" scoped>
-.swiper_wrapper {
-	position: relative;
-}
-.swiper_bg {
-	position: absolute;
-	left: 0;
-	top: 0;
-	z-index: 0;
-	width: 100%;
-	background-color: $main-color;
-	// border-radius: 0 0 40rpx 40rpx;
-	height: ($main-width * 3 * 0.2) * 0.7;
-}
 .swiper {
 	width: $main-width;
-	height: ($main-width * 3 * 0.2);
+	height: ($main-width * 0.5);
 	margin: auto;
 	border-radius: 20rpx;
 	overflow: hidden;
