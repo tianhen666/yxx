@@ -1,60 +1,69 @@
 <template>
-	<view class="container">
+	<m-page-loading v-if="loading"></m-page-loading>
+
+	<view class="container" v-else>
 		<!-- 封面图 -->
-		<view class="banner_img"><image class="image" src="/static/default/banner.png" mode="aspectFill"></image></view>
-		<!-- 标题 -->
-		<view class="title">{{ list.title }}</view>
+		<view class="banner_img"><image class="image" :src="dataObj.mainPic" mode="aspectFill"></image></view>
+		<view class="blank24"></view>
 
-		<view class="box1">
-			<!-- 价格 -->
-			<view class="price_wrapper">
-				<view class="price">
-					<text class="price_cn">￥</text>
-					<text>{{ list.price }}</text>
-				</view>
-				<view class="originalPrice">
-					<text>￥</text>
-					<text class="through">{{ list.originalPrice }}</text>
-				</view>
-			</view>
-			<!-- 销售量 -->
-			<view class="sale">已售：888件</view>
-		</view>
-		<view class="blank20"></view>
-
-		<!-- 倒计时 -->
-		<view class="count_down_box">
+		<!-- 模块一 -->
+		<view class="box1 box">
+			<!-- 倒计时 -->
 			<view class="count_down">
-				<image class="image" src="/static/default/time.png" mode="aspectFill"></image>
-				<text>距离活动结束还有30天12小时30分钟</text>
+				<image class="image" src="/static/images/time.png" mode="aspectFill"></image>
+				<text>距离结束还剩</text>
+				<text class="text1">30天12小时30分钟</text>
+			</view>
+			<!-- 标题 -->
+			<view class="title">{{ dataObj.title }}</view>
+			<!-- 时间 -->
+			<view class="time">
+				{{ dayjs(dataObj.startDt).format('YYYY年M月D日') + '  至  ' + dayjs(dataObj.endDt).format('YYYY年M月D日') }}
+			</view>
+			<!-- 参与人 -->
+			<view class="join">
+				<view class="join_left">
+					<view class="num">已有200人参与活动</view>
+					<view class="img_wrapper">
+						<view
+							class="image_box"
+							:style="{ zIndex: index + 1, left: index * 34 + 'rpx' }"
+							v-for="(item, index) in 6"
+							:key="index"
+						>
+							<image class="image" src="/static/default/tup4.jpg" mode="aspectFill"></image>
+						</view>
+					</view>
+				</view>
+				<button class="jion_right" @tap="confirm">参与活动</button>
 			</view>
 		</view>
-
-		<!-- 活动时间 -->
-		<view class="time">
-			<view class="left">活动时间</view>
-			<view class="right">2022年07月14日至2023年7月14日</view>
-		</view>
-
-		<!-- 购买须知 -->
-		<view class="inform">
-			<view class="left">购买须知</view>
-			<view class="right">此活动为秒杀活动，售出后不予退还</view>
-		</view>
-		<view class="blank20"></view>
+		<view class="blank24"></view>
 
 		<!-- 活动内容 -->
-		<view class="content_text">
-			<m-title2 title="活动内容"></m-title2>
-			<text class="text">1、成年人洗牙4次\n1、成年人洗牙4次\n1、成年人洗牙4次</text>
+		<view class="box2 box">
+			<view class="content_text">
+				<m-title2 title="活动内容"></m-title2>
+				<text class="text">{{ dataObj.content }}</text>
+			</view>
+			<view class="content_img" @tap="previewImage(dataObj.details.split(','))">
+				<image
+					class="image"
+					v-for="(item, index) in dataObj.details.split(',')"
+					:key="index"
+					:src="item"
+					mode="widthFix"
+				></image>
+			</view>
 		</view>
-		<view class="blank20"></view>
+		<view class="blank24"></view>
 
-		<!-- 活动图片 -->
-		<view class="content_img">
-			<m-title1 title="产品详情"></m-title1>
-			<image class="image" src="/static/default/content.png" mode="widthFix"></image>
+		<!-- 活动须知 -->
+		<view class="box3 box">
+			<m-title2 title="活动须知"></m-title2>
+			<text class="text">{{ dataObj.content }}</text>
 		</view>
+		<view class="blank40"></view>
 		<view class="blank40"></view>
 
 		<!-- 底部按钮 -->
@@ -63,137 +72,194 @@
 </template>
 
 <script setup>
-const list = {
-	id: 123456,
-	title: '测试标题测试标题测试标题测试标题测试标题测试标题测试',
-	time: '2022.08.18-2022.08.28',
-	img: '/static/default/banner.png',
-	price: 888888888888,
-	originalPrice: 888888888888,
-	jion: 99,
-	type: '拼团'
-}
+import { ref } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
+import { _enrollformGetinfo } from '@/aTemp/apis/activity.js'
+import { _debounce } from '@/aTemp/utils/tools.js'
+import { _wxpayPayment } from '@/aTemp/apis/store.js'
+import { navigateTo, previewImage } from '@/aTemp/utils/uniAppTools.js'
+import dayjs from 'dayjs'
 
-const clickBuy = () => {}
+// 加载中
+const loading = ref(true)
+// 数据ID
+const dataId = ref(0)
+// 数据对象
+const dataObj = ref({})
+// 页面开始加载
+onLoad(options => {
+	dataId.value = options.id || 0
+	
+	// 加载中
+	loading.value = true
+	_enrollformGetinfo({ id: dataId.value }).then(res => {
+		const { data } = res
+		// 数据赋值
+		dataObj.value = data
+		// 数据加载结束
+		loading.value = false
+	})
+})
+
+// 加载中
+const btnLoading = ref(false)
+const confirm = _debounce(
+	() => {
+		_wxpayPayment({ productId: dataId.value })
+			.then(res => {
+				btnLoading.value = false
+				const { data, code, msg } = res
+				// 修改后端返回的数据
+				data.package = 'prepay_id=' + data.prepay_id
+				uni
+					.requestPayment(data)
+					.then(val => {
+						console.log(val)
+					})
+					.catch(err => {
+						console.log(err)
+					})
+			})
+			.catch(err => {
+				btnLoading.value = false
+				console.log(err)
+			})
+	},
+	1000,
+	btnLoading
+)
 </script>
 
 <style lang="scss" scoped>
-:global(page) {
-	background-color: #f5f5f5;
-}
 .banner_img {
 	> .image {
 		width: 750rpx;
-		height: 750rpx * 3 * 0.2;
-	}
-}
-.title {
-	color: $text-color;
-	background-color: #fff;
-	padding: $padding;
-	line-height: 1.6;
-}
-.box1 {
-	@include mFlex;
-	justify-content: space-between;
-	padding: 0 32rpx 32rpx;
-	background-color: #fff;
-	.price_wrapper {
-		flex: none;
-		width: 400rpx;
-		overflow: hidden;
-		flex-wrap: wrap;
-		white-space: nowrap;
-		@include mFlex;
-		justify-content: left;
-		.price {
-			color: $sub-color;
-			font-size: 40rpx;
-			&_cn {
-				font-size: 26rpx;
-			}
-			margin-right: 10rpx;
-		}
-		.originalPrice {
-			margin-top: 10rpx;
-			color: $text-color-grey;
-			font-size: 26rpx;
-			.through {
-				text-decoration: line-through;
-			}
-		}
-	}
-	.sale {
-		font-size: 26rpx;
-		color: $text-color-grey;
+		height: 750rpx * 0.5;
 	}
 }
 
-.count_down_box {
+.box {
+	padding: 38rpx 24rpx;
 	background-color: #fff;
-	padding: $padding;
-	.count_down {
+	width: $main-width;
+	margin: auto;
+	border-radius: 16rpx;
+}
+
+.box1 {
+	> .count_down {
 		background-color: #fff6ea;
 		color: #f73639;
-		padding: 20rpx 32rpx;
-		@include mFlex;
-		justify-content: left;
-		border-radius: 16rpx;
 		font-size: 28rpx;
+		padding: 20rpx;
+		@include mFlex;
+		justify-content: flex-start;
+		border-radius: 16rpx;
 		> .image {
+			flex: none;
 			height: 40rpx;
 			width: 40rpx;
-			margin-right: 20rpx;
+			margin-right: 10rpx;
+		}
+		> .text1 {
+			padding-left: 10rpx;
+			font-weight: 600;
+		}
+	}
+
+	> .title {
+		color: $text-color;
+		@include singleLineTextOverHidden;
+		overflow: hidden;
+		font-size: 36rpx;
+		padding: 48rpx 0;
+	}
+
+	> .time {
+		color: $text-color-grey;
+		font-size: 28rpx;
+	}
+	> .join {
+		background-color: #fafafa;
+		border-radius: 16rpx;
+		margin-top: 48rpx;
+		padding: $padding;
+		@include mFlex;
+
+		.join_left {
+			flex: auto;
+			overflow: hidden;
+			.num {
+				font-size: 26rpx;
+				color: #666666;
+				padding-bottom: 20rpx;
+			}
+			.img_wrapper {
+				position: relative;
+				overflow: hidden;
+				height: 54rpx;
+				width: 100%;
+				> .image_box {
+					position: absolute;
+					top: 0;
+					border-radius: 50%;
+					width: 54rpx;
+					height: 54rpx;
+					padding: 2rpx;
+					background-color: #fff;
+					overflow: hidden;
+					> .image {
+						width: 100%;
+						height: 100%;
+						border-radius: 50%;
+					}
+				}
+			}
+		}
+		.jion_right {
+			font-size: 26rpx;
+			font-weight: bold;
+			color: #fff;
+			width: 170rpx;
+			background-color: $main-color;
+			border-radius: 50rpx;
+			line-height: 2.2;
 		}
 	}
 }
-.time {
-	font-size: 28rpx;
-	@include mFlex;
-	justify-content: left;
-	background-color: #fff;
-	padding: 0 32rpx;
-	> .left {
-		color: $text-color-grey;
-		margin-right: 40rpx;
-	}
-	> .right {
-		color: $text-color;
-	}
-}
-.inform {
-	font-size: 28rpx;
-	@include mFlex;
-	justify-content: left;
-	background-color: #fff;
-	padding: 32rpx;
-	> .left {
-		color: $text-color-grey;
-		margin-right: 40rpx;
-	}
-	> .right {
-		color: $text-color;
-	}
-}
-.content_text {
-	background-color: #fff;
-	padding: 32rpx;
+
+.box3 {
 	> .text {
 		display: block;
-		border: 1px solid #f0f0f0;
+		border: 1px solid #fafafa;
+		background-color: #fafafa;
 		border-radius: 16rpx;
 		padding: 20rpx;
-		color: $text-color;
 		font-size: 28rpx;
-		line-height: 2;
+		line-height: 1.6;
+		overflow: hidden;
 	}
 }
-.content_img {
-	padding-top: 32rpx;
+.box2 {
 	background-color: #fff;
-	> .image {
-		width: 750rpx;
-		height: auto;
+	> .content_text {
+		> .text {
+			display: block;
+			border: 1px solid #fafafa;
+			background-color: #fafafa;
+			border-radius: 16rpx;
+			padding: 20rpx;
+			line-height: 1.6;
+			font-size: 28rpx;
+			overflow: hidden;
+		}
+	}
+	> .content_img {
+		background-color: #fafafa;
+		> .image {
+			width: 100%;
+			height: auto;
+		}
 	}
 }
 </style>

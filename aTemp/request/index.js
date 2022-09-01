@@ -27,18 +27,19 @@ instance.interceptors.request.use(
 		// 获取第三方平台自定义的数据字段
 		// console.log(uni.getExtConfigSync())
 
-		// 获取本地登录信息
-		const loginStore = uni.getStorageSync("loginStore")
-
+		// 获取用户信息
+		const mainStore = uni.getStorageSync("mainStore")
 		const {
 			storeId,
 			token
-		} = loginStore
-
-		// 设置店铺ID
+		} = mainStore
+		
+		// 如果有店铺ID
 		if (storeId) {
 			config.data.storeId = storeId
 		}
+		
+		
 		// 设置token
 		if (token) {
 			config.header.authorization = token

@@ -1,20 +1,22 @@
 <template>
 	<view class="swiper_wrapper">
 		<swiper class="swiper" indicator-dots autoplay circular skip-hidden-item-layout interval="5000">
-			<swiper-item>
-				<image class="image" src="/static/default/banner.png" mode="aspectFill"></image>
-			</swiper-item>
-			<swiper-item>
-				<image class="image" src="/static/default/banner.png" mode="aspectFill"></image>
-			</swiper-item>
-			<swiper-item>
-				<image class="image" src="/static/default/banner.png" mode="aspectFill"></image>
+			<swiper-item v-for="(item, index) in props.listData" :key="index">
+				<image class="image" :src="item" mode="aspectFill"></image>
 			</swiper-item>
 		</swiper>
 	</view>
 </template>
 
-<script setup></script>
+<script setup>
+const props = defineProps({
+	listData: {
+		type: Array,
+		require: true,
+		defaule: () => []
+	}
+})
+</script>
 
 <style lang="scss" scoped>
 .swiper_wrapper {

@@ -56,6 +56,7 @@ export default function(paramsObj) {
 			// res需要裁剪图片地址列表
 			// ratio 比例
 			// url 服务器上传地址
+			// param上传字段
 			uni.navigateTo({
 				url: `/pages/sub2/cropper/cropper?imgUrls=${res}&ratio=${ratio}&url=${url}&param=${param}`
 			})
@@ -65,9 +66,10 @@ export default function(paramsObj) {
 		const storeCropper = _storeCropper()
 		// 监听裁剪后storeCropper的变化
 		watch(
-			() => storeCropper[param],
+			() => storeCropper.$state,
 			(newValue, oldValue) => {
-
+				console.log(newValue)
+				console.log(oldValue)
 				if (refData.value[param]) {
 					refData.value[param] += ',' + newValue.join(',')
 				} else {
@@ -86,7 +88,7 @@ export default function(paramsObj) {
 
 
 	/*
-	 * 自动上传图片
+	 * 自动上传图片,不需要裁剪
 	 */
 	const uploadimageURL = config.BASE_URL + url
 	// 自动上传成功回调

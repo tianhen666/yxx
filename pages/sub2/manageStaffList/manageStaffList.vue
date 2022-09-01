@@ -66,27 +66,39 @@
 <script setup>
 import { ref } from 'vue'
 import { _debounce } from '@/aTemp/utils/tools.js'
+import { _userList } from '@/aTemp/apis/user.js'
+import { onLoad } from '@dcloudio/uni-app'
+
+// 获取用户列表
+const getUserList = () => {
+	_userList().then(res => {})
+}
+
+onLoad(options => {
+	console.log(options)
+	getUserList()
+})
 // 数据列表
 const listData = ref([
 	{
 		power: [],
 		name: '天痕',
-		remarkName: '徐怀龙'
+		remarkName: '姓名一'
 	},
 	{
 		power: [],
 		name: '天痕',
-		remarkName: '徐怀龙'
+		remarkName: '姓名一'
 	},
 	{
 		power: [],
 		name: '天痕',
-		remarkName: '徐怀龙'
+		remarkName: '姓名一'
 	},
 	{
 		power: [],
 		name: '天痕',
-		remarkName: '徐怀龙'
+		remarkName: '姓名一'
 	}
 ])
 
@@ -200,7 +212,7 @@ const saveClick = _debounce(
 					:deep(.uni-tag) {
 						margin-right: 10rpx;
 					}
-					.text{
+					.text {
 						color: #999;
 						font-size: 26rpx;
 					}

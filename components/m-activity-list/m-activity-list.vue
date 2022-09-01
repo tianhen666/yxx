@@ -1,25 +1,34 @@
 <template>
 	<view class="activity">
-		<view class="activity_item" v-for="(item, index) in props.list" :key="index" @tap="jumpClick(item)">
+		<view
+			class="activity_item"
+			v-for="(item, index) in props.listData"
+			:key="index"
+			@tap="navigateTo(`/pages/sub1/activityInfo/activityInfo?id=${item.id}`)"
+		>
 			<view class="activity_item_img">
-				<image class="image" :src="item.img" mode="aspectFill"></image>
+				<image class="image" :src="item.mainPic" mode="aspectFill"></image>
 				<!-- 活动类型 -->
 				<view class="type">
-					<image class="image" :src="`/static/default/type${index + 1}.png`" mode="aspectFill"></image>
-					<text class="text">{{ item.type }}活动</text>
+					<image class="image" :src="`/static/images/type${index + 1}.png`" mode="aspectFill"></image>
+					<text class="text">
+						{{ item.type === 0 ? '义诊' : item.type === 1 ? '秒杀' : item.type === 2 ? '拼团' : '' }}活动
+					</text>
 				</view>
 			</view>
 
 			<!-- 带有背景区域 -->
 			<view class="a_wrapper">
 				<view class="title">{{ item.title }}</view>
-				<!-- 价格时间 -->
+				<!-- 价格,时间 -->
 				<view class="b_wrapper">
-					<view class="time">{{ item.time }}</view>
-					<view class="price_wrapper">
+					<view class="time">
+						{{ dayjs(item.startDt).format('M月D日') + '——' + dayjs(item.endDt).format('M月D日') }}
+					</view>
+					<view class="price_wrapper" v-if="parseInt(item.price) > 0">
 						<!-- 划线价格 -->
 						<view class="originalPrice">
-							<text class="through">￥{{ item.originalPrice }}</text>
+							<text class="through">￥{{ item.alonePrice }}</text>
 						</view>
 						<!-- 出售价格 -->
 						<view class="price">
@@ -46,8 +55,8 @@
 						<view class="text">已有{{ item.jion }}人参与</view>
 					</view>
 					<view class="jion" :class="`style${index + 1}`">
-						<text>参与{{ item.type }}</text>
-						<image class="image" :src="`/static/default/right${index + 1}.png`" mode="aspectFill"></image>
+						<text>参与{{ item.type === 0 ? '义诊' : item.type === 1 ? '秒杀' : item.type === 2 ? '拼团' : '' }}</text>
+						<image class="image" :src="`/static/images/right${index + 1}.png`" mode="aspectFill"></image>
 					</view>
 				</view>
 			</view>
@@ -56,42 +65,17 @@
 </template>
 
 <script setup>
+import dayjs from 'dayjs'
+import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
 const props = defineProps({
-	list: {
+	listData: {
 		required: true,
 		type: Array,
 		default() {
-			return [
-				{
-					id: 123456,
-					title: '测试标题测试标题测试标题测试标题测试标题测试标题测试',
-					time: '2022.08.18-2022.08.28',
-					img: '/static/default/banner.png',
-					price: 2999,
-					originalPrice: 4999,
-					jion: 99,
-					type: '拼团'
-				},
-				{
-					id: 123456,
-					title: '测试标题测试标题测试标题测试标题测试标题测试标题测试',
-					time: '2022.08.18-2022.08.28',
-					img: '/static/default/banner.png',
-					price: 2999,
-					originalPrice: 4999,
-					jion: 99,
-					type: '拼团'
-				}
-			]
+			return []
 		}
 	}
 })
-
-const jumpClick = item => {
-	uni.navigateTo({
-		url: `/pages-sub1/activityInfo/activityInfo`
-	})
-}
 </script>
 
 <style lang="scss" scoped>
@@ -130,7 +114,7 @@ const jumpClick = item => {
 				color: #fff;
 				padding: 0 0 12rpx 12rpx;
 				text-align: center;
-				>.image{
+				> .image {
 					width: 100%;
 					height: 100%;
 					position: absolute;
@@ -138,7 +122,7 @@ const jumpClick = item => {
 					right: 0;
 					z-index: 1;
 				}
-				>.text{
+				> .text {
 					width: 100%;
 					height: 100%;
 					@include mFlex;
@@ -177,8 +161,7 @@ const jumpClick = item => {
 				}
 
 				.price_wrapper {
-					flex: none;
-					width: 263rpx;
+					flex: auto;
 					overflow: hidden;
 					flex-wrap: wrap;
 					white-space: nowrap;
@@ -276,11 +259,11 @@ const jumpClick = item => {
 						height: 24rpx;
 					}
 				}
-				.style1 {
+				> .style1 {
 					color: #4685fb;
 					background: linear-gradient(to right, transparent, rgba(70, 133, 251, 0.3));
 				}
-				.style2 {
+				> .style2 {
 					color: #fb4646;
 					background: linear-gradient(to right, transparent, rgba(251, 70, 70, 0.3));
 				}

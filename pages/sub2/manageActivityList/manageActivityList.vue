@@ -31,9 +31,7 @@
 				<view class="sales">已参与{{ item.sold || 0 }}</view>
 
 				<view class="btn">
-					<view class="btn_item style2" @tap="enrollformDisable(item, index)" v-if="item.status === 0">
-						下架
-					</view>
+					<view class="btn_item style2" @tap="enrollformDisable(item, index)" v-if="item.status === 0">下架</view>
 					<view
 						v-if="item.status === 1"
 						class="btn_item style1"

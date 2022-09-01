@@ -1,11 +1,20 @@
 // 提示文本弹窗
 export function showToastText(title) {
 	uni.showToast({
-		title, //提示文字
+		title: title || '提示文字', //提示文字
 		icon: 'none', //不显示图标
 		duration: 2000 //持续时间
 	})
 }
+
+// 加载中
+export function showLoading(title) {
+	uni.showLoading({
+		title: title || '加载中'
+	});
+
+}
+
 
 // 选择照片
 export function chooseImage(count) {
@@ -21,7 +30,32 @@ export function chooseImage(count) {
 			})
 			.catch(error => {
 				// showToastText("取消选择图片")
+				reject(error)
 			})
+	})
+}
+
+// 上传文件
+export function uploadFile(tempFilePath, url) {
+	return new Promise((resolve, reject) => {
+		uni.uploadFile({
+			url: url, //仅为示例，非真实的接口地址
+			filePath: tempFilePath,
+			name: 'file',
+		}).then((uploadFileRes) => {
+			const {
+				data,
+				statusCode
+			} = uploadFileRes
+			if (statusCode !== 200) {
+				showToastText("图片上传失败~")
+				reject(data)
+			}
+			resolve(data)
+		}).catch(error => {
+			showToastText("图片上传失败~")
+			reject(error)
+		})
 	})
 }
 
@@ -89,6 +123,13 @@ export function navigateBackRefresh(obj = {}, index = 1) {
 // 跳转到非tabbar页面
 export function navigateTo(path) {
 	uni.navigateTo({
+		url: path
+	})
+}
+
+// 跳转到tabbar页面
+export function switchTab(path) {
+	uni.switchTab({
 		url: path
 	})
 }

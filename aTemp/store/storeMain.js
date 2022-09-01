@@ -6,13 +6,16 @@ import {
 export const _useMainStore = defineStore('main', {
 	state: () => {
 		return {
-			storeId: 1, //店铺ID
+			storeId: '', //店铺ID
 			openId: '', //openId
 			unionId: '', //unionId
-			token: '' //token秘钥
+			token: '', //token秘钥
+			mobile: '' // 手机号
 		}
 	},
 	getters: {
-		isLogin: (state) => state.token ? true : false,
+		// 是否进行code授权
+		isToken: (state) => state.token ? true : false,
+		isLogin: (state) => state.mobile ? true : false,
 	},
 })

@@ -12,12 +12,9 @@ export default {
 	// 白名单，不需要登录的页面路径
 	whiteList: [
 		'/',
-		'/pages/index/index',
-		'/pages/me/index',
-		'/pages/login/login',
-		'/pages/login/reg',
-		'/pages/login/forget',
-		'/pages/login/agreement',
+		'/pages/main/index/index',
+		'/pages/main/login/login',
+		'/pages/main/login/agreement',
 		{
 			'pattern': RegExp(/register/)
 		}
@@ -31,10 +28,10 @@ export default {
 	// ],
 
 	// setStorageSync 设置本地存储的用户登录标识
-	userInfo: 'userInfo',
+	userInfo: 'isLogin',
 
 	// 登录页面地址，用于未登录时跳转
-	loginPath: '/pages/login/login',
+	loginPath: '/pages/main/login/login',
 
 	// 点击跳转到需要登录的页面时，未登录状态下是否跳转到登录页面，true | false
 	toLogin: true

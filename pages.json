@@ -35,6 +35,13 @@
 			"enablePullDownRefresh": false,
 			"navigationStyle": "custom"
 		}
+	}, {
+		"path": "pages/main/login/login",
+		"style": {
+			"navigationBarTitleText": "",
+			"enablePullDownRefresh": false
+		}
+
 	}],
 
 	// 子包 
@@ -133,6 +140,12 @@
 					"navigationBarTitleText": "会员中心",
 					"enablePullDownRefresh": false,
 					"navigationStyle": "custom"
+				}
+			}, {
+				"path": "serveList/serveList",
+				"style": {
+					"navigationBarTitleText": "服务列表",
+					"enablePullDownRefresh": false
 				}
 			}]
 		},
@@ -272,25 +285,38 @@
 					"navigationBarTitleText": "全部订单",
 					"enablePullDownRefresh": false
 				}
-
 			}, {
 				"path": "orderDetails/orderDetails",
 				"style": {
 					"navigationBarTitleText": "订单详情",
 					"enablePullDownRefresh": false
 				}
-
 			}, {
 				"path": "manageStaffList/manageStaffList",
 				"style": {
 					"navigationBarTitleText": "员工管理",
 					"enablePullDownRefresh": false
 				}
-
 			}, {
 				"path": "switchStore/switchStore",
 				"style": {
 					"navigationBarTitleText": "切换门店",
+					"enablePullDownRefresh": false
+				}
+			}]
+		},
+		{
+			"root": "pages/sub3",
+			"pages": [{
+				"path": "posterList/posterList",
+				"style": {
+					"navigationBarTitleText": "海报列表",
+					"enablePullDownRefresh": false
+				}
+			}, {
+				"path": "posterInfo/posterInfo",
+				"style": {
+					"navigationBarTitleText": "海报详情",
 					"enablePullDownRefresh": false
 				}
 
@@ -309,7 +335,7 @@
 			// #endif
 		},
 		"h5": {
-			"navigationStyle":"custom",
+			"navigationStyle": "custom"
 		}
 	},
 	"tabBar": {

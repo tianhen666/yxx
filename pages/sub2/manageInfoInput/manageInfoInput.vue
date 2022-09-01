@@ -79,7 +79,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
-import { _storeSave, _storeGetinfo } from '@/aTemp/apis/index'
+import { _storeSave, _storeGetinfo } from '@/aTemp/apis/store.js'
 
 // 表单数据
 const formData = ref({

@@ -1,7 +1,7 @@
 <template>
 	<view class="container">
 		<!-- 轮播图片 -->
-		<m-carousel-goods></m-carousel-goods>
+		<m-carousel-goods :listData="dataObj.pics"></m-carousel-goods>
 
 		<!-- 标题 -->
 		<view class="title">{{ dataObj.title }}</view>
@@ -41,11 +41,11 @@
 		<view class="blank20"></view> -->
 
 		<!-- 商品详情 -->
-		<view class="goods_img">
+		<view class="goods_img" @tap="previewImage(dataObj.detail)">
 			<m-title1 title="商品详情"></m-title1>
-			<image v-for="(item, index) in dataObj.detail" :key="index" class="image" :src="item" mode="widthFix"></image>
+			<image v-for="(item, index) in dataObj.detail"  :key="index" class="image" :src="item" mode="widthFix"></image>
 		</view>
-		
+
 		<!-- 底部按钮 -->
 		<m-shop-btn-bottom @clickBuy="navigateTo(`/pages/sub1/confirmOrder/confirmOrder?id=${dataId}`)"></m-shop-btn-bottom>
 	</view>
@@ -55,7 +55,7 @@
 import { ref } from 'vue'
 import { _storeproductGetinfo } from '@/aTemp/apis/shop.js'
 import { onLoad, onShow } from '@dcloudio/uni-app'
-import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
+import { navigateTo,previewImage } from '@/aTemp/utils/uniAppTools.js'
 
 // 数据ID
 const dataId = ref(0)

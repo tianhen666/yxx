@@ -2,8 +2,6 @@ import {
 	defineConfig
 } from "vite";
 import uni from "@dcloudio/vite-plugin-uni";
-// 全局基础配置
-import config from './global-config.js'
 
 export default defineConfig({
 	build: {
@@ -13,7 +11,7 @@ export default defineConfig({
 		port: '8000',
 		proxy: {
 			'^/api': {
-				target: config.BASE_URL,
+				target: 'http://192.168.5.116:8089',
 				changeOrigin: true,
 			}
 		}

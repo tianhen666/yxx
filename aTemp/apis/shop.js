@@ -53,11 +53,3 @@ export function _storeproductDelete(data) {
 		data
 	})
 }
-
-// 支付
-export function _wxpayPayment(data) {
-	return http.post({
-		url: '/wxpay/payment',
-		data
-	})
-}

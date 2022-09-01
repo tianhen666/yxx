@@ -63,7 +63,10 @@ const crop = () => {
 					if (imageSrcs.value.length > resImageSrcs.value.length) {
 						imageSrcIndex.value++
 					} else {
-						storeCropper[param.value] = [...resImageSrcs.value]
+						// 全局添加完成后的图片
+						storeCropper.$patch(state => {
+							state[param.value] = [...resImageSrcs.value]
+						})
 						navigateBack()
 					}
 				}

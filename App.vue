@@ -3,51 +3,83 @@ import { _wxLogin } from '@/aTemp/apis/login.js'
 import { onLaunch } from '@dcloudio/uni-app'
 import { init } from '@/aTemp/index.js'
 import router from '@/aTemp/router/index.js'
-import { _useMainStore } from '@/aTemp/store/storeMain.js'
+import { showToastText } from '@/aTemp/utils/uniAppTools.js'
 
-// 全局信息变量
+// 全局登录信息
+import { _useMainStore } from '@/aTemp/store/storeMain.js'
 const useMainStore = _useMainStore()
 
-// 每当它发生变化时，将整个状态持久化到本地存储
+// 监听每当mainStore发生变化时，将整个状态持久化到本地存储
 useMainStore.$subscribe(
 	(mutation, state) => {
-		uni.setStorageSync('loginStore', state)
+		// console.log(mutation, state)
+		// 登录信息
+		uni.setStorageSync('mainStore', state)
+		uni.setStorageSync('isLogin', useMainStore.isLogin)
 	},
 	{ detached: true }
 )
 
-// 获取静态存储loginStore
-const old = uni.getStorageSync('loginStore')
+// 获取静态存储mainStore
+const old = uni.getStorageSync('mainStore')
 if (old) {
-	useMainStore.$state = old
+	useMainStore.$patch({ ...old })
 }
 
-onLaunch(options => {
+// 小程序启动
+onLaunch(async options => {
+	// console.log(options)
 	init(options) // 初始化,检查是否更新
-	// router(options) // 路由拦截
+	router(options) // 路由拦截
 
-	console.log()
+	/*
+	 * invitationCode 邀请人code
+	 * storeId 店铺ID
+	 * scene 0直接邀请 1活动 2商品 3服务 4海报 5其他
+	 * targetId 场景来源ID
+	 * 获取启动参数并设置店铺ID,邀请人code 并且缓存
+	 */
+	const { query } = options
+	const { invitationCode, storeId, scene, targetId } = query
+	console.log(query)
+	if (storeId) {
+		useMainStore.$patch({ storeId: storeId })
+	}
+	if (invitationCode) {
+		useMainStore.$patch({ invitationCode: invitationCode })
+	}
+
+	// 如果缓存中还是没有店铺ID,设置一个店铺ID
+	const mainStore = uni.getStorageSync('mainStore')
+	const storageStoreId = mainStore.storeId
+	if (!storageStoreId) {
+		useMainStore.$patch({ storeId: 1 })
+	}
+
+	// if (!query.invitationCode) {
+	// 	showToastText('获取邀请人失败')
+	// }
+
 	// 微信授权登录
-	if (!useMainStore.isLogin) {
-		uni.login().then(val => {
-			_wxLogin({
-				code: val.code
-			})
-				.then(res => {
-					const { code, data, msg } = res
-					const { storeid, openid, unionid, token } = data
-					console.log(storeid)
-					// 获取到数据后赋值给全局变量
-					useMainStore.$patch({
-						storeId: storeid,
-						openId: openid,
-						unionId: unionid,
-						token: token
-					})
-				})
-				.catch(err => {
-					console.log(err)
-				})
+	if (!useMainStore.isToken) {
+		const wxCode = await uni.login()
+		
+		// 登录获取
+		const resData = await _wxLogin({
+			code: wxCode.code,
+			invitationCode,
+			scene,
+			targetId
+		})
+
+		const { code, data, msg } = resData
+		const { openid, unionid, token, mobile } = data
+		// 获取到数据后赋值给全局变量
+		useMainStore.$patch({
+			openId: openid,
+			unionId: unionid,
+			token: token,
+			mobile: mobile
 		})
 	}
 })

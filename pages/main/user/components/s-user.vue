@@ -127,8 +127,8 @@ const module4 = {
 		},
 		{
 			imgUrl: '/static/default/menzhen.png',
-			name: '精美海报',
-			path: '/pages/sub2/manageActivityList/manageActivityList'
+			name: '宣发海报',
+			path: '/pages/sub3/posterList/posterList'
 		},
 		{
 			imgUrl: '/static/default/huodong.png',

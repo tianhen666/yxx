@@ -109,7 +109,7 @@ const { saveClick, loading } = useSaveApi(formObj, formData, _bannerSave)
  */
 import useHtzImageUpload from '@/aTemp/mixins/useHtzImageUpload.js'
 
-// 商品图片上传
+// 图片上传
 const { chooseSuccess: chooseSuccess1, picList: picList1, selectNum: selectNum1 } = useHtzImageUpload({
 	ratio: 2 / 1,
 	url: '/serve/uploadimage',

@@ -2,41 +2,29 @@
 	<view class="container">
 		<view class="serve_list">
 			<!-- 列表 -->
-			<view class="serve_list_item" v-for="(item, index) in list" :key="index" :class="'bg' + (1 + index)">
+			<view
+				class="serve_list_item"
+				v-for="(item, index) in props.listData"
+				:key="index"
+				:class="'bg' + (1 + index)"
+				@tap="navigateTo(`/pages/sub1/serveInfo/serveInfo?id=${item.id}`)"
+			>
 				<view class="title">{{ item.title }}</view>
-				<view class="peculiarity">{{ item.peculiarity }}</view>
+				<view class="peculiarity">{{ item.peculiarity || '门诊首推' }}</view>
 			</view>
 		</view>
 	</view>
 </template>
 
 <script setup>
-const list = [
-	{
-		title: '烤瓷牙',
-		peculiarity: '门诊精选',
-		img: '/static/default/banner.png',
-		views: '1000'
-	},
-	{
-		title: '牙齿种植',
-		peculiarity: '技术过硬',
-		img: '/static/default/banner.png',
-		views: '1000'
-	},
-	{
-		title: '牙齿美白',
-		peculiarity: '门诊首推',
-		img: '/static/default/banner.png',
-		views: '1000'
-	},
-	{
-		title: '牙齿贴面',
-		peculiarity: '最受欢迎',
-		img: '/static/default/banner.png',
-		views: '1000'
+import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
+const props = defineProps({
+	listData: {
+		required: true,
+		type: Array,
+		default: () => []
 	}
-]
+})
 </script>
 
 <style lang="scss" scoped>
@@ -62,10 +50,11 @@ const list = [
 			}
 			.title {
 				font-size: 28rpx;
-				font-weight: 600;
+				font-weight: 500;
 				line-height: 28rpx;
+				@include singleLineTextOverHidden;
 			}
-			.peculiarity{
+			.peculiarity {
 				font-size: 24rpx;
 				font-weight: 400;
 				line-height: 24rpx;
@@ -74,33 +63,33 @@ const list = [
 		}
 		.bg1 {
 			color: #4b8eff;
-			background: url('@/static/default/fw1.png') no-repeat;
+			background: url('@/static/images/fw1.png') no-repeat;
 			background-size: cover;
-			.peculiarity{
+			.peculiarity {
 				color: #4b8eff88;
 			}
 		}
 		.bg2 {
 			color: #34c251;
-			background: url('@/static/default/fw2.png') no-repeat;
+			background: url('@/static/images/fw2.png') no-repeat;
 			background-size: cover;
-			.peculiarity{
+			.peculiarity {
 				color: #34c25188;
 			}
 		}
 		.bg3 {
 			color: #ff6464;
-			background: url('@/static/default/fw3.png') no-repeat;
+			background: url('@/static/images/fw3.png') no-repeat;
 			background-size: cover;
-			.peculiarity{
+			.peculiarity {
 				color: #ff646488;
 			}
 		}
 		.bg4 {
 			color: #ff8e47;
-			background: url('@/static/default/fw4.png') no-repeat;
+			background: url('@/static/images/fw4.png') no-repeat;
 			background-size: cover;
-			.peculiarity{
+			.peculiarity {
 				color: #ff8e4788;
 			}
 		}

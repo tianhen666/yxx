@@ -2,16 +2,16 @@
 	<view class="info_wrapper">
 		<!-- 详情信息 -->
 		<view class="box1">
-			<image class="logo" src="/static/default/banner.png" mode="aspectFill"></image>
+			<image class="logo" :src="props.info.icon" mode="aspectFill"></image>
 			<view class="text_wrapper">
 				<view class="name">{{ props.info.name }}</view>
-				<view class="address">
-					牙小新口腔门诊牙小新口腔门诊牙小新口腔门诊牙小新口腔门诊牙小新口腔门诊牙小新口腔门诊牙小新口腔门诊牙小新口腔门诊
-				</view>
+				<view class="address">{{ props.info.descData }}</view>
 
 				<!-- 营业时间 -->
 				<view class="text_warpper_box1">
-					<view class="work_time">营业时间：09:00-18:00</view>
+					<view class="work_time" v-if="props.info.businessDt">
+						营业时间：{{ props.info.businessDt.split(',')[0] + '-' + props.info.businessDt.split(',')[1] }}
+					</view>
 					<view class="distance">
 						<uni-icons color="#929292" type="location" size="28rpx" />
 						<text>距离6.8km</text>
@@ -23,17 +23,17 @@
 		<!-- 按钮... -->
 		<view class="box2">
 			<view class="icon-wrapper">
-				<image class="icon" src="@/static/default/daohang.png" mode="aspectFill"></image>
+				<image class="icon" src="/static/images/daohang.png" mode="aspectFill"></image>
 				<image
-					@tap="makePhoneCall(props.info.phoneNumber)"
+					@tap="makePhoneCall(props.info.mobile)"
 					class="icon"
-					src="@/static/default/dianhua.png"
+					src="/static/images/dianhua.png"
 					mode="aspectFill"
 				></image>
 			</view>
 			<!-- 预约服务 -->
-			<view class="addWx" @tap="previewImage([props.info.url])">
-				<image class="image" src="/static/default/shijian.png" mode="aspectFill"></image>
+			<view class="addWx" @tap="previewImage([props.info.customer])">
+				<image class="image" src="/static/images/shijian.png" mode="aspectFill"></image>
 				<text>预约服务</text>
 			</view>
 		</view>
@@ -46,13 +46,7 @@ const props = defineProps({
 	info: {
 		required: true,
 		type: Object,
-		default() {
-			return {
-				name: '陈景康口腔',
-				url: '/static/default/banner.png',
-				phone: '1773022541'
-			}
-		}
+		default: () => {}
 	}
 })
 </script>

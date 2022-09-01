@@ -55,7 +55,7 @@ const getListData = data => {
 
 // 页面加载
 onLoad(option => {
-	// 拉取商品列表
+	// 拉取列表数据
 	getListData()
 })
 

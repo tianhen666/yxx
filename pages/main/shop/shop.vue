@@ -11,7 +11,7 @@
 </template>
 
 <script setup>
-import mThreeColumns from './components/m-three-columns/m-three-columns.vue'
+// import mThreeColumns from './components/m-three-columns/m-three-columns.vue'
 import { _storeproductGetlist } from '@/aTemp/apis/shop.js'
 import { onLoad, onShow } from '@dcloudio/uni-app'
 import { ref } from 'vue'

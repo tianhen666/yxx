@@ -1,24 +1,24 @@
 <template>
 	<view class="box_fuwu">
-		<view class="box_fuwu_left">
-			<image class="image" src="/static/default/fuwu1.png" mode="aspectFill"></image>
+		<view class="box_fuwu_left" @tap="previewImage([props.info.customer])">
+			<image class="image" src="/static/images/fuwu1.png" mode="aspectFill"></image>
 			<view class="title">预约服务</view>
 			<view class="sub_title">关爱牙齿 从我做起</view>
 		</view>
 		<view class="box_fuwu_right">
-			<view class="box_fuwu_right_item1">
-				<image class="image" src="/static/default/fuwu2.png" mode="aspectFill"></image>
+			<view class="box_fuwu_right_item1" @tap="navigateTo(`/pages/sub1/serveList/serveList`)">
+				<image class="image" src="/static/images/fuwu2.png" mode="aspectFill"></image>
 				<view class="title">爱牙护牙</view>
 				<view class="sub_title">牙齿管理专家</view>
 			</view>
 			<view class="box_fuwu_right_item2">
-				<view class="box_fuwu_right_item2_left">
-					<image class="image" src="/static/default/fuwu3.png" mode="aspectFill"></image>
+				<view class="box_fuwu_right_item2_left" @tap="switchTab('/pages/main/case/case?current=1')">
+					<image class="image" src="/static/images/fuwu3.png" mode="aspectFill"></image>
 					<view class="title" style="color:#D56464;">口腔知识</view>
 					<view class="sub_title" style="color:#D5646488;">关爱口腔健康</view>
 				</view>
-				<view class="box_fuwu_right_item2_right">
-					<image class="image" src="/static/default/fuwu4.png" mode="aspectFill"></image>
+				<view class="box_fuwu_right_item2_right" @tap="switchTab('/pages/main/case/case?current=0')">
+					<image class="image" src="/static/images/fuwu4.png" mode="aspectFill"></image>
 					<view class="title" style="color:#CB9B57;">门诊案例</view>
 					<view class="sub_title" style="color:#CB9B5788;">真实案例</view>
 				</view>
@@ -27,7 +27,16 @@
 	</view>
 </template>
 
-<script setup></script>
+<script setup>
+import { previewImage, switchTab, navigateTo } from '@/aTemp/utils/uniAppTools.js'
+const props = defineProps({
+	info: {
+		required: true,
+		type: Object,
+		default: () => {}
+	}
+})
+</script>
 
 <style lang="scss" scoped>
 .box_fuwu {

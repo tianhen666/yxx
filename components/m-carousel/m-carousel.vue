@@ -12,8 +12,8 @@
 			}"
 		>
 			<swiper class="swiper" autoplay circular interval="5000" @change="change">
-				<swiper-item v-for="(item, index) in listData" :key="index">
-					<image class="image" :src="item.url" mode="aspectFill" @tap="bannerTap(item)"></image>
+				<swiper-item v-for="(item, index) in props.listData" :key="index" @tap="bannerTap(item)">
+					<image class="image" :src="item.banner" mode="aspectFill"></image>
 				</swiper-item>
 			</swiper>
 		</uni-swiper-dot>
@@ -23,28 +23,29 @@
 <script setup>
 import { ref } from 'vue'
 import { showToastText } from '@/aTemp/utils/uniAppTools.js'
+// 数据列表
+const props = defineProps({
+	listData: {
+		type: Array,
+		required: true,
+		default: () => []
+	}
+})
+
+// 当前索引
+const current = ref(0)
+
+// 点击事件
 const bannerTap = item => {
 	showToastText('点击了banner')
 	console.log(item)
 }
+
+// 改变索引事件
 const change = e => {
 	current.value = e.detail.current
 }
-const listData = ref([
-	{
-		url: '/static/default/banner.jpg',
-		pId: '1'
-	},
-	{
-		url: '/static/default/banner.jpg',
-		pId: '1'
-	},
-	{
-		url: '/static/default/banner.jpg',
-		pId: '1'
-	}
-])
-const current = ref(0)
+
 </script>
 
 <style lang="scss" scoped>

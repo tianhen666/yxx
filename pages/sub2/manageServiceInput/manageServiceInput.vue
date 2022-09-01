@@ -2,7 +2,7 @@
 	<view class="container">
 		<view class="blank32 blank_bg_color"></view>
 		<uni-forms :rules="rules" ref="formObj" v-model="formData" label-position="left" label-width="220rpx">
-			<!-- 服务封面图 -->
+			<!-- 服务banner图 -->
 			<uni-forms-item :label="rules.pic.label" label-position="top" name="pic">
 				<htz-image-upload :max="selectNum1" v-model="picList1" mediaType="image" @chooseSuccess="chooseSuccess1" />
 			</uni-forms-item>
@@ -115,8 +115,8 @@ onLoad(optios => {
 // 表单校验
 const rules = {
 	pic: {
-		rules: [{ required: true, errorMessage: '请上传服务封面图' }],
-		label: '服务封面图'
+		rules: [{ required: true, errorMessage: '请上传服务banner图' }],
+		label: '服务banner图'
 	},
 	title: {
 		rules: [{ required: true, errorMessage: '请输入服务名称' }],

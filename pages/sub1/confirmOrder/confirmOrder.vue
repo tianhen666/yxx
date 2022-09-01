@@ -72,9 +72,10 @@
 
 <script setup>
 import { ref } from 'vue'
-import { _storeproductGetinfo, _wxpayPayment } from '@/aTemp/apis/shop.js'
+import { _storeproductGetinfo } from '@/aTemp/apis/shop.js'
+import {_wxpayPayment} from '@/aTemp/apis/store.js'
 import { onLoad, onShow } from '@dcloudio/uni-app'
-import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
+import { navigateTo,showToastText } from '@/aTemp/utils/uniAppTools.js'
 import { _debounce } from '@/aTemp/utils/tools.js'
 // 骨架屏
 import lsSkeleton from '@/components/ls-skeleton/ls-skeleton.nvue'
@@ -110,15 +111,24 @@ const confirm = _debounce(
 			.then(res => {
 				btnLoading.value = false
 				const { data, code, msg } = res
-				// 修改后端返回的数据
-				data.package = 'prepay_id=' + data.prepay_id
+				const resDataObj = JSON.parse(data)
+				const payInfo = JSON.parse(resDataObj.pay_info)
+				console.log(payInfo)
+				
+				// 唤醒支付
 				uni
-					.requestPayment(data)
+					.requestPayment({
+						timeStamp:payInfo.timeStamp,
+						nonceStr:payInfo.nonceStr,
+						package:payInfo.package,
+						signType:payInfo.signType,
+						paySign:payInfo.sign
+					})
 					.then(val => {
-						console.log(val)
+						showToastText("支付成功~")
 					})
 					.catch(err => {
-						console.log(err)
+						showToastText("取消支付~")
 					})
 			})
 			.catch(err => {
