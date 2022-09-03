@@ -3,12 +3,10 @@
 		<view class="title">欢迎登录</view>
 		<!-- 协议 -->
 		<view class="box1">
-			<view class="box1_item1" :class="{ agree: isAgree }" @tap="isAgree = !isAgree">
-				<uni-icons type="checkmarkempty" size="10" color="#fff" v-if="isAgree"></uni-icons>
-			</view>
+			<radio class="myradio" :checked="isAgree" @tap="isAgree = !isAgree" />
 			<view class="box1_item2">
 				<text @tap="isAgree = !isAgree">我已阅读并同意</text>
-				<text class="text1">《用户隐私协议》</text>
+				<text class="text1" @tap="navigateTo('/pages/main/agree/agree')">《用户隐私协议》</text>
 			</view>
 		</view>
 
@@ -23,29 +21,47 @@
 
 <script setup>
 import { _wxMobile } from '@/aTemp/apis/login.js'
-import { showToastText } from '@/aTemp/utils/uniAppTools.js'
+import { showToastText, redirectTo, showLoading, navigateTo } from '@/aTemp/utils/uniAppTools.js'
 import { ref } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
 // 全局登录信息
 import { _useMainStore } from '@/aTemp/store/storeMain.js'
 const useMainStore = _useMainStore()
 
 // 是否同意协议
-const isAgree = ref(false)
+const isAgree = ref(true)
+
+// 回跳页面
+const jumpPage = ref('')
+
+const loading = ref(false)
+
+onLoad(options => {
+	const { path } = options
+	if (path) {
+		jumpPage.value = decodeURIComponent(path)
+	} else {
+		jumpPage.value = '/pages/main/index/index'
+	}
+})
 
 // 获取手机号事件
 const getphonenumber = val => {
-	// console.log(val)
+	// 加载中
+	showLoading()
+	// 获取code
+	const { code } = val.detail
 
-	const { detail } = val
-	const { code } = detail
 	if (code) {
 		_wxMobile({ code: code }).then(res => {
-			// console.log(res)
-
 			const { msg, data, code } = res
 			if (data) {
 				useMainStore.$patch({ mobile: data })
 			}
+			setTimeout(() => {
+				uni.hideLoading()
+				redirectTo(jumpPage.value)
+			}, 500)
 		})
 	} else {
 		showToastText('已拒绝授权登录')
@@ -65,20 +81,11 @@ const getphonenumber = val => {
 		@include mFlex;
 		justify-content: flex-start;
 		font-size: 26rpx;
-		&_item1 {
-			flex: none;
-			@include mFlex;
-			border-radius: 50%;
-			border: 2rpx solid $text-color-grey;
-			width: 26rpx;
-			height: 26rpx;
-			margin-right: 10rpx;
-		}
-		.agree {
-			background-color: $main-color;
-			border: 2rpx solid $main-color;
+		.myradio {
+			transform: scale(0.6);
 		}
 		&_item2 {
+			padding-left: 4rpx;
 			.text1 {
 				color: $main-color;
 			}

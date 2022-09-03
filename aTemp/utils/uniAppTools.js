@@ -15,7 +15,6 @@ export function showLoading(title) {
 
 }
 
-
 // 选择照片
 export function chooseImage(count) {
 	return new Promise((resolve, reject) => {
@@ -123,14 +122,30 @@ export function navigateBackRefresh(obj = {}, index = 1) {
 // 跳转到非tabbar页面
 export function navigateTo(path) {
 	uni.navigateTo({
-		url: path
+		url: path,
+		fail: (err) => {
+			uni.reLaunch(path)
+		}
 	})
 }
 
 // 跳转到tabbar页面
 export function switchTab(path) {
 	uni.switchTab({
-		url: path
+		url: path,
+		fail: (err) => {
+			uni.reLaunch(path)
+		}
+	})
+}
+
+//  关闭当前页面跳转
+export function redirectTo(path) {
+	uni.redirectTo({
+		url: path,
+		fail: (err) => {
+			uni.reLaunch(path)
+		}
 	})
 }
 

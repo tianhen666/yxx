@@ -3,12 +3,24 @@
 		<view class="fix">
 			<!-- 功能一 -->
 			<view class="button-container">
-				<view class="item">
-					<view class="icon"><uni-icons type="undo-filled" :color="icon.color" :size="icon.size"></uni-icons></view>
+				<view class="item" @tap.prevent.stop="revoke">
+					<view class="icon">
+						<uni-icons
+							type="undo-filled"
+							:color="posterDataListIndex > 0 ? icon.color : '#ffffff55'"
+							:size="icon.size"
+						></uni-icons>
+					</view>
 					<text>撤销</text>
 				</view>
-				<view class="item">
-					<view class="icon"><uni-icons type="redo-filled" :color="icon.color" :size="icon.size"></uni-icons></view>
+				<view class="item" @tap.prevent.stop="recovery">
+					<view class="icon">
+						<uni-icons
+							type="redo-filled"
+							:color="posterDataListIndex < posterDataList.length - 1 ? icon.color : '#ffffff55'"
+							:size="icon.size"
+						></uni-icons>
+					</view>
 					<text>重做</text>
 				</view>
 				<view class="item">
@@ -61,7 +73,7 @@
 </template>
 
 <script setup>
-import { readonly, provide, inject, ref, watch, computed } from 'vue'
+import { readonly, provide, inject, ref, watch, computed, toRaw } from 'vue'
 import { showLoading, showToastText } from '@/aTemp/utils/uniAppTools.js'
 // 图标样式
 const icon = readonly({
@@ -88,12 +100,48 @@ const savePosterImg = () => {
 	refresh.value = Date.now()
 }
 
+/*
+ * 撤销重做功能
+ *
+ */
+// 海报数据变化记录列表
+let posterDataList = inject('posterDataList')
+let posterDataListIndex = inject('posterDataListIndex')
+let pushStatus = inject('pushStatus')
+
+const revoke = () => {
+	movableViewIndex.value = ''
+	movableViewObj.value = {}
+	if (posterDataListIndex.value > 0) {
+		pushStatus.value = false
+		const oldVal = posterDataList.value[posterDataListIndex.value - 1]
+		posterDataListIndex.value--
+		posterData.views.splice(0, posterData.views.length, ...oldVal)
+	}
+	// console.log(posterDataList.value)
+}
+const recovery = () => {
+	movableViewIndex.value = ''
+	movableViewObj.value = {}
+	if (posterDataListIndex.value < posterDataList.value.length - 1) {
+		pushStatus.value = false
+		posterDataListIndex.value++
+		const newVal = posterDataList.value[posterDataListIndex.value]
+		posterData.views.splice(0, posterData.views.length, ...newVal)
+	}
+}
+
 // 添加一个元素
 const typeAddPopup = inject('typeAddPopup')
 const handleAdd = () => {
-	typeAddPopup.value.open()
+	// 重新开始记录
+	posterDataList.value = JSON.parse(JSON.stringify(posterDataList.value.slice(0, posterDataListIndex.value + 1)))
+	pushStatus.value = true
+	
+	// 重置选中的对象
 	movableViewIndex.value = ''
 	movableViewObj.value = {}
+	typeAddPopup.value.open()
 }
 
 // 编辑一个元素

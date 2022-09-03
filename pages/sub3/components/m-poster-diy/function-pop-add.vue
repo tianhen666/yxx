@@ -28,7 +28,7 @@
 
 <script setup>
 import { ref, inject } from 'vue'
-import { chooseImage, uploadFile, showToastText } from '@/aTemp/utils/uniAppTools.js'
+import { chooseImage, uploadFile, showToastText, getImageInfo } from '@/aTemp/utils/uniAppTools.js'
 // 全局基础配置
 import config from '@/global-config.js'
 
@@ -37,10 +37,14 @@ const typeAddPopup = inject('typeAddPopup')
 
 // 接收海报数据
 const posterData = inject('posterData')
+// 接收选中对象(初始值)
+const movableViewObj = inject('movableViewObj')
+// 当前选中的索引
+const movableViewIndex = inject('movableViewIndex')
 
 // 添加文字
 const addFont = () => {
-	posterData.views.push({
+	const newViewObj = {
 		id: Date.now(),
 		type: 'text',
 		text: '新增文字',
@@ -50,26 +54,48 @@ const addFont = () => {
 			fontSize: '14px',
 			width: '60px'
 		}
-	})
+	}
+
+	posterData.views.push(newViewObj)
+
+	// 选中这个元素
+	movableViewObj.value = newViewObj
+	movableViewIndex.value = posterData.views.length - 1
+	// console.log(movableViewObj.value)
+	// console.log(movableViewIndex.value)
+
 	typeAddPopup.value.close()
 }
 
 // 添加图片
 const addImg = async () => {
 	const imgList = await chooseImage(1)
-	const resUploadFile = await uploadFile(imgList[0], config.BASE_URL + '/poster/uploadimage')
+
+	const getImgInfo = await getImageInfo(imgList[0])
+	const { height: imgHeight, width: imgWidth, path: imgPath } = getImgInfo
+
+	const resUploadFile = await uploadFile(imgPath, config.BASE_URL + '/poster/uploadimage')
 	const { code, data, msg } = JSON.parse(resUploadFile)
-	posterData.views.push({
+
+	const newViewObj = {
 		id: Date.now(),
 		type: 'image',
 		url: data,
 		css: {
-			top: '48px',
-			left: '48px',
-			width: '192px',
-			height: '192px'
+			top: '50px',
+			left: '50px',
+			width: '100px',
+			height: imgHeight / (imgWidth / 100) + 'px'
 		}
-	})
+	}
+	posterData.views.push(newViewObj)
+
+	// 选中这个元素
+	movableViewObj.value = newViewObj
+	movableViewIndex.value = posterData.views.length - 1
+	// console.log(movableViewObj.value)
+	// console.log(movableViewIndex.value)
+
 	typeAddPopup.value.close()
 }
 

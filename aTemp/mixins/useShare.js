@@ -31,6 +31,7 @@ export default function(shareInfo) {
 	/* 分享到朋友圈 */
 	onShareTimeline(() => {
 		// console.log("分享到朋友圈")
+		// console.log(shareInfo.query)
 		return {
 			query: shareInfo.query,
 			title: shareInfo.title,

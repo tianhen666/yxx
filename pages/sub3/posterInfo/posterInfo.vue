@@ -2,6 +2,7 @@
 	<w-painter
 		:palette="posterData"
 		@imgOK="createImgOk"
+		@imgErr="imgErr"
 		:use2D="true"
 		:dirty="false"
 		:LRU="false"
@@ -14,12 +15,11 @@
 <script setup>
 import { reactive, ref, provide } from 'vue'
 import mPosterDiy from '@/pages/sub3/components/m-poster-diy/m-poster-diy.vue'
-import { showLoading, saveImageToPhotosAlbum, previewImage } from '@/aTemp/utils/uniAppTools.js'
+import { showLoading, saveImageToPhotosAlbum, previewImage, showToastText } from '@/aTemp/utils/uniAppTools.js'
 // 解决使用原生微信小程序组件,传入object不能及时更新问题
 const refresh = ref('')
 // 向下传递
 provide('refresh', refresh)
-
 
 // 海报数据
 const posterData = reactive({
@@ -54,7 +54,7 @@ const posterData = reactive({
 		{
 			id: '33333333333333',
 			type: 'image',
-			url: 'https://imgs.ledianduo.com/tooth/activity/0e5d2c8c-5a95-4daf-817e-feb6686e2e4b.jpg',
+			url: 'https://imgs.fenxiangzl.com/tooth/activity/0e5d2c8c-5a95-4daf-817e-feb6686e2e4b.jpg',
 			css: {
 				top: '48px',
 				left: '48px',
@@ -83,6 +83,10 @@ const createImgOk = e => {
 		})
 	}
 	console.log(e.detail.path)
+}
+const imgErr = e => {
+	showToastText('海报加载失败~')
+	uni.hideLoading()
 }
 </script>
 <style scoped>

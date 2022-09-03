@@ -124,3 +124,10 @@ textarea {
 		}
 	}
 }
+
+radio.myradio[checked] .wx-radio-input,
+radio.myradio.checked .uni-radio-input {
+	background-color: #4b8eff !important;
+	border-color: #4b8eff !important;
+	color: #ffffff !important;
+}

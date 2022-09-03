@@ -38,7 +38,14 @@
 	}, {
 		"path": "pages/main/login/login",
 		"style": {
-			"navigationBarTitleText": "",
+			"navigationBarTitleText": "用户授权登录",
+			"enablePullDownRefresh": false
+		}
+
+	}, {
+		"path": "pages/main/agree/agree",
+		"style": {
+			"navigationBarTitleText": "协议",
 			"enablePullDownRefresh": false
 		}
 
@@ -317,7 +324,12 @@
 				"path": "posterInfo/posterInfo",
 				"style": {
 					"navigationBarTitleText": "海报详情",
-					"enablePullDownRefresh": false
+					"enablePullDownRefresh": false,
+					"usingComponents": {
+						// #ifdef APP-PLUS || H5 || MP-WEIXIN || MP-QQ
+						"w-painter": "/wxcomponents/painter/painter"
+						// #endif
+					}
 				}
 
 			}]
@@ -328,12 +340,6 @@
 		"navigationBarTitleText": "",
 		"navigationBarBackgroundColor": "#ffffff",
 		"backgroundColor": "#f9f9f9",
-		"usingComponents": {
-			// #ifdef APP-PLUS || H5 || MP-WEIXIN || MP-QQ
-			"w-painter": "/wxcomponents/painter/painter",
-			"test": "/wxcomponents/test/test"
-			// #endif
-		},
 		"h5": {
 			"navigationStyle": "custom"
 		}

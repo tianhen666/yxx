@@ -101,11 +101,14 @@ const getData = () => {
 					useMainStore.storeId
 				}&scene=0&targetId=0`
 		)
+		shareInfo.query = computed(
+			() => `invitationCode=${useMainStore.openId}&storeId=${useMainStore.storeId}&scene=0&targetId=0`
+		)
 	})
 }
 
 onLoad(options => {
-	// console.log(options)
+	console.log(options)
 	getData()
 })
 </script>

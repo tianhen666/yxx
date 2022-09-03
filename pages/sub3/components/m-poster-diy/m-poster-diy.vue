@@ -8,27 +8,28 @@
 			:style="`transform: translate3d(${item.css.left},${item.css.top},0)`"
 			class="movableView"
 		>
-			<view class="tip" v-show="movableViewObj.id === item.id" @tap.prevent.stop="edit">
+			<view class="tip" v-show="movableViewIndex === index" @tap.prevent.stop="edit">
 				点击修改{{ item.type === 'text' ? '文字' : '图片' }}
 			</view>
 
 			<view
 				class="movableVie-wrapper"
 				@touchstart.prevent.stop="handleTouchStart($event, item, index)"
-				@touchmove.prevent.stop="movableViewObj.id === item.id ? handleTouchMove($event, item, index) : ''"
+				@touchmove.prevent.stop="movableViewIndex === index ? handleTouchMove($event, item, index) : ''"
+				@touchend.prevent.stop="movableViewIndex === index ? handleTouchEnd($event, item, index) : ''"
 				:id="item.id"
 				:style="item.css"
 				:class="{ heightText: item.type === 'text' }"
 			>
-				<!-- 文本用text节点 -->
-				<image v-if="item.type === 'image'" class="img" :src="item.url" mode="aspectFill" />
 				<!-- 图片用image节点 -->
+				<image v-if="item.type === 'image'" class="img" :src="item.url" mode="aspectFill" />
+				<!-- 文本用view节点 -->
 				<text v-if="item.type === 'text'" class="text">{{ item.text }}</text>
 			</view>
 
 			<!-- 删除 -->
 			<view
-				v-show="movableViewObj.id === item.id"
+				v-show="movableViewIndex === index"
 				:class="[item.type === 'text' ? 'movableView_del_text' : 'movableView_del_img', 'movableView_del']"
 				@tap.prevent.stop="del"
 			>
@@ -37,9 +38,9 @@
 
 			<!-- 缩放 -->
 			<view
-				v-show="movableViewObj.id === item.id"
-				@touchstart.prevent.stop="movableViewObj.id === item.id ? scaleTouchStart($event, item, index) : ''"
-				@touchmove.prevent.stop="movableViewObj.id === item.id ? scaleTouchMove($event, item, index) : ''"
+				v-show="movableViewIndex === index"
+				@touchstart.prevent.stop="movableViewIndex === index ? scaleTouchStart($event, item, index) : ''"
+				@touchmove.prevent.stop="movableViewIndex === index ? scaleTouchMove($event, item, index) : ''"
 				@touchend.prevent.stop="scaleTouchEnd"
 				:class="[item.type === 'text' ? 'movableView_scale_text' : 'movableView_scale_img', 'movableView_scale']"
 			>
@@ -67,6 +68,8 @@ import functionPopEdit from './function-pop-edit.vue'
 import functionPopFontStyle from './function-pop-font-style.vue'
 import { reactive, provide, ref, watch, computed, toRaw } from 'vue'
 import functionButton from './function-button.vue'
+import { _debounce } from '@/aTemp/utils/tools.js'
+
 const props = defineProps({
 	posterData: {
 		type: Object,
@@ -95,7 +98,7 @@ const movableViewObj = ref({})
 provide('movableViewObj', movableViewObj)
 
 // 当前选中的索引
-const movableViewIndex = ref('')
+const movableViewIndex = ref(-1)
 provide('movableViewIndex', movableViewIndex)
 
 // 操作者触摸位置
@@ -104,10 +107,41 @@ let operator = {
 	touchY: 0
 }
 
+// 快照列表
+const posterDataList = ref([])
+provide('posterDataList', posterDataList)
+// 快照指针
+const posterDataListIndex = ref(-1)
+provide('posterDataListIndex', posterDataListIndex)
+// 是否开启记录，变化快照
+const pushStatus = ref(true)
+provide('pushStatus', pushStatus)
+
+// 添加一个快照记录
+const setPosterDataList = _debounce(data => {
+	posterDataList.value.push(data)
+	posterDataListIndex.value += 1
+	// console.log(posterDataListIndex.value)
+	// console.log(posterDataList.value)
+}, 300)
+
+// 监听数据变化
+watch(
+	posterData,
+	(newVal, oldVal) => {
+		// 如果在撤销操作中不添加快照记录
+		if (pushStatus.value) {
+			setPosterDataList(JSON.parse(JSON.stringify(newVal.views)))
+		}
+	},
+	{ immediate: true }
+)
+
 // 移动区域点击事件
-// const movableAreaTap = e => {
-// 	movableView = {}
-// }
+const movableAreaTap = e => {
+	movableViewObj.value = {}
+	movableViewIndex.value = -1
+}
 
 // // 判断是否只有一个触摸点
 const isOneTouch = e => {
@@ -118,9 +152,17 @@ const isOneTouch = e => {
 
 // 触摸开始事件
 const handleTouchStart = (e, item, index) => {
-	if(!isOneTouch(e)){
+	// 有多个触摸点移除当前选中元素
+	if (!isOneTouch(e)) {
+		movableViewObj.value = {}
+		movableViewIndex.value = -1
 		return false
 	}
+
+	// 重新开始快照记录
+	posterDataList.value = JSON.parse(JSON.stringify(posterDataList.value.slice(0, posterDataListIndex.value + 1)))
+	pushStatus.value = true
+
 	// 清空触摸点位置
 	operator = {
 		touchX: 0,
@@ -134,6 +176,7 @@ const handleTouchStart = (e, item, index) => {
 	movableViewObj.value = JSON.parse(JSON.stringify(item))
 	movableViewIndex.value = index
 }
+
 // 触摸滑动事件
 const handleTouchMove = (e, item, index) => {
 	item.css.top = parseFloat(movableViewObj.value.css.top) + (e.changedTouches[0].pageY - operator.touchY) + 'px'
@@ -141,6 +184,8 @@ const handleTouchMove = (e, item, index) => {
 
 	// console.log(item.css.top)
 }
+// 触摸结束事件
+const handleTouchEnd = (e, item, index) => {}
 
 // 缩放开始事件
 const scaleTouchStart = (e, item, index) => {
@@ -172,6 +217,7 @@ const scaleTouchMove = (e, item, index) => {
 
 /*
  * 弹窗对象
+ *
  */
 // 添加弹窗
 const typeAddPopup = ref(null)
@@ -187,7 +233,7 @@ provide('typefontStylePopup', typefontStylePopup)
 const del = () => {
 	posterData.views.splice(movableViewIndex.value, 1)
 	movableViewObj.value = {}
-	movableViewIndex.value = ''
+	movableViewIndex.value = -1
 }
 
 // 显示修改功能面板
@@ -225,6 +271,18 @@ provide('fontStyleSize', fontStyleSize)
 // 设置文字颜色
 const fontStyleColor = ref(false)
 provide('fontStyleColor', fontStyleColor)
+// 设置文字对齐方式
+const fontStyleAlign = ref(false)
+provide('fontStyleAlign', fontStyleAlign)
+// 设置文字行高
+const fontStyleLineHeight = ref(false)
+provide('fontStyleLineHeight', fontStyleLineHeight)
+// 设置文字粗体
+const fontStyleBold = ref(false)
+provide('fontStyleBold', fontStyleBold)
+// 设置文字字体
+const fontStyleFamily = ref(false)
+provide('fontStyleFamily', fontStyleFamily)
 </script>
 
 <style lang="scss" scoped>
@@ -233,7 +291,7 @@ $movable-area-w: 320px;
 /*移动区域高度*/
 $movable-area-h: 560px;
 /* 操作图标大小 */
-$iocn-size: 15px;
+$iocn-size: 18px;
 
 .movableArea {
 	position: relative;
@@ -250,7 +308,6 @@ $iocn-size: 15px;
 	border: 1px dashed red;
 	height: auto;
 	width: auto;
-	cursor: pointer;
 	line-height: 1;
 	position: absolute;
 	top: 0;
@@ -277,38 +334,30 @@ $iocn-size: 15px;
 	width: 100%;
 	height: 100%;
 }
-.movableView .text {
-	display: block;
-}
 .movableView_del,
 .movableView_scale {
-	width: $iocn-size;
-	height: $iocn-size;
 	position: absolute;
-	z-index: 55;
+	z-index: 88;
+	height: 100%;
 	> .image {
-		width: 100%;
-		height: 100%;
+		height: $iocn-size;
+		width: $iocn-size;
 	}
 }
 .movableView_del {
 	left: -($iocn-size * 1.2);
 }
-.movableView_del_img {
-	bottom: -($iocn-size * 0.5);
-}
-.movableView_del_text {
-	top: 50%;
-	margin-top: -($iocn-size * 0.5);
-}
 .movableView_scale {
 	right: -($iocn-size * 1.2);
 }
+
+.movableView_del_img {
+	bottom: 0px;
+}
+.movableView_del_text {
+}
 .movableView_scale_img {
-	bottom: -($iocn-size * 0.5);
 }
 .movableView_scale_text {
-	top: 50%;
-	margin-top: -($iocn-size * 0.5);
 }
 </style>

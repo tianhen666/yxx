@@ -28,7 +28,7 @@ export function queryURLparamsRegEs5(url) {
 }
 
 // 防抖，在事件被触发n秒后再执行回调，如果在这n秒内又被触发，则重新计时
-export function _debounce(fun, delay, loading) {
+export function _debounce(fun, delay, loading = {}) {
 	return function(args) {
 		if (!loading.value) {
 			loading.value = true

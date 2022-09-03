@@ -15,6 +15,7 @@ useMainStore.$subscribe(
 		// console.log(mutation, state)
 		// 登录信息
 		uni.setStorageSync('mainStore', state)
+		// 缓存是否登录
 		uni.setStorageSync('isLogin', useMainStore.isLogin)
 	},
 	{ detached: true }
@@ -25,23 +26,22 @@ const old = uni.getStorageSync('mainStore')
 if (old) {
 	useMainStore.$patch({ ...old })
 }
-
-// 小程序启动
+// 小程序冷启动执行,只会执行一次
 onLaunch(async options => {
 	// console.log(options)
 	init(options) // 初始化,检查是否更新
 	router(options) // 路由拦截
 
 	/*
+	 * 邀请进入小程序
 	 * invitationCode 邀请人code
 	 * storeId 店铺ID
 	 * scene 0直接邀请 1活动 2商品 3服务 4海报 5其他
 	 * targetId 场景来源ID
 	 * 获取启动参数并设置店铺ID,邀请人code 并且缓存
 	 */
-	const { query } = options
-	const { invitationCode, storeId, scene, targetId } = query
-	console.log(query)
+	// console.log(options.query)
+	const { invitationCode, storeId, scene, targetId } = options.query
 	if (storeId) {
 		useMainStore.$patch({ storeId: storeId })
 	}
@@ -49,21 +49,17 @@ onLaunch(async options => {
 		useMainStore.$patch({ invitationCode: invitationCode })
 	}
 
-	// 如果缓存中还是没有店铺ID,设置一个店铺ID
+	// 如果缓存中还是没有店铺ID,设置一个默认店铺ID
 	const mainStore = uni.getStorageSync('mainStore')
 	const storageStoreId = mainStore.storeId
 	if (!storageStoreId) {
 		useMainStore.$patch({ storeId: 1 })
 	}
 
-	// if (!query.invitationCode) {
-	// 	showToastText('获取邀请人失败')
-	// }
-
 	// 微信授权登录
 	if (!useMainStore.isToken) {
 		const wxCode = await uni.login()
-		
+
 		// 登录获取
 		const resData = await _wxLogin({
 			code: wxCode.code,

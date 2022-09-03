@@ -4,7 +4,7 @@ import {
 import {
 	ref
 } from 'vue'
-import uCharts from '@/uni_modules/qiun-data-charts/js_sdk/u-charts/config-ucharts.js'
+import uCharts from '@/pages/sub2/components/qiun-data-charts/js_sdk/u-charts/config-ucharts.js'
 import dayjs from 'dayjs'
 
 export default function(paramsObj) {

@@ -11,10 +11,9 @@ export default {
 	// 黑白名单只能二选一，可配置页面路径 或 正则表达式规则
 	// 白名单，不需要登录的页面路径
 	whiteList: [
-		'/',
 		'/pages/main/index/index',
 		'/pages/main/login/login',
-		'/pages/main/login/agreement',
+		'/pages/main/agree/agree',
 		{
 			'pattern': RegExp(/register/)
 		}
