@@ -4,12 +4,10 @@
 
 		<!-- 收益总计 -->
 		<view class="box1 box">
-			<m-title2 title="累计收益"  moreText="查看明细" 	path="11" />
-			
+			<m-title2 title="累计收益" moreText="查看明细" path="11" />
+
 			<!-- 累计收益 -->
-			<view class="total">
-				<view class="num">66666.66</view>
-			</view>
+			<view class="total"><view class="num">66666.66</view></view>
 
 			<!-- 按时间分类 -->
 			<view class="date">
@@ -97,7 +95,7 @@
 <script setup>
 import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
-
+import qiunDataCharts from '@/pages/sub2/components/qiun-data-charts/components/qiun-data-charts/qiun-data-charts.vue'
 const categoryOption1 = ref([
 	{
 		value: 1,
@@ -145,7 +143,6 @@ const { chartData: chartData2, opts: opts2 } = UseColumnChart()
 
 <style lang="scss" scoped>
 .container {
-	
 	.box {
 		width: $main-width;
 		margin: auto;
@@ -154,7 +151,7 @@ const { chartData: chartData2, opts: opts2 } = UseColumnChart()
 		background-color: #fff;
 		padding: $padding;
 	}
-	
+
 	.box1 {
 		.text {
 			color: #999;

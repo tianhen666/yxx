@@ -90,7 +90,7 @@
 		<view class="font_bold" v-if="fontStyleBold">
 			<view
 				class="font_bold_item"
-				:class="item.val === (posterData?.views[movableViewIndex]?.css?.fontWeight || 'normal') ? 'style1' : ''"
+				:class="item.val === (posterData.views[movableViewIndex].css.fontWeight || 'normal') ? 'style1' : ''"
 				@tap.stop.prevent="fontBoldChange(item)"
 				v-for="(item, index) in boldList"
 				:key="index"
@@ -109,7 +109,7 @@
 				:key="index"
 			>
 				<view class="img_box"><image class="image" :src="item.imgUrl" mode="aspectFill" /></view>
-				<radio class="myradio" :checked="item.val === (posterData?.views[movableViewIndex]?.css?.fontFamily || '')" />
+				<radio class="myradio" :checked="item.val === posterData.views[movableViewIndex].css.fontFamily" />
 			</view>
 		</view>
 	</view>

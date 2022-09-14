@@ -23,8 +23,8 @@ provide('refresh', refresh)
 
 // 海报数据
 const posterData = reactive({
-	width: '327px',
-	height: '500px',
+	width: '310px',
+	height: '534px',
 	background: '#aaa',
 	views: [
 		{

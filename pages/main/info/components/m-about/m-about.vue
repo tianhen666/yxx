@@ -1,15 +1,12 @@
 <template>
 	<view class="container">
 		<slot name="title"></slot>
-		<!-- 展示首图 -->
-		<image class="image" src="/static/default/banner.png" mode="aspectFill"></image>
-
 		<!-- 滚动图片 -->
 		<scroll-view scroll-x="true" class="scroll-view_H" scroll-left="20">
-			<view class="scroll_item"><image class="image" src="/static/default/banner.png" mode="heightFix"></image></view>
-			<view class="scroll_item"><image class="image" src="/static/default/banner.png" mode="heightFix"></image></view>
-			<view class="scroll_item"><image class="image" src="/static/default/banner.png" mode="heightFix"></image></view>
-			<view class="scroll_item"><image class="image" src="/static/default/banner.png" mode="heightFix"></image></view>
+			<view class="scroll_item"><image class="image" src="/static/images/imgt.png" mode="heightFix"></image></view>
+			<view class="scroll_item"><image class="image" src="/static/images/imgt.png" mode="heightFix"></image></view>
+			<view class="scroll_item"><image class="image" src="/static/images/imgt.png" mode="heightFix"></image></view>
+			<view class="scroll_item"><image class="image" src="/static/images/imgt.png" mode="heightFix"></image></view>
 		</scroll-view>
 
 		<view class="about_text">
@@ -25,11 +22,11 @@
 	padding: $padding;
 	background-color: #fff;
 	overflow: hidden;
-	> .image {
-		width: 100%;
-		height: $main-width * 3 * 0.2;
-		border-radius: 8rpx;
-	}
+	margin: auto;
+	position: relative;
+	z-index: 2;
+	border-radius: 16rpx;
+	overflow: hidden;
 	.scroll-view_H {
 		white-space: nowrap;
 		margin-top: 20rpx;

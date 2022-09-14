@@ -108,30 +108,30 @@ let operator = {
 }
 
 // 快照列表
-const posterDataList = ref([])
+let posterDataList = ref([])
 provide('posterDataList', posterDataList)
 // 快照指针
-const posterDataListIndex = ref(-1)
+let posterDataListIndex = ref(-1)
 provide('posterDataListIndex', posterDataListIndex)
-// 是否开启记录，变化快照
-const pushStatus = ref(true)
+// 当数据发生变化，是否记录快照
+let pushStatus = ref(true)
 provide('pushStatus', pushStatus)
 
 // 添加一个快照记录
 const setPosterDataList = _debounce(data => {
 	posterDataList.value.push(data)
-	posterDataListIndex.value += 1
-	// console.log(posterDataListIndex.value)
-	// console.log(posterDataList.value)
+	posterDataListIndex.value++
+	// console.log(posterDataListIndex)
+	// console.log(posterDataList)
 }, 300)
 
 // 监听数据变化
 watch(
-	posterData,
+	posterData.views,
 	(newVal, oldVal) => {
 		// 如果在撤销操作中不添加快照记录
 		if (pushStatus.value) {
-			setPosterDataList(JSON.parse(JSON.stringify(newVal.views)))
+			setPosterDataList(JSON.stringify(newVal))
 		}
 	},
 	{ immediate: true }
@@ -160,9 +160,9 @@ const handleTouchStart = (e, item, index) => {
 	}
 
 	// 重新开始快照记录
-	posterDataList.value = JSON.parse(JSON.stringify(posterDataList.value.slice(0, posterDataListIndex.value + 1)))
+	posterDataList.value = posterDataList.value.slice(0, posterDataListIndex.value + 1)
 	pushStatus.value = true
-
+	// console.log(posterDataList.value)
 	// 清空触摸点位置
 	operator = {
 		touchX: 0,

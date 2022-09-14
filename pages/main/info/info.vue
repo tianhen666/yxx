@@ -1,30 +1,38 @@
 <template>
+	<!-- 背景 -->
+	<view class="bg"><image class="image" src="/static/images/bg.png" mode="aspectFill"></image></view>
+	<!-- #ifndef H5 -->
 	<!-- 标题栏 -->
-	<uni-nav-bar title="xxx门诊" statusBar fixed color="#ffffff" :border="false"></uni-nav-bar>
+	<uni-nav-bar statusBar :title="'门诊信息'" color="#ffffff" :border="false"></uni-nav-bar>
+	<!-- #endif -->
+	
+	<!-- 轮播图 -->
+	<!-- <m-carousel></m-carousel> -->
+	<view class="blank30"></view>
 	
 	<!-- 关于我们一 -->
-	<m-about-one></m-about-one>
+	<m-address></m-address>
 	<view class="blank30"></view>
 
-	<!-- 关于我们二 -->
-	<m-about-two>
+	<!-- 关于我们 -->
+	<m-about>
 		<template #title>
-			<m-title1 title="关于我们"></m-title1>
+			<m-title3 title="关于我们"></m-title3>
 		</template>
-	</m-about-two>
+	</m-about>
 	<view class="blank30"></view>
 
 	<!-- 牙医 -->
 	<m-dentist>
 		<template #title>
-			<m-title1 title="医生团队"></m-title1>
+			<m-title3 title="医生团队"></m-title3>
 		</template>
 	</m-dentist>
 </template>
 
 <script setup>
-import mAboutOne from './components/m-about-one/m-about-one.vue'
-import mAboutTwo from './components/m-about-two/m-about-two.vue'
+import mAddress from './components/m-address/m-address.vue'
+import mAbout from './components/m-about/m-about.vue'
 import mDentist from './components/m-dentist/m-dentist.vue'
 </script>
 <style lang="scss" scoped>

@@ -25,10 +25,10 @@
 		<view class="box2 box">
 			<!-- 标题 -->
 			<m-title2 title="活动收益" />
-			
+
 			<view class="time">(统计时间：2022年8月23--2022年8月30)</view>
 			<view class="blank32"></view>
-			
+
 			<view class="box2_total">
 				<!-- 总收益 -->
 				<view class="box2_total_item">
@@ -99,10 +99,10 @@
 		<view class="box3 box">
 			<!-- 标题 -->
 			<m-title2 title="邀请排行榜" moreText="查看详情" path="/pages/sub2/activityDataDetails/activityDataDetails" />
-			
+
 			<view class="time">(统计时间：2022年8月23--2022年8月30)</view>
 			<view class="blank32"></view>
-			
+
 			<!-- 排行榜数据 -->
 			<m-ranking-list></m-ranking-list>
 		</view>
@@ -115,7 +115,7 @@
 import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { _enrollformGetlist } from '@/aTemp/apis/activity.js'
-
+import qiunDataCharts from '@/pages/sub2/components/qiun-data-charts/components/qiun-data-charts/qiun-data-charts.vue'
 // 活动数据列表
 const categoryOption1 = ref([])
 // 当前活动ID

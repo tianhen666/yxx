@@ -1,7 +1,7 @@
 <template>
 	<view class="container">
 		<!-- 头像 -->
-		<image class="image" src="/static/default/banner.png" mode="aspectFill"></image>
+		<image class="image" src="/static/images/imgt.png" mode="aspectFill"></image>
 		<!-- 名称 -->
 		<view class="name_box">
 			<view class="name">牙小新牙小新</view>
@@ -9,12 +9,12 @@
 		</view>
 		<!-- 邀请码 -->
 		<view class="invitation">
-			<view class="image_wrapper"><image class="image" src="/static/user/code.png" mode="aspectFill"></image></view>
+			<image class="image" src="/static/images/erweima.png" mode="aspectFill"></image>
 			<text class="text">个人码</text>
 		</view>
 		<!-- 邀请按钮 -->
 		<view class="invitation">
-			<view class="image_wrapper"><image class="image" src="/static/user/share.png" mode="aspectFill"></image></view>
+			<image class="image" src="/static/images/yaoqing.png" mode="heightFix"></image>
 			<text class="text">邀请好友</text>
 		</view>
 	</view>
@@ -24,16 +24,16 @@
 
 <style lang="scss" scoped>
 .container {
-	background-color: $main-color;
-	color: #ffffff;
-	width: 750rpx;
-	box-sizing: border-box;
+	position: relative;
+	z-index: 1;
+	width: $main-width;
 	@include mFlex;
-	padding: $padding;
-
+	margin: auto;
+	padding-top: 34rpx;
+	color: #ffffff;
 	> .image {
-		width: 96rpx;
-		height: 96rpx;
+		width: 90rpx;
+		height: 90rpx;
 		border-radius: 50%;
 		flex: none;
 	}
@@ -42,11 +42,12 @@
 		flex: 1;
 		margin-left: 20rpx;
 		.name {
+			font-size: 36rpx;
 			@include singleLineTextOverHidden;
 		}
 		.userId {
-			font-size: 24rpx;
-			margin-top: 20rpx;
+			font-size: 28rpx;
+			margin-top: 22rpx;
 			@include singleLineTextOverHidden;
 		}
 	}
@@ -55,18 +56,13 @@
 		flex: none;
 		@include mFlex(column);
 		margin-left: 20rpx;
-		> .image_wrapper {
-			background-color: #ffffff66;
-			padding: 5rpx;
-			border-radius: 4rpx;
-			margin-bottom: 10rpx;
-			> .image {
-				width: 48rpx;
-				height: 48rpx;
-			}
+		> .image {
+			width: 48rpx;
+			height: 48rpx;
 		}
 		> .text {
-			margin-top: 6rpx;
+			margin-top: 8rpx;
+			line-height: 34rpx;
 			font-size: 24rpx;
 		}
 	}

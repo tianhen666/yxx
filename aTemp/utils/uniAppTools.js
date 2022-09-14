@@ -124,7 +124,9 @@ export function navigateTo(path) {
 	uni.navigateTo({
 		url: path,
 		fail: (err) => {
-			uni.reLaunch(path)
+			uni.reLaunch({
+				url: path
+			})
 		}
 	})
 }
@@ -134,7 +136,9 @@ export function switchTab(path) {
 	uni.switchTab({
 		url: path,
 		fail: (err) => {
-			uni.reLaunch(path)
+			uni.reLaunch({
+				url: path
+			})
 		}
 	})
 }
@@ -144,7 +148,9 @@ export function redirectTo(path) {
 	uni.redirectTo({
 		url: path,
 		fail: (err) => {
-			uni.reLaunch(path)
+			uni.reLaunch({
+				url: path
+			})
 		}
 	})
 }

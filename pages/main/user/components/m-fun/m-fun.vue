@@ -13,8 +13,12 @@
 					@tap="itemClick(item, index)"
 				>
 					<image class="image" :src="item.imgUrl" mode="aspectFill"></image>
-					<text>{{ item.name }}</text>
+					<text class="text">{{ item.name }}</text>
 				</view>
+
+				<view class="btn_box_item" v-if="props.listData.sub.length % 4 === 1"></view>
+				<view class="btn_box_item" v-if="props.listData.sub.length % 4 === 2"></view>
+				<view class="btn_box_item" v-if="props.listData.sub.length % 4 === 3"></view>
 			</view>
 		</view>
 	</view>
@@ -57,18 +61,21 @@ const itemClick = (item, index) => {
 			justify-content: space-between;
 			overflow: hidden;
 			flex-wrap: wrap;
-			margin-top: -40rpx;
+			margin-top: -30rpx;
 			&_item {
-				margin-top: 40rpx;
+				margin-top: 50rpx;
 				@include mFlex(column);
-				width: 25%;
-				font-size: 26rpx;
-				color: #666666;
+				width: 21%;
 				flex: none;
 				> .image {
-					width: 56rpx;
-					height: 56rpx;
+					width: 48rpx;
+					height: 50rpx;
 					margin-bottom: 10rpx;
+				}
+				> .text {
+					line-height: 34rpx;
+					font-size: 24rpx;
+					color: #333333;
 				}
 			}
 		}

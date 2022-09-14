@@ -30,7 +30,7 @@ if (old) {
 onLaunch(async options => {
 	// console.log(options)
 	init(options) // 初始化,检查是否更新
-	router(options) // 路由拦截
+	// router(options) // 路由拦截
 
 	/*
 	 * 邀请进入小程序
@@ -48,13 +48,17 @@ onLaunch(async options => {
 	if (invitationCode) {
 		useMainStore.$patch({ invitationCode: invitationCode })
 	}
-
-	// 如果缓存中还是没有店铺ID,设置一个默认店铺ID
+	
+	/* 
+	 * 直接进入小程序
+	 * 如果缓存中还是没有店铺ID,设置一个默认店铺ID
+	 */
 	const mainStore = uni.getStorageSync('mainStore')
 	const storageStoreId = mainStore.storeId
 	if (!storageStoreId) {
 		useMainStore.$patch({ storeId: 1 })
 	}
+
 
 	// 微信授权登录
 	if (!useMainStore.isToken) {

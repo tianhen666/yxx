@@ -75,6 +75,7 @@
 <script setup>
 import { readonly, provide, inject, ref, watch, computed, toRaw } from 'vue'
 import { showLoading, showToastText } from '@/aTemp/utils/uniAppTools.js'
+import { _debounce } from '@/aTemp/utils/tools.js'
 // 图标样式
 const icon = readonly({
 	color: '#ffffff',
@@ -114,8 +115,8 @@ const revoke = () => {
 	movableViewObj.value = {}
 	if (posterDataListIndex.value > 0) {
 		pushStatus.value = false
-		const oldVal = posterDataList.value[posterDataListIndex.value - 1]
 		posterDataListIndex.value--
+		const oldVal = JSON.parse(posterDataList.value[posterDataListIndex.value])
 		posterData.views.splice(0, posterData.views.length, ...oldVal)
 	}
 	// console.log(posterDataList.value)
@@ -126,7 +127,7 @@ const recovery = () => {
 	if (posterDataListIndex.value < posterDataList.value.length - 1) {
 		pushStatus.value = false
 		posterDataListIndex.value++
-		const newVal = posterDataList.value[posterDataListIndex.value]
+		const newVal = JSON.parse(posterDataList.value[posterDataListIndex.value])
 		posterData.views.splice(0, posterData.views.length, ...newVal)
 	}
 }
@@ -137,7 +138,7 @@ const handleAdd = () => {
 	// 重新开始记录
 	posterDataList.value = JSON.parse(JSON.stringify(posterDataList.value.slice(0, posterDataListIndex.value + 1)))
 	pushStatus.value = true
-	
+
 	// 重置选中的对象
 	movableViewIndex.value = ''
 	movableViewObj.value = {}

@@ -3,24 +3,31 @@
 	<m-header></m-header>
 
 	<!-- vip -->
-	<view class="bg"></view>
-	<m-vip style="margin-top: -100rpx;display: block;"></m-vip>
+	<m-vip></m-vip>
 	<view class="blank30"></view>
 
-	<!-- 模块一 -->
+	<!-- 门诊管理 -->
 	<m-fun :listData="module1"></m-fun>
 	<view class="blank30"></view>
 
-	<!-- 模块二 -->
+	<!-- 数据统计 -->
 	<m-fun :listData="module2"></m-fun>
 	<view class="blank30"></view>
 
-	<!-- 模块三 -->
+	<!-- 订单管理 -->
 	<m-fun :listData="module3" @moduleFun="module3Fun"></m-fun>
 	<view class="blank30"></view>
 
-	<!-- 模块四 -->
-	<m-fun :listData="module4"></m-fun>
+	<!-- 营销助手 -->
+	<view class="box">
+		<m-title2 :title="module4.title"></m-title2>
+		<view class="yxzs">
+			<view class="yxzs_item" v-for="(item, index) in module4.sub" :key="index" @tap="navigateTo(item.path)">
+				<image class="image" :src="item.imgUrl" mode="aspectFill"></image>
+				<text class="text">{{ item.name }}</text>
+			</view>
+		</view>
+	</view>
 	<view class="blank30"></view>
 
 	<!-- 选项 -->
@@ -30,7 +37,7 @@
 	<!-- 弹出框 -->
 	<uni-popup ref="popup" type="center" :safe-area="false">
 		<view class="popup_box">
-			<image class="close" @tap="popup.close" src="/static/default/close.png"></image>
+			<image class="close" @tap="popup.close" src="/static/images/close.png"></image>
 			<uni-forms :rules="rules" ref="formObj" v-model="formData" label-width="220rpx" label-position="top">
 				<!-- 订单秘钥 -->
 				<uni-forms-item :label="rules.orderSecretKey.label" name="orderSecretKey" label-position="top">
@@ -51,7 +58,7 @@ import mFun from './m-fun/m-fun.vue'
 import mHeader from './m-header/m-header.vue'
 import mOption from './m-option/m-option.vue'
 import mVip from './m-vip/m-vip.vue'
-import { showToastText } from '@/aTemp/utils/uniAppTools.js'
+import { showToastText, navigateTo } from '@/aTemp/utils/uniAppTools.js'
 import { _debounce } from '@/aTemp/utils/tools.js'
 import { ref } from 'vue'
 
@@ -59,37 +66,37 @@ const module1 = {
 	title: '门诊管理',
 	sub: [
 		{
-			imgUrl: '/static/default/menzhen.png',
+			imgUrl: '/static/images/u-huodong.png',
 			name: '活动管理',
 			path: '/pages/sub2/manageActivityList/manageActivityList'
 		},
 		{
-			imgUrl: '/static/default/huodong.png',
+			imgUrl: '/static/images/u-shangpin.png',
 			name: '商品管理',
 			path: '/pages/sub2/manageShopList/manageShopList'
 		},
 		{
-			imgUrl: '/static/default/haibao.png',
+			imgUrl: '/static/images/u-fuwu.png',
 			name: '服务项目',
 			path: '/pages/sub2/manageServiceList/manageServiceList'
 		},
 		{
-			imgUrl: '/static/default/haibao.png',
+			imgUrl: '/static/images/u-anli.png',
 			name: '案例管理',
 			path: '/pages/sub2/manageCaseList/manageCaseList'
 		},
 		{
-			imgUrl: '/static/default/haibao.png',
+			imgUrl: '/static/images/u-lunbo.png',
 			name: '轮播图管理',
 			path: '/pages/sub2/manageBannerList/manageBannerList'
 		},
 		{
-			imgUrl: '/static/default/haibao.png',
+			imgUrl: '/static/images/u-mzxinxi.png',
 			name: '门诊信息',
 			path: '/pages/sub2/manageInfoInput/manageInfoInput'
 		},
 		{
-			imgUrl: '/static/default/haibao.png',
+			imgUrl: '/static/images/u-yisheng.png',
 			name: '医生管理',
 			path: '/pages/sub2/manageDoctorList/manageDoctorList'
 		}
@@ -100,19 +107,39 @@ const module2 = {
 	title: '数据统计',
 	sub: [
 		{
-			imgUrl: '/static/default/menzhen.png',
+			imgUrl: '/static/images/u-shouyi.png',
 			name: '门诊收益',
 			path: '/pages/sub2/storeProfit/storeProfit'
 		},
 		{
-			imgUrl: '/static/default/huodong.png',
+			imgUrl: '/static/images/u-huodong1.png',
 			name: '活动数据',
 			path: '/pages/sub2/activityData/activityData'
 		},
 		{
-			imgUrl: '/static/default/haibao.png',
+			imgUrl: '/static/images/u-huiyuan.png',
 			name: '会员管理',
 			path: '/pages/sub2/manageMemberList/manageMemberList'
+		}
+	]
+}
+const module3 = {
+	title: '订单管理',
+	sub: [
+		{
+			imgUrl: '/static/images/u-shaoma.png',
+			name: '扫码核销',
+			fun: true
+		},
+		{
+			imgUrl: '/static/images/u-shoudong.png',
+			name: '手动核销',
+			fun: true
+		},
+		{
+			imgUrl: '/static/images/u-dingdan.png',
+			name: '全部订单',
+			path: '/pages/sub2/orderList/orderList?current=0'
 		}
 	]
 }
@@ -121,45 +148,24 @@ const module4 = {
 	title: '营销助手',
 	sub: [
 		{
-			imgUrl: '/static/default/haibao.png',
+			imgUrl: '/static/images/u-huodongmuban.png',
 			name: '活动模板',
-			path: '/pages/sub2/manageServiceList/manageServiceList'
+			path: ''
 		},
 		{
-			imgUrl: '/static/default/menzhen.png',
-			name: '宣发海报',
+			imgUrl: '/static/images/u-jingmeihaibao.png',
+			name: '精美海报',
 			path: '/pages/sub3/posterList/posterList'
 		},
 		{
-			imgUrl: '/static/default/huodong.png',
+			imgUrl: '/static/images/u-wenanxuanfa.png',
 			name: '文案宣发',
-			path: '/pages/sub2/manageShopList/manageShopList'
+			path: ''
 		},
 		{
-			imgUrl: '/static/default/haibao.png',
+			imgUrl: '/static/images/u-kepuwenzhang.png',
 			name: '科普文章',
-			path: '/pages/sub2/manageServiceList/manageServiceList'
-		}
-	]
-}
-
-const module3 = {
-	title: '订单管理',
-	sub: [
-		{
-			imgUrl: '/static/default/menzhen.png',
-			name: '扫码核销',
-			fun: true
-		},
-		{
-			imgUrl: '/static/default/huodong.png',
-			name: '手动核销',
-			fun: true
-		},
-		{
-			imgUrl: '/static/default/haibao.png',
-			name: '全部订单',
-			path: '/pages/sub2/orderList/orderList?current=0'
+			path: '/pages/main/case/case'
 		}
 	]
 }
@@ -225,26 +231,65 @@ const secretKeyClick = _debounce(
 	loading
 )
 
-const module5 = [
-	{
-		icon: '/static/order/yaoqing.png',
-		title: '员工管理',
-		path: '/pages/sub2/manageStaffList/manageStaffList'
-	},
-	{
-		icon: '/static/order/yaoqing.png',
-		title: '我的订单',
-		path: '/pages/sub1/orderList/orderList'
-	},
-	{
-		icon: '/static/order/yaoqing.png',
-		title: '切换门店',
-		path: '/pages/sub2/switchStore/switchStore'
-	}
-]
+const module5 = {
+	title: '其他选项',
+	sub: [
+		{
+			imgUrl: '/static/images/u-yuangong.png',
+			title: '员工管理',
+			path: '/pages/sub2/manageStaffList/manageStaffList'
+		},
+		{
+			imgUrl: '/static/images/u-wddingdan.png',
+			title: '我的订单',
+			path: '/pages/sub1/orderList/orderList'
+		},
+		{
+			imgUrl: '/static/images/u-qhmenzhen.png',
+			title: '切换门店',
+			path: '/pages/sub2/switchStore/switchStore'
+		}
+	]
+}
 </script>
 
 <style lang="scss" scoped>
+.box {
+	width: $main-width;
+	margin: auto;
+}
+.yxzs {
+	@include mFlex;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	.yxzs_item {
+		height: 144rpx;
+		width: 334rpx;
+		flex: none;
+		position: relative;
+		margin-bottom: 24rpx;
+		> .image {
+			position: absolute;
+			z-index: 1;
+			width: 334rpx;
+			height: 144rpx;
+			left: 0;
+			top: 0;
+		}
+		> .text {
+			position: absolute;
+			z-index: 2;
+			left: 25rpx;
+			top: 50%;
+			margin-top: -20rpx;
+			height: 40rpx;
+			font-size: 28rpx;
+			font-weight: 600;
+			color: #ffffff;
+			line-height: 40rpx;
+		}
+	}
+}
 .popup_box {
 	position: relative;
 	background-color: #fff;

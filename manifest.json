@@ -1,5 +1,5 @@
 {
-	"name": "demo",
+	"name": "牙小新",
 	"appid": "__UNI__11ED83D",
 	"description": "",
 	"versionName": "1.0.0",
@@ -70,11 +70,17 @@
 		"optimization": {
 			"subPackages": true
 		},
-		"requiredPrivateInfos": ["getLocation", "onLocationChange", "chooseAddress", "choosePoi",
-			"chooseLocation", "startLocationUpdate", "startLocationUpdateBackground"
-		],
-		"lazyCodeLoading": "requiredComponents",
-		"mergeVirtualHostAttributes": true
+		"requiredPrivateInfos": [
+			"getLocation",
+			"onLocationChange",
+			"chooseAddress",
+			"choosePoi",
+			"chooseLocation",
+			"startLocationUpdate",
+			"startLocationUpdateBackground"
+		]
+		// "lazyCodeLoading": "requiredComponents",
+		// "mergeVirtualHostAttributes": true
 	},
 	"mp-alipay": {
 		"usingComponents": true

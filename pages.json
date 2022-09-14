@@ -332,6 +332,27 @@
 					}
 				}
 
+			}, {
+				"path": "test/test",
+				"style": {
+					"navigationBarTitleText": "",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "posterListSub/posterListSub",
+				"style": {
+					"navigationBarTitleText": "",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "searchPosterList/searchPosterList",
+				"style": {
+					"navigationBarTitleText": "海报搜索",
+					"enablePullDownRefresh": false
+				}
+
 			}]
 		}
 	],

@@ -44,3 +44,11 @@ export function _wxpayPayment(data) {
 		data
 	})
 }
+
+// 分账回调
+export function _wxpayWxNotify(data) {
+	return http.get({
+		url: '/wxpay/wxNotify',
+		data
+	})
+}

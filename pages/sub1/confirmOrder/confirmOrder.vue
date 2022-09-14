@@ -73,9 +73,9 @@
 <script setup>
 import { ref } from 'vue'
 import { _storeproductGetinfo } from '@/aTemp/apis/shop.js'
-import {_wxpayPayment} from '@/aTemp/apis/store.js'
+import { _wxpayPayment, _wxpayWxNotify } from '@/aTemp/apis/store.js'
 import { onLoad, onShow } from '@dcloudio/uni-app'
-import { navigateTo,showToastText } from '@/aTemp/utils/uniAppTools.js'
+import { navigateTo, showToastText } from '@/aTemp/utils/uniAppTools.js'
 import { _debounce } from '@/aTemp/utils/tools.js'
 // 骨架屏
 import lsSkeleton from '@/components/ls-skeleton/ls-skeleton.nvue'
@@ -112,23 +112,33 @@ const confirm = _debounce(
 				btnLoading.value = false
 				const { data, code, msg } = res
 				const resDataObj = JSON.parse(data)
+				// console.log(resDataObj)
+				// 订单编号
+				const orderNumParent = resDataObj.orderNumParent
+
+				// 支付信息
 				const payInfo = JSON.parse(resDataObj.pay_info)
-				console.log(payInfo)
-				
+				// console.log(payInfo)
+
 				// 唤醒支付
 				uni
 					.requestPayment({
-						timeStamp:payInfo.timeStamp,
-						nonceStr:payInfo.nonceStr,
-						package:payInfo.package,
-						signType:payInfo.signType,
-						paySign:payInfo.sign
+						timeStamp: payInfo.timeStamp,
+						nonceStr: payInfo.nonceStr,
+						package: payInfo.package,
+						signType: payInfo.signType,
+						paySign: payInfo.sign
 					})
 					.then(val => {
-						showToastText("支付成功~")
+						showToastText('支付成功~')
+
+						// 分账回调
+						_wxpayWxNotify({ orderNumParent: orderNumParent }).then(resData => {
+							console.log('resData')
+						})
 					})
 					.catch(err => {
-						showToastText("取消支付~")
+						showToastText('取消支付~')
 					})
 			})
 			.catch(err => {

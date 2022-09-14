@@ -95,24 +95,26 @@ const props = defineProps({
 			}
 			> .title {
 				position: absolute;
-				left: 20rpx;
+				left: 0;
 				top: 26rpx;
 				font-size: 32rpx;
 				font-family: 'HelloFont-WenYiHei', 'HelloFont';
 				font-weight: bold;
 				line-height: 40rpx;
 				width: 100%;
+				padding-left: 20rpx;
 				color: #0ba681;
 			}
 			> .sub_title {
 				position: absolute;
-				left: 20rpx;
+				left: 0;
 				top: 76rpx;
 				font-size: 24rpx;
 				font-family: 'PingFangSC-Regular', 'PingFang SC';
 				font-weight: 400;
 				line-height: 34rpx;
 				width: 100%;
+				padding-left: 20rpx;
 				color: #0ba68188;
 			}
 		}
@@ -135,7 +137,7 @@ const props = defineProps({
 				}
 				> .title {
 					position: absolute;
-					left: 20rpx;
+					left: 0x;
 					top: 20rpx;
 					font-size: 32rpx;
 					font-family: 'HelloFont-WenYiHei', 'HelloFont';
@@ -143,16 +145,18 @@ const props = defineProps({
 
 					line-height: 40rpx;
 					width: 100%;
+					padding-left: 20rpx;
 				}
 				> .sub_title {
 					position: absolute;
-					left: 20rpx;
+					left: 0;
 					top: 62rpx;
 					font-size: 24rpx;
 					font-family: 'PingFangSC-Regular', 'PingFang SC';
 					font-weight: 400;
 					line-height: 34rpx;
 					width: 100%;
+					padding-left: 20rpx;
 				}
 			}
 		}
