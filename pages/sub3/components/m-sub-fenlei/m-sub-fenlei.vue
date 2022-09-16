@@ -1,14 +1,14 @@
 <template>
-	<view class="sub">
+	<view class="sub" v-if="listData.length">
 		<scroll-view scroll-x="true" class="scroll_X" :class="packUp ? '' : 'packUp'">
 			<view
 				class="scroll-view-item"
-				:class="index === 0 ? 'active' : ''"
-				v-for="(item, index) in 8"
+				:class="index === currentIndex ? 'active' : ''"
+				v-for="(item, index) in listData"
 				:key="index"
-				@tap="scrollViewItemTap(item)"
+				@tap="scrollViewItemTap(item, index)"
 			>
-				家庭营销
+				{{ item.posterName }}
 			</view>
 		</scroll-view>
 
@@ -21,12 +21,35 @@
 <script setup>
 import { ref } from 'vue'
 import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
+
+const props = defineProps({
+	listData: {
+		// 子分类数据
+		required: true,
+		type: Array,
+		default: () => []
+	},
+	parentId: {
+		// 父分类ID
+		required: true,
+		type: Number,
+		default: 0
+	}
+})
+
+// 是否收起
 const packUp = ref(true)
-const scrollViewItemTap = (item) => {
+
+// 请求海报二级数据
+const currentIndex = ref(0)
+const scrollViewItemTap = (item, index) => {
 	const pages = getCurrentPages()
 	if (pages[pages.length - 1].route === 'pages/sub3/posterListSub/posterListSub') {
+		currentIndex.value = index
 	} else {
-		navigateTo('/pages/sub3/posterListSub/posterListSub?index=' + item)
+		navigateTo(
+			'/pages/sub3/posterListSub/posterListSub?parentId=' + props.parentId + '&subIndex=' + index
+		)
 	}
 }
 </script>
@@ -68,8 +91,8 @@ const scrollViewItemTap = (item) => {
 	.sub_arrow {
 		position: absolute;
 		right: 0;
+		height: 60rpx;
 		top: 22rpx;
-		height: 30rpx;
 		font-size: 0;
 		background-color: #fff;
 		padding-left: 10rpx;

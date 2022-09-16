@@ -1,7 +1,7 @@
 <template>
 	<view class="box">
 		<!-- 子分类 -->
-		<m-sub-fenlei></m-sub-fenlei>
+		<m-sub-fenlei :listData="posterList"></m-sub-fenlei>
 
 		<!-- 列表 -->
 		<view class="list">
@@ -24,12 +24,30 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { mSubFenlei } from '../components/m-sub-fenlei/m-sub-fenlei.vue'
 import { navigateTo, showToastText } from '@/aTemp/utils/uniAppTools.js'
+
+import { _posterGetIdPostAll } from '@/aTemp/apis/poster.js'
+
+const posterList = ref([])
 onLoad(options => {
+	console.log(options)
+
+	// 设置页面标题
+	let pageName = options.name || '海报列表'
 	uni.setNavigationBarTitle({
-		title: '新的标题'
+		title: pageName
+	})
+
+	// 获取海报分类数据
+	const posterId = parseInt(options.id || 0)
+	_posterGetIdPostAll({
+		id: posterId
+	}).then(res => {
+		const { code, data, msg } = res
+		posterList.value = data
 	})
 })
 </script>

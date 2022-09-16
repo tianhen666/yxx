@@ -11,64 +11,53 @@
 		<view class="blank30"></view>
 
 		<view class="box1_item_wrapper">
-			<view class="box1_item" v-for="(item, index) in 4" :key="index">
+			<view
+				class="box1_item"
+				v-for="(item, index) in posterList"
+				:key="index"
+				@tap="navigateTo('/pages/sub3/posterListSub/posterListSub?id=' + item.id + '&name=' + item.posterName)"
+			>
 				<view class="img_box">
 					<image class="image" src="/static/htz-image-upload/play.png" mode="aspectFill"></image>
 				</view>
-				<text class="text">营销海报</text>
+				<text class="text">{{ item.posterName }}</text>
 			</view>
 		</view>
 	</view>
-
 	<view class="blank30"></view>
+
 	<!-- 分类列表 -->
-	<view class="box box2">
-		<m-title2 title="营销海报" path="/pages/sub3/posterListSub/posterListSub"></m-title2>
+	<view class="box box2" v-for="(item, index) in posterList" :key="index">
+		<m-title2
+			:title="item.posterName"
+			:path="'/pages/sub3/posterListSub/posterListSub?id=' + item.id + '&name=' + item.posterName"
+		></m-title2>
 		<!-- 子分类 -->
-		<m-sub-fenlei></m-sub-fenlei>
+		<m-sub-fenlei :listData="item.children" :parentId="item.id"></m-sub-fenlei>
 		<!-- 列表  -->
-		<m-poster-list></m-poster-list>
+		<m-poster-list :listData="item?.children[0]?.posterImgList"></m-poster-list>
 	</view>
 
 	<view class="blank30"></view>
-	<!-- 分类列表 -->
-	<view class="box box2">
-		<m-title2 title="营销海报" path="/pages/sub3/posterListSub/posterListSub"></m-title2>
-		<!-- 子分类 -->
-		<m-sub-fenlei></m-sub-fenlei>
-		<!-- 列表  -->
-		<m-poster-list></m-poster-list>
-	</view>
-
 	<view class="blank30"></view>
-	<!-- 分类列表 -->
-	<view class="box box2">
-		<m-title2 title="营销海报" path="/pages/sub3/posterListSub/posterListSub"></m-title2>
-		<!-- 子分类 -->
-		<m-sub-fenlei></m-sub-fenlei>
-		<!-- 列表  -->
-		<m-poster-list></m-poster-list>
-	</view>
-
-	<view class="blank30"></view>
-	<!-- 分类列表 -->
-	<view class="box box2">
-		<m-title2 title="营销海报" path="/pages/sub3/posterListSub/posterListSub"></m-title2>
-		<!-- 子分类 -->
-		<m-sub-fenlei></m-sub-fenlei>
-		<!-- 列表  -->
-		<m-poster-list></m-poster-list>
-
-		<view class="blank40"></view>
-		<view class="blank40"></view>
-	</view>
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
 import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
 import { mSubFenlei } from '../components/m-sub-fenlei/m-sub-fenlei.vue'
 import { mPosterList } from '../components/m-poster-list/m-poster-list.vue'
+
+import { _posterGetPostAll } from '@/aTemp/apis/poster.js'
+
+const posterList = ref([])
+onLoad(options => {
+	_posterGetPostAll().then(res => {
+		const { code, data, msg } = res
+		posterList.value = data
+	})
+})
 </script>
 
 <style lang="scss">
@@ -108,5 +97,6 @@ import { mPosterList } from '../components/m-poster-list/m-poster-list.vue'
 }
 
 .box2 {
+	margin-bottom: 30rpx;
 }
 </style>

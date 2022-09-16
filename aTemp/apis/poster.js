@@ -4,6 +4,23 @@ import http from '@/aTemp/request';
  * 海报管理接口
  */
 
+// 根据父ID查询子分类
+export function _posterGetPostAll(data) {
+	return http.post({
+		url: '/poster/getPostAll',
+		data
+	})
+}
+
+// 获取海报接口
+export function _posterGetIdPostAll(data) {
+	return http.post({
+		url: '/poster/getIdPostAll',
+		data
+	})
+}
+
+
 // 删除用户自己的海报
 export function _posterDelete(data) {
 	return http.get({

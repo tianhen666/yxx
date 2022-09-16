@@ -2,22 +2,25 @@
 	<view class="list">
 		<view
 			class="list_item"
-			v-for="(item, index) in 8"
+			v-for="(item, index) in listData"
 			:key="index"
 			@tap="navigateTo('/pages/sub3/posterInfo/posterInfo')"
 		>
-			<image
-				class="image"
-				src="https://imgs.fenxiangzl.com/tooth/product/0e4dc240-93c2-4de9-af63-3029cf954ffe.jpg"
-				mode="aspectFill"
-				v-if="index < 6"
-			></image>
+			<image class="image" :src="item.posterurl" mode="aspectFill" v-if="index < 6"></image>
 		</view>
 	</view>
 </template>
 
 <script setup>
 import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
+
+const props = defineProps({
+	listData: {
+		required: true,
+		type: Array,
+		default: () => []
+	}
+})
 </script>
 
 <style scoped lang="scss">

@@ -64,8 +64,9 @@ instance.interceptors.response.use(
 			data,
 			msg
 		} = response.data
+		
 		// 判断code是否正确
-		if (parseInt(code) === 0) {
+		if (parseInt(code) === 200) {
 			return response.data
 		} else {
 			return Promise.reject(response.data)
