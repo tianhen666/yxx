@@ -56,11 +56,11 @@ const addFont = () => {
 		}
 	}
 
-	posterData.views.push(newViewObj)
+	posterData.value.views.push(newViewObj)
 
 	// 选中这个元素
 	movableViewObj.value = newViewObj
-	movableViewIndex.value = posterData.views.length - 1
+	movableViewIndex.value = posterData.value.views.length - 1
 	// console.log(movableViewObj.value)
 	// console.log(movableViewIndex.value)
 
@@ -88,11 +88,11 @@ const addImg = async () => {
 			height: imgHeight / (imgWidth / 100) + 'px'
 		}
 	}
-	posterData.views.push(newViewObj)
+	posterData.value.views.push(newViewObj)
 
 	// 选中这个元素
 	movableViewObj.value = newViewObj
-	movableViewIndex.value = posterData.views.length - 1
+	movableViewIndex.value = posterData.value.views.length - 1
 	// console.log(movableViewObj.value)
 	// console.log(movableViewIndex.value)
 
@@ -104,7 +104,7 @@ const addBg = async () => {
 	const imgList = await chooseImage(1)
 	const resUploadFile = await uploadFile(imgList[0], config.BASE_URL + '/poster/uploadimage')
 	const { code, data, msg } = JSON.parse(resUploadFile)
-	posterData.background = data
+	posterData.value.background = data
 	typeAddPopup.value.close()
 }
 </script>

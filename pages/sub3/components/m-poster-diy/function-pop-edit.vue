@@ -69,7 +69,7 @@ const modify = () => {
 // 确认修改
 const textIpnutConfirm = () => {
 	if (textInput.value) {
-		posterData.views[movableViewIndex.value].text = movableViewObj.value.text
+		posterData.value.views[movableViewIndex.value].text = movableViewObj.value.text
 		textInput.value = false
 	}
 	
@@ -86,14 +86,14 @@ const copy = async () => {
 	obj.css.left = parseInt(obj.css.left) + 10 + 'px'
 
 	movableViewObj.value = obj
-	posterData.views.push(obj)
-	movableViewIndex.value = posterData.views.length - 1
+	posterData.value.views.push(obj)
+	movableViewIndex.value = posterData.value.views.length - 1
 	typeEditPopup.value.close()
 }
 
 // 删除
 const del = () => {
-	posterData.views.splice(movableViewIndex.value, 1)
+	posterData.value.views.splice(movableViewIndex.value, 1)
 	movableViewObj.value = {}
 	movableViewIndex.value = ''
 	typeEditPopup.value.close()
@@ -101,15 +101,15 @@ const del = () => {
 
 // 置顶
 const moveTop = () => {
-	posterData.views.push(posterData.views.splice(movableViewIndex.value, 1)[0])
-	movableViewIndex.value = posterData.views.length - 1
+	posterData.value.views.push(posterData.value.views.splice(movableViewIndex.value, 1)[0])
+	movableViewIndex.value = posterData.value.views.length - 1
 	typeEditPopup.value.close()
-	// posterData.views.unshift(posterData.views.splice(movableViewIndex.value, 1)[0]);
+	// posterData.value.views.unshift(posterData.value.views.splice(movableViewIndex.value, 1)[0]);
 }
 
 // 置低
 const moveBottom = () => {
-	posterData.views.unshift(posterData.views.splice(movableViewIndex.value, 1)[0])
+	posterData.value.views.unshift(posterData.value.views.splice(movableViewIndex.value, 1)[0])
 	movableViewIndex.value = 0
 	typeEditPopup.value.close()
 }

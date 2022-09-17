@@ -4,7 +4,7 @@ import http from '@/aTemp/request';
  * 海报管理接口
  */
 
-// 根据父ID查询子分类
+// 获取所有分类海报接口
 export function _posterGetPostAll(data) {
 	return http.post({
 		url: '/poster/getPostAll',
@@ -12,10 +12,27 @@ export function _posterGetPostAll(data) {
 	})
 }
 
-// 获取海报接口
+// 根据父ID查询子分类
 export function _posterGetIdPostAll(data) {
 	return http.post({
 		url: '/poster/getIdPostAll',
+		data
+	})
+}
+
+// 根据分类查询海报内容
+export function _posterGetIdPost(data) {
+	return http.post({
+		url: '/poster/getIdPost',
+		data
+	})
+}
+
+
+// 查询海报内容
+export function _posterGetPostercontent(data) {
+	return http.post({
+		url: '/poster/getPostercontent',
 		data
 	})
 }

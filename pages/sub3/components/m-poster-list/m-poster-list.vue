@@ -8,6 +8,7 @@
 		>
 			<image class="image" :src="item.posterurl" mode="aspectFill" v-if="index < 6"></image>
 		</view>
+		<view class="list_item" v-if="listData.length % 3 == 2"></view>
 	</view>
 </template>
 

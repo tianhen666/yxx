@@ -12,7 +12,7 @@
 					:key="index"
 					@tap="itemClick(item, index)"
 				>
-					<image class="image" :src="item.imgUrl" mode="aspectFill"></image>
+					<image class="image" :src="item.imgUrl" mode="heightFix"></image>
 					<text class="text">{{ item.name }}</text>
 				</view>
 

@@ -3,7 +3,7 @@
 	<view class="movableArea" @tap="movableAreaTap" :style="movableAreaStyle">
 		<!-- 移动物体 -->
 		<view
-			v-for="(item, index) in posterData.views"
+			v-for="(item, index) in posterData.value.views"
 			:key="index"
 			:style="`transform: translate3d(${item.css.left},${item.css.top},0)`"
 			class="movableView"
@@ -66,30 +66,27 @@
 import functionPopAdd from './function-pop-add.vue'
 import functionPopEdit from './function-pop-edit.vue'
 import functionPopFontStyle from './function-pop-font-style.vue'
-import { reactive, provide, ref, watch, computed, toRaw } from 'vue'
+import { inject, provide, ref, watch, computed, toRefs } from 'vue'
 import functionButton from './function-button.vue'
 import { _debounce } from '@/aTemp/utils/tools.js'
 
-const props = defineProps({
-	posterData: {
-		type: Object,
-		required: true,
-		default() {
-			return {}
-		}
-	}
-})
-
-// 海报数据
-const { posterData } = props
-provide('posterData', posterData)
+// 接收数据
+const posterData = inject('posterData')
 
 // 移动区域宽度
 const movableAreaStyle = computed(() => {
-	if (posterData.background.indexOf('.') !== -1) {
-		return `width:${posterData.width};height:${posterData.height};background-image:url(${posterData.background});`
+	if (posterData.value.background) {
+		if (posterData.value.background.indexOf('.') !== -1) {
+			return `width:${posterData.value.width};height:${posterData.value.height};background-image:url(${
+				posterData.value.background
+			});`
+		} else {
+			return `width:${posterData.value.width};height:${posterData.value.height};background-color:${
+				posterData.value.background
+			};`
+		}
 	} else {
-		return `width:${posterData.width};height:${posterData.height};background-color:${posterData.background};`
+		return ''
 	}
 })
 
@@ -126,16 +123,13 @@ const setPosterDataList = _debounce(data => {
 }, 300)
 
 // 监听数据变化
-watch(
-	posterData.views,
-	(newVal, oldVal) => {
-		// 如果在撤销操作中不添加快照记录
-		if (pushStatus.value) {
-			setPosterDataList(JSON.stringify(newVal))
-		}
-	},
-	{ immediate: true }
-)
+watch(posterData, (newVal, oldVal) => {
+	// 如果在撤销操作中不添加快照记录
+	if (pushStatus.value) {
+		// console.log(JSON.stringify(newVal.value.views))
+		setPosterDataList(JSON.stringify(newVal.value.views))
+	}
+})
 
 // 移动区域点击事件
 const movableAreaTap = e => {
@@ -152,6 +146,9 @@ const isOneTouch = e => {
 
 // 触摸开始事件
 const handleTouchStart = (e, item, index) => {
+	// console.log(e)
+	// console.log(item)
+	// console.log(index)
 	// 有多个触摸点移除当前选中元素
 	if (!isOneTouch(e)) {
 		movableViewObj.value = {}
@@ -231,7 +228,7 @@ provide('typefontStylePopup', typefontStylePopup)
 
 // 删除事件
 const del = () => {
-	posterData.views.splice(movableViewIndex.value, 1)
+	posterData.value.views.splice(movableViewIndex.value, 1)
 	movableViewObj.value = {}
 	movableViewIndex.value = -1
 }
@@ -251,7 +248,7 @@ const edit = () => {
 		textInput.value = true
 		typeEditPopup.value.open()
 	} else {
-		showToastText('没有选中元素~')
+		showToastText('请选中图片或者文字~')
 	}
 }
 // 点击蒙版

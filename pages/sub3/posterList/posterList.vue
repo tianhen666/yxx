@@ -15,7 +15,7 @@
 				class="box1_item"
 				v-for="(item, index) in posterList"
 				:key="index"
-				@tap="navigateTo('/pages/sub3/posterListSub/posterListSub?id=' + item.id + '&name=' + item.posterName)"
+				@tap="navigateTo('/pages/sub3/posterListSub/posterListSub?parentId=' + item.id + '&parentName=' + item.posterName)"
 			>
 				<view class="img_box">
 					<image class="image" src="/static/htz-image-upload/play.png" mode="aspectFill"></image>
@@ -30,10 +30,10 @@
 	<view class="box box2" v-for="(item, index) in posterList" :key="index">
 		<m-title2
 			:title="item.posterName"
-			:path="'/pages/sub3/posterListSub/posterListSub?id=' + item.id + '&name=' + item.posterName"
+			:path="'/pages/sub3/posterListSub/posterListSub?parentId=' + item.id + '&parentName=' + item.posterName"
 		></m-title2>
 		<!-- 子分类 -->
-		<m-sub-fenlei :listData="item.children" :parentId="item.id"></m-sub-fenlei>
+		<m-sub-fenlei :listData="item.children" :parentId="item.id" :parentName="item.posterName"></m-sub-fenlei>
 		<!-- 列表  -->
 		<m-poster-list :listData="item?.children[0]?.posterImgList"></m-poster-list>
 	</view>

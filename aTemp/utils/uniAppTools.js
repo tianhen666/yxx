@@ -10,7 +10,8 @@ export function showToastText(title) {
 // 加载中
 export function showLoading(title) {
 	uni.showLoading({
-		title: title || '加载中'
+		title: title || '加载中',
+		mask: true
 	});
 
 }
@@ -74,12 +75,30 @@ export function getImageInfo(path) {
 //  保存图片到相册
 export function saveImageToPhotosAlbum(path) {
 	return new Promise((resolve, reject) => {
-		uni.saveImageToPhotosAlbum({
-			filePath: path,
-		}).then(e => {
-			resolve(e)
-		}).catch(error => {
-			showToastText("保存图片失败")
+		// 获取是否开启授权保存图片到相册
+		uni.authorize({
+			scope: 'scope.writePhotosAlbum',
+		}).then(res => {
+			// 已开启授权
+			// console.log(res)
+			uni.saveImageToPhotosAlbum({
+				filePath: path,
+			}).then(e => {
+				resolve(e)
+			}).catch(err => {
+				console.log(err)
+				showToastText("保存图片失败~")
+			})
+
+		}).catch(err => {
+			// 拒绝授权
+			// console.log(err)
+			showModal('检测到，您没有打开保存图片授权，是否打开设置？').then(e => {
+				console.log(e)
+				if (e.confirm) {
+					uni.openSetting()
+				}
+			})
 		})
 	})
 }

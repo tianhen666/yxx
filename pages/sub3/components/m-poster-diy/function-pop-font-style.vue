@@ -39,7 +39,7 @@
 
 		<!-- 文字大小 -->
 		<slider
-			:value="parseInt(posterData?.views[movableViewIndex]?.css?.fontSize || 8)"
+			:value="parseInt(posterData.value.views[movableViewIndex]?.css?.fontSize || 8)"
 			@change="fontSizeChange"
 			show-value
 			min="8"
@@ -64,7 +64,7 @@
 		<view class="font_align" v-if="fontStyleAlign">
 			<view
 				class="font_align_item"
-				:class="item.val === (posterData?.views[movableViewIndex]?.css?.textAlign || 'left') ? 'style1' : ''"
+				:class="item.val === (posterData.value.views[movableViewIndex]?.css?.textAlign || 'left') ? 'style1' : ''"
 				@tap.stop.prevent="fontAlignChange(item, index)"
 				v-for="(item, index) in alignList"
 				:key="index"
@@ -76,7 +76,7 @@
 
 		<!-- 文字行高 -->
 		<slider
-			:value="parseInt(posterData?.views[movableViewIndex]?.css?.lineHeight || 8)"
+			:value="parseInt(posterData.value.views[movableViewIndex]?.css?.lineHeight || 8)"
 			@change="fontLineHeightChange"
 			show-value
 			min="8"
@@ -90,7 +90,7 @@
 		<view class="font_bold" v-if="fontStyleBold">
 			<view
 				class="font_bold_item"
-				:class="item.val === (posterData.views[movableViewIndex].css.fontWeight || 'normal') ? 'style1' : ''"
+				:class="item.val === (posterData.value.views[movableViewIndex].css.fontWeight || 'normal') ? 'style1' : ''"
 				@tap.stop.prevent="fontBoldChange(item)"
 				v-for="(item, index) in boldList"
 				:key="index"
@@ -109,7 +109,7 @@
 				:key="index"
 			>
 				<view class="img_box"><image class="image" :src="item.imgUrl" mode="aspectFill" /></view>
-				<radio class="myradio" :checked="item.val === posterData.views[movableViewIndex].css.fontFamily" />
+				<radio class="myradio" :checked="item.val === posterData.value.views[movableViewIndex].css.fontFamily" />
 			</view>
 		</view>
 	</view>
@@ -143,7 +143,7 @@ const fontSizeFun = () => {
 	fontStyleSize.value = true
 }
 const fontSizeChange = e => {
-	posterData.views[movableViewIndex.value].css.fontSize = e.detail.value + 'px'
+	posterData.value.views[movableViewIndex.value].css.fontSize = e.detail.value + 'px'
 }
 
 // 设置文字颜色
@@ -174,7 +174,7 @@ const fontColorFun = () => {
 	fontStyleColor.value = true
 }
 const fontColorChange = color => {
-	posterData.views[movableViewIndex.value].css.color = color
+	posterData.value.views[movableViewIndex.value].css.color = color
 }
 
 // 对齐方式
@@ -199,7 +199,7 @@ const fontAlignFun = () => {
 	fontStyleAlign.value = true
 }
 const fontAlignChange = (item, index) => {
-	posterData.views[movableViewIndex.value].css.textAlign = item.val
+	posterData.value.views[movableViewIndex.value].css.textAlign = item.val
 }
 
 // 设置文字行高
@@ -210,7 +210,7 @@ const fontLineHeightFun = () => {
 	fontStyleLineHeight.value = true
 }
 const fontLineHeightChange = e => {
-	posterData.views[movableViewIndex.value].css.lineHeight = e.detail.value + 'px'
+	posterData.value.views[movableViewIndex.value].css.lineHeight = e.detail.value + 'px'
 }
 
 // 对齐方式
@@ -231,7 +231,7 @@ const fontBoldFun = () => {
 	fontStyleBold.value = true
 }
 const fontBoldChange = (item, index) => {
-	posterData.views[movableViewIndex.value].css.fontWeight = item.val
+	posterData.value.views[movableViewIndex.value].css.fontWeight = item.val
 }
 
 // 设置文字字体
@@ -252,38 +252,38 @@ const fontFamilyFun = () => {
 	fontStyleFamily.value = true
 }
 const fontFamilyChange = item => {
-	posterData.views[movableViewIndex.value].css.fontFamily = item.val
+	posterData.value.views[movableViewIndex.value].css.fontFamily = item.val
 }
 
 // 取消修改
 const fontStyleCancel = () => {
 	if (fontStyleSize.value) {
-		posterData.views[movableViewIndex.value].css.fontSize = movableViewObj.value.css.fontSize
+		posterData.value.views[movableViewIndex.value].css.fontSize = movableViewObj.value.css.fontSize
 		fontStyleSize.value = false
 	}
 
 	if (fontStyleColor.value) {
-		posterData.views[movableViewIndex.value].css.color = movableViewObj.value.css.color
+		posterData.value.views[movableViewIndex.value].css.color = movableViewObj.value.css.color
 		fontStyleColor.value = false
 	}
 
 	if (fontStyleAlign.value) {
-		posterData.views[movableViewIndex.value].css.textAlign = movableViewObj.value.css.textAlign
+		posterData.value.views[movableViewIndex.value].css.textAlign = movableViewObj.value.css.textAlign
 		fontStyleAlign.value = false
 	}
 
 	if (fontStyleLineHeight.value) {
-		posterData.views[movableViewIndex.value].css.lineHeight = movableViewObj.value.css.lineHeight
+		posterData.value.views[movableViewIndex.value].css.lineHeight = movableViewObj.value.css.lineHeight
 		fontStyleLineHeight.value = false
 	}
 
 	if (fontStyleBold.value) {
-		posterData.views[movableViewIndex.value].css.fontWeight = movableViewObj.value.css.fontWeight
+		posterData.value.views[movableViewIndex.value].css.fontWeight = movableViewObj.value.css.fontWeight
 		fontStyleBold.value = false
 	}
 
 	if (fontStyleFamily.value) {
-		posterData.views[movableViewIndex.value].css.fontFamily = movableViewObj.value.css.fontWeight
+		posterData.value.views[movableViewIndex.value].css.fontFamily = movableViewObj.value.css.fontWeight
 		fontStyleFamily.value = false
 	}
 
@@ -292,32 +292,32 @@ const fontStyleCancel = () => {
 // 确定修改
 const fontStyleConfirm = () => {
 	if (fontStyleSize.value) {
-		movableViewObj.value.css.fontSize = posterData.views[movableViewIndex.value].css.fontSize
+		movableViewObj.value.css.fontSize = posterData.value.views[movableViewIndex.value].css.fontSize
 		fontStyleSize.value = false
 	}
 
 	if (fontStyleColor.value) {
-		movableViewObj.value.css.color = posterData.views[movableViewIndex.value].css.color
+		movableViewObj.value.css.color = posterData.value.views[movableViewIndex.value].css.color
 		fontStyleColor.value = false
 	}
 
 	if (fontStyleAlign.value) {
-		movableViewObj.value.css.textAlign = posterData.views[movableViewIndex.value].css.textAlign
+		movableViewObj.value.css.textAlign = posterData.value.views[movableViewIndex.value].css.textAlign
 		fontStyleAlign.value = false
 	}
 
 	if (fontStyleLineHeight.value) {
-		movableViewObj.value.css.lineHeight = posterData.views[movableViewIndex.value].css.lineHeight
+		movableViewObj.value.css.lineHeight = posterData.value.views[movableViewIndex.value].css.lineHeight
 		fontStyleLineHeight.value = false
 	}
 
 	if (fontStyleBold.value) {
-		movableViewObj.value.css.fontWeight = posterData.views[movableViewIndex.value].css.fontWeight
+		movableViewObj.value.css.fontWeight = posterData.value.views[movableViewIndex.value].css.fontWeight
 		fontStyleBold.value = false
 	}
 
 	if (fontStyleFamily.value) {
-		movableViewObj.value.css.fontFamily = posterData.views[movableViewIndex.value].css.fontFamily
+		movableViewObj.value.css.fontFamily = posterData.value.views[movableViewIndex.value].css.fontFamily
 		fontStyleFamily.value = false
 	}
 

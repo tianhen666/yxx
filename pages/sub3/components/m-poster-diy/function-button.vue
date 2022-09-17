@@ -117,7 +117,7 @@ const revoke = () => {
 		pushStatus.value = false
 		posterDataListIndex.value--
 		const oldVal = JSON.parse(posterDataList.value[posterDataListIndex.value])
-		posterData.views.splice(0, posterData.views.length, ...oldVal)
+		posterData.value.views.splice(0, posterData.value.views.length, ...oldVal)
 	}
 	// console.log(posterDataList.value)
 }
@@ -128,7 +128,7 @@ const recovery = () => {
 		pushStatus.value = false
 		posterDataListIndex.value++
 		const newVal = JSON.parse(posterDataList.value[posterDataListIndex.value])
-		posterData.views.splice(0, posterData.views.length, ...newVal)
+		posterData.value.views.splice(0, posterData.value.views.length, ...newVal)
 	}
 }
 
@@ -155,7 +155,7 @@ const handleEdit = () => {
 	} else if (movableViewObj.value.type === 'text') {
 		typeEditPopup.value.open()
 	} else {
-		showToastText('没有选中元素~')
+		showToastText('请选中图片或者文字~')
 	}
 }
 
@@ -165,7 +165,7 @@ const handleFontStyle = () => {
 	if (movableViewObj.value.type === 'text') {
 		typefontStylePopup.value.open()
 	} else {
-		showToastText('请选择文字编辑~')
+		showToastText('请选中文字编辑~')
 	}
 }
 </script>

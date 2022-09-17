@@ -31,24 +31,35 @@ const props = defineProps({
 	},
 	parentId: {
 		// 父分类ID
-		required: true,
+		type: Number,
+		default: 0
+	},
+	parentName: {
+		// 父分类名称
+		type: String,
+		default: '海报列表'
+	},
+	currentIndex: {
+		// 当前选中索引
 		type: Number,
 		default: 0
 	}
 })
 
+const emits = defineEmits(['modifyCurrentIndex'])
+
 // 是否收起
 const packUp = ref(true)
 
-// 请求海报二级数据
-const currentIndex = ref(0)
 const scrollViewItemTap = (item, index) => {
 	const pages = getCurrentPages()
 	if (pages[pages.length - 1].route === 'pages/sub3/posterListSub/posterListSub') {
-		currentIndex.value = index
+		emits('modifyCurrentIndex', index)
 	} else {
 		navigateTo(
-			'/pages/sub3/posterListSub/posterListSub?parentId=' + props.parentId + '&subIndex=' + index
+			`/pages/sub3/posterListSub/posterListSub?parentId=${props.parentId}&currentIndex=${index}&parentName=${
+				props.parentName
+			}`
 		)
 	}
 }
