@@ -299,7 +299,7 @@ $iocn-size: 18px;
 	background-size: 100% 100%;
 	background-repeat: no-repeat;
 	margin: auto;
-	margin-top: 20px;
+	margin-top: 10px;
 }
 .movableView {
 	border: 1px dashed red;

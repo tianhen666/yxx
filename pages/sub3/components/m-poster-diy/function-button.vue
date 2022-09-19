@@ -27,7 +27,7 @@
 					<view class="icon"><uni-icons type="pyq" :color="icon.color" :size="icon.size"></uni-icons></view>
 					<text>文案</text>
 				</view>
-				<view class="item">
+				<view class="item" @tap="stagingPosterImg">
 					<view class="icon">
 						<uni-icons type="folder-add-filled" :color="icon.color" :size="icon.size"></uni-icons>
 					</view>
@@ -76,6 +76,7 @@
 import { readonly, provide, inject, ref, watch, computed, toRaw } from 'vue'
 import { showLoading, showToastText } from '@/aTemp/utils/uniAppTools.js'
 import { _debounce } from '@/aTemp/utils/tools.js'
+import { _posterRenewalPosterImg } from '@/aTemp/apis/poster.js'
 // 图标样式
 const icon = readonly({
 	color: '#ffffff',
@@ -93,12 +94,43 @@ const movableViewIndex = inject('movableViewIndex')
 // 接收海报数据
 const posterData = inject('posterData')
 
-// 保存海报
+// 海报其他属性
+const posterOtherData = inject('posterOtherData')
+// 当前暂存的ID
+const posterStagingId = ref(0)
+
+/*
+ * 生成海报
+ */
 const refresh = inject('refresh')
 // console.log(refresh)
-const savePosterImg = () => {
+const savePosterImg = async () => {
 	showLoading('海报生成中')
 	refresh.value = Date.now()
+
+	const posterRenewalPosterImgResponse = await posterRenewalPosterImg()
+	const { code, msg, data } = posterRenewalPosterImgResponse
+	posterStagingId.value = data
+}
+
+// 暂存海报
+const stagingPosterImg = async () => {
+	const posterRenewalPosterImgResponse = await posterRenewalPosterImg()
+	const { code, msg, data } = posterRenewalPosterImgResponse
+	posterStagingId.value = data
+	showToastText('成功暂存到-->门诊素材')
+}
+
+// 暂存海报请求
+const posterRenewalPosterImg = () => {
+	return _posterRenewalPosterImg({
+		openid: uni.getStorageSync('mainStore').openId,
+		posterImg: JSON.stringify(posterData),
+		posterName: posterOtherData.value.postercampaign,
+		posterUrl: posterOtherData.value.posterurl,
+		posterid: posterOtherData.value.id,
+		id: posterStagingId.value
+	})
 }
 
 /*

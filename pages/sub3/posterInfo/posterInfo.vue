@@ -29,28 +29,34 @@ provide('posterId', posterId)
 const posterData = reactive({ value: {} })
 provide('posterData', posterData)
 
+// 海报其他数据
+const posterOtherData = reactive({ value: {} })
+provide('posterOtherData', posterOtherData)
+
 onLoad(options => {
 	// console.log(options)
 
-	posterId.value = options.id || 0
+	posterId.value = parseInt(options.id) || 0
 	posterGetPostercontent()
 })
 
 // 获取海报数据
 const posterGetPostercontent = () => {
 	showLoading('海报数据加载中')
-	// _posterGetPostercontent({
-	// 	id: posterId.value
-	// }).then(res => {
-	// 	const { code, data, msg } = res
-	// 	posterData.data = JSON.parse(data.posterimg)
-	// })
+	_posterGetPostercontent({
+		id: posterId.value
+	}).then(res => {
+		const { code, data, msg } = res
+		// console.log(data)
+		// console.log(data.posterimg)
+		posterOtherData.value = data
+		posterData.value = JSON.parse(data.posterimg)
 
-	setTimeout(() => {
-		posterData.value = JSON.parse(
-			'{"width":"310px","height":"534px","background":"#aaa","views":[{"id":"1123123123123","type":"text","text":"你好11","css":{"top":"100px","left":"60px","fontSize":"30px","color":"red","width":"200px"}},{"id":"22222222","type":"text","text":"我是文字","css":{"top":"300px","left":"60px","fontSize":"30px","width":"300px","color":"red"}},{"id":"33333333333333","type":"image","url":"https://imgs.fenxiangzl.com/tooth/activity/0e5d2c8c-5a95-4daf-817e-feb6686e2e4b.jpg","css":{"top":"48px","left":"48px","width":"192px","height":"192px"}}]}'
-		)
-	}, 1000)
+		if (!data?.posterimg) {
+			uni.hideLoading()
+			showToastText('海报加载失败~')
+		}
+	})
 }
 
 // 图片生成完成

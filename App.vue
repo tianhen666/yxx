@@ -26,6 +26,7 @@ const old = uni.getStorageSync('mainStore')
 if (old) {
 	useMainStore.$patch({ ...old })
 }
+
 // 小程序冷启动执行,只会执行一次
 onLaunch(async options => {
 	// console.log(options)
@@ -48,8 +49,8 @@ onLaunch(async options => {
 	if (invitationCode) {
 		useMainStore.$patch({ invitationCode: invitationCode })
 	}
-	
-	/* 
+
+	/*
 	 * 直接进入小程序
 	 * 如果缓存中还是没有店铺ID,设置一个默认店铺ID
 	 */
@@ -58,7 +59,6 @@ onLaunch(async options => {
 	if (!storageStoreId) {
 		useMainStore.$patch({ storeId: 1 })
 	}
-
 
 	// 微信授权登录
 	if (!useMainStore.isToken) {
@@ -73,13 +73,14 @@ onLaunch(async options => {
 		})
 
 		const { code, data, msg } = resData
-		const { openid, unionid, token, mobile } = data
+		const { openid, unionid, token, mobile, userid } = data
 		// 获取到数据后赋值给全局变量
 		useMainStore.$patch({
 			openId: openid,
 			unionId: unionid,
 			token: token,
-			mobile: mobile
+			mobile: mobile,
+			userid: userid
 		})
 	}
 })

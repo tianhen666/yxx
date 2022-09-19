@@ -10,7 +10,8 @@ export const _useMainStore = defineStore('main', {
 			openId: '', //openId
 			unionId: '', //unionId
 			token: '', //token秘钥
-			mobile: '' // 手机号
+			mobile: '' ,// 手机号
+			userid:'' // 用户ID
 		}
 	},
 	getters: {

@@ -353,7 +353,16 @@
 					"enablePullDownRefresh": false
 				}
 
-			}]
+			}    ,{
+                    "path" : "posterDrafts/posterDrafts",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "门诊素材",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
+            ]
 		}
 	],
 	"globalStyle": {

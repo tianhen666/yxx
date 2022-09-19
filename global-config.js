@@ -3,7 +3,7 @@
  */
 
 export default {
-	BASE_URL: process.env.NODE_ENV === 'development' ? 'http://192.168.5.116:8089' : 'https://demo.com', //后台根域名
+	BASE_URL: process.env.NODE_ENV === 'development' ? 'http://192.168.5.116:8089/api1' : 'https://demo.com', //后台根域名
 	debug: false, //是否是调试,调试输出console.log
 
 	// 路由相关begin====================================>

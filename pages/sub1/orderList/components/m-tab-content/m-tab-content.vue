@@ -93,7 +93,6 @@ countDown(time1, showTime)
 
 <style lang="scss" scoped>
 .container {
-	padding-bottom: 90rpx;
 	.container_item {
 		padding: $padding;
 		background-color: #ffffff;

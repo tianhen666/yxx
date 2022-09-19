@@ -2,7 +2,7 @@
 	<view class="container">
 		<view class="box">
 			<uni-search-bar
-				placeholder="输入手机号码/产品名称搜索"
+				placeholder="输入手机号码/名称搜索"
 				radius="50"
 				v-model="formData.text"
 				bgColor="#EEEEEE"

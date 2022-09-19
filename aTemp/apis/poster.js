@@ -37,51 +37,18 @@ export function _posterGetPostercontent(data) {
 	})
 }
 
-
-// 删除用户自己的海报
-export function _posterDelete(data) {
-	return http.get({
-		url: '/poster/delete',
+// 修改海报内容
+export function _posterRenewalPosterImg(data) {
+	return http.post({
+		url: '/poster/renewalPosterImg',
 		data
 	})
 }
 
-// 获取营销海报详情
-export function _posterInfo(data) {
-	return http.get({
-		url: '/poster/info',
-		data
-	})
-}
-
-// 获取营销海报仓库
-export function _posterList(data) {
-	return http.get({
-		url: '/poster/list',
-		data
-	})
-}
-
-// 获取用户自己保存的海报
-export function _posterPosterlist(data) {
-	return http.get({
-		url: '/poster/posterlist',
-		data
-	})
-}
-
-// 保存海报
-export function _posterSave(data) {
-	return http.get({
-		url: '/poster/save',
-		data
-	})
-}
-
-// 修改自己保存海报
-export function _posterUpdate(data) {
-	return http.get({
-		url: '/poster/update',
+// 修改海报内容
+export function _posterDrafts(data) {
+	return http.post({
+		url: '/poster/drafts',
 		data
 	})
 }

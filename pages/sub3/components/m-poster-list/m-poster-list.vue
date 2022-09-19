@@ -4,7 +4,7 @@
 			class="list_item"
 			v-for="(item, index) in listData"
 			:key="index"
-			@tap="navigateTo('/pages/sub3/posterInfo/posterInfo')"
+			@tap="navigateTo(`/pages/sub3/posterInfo/posterInfo?id=${item.id}`)"
 		>
 			<image class="image" :src="item.posterurl" mode="aspectFill" v-if="index < 6"></image>
 		</view>

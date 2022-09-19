@@ -6,6 +6,7 @@
 			placeholder="1000+海报任意搜索"
 			bgColor="#eeeeee"
 			readonly
+			radius="30"
 			@tap="navigateTo('/pages/sub3/searchPosterList/searchPosterList')"
 		></uni-search-bar>
 		<view class="blank30"></view>
@@ -15,12 +16,21 @@
 				class="box1_item"
 				v-for="(item, index) in posterList"
 				:key="index"
-				@tap="navigateTo('/pages/sub3/posterListSub/posterListSub?parentId=' + item.id + '&parentName=' + item.posterName)"
+				@tap="
+					navigateTo('/pages/sub3/posterListSub/posterListSub?parentId=' + item.id + '&parentName=' + item.posterName)
+				"
 			>
 				<view class="img_box">
 					<image class="image" src="/static/htz-image-upload/play.png" mode="aspectFill"></image>
 				</view>
 				<text class="text">{{ item.posterName }}</text>
+			</view>
+
+			<view class="box1_item" @tap="navigateTo('/pages/sub3/posterDrafts/posterDrafts')">
+				<view class="img_box">
+					<image class="image" src="/static/htz-image-upload/play.png" mode="aspectFill"></image>
+				</view>
+				<text class="text">门诊素材</text>
 			</view>
 		</view>
 	</view>
@@ -90,7 +100,8 @@ onLoad(options => {
 			}
 			> .text {
 				margin-top: 20rpx;
-				font-size: 26rpx;
+				font-size: 24rpx;
+				color: #666;
 			}
 		}
 	}

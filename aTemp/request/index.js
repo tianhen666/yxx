@@ -33,13 +33,13 @@ instance.interceptors.request.use(
 			storeId,
 			token
 		} = mainStore
-		
+
 		// 如果有店铺ID
 		if (storeId) {
 			config.data.storeId = storeId
 		}
-		
-		
+
+
 		// 设置token
 		if (token) {
 			config.header.authorization = token
@@ -64,9 +64,9 @@ instance.interceptors.response.use(
 			data,
 			msg
 		} = response.data
-		
+
 		// 判断code是否正确
-		if (parseInt(code) === 200) {
+		if (parseInt(code) === 200 || parseInt(code) === 0) {
 			return response.data
 		} else {
 			return Promise.reject(response.data)
