@@ -14,7 +14,7 @@ export function _userList(data) {
 
 // 移除员工
 export function _userDelete(data) {
-	return http.psot({
+	return http.get({
 		url: '/user/delete',
 		data
 	})
@@ -22,7 +22,7 @@ export function _userDelete(data) {
 
 // 设置员工权限
 export function _userPower(data) {
-	return http.psot({
+	return http.post({
 		url: '/user/power',
 		data
 	})
@@ -30,8 +30,16 @@ export function _userPower(data) {
 
 // 修改员工信息
 export function _userUpdate(data) {
-	return http.psot({
+	return http.post({
 		url: '/user/update',
+		data
+	})
+}
+
+// 添加用户所属门诊
+export function _userChangeUserId(data) {
+	return http.post({
+		url: '/user/changeUserId',
 		data
 	})
 }

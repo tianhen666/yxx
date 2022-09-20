@@ -310,7 +310,25 @@
 					"navigationBarTitleText": "切换门店",
 					"enablePullDownRefresh": false
 				}
-			}]
+			}    ,{
+                    "path" : "manageStaffListLogin/manageStaffListLogin",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
+                ,{
+                    "path" : "manageUserInfo/manageUserInfo",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "个人信息",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
+            ]
 		},
 		{
 			"root": "pages/sub3",

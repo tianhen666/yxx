@@ -31,7 +31,7 @@ export default function(formObj, dataObj, _apiSave) {
 		formObj.value
 			.validate()
 			.then(formRes => {
-				// 保存商品接口
+				// 保存信息接口
 				_apiSave(dataObj.value).then(res => {
 					loading.value = false
 					// 返回上一级并且重载noload

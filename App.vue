@@ -31,8 +31,8 @@ if (old) {
 onLaunch(async options => {
 	// console.log(options)
 	init(options) // 初始化,检查是否更新
-	// router(options) // 路由拦截
-
+	router(options) // 路由拦截
+	
 	/*
 	 * 邀请进入小程序
 	 * invitationCode 邀请人code
@@ -61,7 +61,7 @@ onLaunch(async options => {
 	}
 
 	// 微信授权登录
-	if (!useMainStore.isToken) {
+	if (false) {
 		const wxCode = await uni.login()
 
 		// 登录获取

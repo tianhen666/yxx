@@ -5,7 +5,7 @@
 		<view class="blank20"></view>
 		<!-- 切换内容 -->
 		<view class="content">
-			<mTabContent></mTabContent>
+			<mTabContent :listData="orderListData"></mTabContent>
 			<!-- 加载更多 -->
 			<uni-load-more :status="pageLoadStatus" />
 		</view>
@@ -16,11 +16,10 @@
 import mTabContent from './components/m-tab-content/m-tab-content.vue'
 import { ref, reactive } from 'vue'
 import { onLoad, onReachBottom } from '@dcloudio/uni-app'
-import { _orderComplete } from '@/aTemp/apis/order.js'
+import { _orderAllorder } from '@/aTemp/apis/order.js'
 // 全局登录信息
 import { _useMainStore } from '@/aTemp/store/storeMain.js'
 const useMainStore = _useMainStore()
-
 
 // 每页数量
 const pageSize = ref(6)
@@ -31,12 +30,20 @@ const pageLoadStatus = ref('more')
 
 // 订单状态
 const items = reactive(['全部', '待付款', '待使用', '已完成'])
-// 当前选中的状态
+// 订单状态索引
 const current = ref(0)
+// 订单列表
+const orderListData = ref([])
+
 // tab切换
 const onClickItem = e => {
 	if (current.value !== e.currentIndex) {
 		current.value = e.currentIndex
+		
+		// 重置数据和分页
+		orderListData.value = []
+		pageNum.value = 1
+		orderGetList()
 	}
 }
 
@@ -45,22 +52,33 @@ onLoad(option => {
 	// 在传递的参数中获取订单状态索引
 	current.value = parseInt(option.current) || 0
 
-	if (current.value === 0) {
-		orderComplete()
-	}
+	// 获取订单列表
+	orderGetList()
 })
 
 // 查询完成的订单
-const orderComplete = () => {
-	_orderComplete({userId:useMainStore.userid}).then(res => {
-		console.log(res)
+const orderGetList = () => {
+	_orderAllorder({ userId: useMainStore.userid, status: current.value }).then(res => {
+		const { code, msg, data } = res
+		// 暂时延时一下
+		setTimeout(() => {
+			orderListData.value.push(...data)
+		
+			// 判断是否加载完成
+			if (posterListResponse.data.pageindex > pageNum.value) {
+				pageNum.value++
+				pageLoadStatus.value = 'more'
+			} else {
+				pageLoadStatus.value = 'noMore'
+			}
+		}, 1000)
 	})
 }
 
 // 触底加载
 onReachBottom(() => {
 	if (pageLoadStatus.value === 'more') {
-		posterGetIdPost()
+		orderGetList()
 	}
 })
 </script>

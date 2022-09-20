@@ -1,9 +1,14 @@
 <template>
 	<view class="container">
 		<!-- 头像 -->
-		<image class="image" src="/static/images/imgt.png" mode="aspectFill"></image>
+		<image
+			class="image"
+			@tap="navigateTo('/pages/sub2/manageUserInfo/manageUserInfo')"
+			src="/static/images/default_avatar.png"
+			mode="aspectFill"
+		></image>
 		<!-- 名称 -->
-		<view class="name_box">
+		<view class="name_box" @tap="navigateTo('/pages/sub2/manageUserInfo/manageUserInfo')">
 			<view class="name">牙小新牙小新</view>
 			<view class="userId">ID:1234565798</view>
 		</view>
@@ -20,7 +25,9 @@
 	</view>
 </template>
 
-<script></script>
+<script setup>
+import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
+</script>
 
 <style lang="scss" scoped>
 .container {

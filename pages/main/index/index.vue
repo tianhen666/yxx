@@ -59,7 +59,7 @@ const useMainStore = _useMainStore()
 
 // 分享 (onShareAppMessage,onShareTimeline) 不能删,必要 https://github.com/dcloudio/uni-app/issues/3097
 import useShare from '@/aTemp/mixins/useShare.js'
-const shareInfo = reactive({ title: '', path: '', imageUrl: '' })
+const shareInfo = reactive({ title: '', path: '', imageUrl: '', query: '' })
 // 设置分享
 useShare(shareInfo)
 

@@ -1,10 +1,15 @@
 <template>
 	<view class="container">
-		<view class="container_item" v-for="(item, index) in props.listData" :key="index" @tap="navigateTo('/pages/sub1/orderDetails/orderDetails')">
+		<view
+			class="container_item"
+			v-for="(item, index) in props.listData"
+			:key="index"
+			@tap="navigateTo('/pages/sub1/orderDetails/orderDetails')"
+		>
 			<!-- 订单编号，订单状态 -->
 			<view class="container_item_box">
 				<view class="container_item_box_left">
-					<view class="order_sn">订单号：{{ item.orderSN }}</view>
+					<view class="order_sn">订单号：{{ item.orderNo }}</view>
 				</view>
 				<view class="container_item_box_right">
 					<view class="order_status style1" v-if="item.type === 1">待付款</view>
@@ -17,30 +22,30 @@
 			<!-- 图文信息 -->
 			<view class="container_item_box1">
 				<view class="container_item_box1_left">
-					<image :src="item.url" mode="aspectFill" class="goods_img"></image>
+					<image :src="item.productPic" mode="aspectFill" class="goods_img"></image>
 				</view>
 				<view class="container_item_box1_right">
-					<view class="title">{{ item.title }}</view>
+					<view class="title">{{ item.productName }}</view>
 
 					<view class="container_item_box1_right_box">
 						<!-- 价格 -->
 						<text class="price">
 							<text class="text1">实际付款：</text>
 							<text class="price_cn">￥</text>
-							<text>{{ parseFloat(item.price) * parseInt(item.quantity) }}</text>
+							<text>{{ parseFloat(item.price) * parseInt(item.count) }}</text>
 						</text>
 						<!-- 数量 -->
-						<view class="quantity">x{{ item.quantity }}</view>
+						<view class="quantity">x{{ item.count }}</view>
 					</view>
 				</view>
 			</view>
 
 			<view class="blank32"></view>
 			<view class="order_btn_box">
-				<view class="time">待支付: 剩余时间{{ showTime }}</view>
-				<view class="item_btn style1" v-if="item.type === 0">去付款</view>
-				<view class="item_btn style2" v-else-if="item.type === 1">去使用</view>
-				<view class="item_btn  style3" v-else-if="item.type === 2">去评价</view>
+				<view class="time"  v-if="item.status === 1">待支付: 剩余时间{{ showTime }}</view>
+				<view class="item_btn style1" v-if="item.status=== 1">去付款</view>
+				<view class="item_btn style2" v-else-if="item.status === 2">去使用</view>
+				<view class="item_btn  style3" v-else-if="item.status === 3">去评价</view>
 			</view>
 		</view>
 	</view>
@@ -50,38 +55,13 @@
 import { ref } from 'vue'
 import dayjs from 'dayjs'
 import { countDown } from '@/aTemp/utils/tools.js'
-import {navigateTo} from '@/aTemp/utils/uniAppTools.js';
+import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
 const props = defineProps({
 	listData: {
 		type: Array,
 		required: true,
 		default() {
-			return [
-				{
-					orderSN: 'PR2022071614245246',
-					type: 1,
-					title: '金属托槽矫正金属托槽矫正金属托槽矫金属托槽矫正金属托槽矫正金属托槽矫',
-					price: 88,
-					quantity: 2,
-					url: '/static/default/banner.png'
-				},
-				{
-					orderSN: 'PR2022071614245246',
-					type: 2,
-					title: '金属托槽矫正金属托槽矫正金属托槽矫金属托槽矫正金属托槽矫正金属托槽矫',
-					price: 88,
-					quantity: 2,
-					url: '/static/default/banner.png'
-				},
-				{
-					orderSN: 'PR2022071614245246',
-					type: 3,
-					title: '金属托槽矫正金属托槽矫正金属托槽矫金属托槽矫正金属托槽矫正金属托槽矫',
-					price: 88,
-					quantity: 1,
-					url: '/static/default/banner.png'
-				}
-			]
+			return []
 		}
 	}
 })

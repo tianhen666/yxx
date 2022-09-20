@@ -1,52 +1,53 @@
 <template>
 	<view class="container">
 		<view class="blank32"></view>
+
 		<view class="box1 box">
-			<view class="box1_item" v-for="(item, index) in listData" :key="index" @tap="popupTap(item)">
+			<view class="box1_item" v-for="(item, index) in listData" :key="index">
 				<view class="box1_item_left">
-					<image class="image" src="/static/default/tup4.jpg" mode="aspectFill"></image>
+					<image class="image" src="/static/images/default_avatar.png" mode="aspectFill"></image>
 				</view>
 				<view class="box1_item_center">
 					<view class="box1_item_center_box1">
-						<text>{{ item.remarkName || item.name }}</text>
-						<text class="text" v-if="item.remarkName">{{ item.name }}</text>
+						<text>{{ item.remarkname || item.nickname || '微信用户' }}</text>
+						<text class="text" v-if="item.remarkname">{{ item.nickname || '微信用户' }}</text>
 					</view>
 					<view class="box1_item_center_box2">
 						<uni-tag
-							v-if="item.power.length > 0"
-							v-for="(sub, index) in item.power"
-							:key="index"
+							v-if="item.power"
 							size="small"
 							:inverted="true"
-							:text="optionPower[sub].text"
+							:text="optionPower[item.power - 1].text"
 							type="primary"
 						/>
 						<text class="text" v-else>暂无权限</text>
 					</view>
 				</view>
-				<view class="box1_item_right"><button class="box1_item_right_btn">员工设置</button></view>
+				<view class="box1_item_right">
+					<button class="box1_item_right_btn" v-if="item.power !== 1" @tap="popupTap(item)">员工设置</button>
+				</view>
 			</view>
 		</view>
 
 		<!-- 弹出框 -->
 		<uni-popup ref="popup" type="center" :safe-area="false" :is-mask-click="false">
 			<view class="popup_box">
-				<image class="close" @tap="popup.close" src="/static/default/close.png"></image>
+				<image class="close" @tap="popupClose" src="/static/images/close.png"></image>
 				<uni-forms :rules="rules" ref="formObj" v-model="formData" label-width="220rpx" label-position="top">
 					<!-- 员工备注 -->
-					<uni-forms-item :label="rules.remarkName.label" name="remarkName" label-position="top">
+					<uni-forms-item :label="rules.remarkname.label" name="remarkname" label-position="top">
 						<uni-easyinput
-							v-model="formData.remarkName"
-							:placeholder="rules.remarkName.rules[0].errorMessage"
+							v-model="formData.remarkname"
+							:placeholder="rules.remarkname.rules[0].errorMessage"
 						></uni-easyinput>
 					</uni-forms-item>
 					<!-- 权限设置 -->
 					<uni-forms-item :label="rules.power.label" name="power" label-position="top">
 						<uni-data-checkbox
-							multiple
 							mode="button"
 							v-model="formData.power"
 							:localdata="optionPower"
+							@change="setUserPower"
 						></uni-data-checkbox>
 					</uni-forms-item>
 				</uni-forms>
@@ -57,6 +58,12 @@
 				</view>
 			</view>
 		</uni-popup>
+
+		<!-- 邀请新员工 -->
+		<view class="fix">
+			<view class="fix_warpper"><button class="btn" open-type="share">邀请新员工</button></view>
+		</view>
+
 		<view class="blank40"></view>
 		<view class="blank40"></view>
 		<view class="blank40"></view>
@@ -64,47 +71,57 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { _debounce } from '@/aTemp/utils/tools.js'
-import { _userList } from '@/aTemp/apis/user.js'
+import { _userList, _userUpdate, _userDelete, _userPower } from '@/aTemp/apis/user.js'
+import { _storeGetinfo } from '@/aTemp/apis/store.js'
 import { onLoad } from '@dcloudio/uni-app'
+import { showToastText, showModal } from '@/aTemp/utils/uniAppTools.js'
+
+// 全局登录信息
+import { _useMainStore } from '@/aTemp/store/storeMain.js'
+const useMainStore = _useMainStore()
+
+// 分享 (onShareAppMessage,onShareTimeline) 不能删,必要 https://github.com/dcloudio/uni-app/issues/3097
+import useShare from '@/aTemp/mixins/useShare.js'
+const shareInfo = reactive({ title: '', path: '', imageUrl: '', query: '' })
+// 设置分享
+useShare(shareInfo)
+//  设置分享参数
+onLoad(options => {
+	wx.hideShareMenu()
+	_storeGetinfo().then(res => {
+		const { code, msg, data } = res
+		shareInfo.title = `邀请您加入【${data.name}】`
+		shareInfo.path = computed(
+			() =>
+				`/pages/sub2/manageStaffListLogin/manageStaffListLogin?invitationCode=${useMainStore.openId}&storeId=${
+					useMainStore.storeId
+				}&scene=0&targetId=0`
+		)
+		shareInfo.imageUrl = `https://imgs.fenxiangzl.com/store/tooth/invitbg.png`
+	})
+})
+
+// 数据列表
+const listData = ref([])
 
 // 获取用户列表
 const getUserList = () => {
-	_userList().then(res => {})
+	_userList().then(res => {
+		const { code, data, msg } = res
+		listData.value = data
+	})
 }
 
 onLoad(options => {
-	console.log(options)
+	// console.log(options)
 	getUserList()
 })
-// 数据列表
-const listData = ref([
-	{
-		power: [],
-		name: '天痕',
-		remarkName: '姓名一'
-	},
-	{
-		power: [],
-		name: '天痕',
-		remarkName: '姓名一'
-	},
-	{
-		power: [],
-		name: '天痕',
-		remarkName: '姓名一'
-	},
-	{
-		power: [],
-		name: '天痕',
-		remarkName: '姓名一'
-	}
-])
 
 // 表单校验
 const rules = {
-	remarkName: {
+	remarkname: {
 		rules: [{ required: true, errorMessage: '请输入姓名备注' }],
 		label: '姓名备注'
 	},
@@ -114,7 +131,12 @@ const rules = {
 	}
 }
 // 权限数据
-const optionPower = [{ value: 0, text: '篮球' }, { value: 1, text: '足球' }, { value: 2, text: '游泳' }]
+const optionPower = [
+	{ value: 1, text: '创建者', disable: true },
+	{ value: 2, text: '管理员' },
+	{ value: 3, text: '订单核销' },
+	{ value: 4, text: '活动管理' }
+]
 
 // 弹出层
 const popup = ref(null)
@@ -127,44 +149,65 @@ const loading1 = ref(false)
 // 加载中2
 const loading2 = ref(false)
 
+// 弹出弹框
 const popupTap = item => {
 	formData.value = item
 	popup.value.open()
 }
 
-const deleteClick = _debounce(
-	() => {
-		// _apiSave(dataObj.value).then(res => {
-		// 	loading.value = false
-		// })
-		// 关闭弹出框
-		popup.value.close()
-		loading2.value = false
-	},
-	500,
-	loading2
-)
+// 关闭弹框
+const popupClose = () => {
+	popup.value.close()
+	// 重新获取员工列表
+	getUserList()
+}
+
+// 移除员工
+const deleteClick = () => {
+	showModal('确定移除吗？').then(res => {
+		if (res.confirm) {
+			loading2.value = true
+			_userDelete({
+				id: formData.value.id
+			}).then(res => {
+				// 关闭弹出框
+				popup.value.close()
+				loading2.value = false
+				// 重新获取员工列表
+				getUserList()
+			})
+		}
+	})
+}
+
+// 保持备注信息
 const saveClick = _debounce(
 	() => {
 		formObj.value
 			.validate()
 			.then(formRes => {
-				// _apiSave(dataObj.value).then(res => {
-				// 	loading.value = false
-				// })
+				_userUpdate(formData.value).then(res => {
+					loading1.value = false
+				})
 				// 关闭弹出框
 				popup.value.close()
 				loading1.value = false
 			})
 			.catch(err => {
+				// console.log('表单错误信息：', err)
 				loading1.value = false
 				showToastText(err[0].errorMessage)
-				console.log('表单错误信息：', err)
 			})
 	},
 	500,
 	loading1
 )
+
+// 修改权限
+const setUserPower = e => {
+	let powerId = e.detail.data.value
+	_userPower({ power: powerId, userId: formData.value.id }).then(res => {})
+}
 </script>
 
 <style lang="scss" scoped>
@@ -261,6 +304,31 @@ const saveClick = _debounce(
 			width: 40rpx;
 			height: 40rpx;
 			z-index: 10;
+		}
+	}
+
+	.fix {
+		padding-top: 40rpx;
+		padding-bottom: 90rpx;
+		height: 92rpx;
+		box-sizing: content-box;
+		.fix_warpper {
+			position: fixed;
+			z-index: 77;
+			width: 100%;
+			left: 0;
+			bottom: 0;
+			padding-bottom: 90rpx;
+			> .btn {
+				width: $main-width;
+				border-radius: 16rpx;
+				margin: auto;
+				font-size: 32rpx;
+				height: 92rpx;
+				line-height: 92rpx;
+				color: #ffffff;
+				background-color: $main-color;
+			}
 		}
 	}
 }

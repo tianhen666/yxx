@@ -1,9 +1,22 @@
 <template>
 	<view class="container">
-		<view class="title">欢迎登录</view>
+		<!-- <view class="title">欢迎登录</view> -->
+
+		<!-- 头像 -->
+		<button open-type="chooseAvatar" class="avatar" @chooseavatar="onChooseAvatar" hover-class="avatar-button-hover">
+			<image :src="avatar || '/static/images/default_avatar.png'" class="image" mode="aspectFill"></image>
+		</button>
+		<view class="blank40"></view>
+
+		<!-- 用户名 -->
+		<view class="nickname">
+			<uni-easyinput type="nickname" trim v-model="nickname" placeholder="请输入用户名"></uni-easyinput>
+		</view>
+		<view class="blank40"></view>
+
 		<!-- 协议 -->
 		<view class="box1">
-			<radio class="myradio" :checked="isAgree" @tap="isAgree = !isAgree" />
+			<radio class="myradio" :checked="isAgree" @click="isAgree = !isAgree" />
 			<view class="box1_item2">
 				<text @tap="isAgree = !isAgree">我已阅读并同意</text>
 				<text class="text1" @tap="navigateTo('/pages/main/agree/agree')">《用户隐私协议》</text>
@@ -11,7 +24,7 @@
 		</view>
 
 		<view class="box2">
-			<view class="btn" v-if="!isAgree">微信授权登录</view>
+			<view class="btn" @tap="clickTips" v-if="!isAgree || !nickname || !avatar">微信授权登录</view>
 			<button v-else open-type="getPhoneNumber" class="btn btnAgree" @getphonenumber="getphonenumber">
 				微信授权登录
 			</button>
@@ -29,12 +42,18 @@ import { _useMainStore } from '@/aTemp/store/storeMain.js'
 const useMainStore = _useMainStore()
 
 // 是否同意协议
-const isAgree = ref(true)
+const isAgree = ref(false)
 
 // 回跳页面
 const jumpPage = ref('')
 
+// 加载中
 const loading = ref(false)
+
+// 头像
+const avatar = ref('')
+// 用户名
+const nickname = ref('')
 
 onLoad(options => {
 	const { path } = options
@@ -44,6 +63,31 @@ onLoad(options => {
 		jumpPage.value = '/pages/main/index/index'
 	}
 })
+
+// 输入提示
+const clickTips = () => {
+	// console.log(!avatar.value)
+	// console.log(!nickname.value)
+	// console.log(!isAgree.value)
+	if (!avatar.value) {
+		showToastText('请点击灰色头像，上传微信头像')
+		return
+	}
+	if (!nickname.value) {
+		showToastText('请输入用户名')
+		return
+	}
+	if (!isAgree.value) {
+		showToastText('请阅读，并且同意协议')
+		return
+	}
+}
+
+// 获取头像
+const onChooseAvatar = e => {
+	const avatarUrl = e.detail.avatarUrl
+	avatar.value = avatarUrl
+}
 
 // 获取手机号事件
 const getphonenumber = val => {
@@ -72,9 +116,30 @@ const getphonenumber = val => {
 <style lang="scss" scoped>
 .container {
 	padding: 80rpx 50rpx 0;
-	.title {
+	/* .title {
 		font-size: 42rpx;
 		padding-bottom: 120rpx;
+	} */
+	.avatar {
+		font-size: 0;
+		background-color: transparent;
+		padding: 0;
+		margin: 0;
+		&::after {
+			border: none;
+		}
+		.image {
+			width: 100rpx;
+			height: 100rpx;
+			border-radius: 50%;
+			display: inline-block !important;
+		}
+	}
+
+	.nickname {
+		:deep(.uni-easyinput__content) {
+			background-color: transparent !important;
+		}
 	}
 	.box1 {
 		color: $text-color-grey;
@@ -92,7 +157,7 @@ const getphonenumber = val => {
 		}
 	}
 	.box2 {
-		margin-top: 60rpx;
+		margin-top: 20rpx;
 		.btn {
 			font-size: 32rpx;
 			color: #fff;
