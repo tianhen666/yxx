@@ -27,12 +27,12 @@ if (old) {
 	useMainStore.$patch({ ...old })
 }
 
-// 小程序冷启动执行,只会执行一次
+// 小程序启动时执行
 onLaunch(async options => {
 	// console.log(options)
-	init(options) // 初始化,检查是否更新
-	router(options) // 路由拦截
-	
+	// 初始化,检查是否更新
+	init(options) 
+
 	/*
 	 * 邀请进入小程序
 	 * invitationCode 邀请人code
@@ -61,28 +61,29 @@ onLaunch(async options => {
 	}
 
 	// 微信授权登录
-	if (false) {
-		const wxCode = await uni.login()
+	const wxCode = await uni.login()
 
-		// 登录获取
-		const resData = await _wxLogin({
-			code: wxCode.code,
-			invitationCode,
-			scene,
-			targetId
-		})
+	// 登录获取
+	const resData = await _wxLogin({
+		code: wxCode.code,
+		invitationCode,
+		scene,
+		targetId
+	})
 
-		const { code, data, msg } = resData
-		const { openid, unionid, token, mobile, userid } = data
-		// 获取到数据后赋值给全局变量
-		useMainStore.$patch({
-			openId: openid,
-			unionId: unionid,
-			token: token,
-			mobile: mobile,
-			userid: userid
-		})
-	}
+	const { code, data, msg } = resData
+	const { openid, unionid, token, mobile, userid } = data
+	// 获取到数据后赋值给全局变量
+	useMainStore.$patch({
+		openId: openid,
+		unionId: unionid,
+		token: token,
+		mobile: mobile,
+		userid: userid
+	})
+	
+	// 路由拦截
+	router(options) 
 })
 </script>
 

@@ -65,7 +65,7 @@ const crop = () => {
 					} else {
 						// 全局添加完成后的图片
 						storeCropper.$patch(state => {
-							state[param.value] = [...resImageSrcs.value]
+							state.imgUrls[param.value] = [...resImageSrcs.value]
 						})
 						navigateBack()
 					}

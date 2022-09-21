@@ -21,6 +21,6 @@ import sUser from './components/s-user.vue'
 
 <style lang="scss" scoped>
 :global(page) {
-	background-color: #f5f5f5;
+	background-color: #F9F9F9;
 }
 </style>

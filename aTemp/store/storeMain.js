@@ -15,8 +15,7 @@ export const _useMainStore = defineStore('main', {
 		}
 	},
 	getters: {
-		// 是否进行code授权
-		isToken: (state) => state.token ? true : false,
+		// 是否进行了手机号授权
 		isLogin: (state) => state.mobile ? true : false,
 	},
 })

@@ -2,7 +2,7 @@
 	<view class="container">
 		<view
 			class="container_item"
-			v-for="(item, index) in props.listData"
+			v-for="(item, index) in listData"
 			:key="index"
 			@tap="navigateTo('/pages/sub1/orderDetails/orderDetails')"
 		>
@@ -12,9 +12,11 @@
 					<view class="order_sn">订单号：{{ item.orderNo }}</view>
 				</view>
 				<view class="container_item_box_right">
-					<view class="order_status style1" v-if="item.type === 1">待付款</view>
-					<view class="order_status style2" v-else-if="item.type === 2">待使用</view>
-					<view class="order_status  style3" v-else-if="item.type === 3">已完成</view>
+					<view class="order_status style1" v-if="item.status === 1">
+						{{ dayjs(item.createDt).add(30, 'minute') - dayjs() > 0 ? '待支付' : '已过期' }}
+					</view>
+					<view class="order_status style2" v-else-if="item.status === 2">待使用</view>
+					<view class="order_status  style3" v-else-if="item.status === 3">已完成</view>
 				</view>
 			</view>
 			<view class="blank32"></view>
@@ -42,10 +44,30 @@
 
 			<view class="blank32"></view>
 			<view class="order_btn_box">
-				<view class="time"  v-if="item.status === 1">待支付: 剩余时间{{ showTime }}</view>
-				<view class="item_btn style1" v-if="item.status=== 1">去付款</view>
-				<view class="item_btn style2" v-else-if="item.status === 2">去使用</view>
-				<view class="item_btn  style3" v-else-if="item.status === 3">去评价</view>
+				<!-- 待支付 -->
+				<view class="time" v-if="item.status === 1">
+					{{
+						dayjs(item.createDt).add(30, 'minute') - dayjs() > 0
+							? '待支付：剩余' + _getMinutes(item.createDt, 30) + '分钟'
+							: '订单已过期，请重新下单'
+					}}
+				</view>
+				<view class="item_btn style1" v-if="item.status === 1 && dayjs(item.createDt).add(30, 'minute') - dayjs() > 0">
+					去付款
+				</view>
+
+				<!-- 已支付 -->
+				<view class="time timeStyle1" v-if="item.status === 2">
+					支付时间：{{ dayjs(item.payDt).format('YYYY-MM-DD HH:mm:ss') }}
+				</view>
+				<view class="item_btn style2" v-if="item.status === 2">去使用</view>
+
+				<!-- 已使用 -->
+				<view class="time timeStyle1" v-if="item.status === 3 || item.status === 4">
+					完成时间：{{ dayjs(item.payDt).format('YYYY-MM-DD HH:mm:ss') }}
+				</view>
+				<view class="item_btn  style3" v-if="item.status === 3">去评论</view>
+				<view class="item_btn  style3" v-if="item.status === 4">已评论</view>
 			</view>
 		</view>
 	</view>
@@ -54,7 +76,7 @@
 <script setup>
 import { ref } from 'vue'
 import dayjs from 'dayjs'
-import { countDown } from '@/aTemp/utils/tools.js'
+import { _getMinutes } from '@/aTemp/utils/tools.js'
 import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
 const props = defineProps({
 	listData: {
@@ -65,10 +87,6 @@ const props = defineProps({
 		}
 	}
 })
-
-const time1 = dayjs().add(10, 'second')
-const showTime = ref('')
-countDown(time1, showTime)
 </script>
 
 <style lang="scss" scoped>
@@ -167,11 +185,14 @@ countDown(time1, showTime)
 				color: $sub-color;
 				font-size: 26rpx;
 			}
+			> .timeStyle1 {
+				color: $text-color-grey;
+			}
 			.item_btn {
+				@include mFlex;
 				width: 120rpx;
 				height: 48rpx;
 				border-radius: 48rpx;
-				line-height: 48rpx;
 				text-align: center;
 				font-size: 24rpx;
 			}

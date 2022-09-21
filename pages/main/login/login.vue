@@ -34,9 +34,10 @@
 
 <script setup>
 import { _wxMobile } from '@/aTemp/apis/login.js'
-import { showToastText, redirectTo, showLoading, navigateTo } from '@/aTemp/utils/uniAppTools.js'
+import { showToastText, redirectTo, showLoading, navigateTo, uploadFile } from '@/aTemp/utils/uniAppTools.js'
 import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
+import config from '@/global-config.js'
 // 全局登录信息
 import { _useMainStore } from '@/aTemp/store/storeMain.js'
 const useMainStore = _useMainStore()
@@ -70,7 +71,7 @@ const clickTips = () => {
 	// console.log(!nickname.value)
 	// console.log(!isAgree.value)
 	if (!avatar.value) {
-		showToastText('请点击灰色头像，上传微信头像')
+		showToastText('请点击灰色头像，上传头像')
 		return
 	}
 	if (!nickname.value) {
@@ -83,10 +84,12 @@ const clickTips = () => {
 	}
 }
 
-// 获取头像
-const onChooseAvatar = e => {
+// 获取并上传头像
+const onChooseAvatar = async e => {
 	const avatarUrl = e.detail.avatarUrl
-	avatar.value = avatarUrl
+	const resUploadFile = await uploadFile(avatarUrl, config.BASE_URL + '/store/uploadimage')
+	const { code, data, msg } = JSON.parse(resUploadFile)
+	avatar.value = data
 }
 
 // 获取手机号事件
@@ -97,10 +100,10 @@ const getphonenumber = val => {
 	const { code } = val.detail
 
 	if (code) {
-		_wxMobile({ code: code }).then(res => {
+		_wxMobile({ code: code, avatar: avatar.value, nickname: nickname.value }).then(res => {
 			const { msg, data, code } = res
 			if (data) {
-				useMainStore.$patch({ mobile: data })
+				useMainStore.$patch({ mobile: data, avatar: avatar.value, nickname: nickname.value })
 			}
 			setTimeout(() => {
 				uni.hideLoading()

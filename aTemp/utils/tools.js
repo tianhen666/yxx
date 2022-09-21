@@ -63,21 +63,23 @@ export function _throttle(fun, delay) {
 }
 
 // 倒计时
-export function countDown(time1, showTime) {
-	const payTimer = setInterval(() => {
-		showTime.value = countDownWrapper(time1)
-	}, 50)
-	const countDownWrapper = () => {
-		let duration = dayjs.duration(time1 - dayjs())
-		let hours = duration.hours()
-		let minutes = duration.minutes() % 60 < 10 ? '0' + (duration.minutes() % 60) : duration.minutes() % 60
-		let seconds = duration.seconds() % 60 < 10 ? '0' + (duration.seconds() % 60) : duration.seconds() % 60
-		let milliseconds = duration.milliseconds()
-		if (hours <= 0 && minutes <= 0 && seconds <= 0) {
-			clearInterval(payTimer)
-			return false
-		} else {
-			return `${hours}:${minutes}:${seconds} ${milliseconds} `
-		}
+export function _countDown(time, payTimer) {
+
+	let duration = dayjs.duration(dayjs(time) - dayjs())
+	let hours = duration.hours()
+	let minutes = duration.minutes() % 60 < 10 ? '0' + (duration.minutes() % 60) : duration.minutes() % 60
+	let seconds = duration.seconds() % 60 < 10 ? '0' + (duration.seconds() % 60) : duration.seconds() % 60
+	let milliseconds = duration.milliseconds()
+	if (hours <= 0 && minutes <= 0 && seconds <= 0) {
+		clearInterval(payTimer)
+		return `${hours}:${minutes}:${seconds}`
+	} else {
+		return `${hours}:${minutes}:${seconds} ${milliseconds} `
 	}
+}
+
+// 根据毫秒获取分钟倒计时
+export function _getMinutes(time,addMinute){
+	let duration = dayjs.duration(dayjs(time).add(addMinute, 'minute') - dayjs())
+	return parseInt(duration.asMinutes())
 }

@@ -6,7 +6,7 @@ import {
 export const _storeCropper = defineStore('cropper', {
 	state: () => {
 		return {
-			imgUrls: []
+			imgUrls: {}
 		}
 	}
 })

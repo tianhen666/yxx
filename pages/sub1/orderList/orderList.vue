@@ -8,6 +8,9 @@
 			<mTabContent :listData="orderListData"></mTabContent>
 			<!-- 加载更多 -->
 			<uni-load-more :status="pageLoadStatus" />
+			
+			<view class="blank40"></view>
+			<view class="blank40"></view>
 		</view>
 	</view>
 </template>
@@ -39,7 +42,7 @@ const orderListData = ref([])
 const onClickItem = e => {
 	if (current.value !== e.currentIndex) {
 		current.value = e.currentIndex
-		
+
 		// 重置数据和分页
 		orderListData.value = []
 		pageNum.value = 1
@@ -58,14 +61,20 @@ onLoad(option => {
 
 // 查询完成的订单
 const orderGetList = () => {
-	_orderAllorder({ userId: useMainStore.userid, status: current.value }).then(res => {
+	pageLoadStatus.value = 'loading'
+	_orderAllorder({
+		userId: useMainStore.userid,
+		status: current.value,
+		pageNum: pageNum.value,
+		pageSize: pageSize.value
+	}).then(res => {
 		const { code, msg, data } = res
 		// 暂时延时一下
 		setTimeout(() => {
-			orderListData.value.push(...data)
-		
+			orderListData.value.push(...data.records)
+
 			// 判断是否加载完成
-			if (posterListResponse.data.pageindex > pageNum.value) {
+			if (res.data.pages > pageNum.value) {
 				pageNum.value++
 				pageLoadStatus.value = 'more'
 			} else {

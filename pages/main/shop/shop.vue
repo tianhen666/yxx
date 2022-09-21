@@ -1,13 +1,15 @@
 <template>
+	<!-- 背景 -->
+	<view class="bg"><image class="image" src="/static/images/bg.png" mode="aspectFill"></image></view>
+	<!-- #ifndef H5 -->
 	<!-- 标题栏 -->
-	<uni-nav-bar title="xxx门诊" statusBar fixed color="#ffffff" :border="false"></uni-nav-bar>
+	<uni-nav-bar statusBar :title="'商城'" color="#ffffff" :border="false"></uni-nav-bar>
+	<!-- #endif -->
 	<view class="blank32"></view>
 
 	<!-- 商品列表 -->
-	<m-shop-list :listData="listData" showBtn>
-	</m-shop-list>
+	<m-shop-list :listData="listData" showBtn></m-shop-list>
 	<view class="blank32"></view>
-	
 </template>
 
 <script setup>
@@ -50,6 +52,6 @@ onShow(() => {
 </script>
 <style lang="scss" scoped>
 :global(page) {
-	background-color: #f5f5f5;
+	background-color: #F9F9F9;
 }
 </style>

@@ -18,7 +18,8 @@ import {
 // 获取请求地址
 import config from '@/global-config.js'
 
-
+// 裁剪完成的图片列表
+const storeCropper = _storeCropper()
 
 
 export default function(paramsObj) {
@@ -52,6 +53,19 @@ export default function(paramsObj) {
 				refData.value[param].push(res[0])
 				return
 			}
+
+			// 监听裁剪后storeCropper的变化
+			watch(
+				storeCropper.imgUrls,
+				(newValue, oldValue) => {
+					if (refData.value[param]) {
+						refData.value[param] += ',' + newValue[param].join(',')
+					} else {
+						refData.value[param] = newValue[param].join(',')
+					}
+				}
+			)
+
 			// 去裁剪图片页面
 			// res需要裁剪图片地址列表
 			// ratio 比例
@@ -61,22 +75,6 @@ export default function(paramsObj) {
 				url: `/pages/sub2/cropper/cropper?imgUrls=${res}&ratio=${ratio}&url=${url}&param=${param}`
 			})
 		}
-
-		// 裁剪完成的图片列表
-		const storeCropper = _storeCropper()
-		// 监听裁剪后storeCropper的变化
-		watch(
-			() => storeCropper.$state,
-			(newValue, oldValue) => {
-				console.log(newValue)
-				console.log(oldValue)
-				if (refData.value[param]) {
-					refData.value[param] += ',' + newValue.join(',')
-				} else {
-					refData.value[param] = newValue.join(',')
-				}
-			}
-		)
 
 		return {
 			chooseSuccess, //图片选择函数

@@ -38,6 +38,6 @@ import mDentist from './components/m-dentist/m-dentist.vue'
 <style lang="scss" scoped>
 	
 :global(page) {
-	background-color: #f5f5f5;
+	background-color: #F9F9F9;
 }
 </style>
