@@ -1,7 +1,27 @@
 <template>
 	<view class="container">
-		<view class="blank32 blank_bg_color"></view>
 		<uni-forms :rules="rules" ref="formObj" :model="formData" label-position="left" label-width="220rpx">
+			<view class="uni-forms-item-wrapper">
+				<!-- 活动类型 -->
+				<uni-forms-item :label="rules.type.label" name="type">
+					<uni-data-checkbox v-model="formData.type" :localdata="type"></uni-data-checkbox>
+				</uni-forms-item>
+
+				<view class="tips">
+					{{
+						formData.type === 0
+							? '创建【无金额】活动，适用线下义诊，免费参与等活动'
+							: formData.type === 1
+							? '创建【限时】类活动，可设置参与金额及分销佣金'
+							: formData.type === 2
+							? '创建【限量秒杀】类活动，适用福利，名额少的活动'
+							: formData.type === 3
+							? '创建【拼团】类活动，邀约多人购买，抱团享受最大福利'
+							: ''
+					}}
+				</view>
+			</view>
+
 			<!-- 活动封面图上传 -->
 			<uni-forms-item :label="rules.mainPic.label" label-position="top" name="mainPic">
 				<htz-image-upload :max="selectNum1" v-model="picList1" mediaType="image" @chooseSuccess="chooseSuccess1" />
@@ -9,7 +29,7 @@
 			<view class="blank32 blank_bg_color"></view>
 
 			<!-- 开始时间 -->
-			<uni-forms-item :label="rules.startDt.label" name="startDt">
+			<uni-forms-item :label="rules.startDt.label" name="startDt" v-if="formData.type !== 2">
 				<uni-datetime-picker
 					:start="Date.now()"
 					:placeholder="rules.startDt.rules[0].errorMessage"
@@ -20,7 +40,7 @@
 			</uni-forms-item>
 
 			<!-- 结束时间 -->
-			<uni-forms-item :label="rules.endDt.label" name="endDt">
+			<uni-forms-item :label="rules.endDt.label" name="endDt" v-if="formData.type !== 2">
 				<uni-datetime-picker
 					:start="Date.now()"
 					:placeholder="rules.endDt.rules[0].errorMessage"
@@ -29,16 +49,11 @@
 					v-model="formData.endDt"
 				/>
 			</uni-forms-item>
-			<view class="blank32 blank_bg_color"></view>
+			<view class="blank32 blank_bg_color" v-if="formData.type !== 2"></view>
 
 			<!-- 活动标题 -->
 			<uni-forms-item :label="rules.title.label" name="title">
 				<uni-easyinput v-model="formData.title" :placeholder="rules.title.rules[0].errorMessage" />
-			</uni-forms-item>
-
-			<!-- 活动类型 -->
-			<uni-forms-item :label="rules.type.label" name="type">
-				<uni-data-checkbox v-model="formData.type" :localdata="type"></uni-data-checkbox>
 			</uni-forms-item>
 
 			<!-- 活动数量 -->
@@ -177,18 +192,24 @@ const formObj = ref(null)
  */
 const type = [
 	{
-		text: '义诊',
+		text: '免费引流',
 		value: 0
 	},
 	{
-		text: '限时',
+		text: '活动促销',
 		value: 1
 	},
 	{
-		text: '拼团',
+		text: '限量秒杀',
 		value: 2
 	}
 ]
+/* 
+ {
+ 	text: '拼团活动',
+ 	value: 3
+ }
+ */
 // 页面开始加载
 onLoad(optios => {
 	dataId.value = parseInt(optios.id) || 0
@@ -291,11 +312,12 @@ import useHtzImageUpload from '@/aTemp/mixins/useHtzImageUpload.js'
 
 // 活动封面图上传
 const { chooseSuccess: chooseSuccess1, picList: picList1, selectNum: selectNum1 } = useHtzImageUpload({
-	ratio: 2 / 1,
+	ratio: 5 / 4,
 	url: '/enrollform/uploadimage',
 	refData: formData,
 	param: 'mainPic',
-	selectNum: 1
+	selectNum: 1,
+	baseDir: 'active'
 })
 // 活动分享图上传
 const { chooseSuccess: chooseSuccess2, picList: picList2, selectNum: selectNum2 } = useHtzImageUpload({
@@ -303,7 +325,8 @@ const { chooseSuccess: chooseSuccess2, picList: picList2, selectNum: selectNum2 
 	url: '/enrollform/uploadimage',
 	refData: formData,
 	param: 'sharePic',
-	selectNum: 1
+	selectNum: 1,
+	baseDir: 'active'
 })
 // 活动海报图
 const {
@@ -315,7 +338,8 @@ const {
 	url: '/enrollform/uploadimage',
 	refData: formData,
 	param: 'postPic',
-	selectNum: 1
+	selectNum: 1,
+	baseDir: 'active'
 })
 // 活动详情图
 const {
@@ -327,7 +351,8 @@ const {
 	url: '/enrollform/uploadimage',
 	refData: formData,
 	param: 'details',
-	selectNum: 5
+	selectNum: 5,
+	baseDir: 'active'
 })
 </script>
 
@@ -337,5 +362,25 @@ const {
 }
 .container {
 	width: 750rpx;
+}
+.uni-forms-item-wrapper {
+	overflow: hidden;
+	background-color: $main-color;
+	.tips {
+		padding: 0 32rpx 32rpx;
+		color: #fff;
+		font-size: 26rpx;
+	}
+	:deep(.uni-forms-item) {
+		background-color: $main-color !important;
+	}
+	:deep(.uni-forms-item__label) {
+		font-weight: bold;
+		color: #fff;
+	}
+	:deep(.checklist-text) {
+		color: #fff !important;
+		font-weight: bold;
+	}
 }
 </style>

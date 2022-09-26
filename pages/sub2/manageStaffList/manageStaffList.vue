@@ -5,7 +5,7 @@
 		<view class="box1 box">
 			<view class="box1_item" v-for="(item, index) in listData" :key="index">
 				<view class="box1_item_left">
-					<image class="image" src="/static/images/default_avatar.png" mode="aspectFill"></image>
+					<image class="image" :src="item.avatar||'/static/images/default_avatar.png'" mode="aspectFill"></image>
 				</view>
 				<view class="box1_item_center">
 					<view class="box1_item_center_box1">
@@ -66,7 +66,6 @@
 
 		<view class="blank40"></view>
 		<view class="blank40"></view>
-		<view class="blank40"></view>
 	</view>
 </template>
 
@@ -79,24 +78,28 @@ import { onLoad } from '@dcloudio/uni-app'
 import { showToastText, showModal } from '@/aTemp/utils/uniAppTools.js'
 
 // 全局登录信息
-import { _useMainStore } from '@/aTemp/store/storeMain.js'
-const useMainStore = _useMainStore()
+import { _useUserMain } from '@/aTemp/store/userMain.js'
+const useUserMain = _useUserMain()
 
 // 分享 (onShareAppMessage,onShareTimeline) 不能删,必要 https://github.com/dcloudio/uni-app/issues/3097
 import useShare from '@/aTemp/mixins/useShare.js'
 const shareInfo = reactive({ title: '', path: '', imageUrl: '', query: '' })
 // 设置分享
 useShare(shareInfo)
+
+
 //  设置分享参数
 onLoad(options => {
 	wx.hideShareMenu()
+	
+	// 获取店铺信息
 	_storeGetinfo().then(res => {
 		const { code, msg, data } = res
 		shareInfo.title = `邀请您加入【${data.name}】`
 		shareInfo.path = computed(
 			() =>
-				`/pages/sub2/manageStaffListLogin/manageStaffListLogin?invitationCode=${useMainStore.openId}&storeId=${
-					useMainStore.storeId
+				`/pages/sub2/manageStaffListLogin/manageStaffListLogin?invitationCode=${useUserMain.openId}&storeId=${
+					useUserMain.storeId
 				}&scene=0&targetId=0`
 		)
 		shareInfo.imageUrl = `https://imgs.fenxiangzl.com/store/tooth/invitbg.png`
@@ -225,7 +228,7 @@ const setUserPower = e => {
 			justify-content: space-between;
 			padding-bottom: 32rpx;
 			margin-bottom: 32rpx;
-			border-bottom: 1px solid $uni-border-3;
+			border-bottom: 1px solid $uni-border-2;
 			&:last-child {
 				border: none;
 				margin-bottom: 0;

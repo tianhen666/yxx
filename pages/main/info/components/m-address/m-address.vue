@@ -1,7 +1,7 @@
 <template>
 	<view class="container">
 		<!-- 门诊名称 -->
-		<view class="title">牙小新口腔门诊</view>
+		<view class="title">{{ info.name }}</view>
 
 		<!-- 地址 -->
 		<view class="address">
@@ -11,12 +11,23 @@
 
 		<!-- 按钮 -->
 		<view class="button_container">
-			<button>电话咨询</button>
-			<button>门诊预约</button>
+			<button class="btn" @tap="makePhoneCall(info.mobile)">电话咨询</button>
+			<button class="btn">门诊预约</button>
 		</view>
 	</view>
 </template>
 
+<script setup>
+import { makePhoneCall } from '@/aTemp/utils/uniAppTools.js'
+const props = defineProps({
+	// 数据列表
+	info: {
+		type: Object,
+		required: true,
+		default: () => ({})
+	}
+})
+</script>
 <style lang="scss" scoped>
 .container {
 	width: $main-width;
@@ -64,6 +75,19 @@
 			width: 22rpx;
 			height: 24rpx;
 			display: inline-block !important;
+		}
+	}
+	> .button_container {
+		@include mFlex;
+
+		.btn {
+			width: 248rpx;
+			height: 64rpx;
+			font-size: 26rpx;
+			line-height: 64rpx;
+			background-color: $main-color;
+			color: #fff;
+			border-radius: 80rpx;
 		}
 	}
 }

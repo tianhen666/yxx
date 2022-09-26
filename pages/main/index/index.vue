@@ -2,10 +2,10 @@
 	<m-page-loading v-if="loading"></m-page-loading>
 	<view class="container" v-else>
 		<!-- 背景 -->
-		<view class="bg"><image class="image" src="/static/images/bg.png" mode="aspectFill"></image></view>
+		<view class="pageBg"><image class="image" src="/static/images/bg.jpg" mode="aspectFill"></image></view>
 		<!-- #ifndef H5 -->
 		<!-- 标题栏 -->
-		<uni-nav-bar statusBar :title="storeInfo.name" color="#ffffff" :border="false"></uni-nav-bar>
+		<uni-nav-bar fixed statusBar :title="storeInfo.name" color="#ffffff" :border="false"></uni-nav-bar>
 		<!-- #endif -->
 
 		<!-- 轮播 -->
@@ -54,8 +54,8 @@ import { _enrollformGetlist } from '@/aTemp/apis/activity.js'
 import { _serveGetlist } from '@/aTemp/apis/service.js'
 
 // 全局登录信息
-import { _useMainStore } from '@/aTemp/store/storeMain.js'
-const useMainStore = _useMainStore()
+import { _useUserMain } from '@/aTemp/store/userMain.js'
+const useUserMain = _useUserMain()
 
 // 分享 (onShareAppMessage,onShareTimeline) 不能删,必要 https://github.com/dcloudio/uni-app/issues/3097
 import useShare from '@/aTemp/mixins/useShare.js'
@@ -74,8 +74,10 @@ const activityListData = ref([])
 // 拉取服务信息
 const serveListData = ref([])
 
+// onLoad中请求是否加载完成了
+const onLoadStatus = ref(false)
+
 const getData = () => {
-	loading.value = true
 	let ListData = Promise.all([
 		_bannerList({ sfuse: 0 }),
 		_storeGetinfo(),
@@ -87,6 +89,7 @@ const getData = () => {
 	ListData.then(res => {
 		// 加载完成
 		loading.value = false
+		onLoadStatus.value = true
 		bannerListData.value = res[0].data
 		storeInfo.value = res[1].data
 		activityListData.value = res[2].data
@@ -97,29 +100,37 @@ const getData = () => {
 		shareInfo.imageUrl = storeInfo.value.sharePic
 		shareInfo.path = computed(
 			() =>
-				`/pages/main/index/index?invitationCode=${useMainStore.openId}&storeId=${
-					useMainStore.storeId
-				}&scene=0&targetId=0`
+				`/pages/main/index/index?invitationCode=${useUserMain.openId}&storeId=${useUserMain.storeId}&scene=0&targetId=0`
 		)
 		shareInfo.query = computed(
-			() => `invitationCode=${useMainStore.openId}&storeId=${useMainStore.storeId}&scene=0&targetId=0`
+			() => `invitationCode=${useUserMain.openId}&storeId=${useUserMain.storeId}&scene=0&targetId=0`
 		)
 	})
 }
 
 onLoad(options => {
-	console.log(options)
+	// console.log(options)
+	loading.value = true
 	getData()
+})
+
+onShow(() => {
+	if (onLoadStatus.value) {
+		getData()
+	}
 })
 </script>
 <style lang="scss" scoped>
 .box_activity {
+	position: relative;
+	z-index: 2;
 	padding: 32rpx 32rpx;
 	border-radius: 24rpx;
 	/* background: url('@/static/default/huodongbg.png') #2f5ae6 no-repeat; */
 	background-size: 100% auto;
-	:deep(.container) {
-		/* .title {
+
+	/*:deep(.container) {
+		 .title {
 			color: #fff;
 		}
 		.right {
@@ -127,10 +138,12 @@ onLoad(options => {
 			.uniui-forward {
 				color: #fff !important;
 			}
-		} */
-	}
+		} 
+	}*/
 }
 .box_serveList {
+	position: relative;
+	z-index: 2;
 	padding: 32rpx 32rpx 32rpx 32rpx;
 	border-radius: 24rpx;
 	.shijian1 {

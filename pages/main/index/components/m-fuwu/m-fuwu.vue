@@ -1,6 +1,6 @@
 <template>
 	<view class="box_fuwu">
-		<view class="box_fuwu_left" @tap="previewImage([props.info.customer])">
+		<view class="box_fuwu_left" @tap="navigateTo('/pages/sub1/yuyue/yuyue')">
 			<image class="image" src="/static/images/fuwu1.png" mode="aspectFill"></image>
 			<view class="title">预约服务</view>
 			<view class="sub_title">关爱牙齿 从我做起</view>

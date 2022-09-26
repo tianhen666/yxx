@@ -16,7 +16,7 @@
 	</view>
 
 	<!-- 背景 -->
-	<view class="bg"></view>
+	<view class="pageBg"></view>
 
 	<view class="box1">
 		<view class="box1_item">

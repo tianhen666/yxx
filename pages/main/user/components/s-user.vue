@@ -1,6 +1,4 @@
 <template>
-	<!-- 头部 -->
-	<m-header></m-header>
 
 	<!-- vip -->
 	<m-vip></m-vip>
@@ -55,7 +53,6 @@
 
 <script setup>
 import mFun from './m-fun/m-fun.vue'
-import mHeader from './m-header/m-header.vue'
 import mOption from './m-option/m-option.vue'
 import mVip from './m-vip/m-vip.vue'
 import { showToastText, navigateTo } from '@/aTemp/utils/uniAppTools.js'

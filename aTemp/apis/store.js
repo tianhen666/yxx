@@ -45,10 +45,10 @@ export function _wxpayPayment(data) {
 	})
 }
 
-// 分账回调
-export function _wxpayWxNotify(data) {
-	return http.get({
-		url: '/wxpay/wxNotify',
+// 支付成功回调，并且分账
+export function _wxpayWxNotifys(data) {
+	return http.post({
+		url: '/wxpay/wxNotifys',
 		data
 	})
 }

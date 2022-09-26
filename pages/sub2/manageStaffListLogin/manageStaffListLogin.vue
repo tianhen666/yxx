@@ -17,8 +17,8 @@ import { onLoad } from '@dcloudio/uni-app'
 import { showToastText,redirectTo } from '@/aTemp/utils/uniAppTools.js'
 
 // 全局登录信息
-import { _useMainStore } from '@/aTemp/store/storeMain.js'
-const useMainStore = _useMainStore()
+import { _useUserMain } from '@/aTemp/store/userMain.js'
+const useUserMain = _useUserMain()
 
 const storeInfo = ref({})
 onLoad(options => {
@@ -32,7 +32,7 @@ onLoad(options => {
 // 进入门诊
 const jionStore = () => {
 	_userChangeUserId({
-		userid: useMainStore.userid
+		userid: useUserMain.userid
 	}).then(res=>{
 		const { data, msg, code } = res
 		showToastText("加入成功,正在跳转...")

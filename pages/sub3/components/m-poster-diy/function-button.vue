@@ -124,7 +124,7 @@ const stagingPosterImg = async () => {
 // 暂存海报请求
 const posterRenewalPosterImg = () => {
 	return _posterRenewalPosterImg({
-		openid: uni.getStorageSync('mainStore').openId,
+		openid: uni.getStorageSync('UserMain').openId,
 		posterImg: JSON.stringify(posterData),
 		posterName: posterOtherData.value.postercampaign,
 		posterUrl: posterOtherData.value.posterurl,

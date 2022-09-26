@@ -2,17 +2,22 @@
 page {
 	font-family: 'PingFangSC-Medium', 'PingFang SC', -apple-system, 'BlinkMacSystemFont', sans-serif;
 	line-height: 1;
-	background-color: $uni-bg-color;
+	background-color: #f9f9f9;
 	width: 100%;
 	color: #333;
 	position: relative;
 }
 /* 顶部背景颜色 */
-.bg {
-	position: absolute;
+.uni-navbar--fixed {
+	background-image: url('@/static/images/bg.jpg');
+	background-size: 750rpx 514rpx;
+	background-repeat: no-repeat;
+}
+.pageBg {
+	position: fixed;
 	left: 0;
 	top: 0;
-	z-index: 0;
+	z-index: -1;
 	width: 750rpx;
 	height: 514rpx;
 	> .image {
@@ -69,10 +74,15 @@ textarea {
 /* uni组件样式覆盖 */
 
 /* 页面标题组件 */
-.uni-status-bar,.uni-navbar__content,.uni-navbar__header {
+.uni-status-bar{
+	height: 44px !important;
+}
+.uni-status-bar,
+.uni-navbar__content,
+.uni-navbar__header {
 	background-color: transparent !important;
 }
-.uni-nav-bar-text{
+.uni-nav-bar-text {
 	font-size: 32rpx !important;
 }
 

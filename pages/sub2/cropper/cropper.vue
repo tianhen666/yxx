@@ -31,12 +31,15 @@ const url = ref('') // 上传服务器url
 const resImageSrcs = ref([]) //裁剪完成的图片
 const cropper = ref(null) //裁剪组件对象
 const param = ref('') //裁剪store字段参数
+const baseDir = ref('') //上传到服务端的文件夹
 
 onLoad(option => {
 	imageSrcs.value = option.imgUrls ? decodeURIComponent(option.imgUrls).split(',') : []
-	ratio.value = parseFloat(option.ratio)
+	ratio.value = parseFloat(option.ratio) || 1
 	param.value = option.param || 'imgUrls'
 	url.value = baseURL + decodeURIComponent(option.url)
+
+	baseDir.value = option.baseDir || ''
 })
 
 const crop = () => {
@@ -50,6 +53,7 @@ const crop = () => {
 			uni.uploadFile({
 				url: url.value, //仅为示例，非真实的接口地址
 				filePath: res.tempFilePath,
+				formData: { baseDir: baseDir.value },
 				name: 'file',
 				success: uploadFileRes => {
 					uni.hideLoading()

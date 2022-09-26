@@ -62,18 +62,19 @@ const mDelete = (item, index) => {
 </script>
 
 <style lang="scss" scoped>
-:global(page) {
-	background-color: #f5f5f5;
-}
 .tab_content {
+	width: $main-width;
+	margin: auto;
 	&_item {
 		@include mFlex;
 		background-color: #ffffff;
 		padding: $padding;
 		justify-content: space-between;
-		border-bottom: 1px solid $uni-border-4;
+		margin-bottom: 30rpx;
+		border-radius: 16rpx;
+		overflow: hidden;
 		&:last-child {
-			border: none;
+			margin-bottom: 0;
 		}
 		> .image {
 			height: 280rpx;

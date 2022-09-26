@@ -3,18 +3,36 @@
 		<slot name="title"></slot>
 		<!-- 滚动图片 -->
 		<scroll-view scroll-x="true" class="scroll-view_H" scroll-left="20">
-			<view class="scroll_item"><image class="image" src="/static/images/imgt.png" mode="heightFix"></image></view>
-			<view class="scroll_item"><image class="image" src="/static/images/imgt.png" mode="heightFix"></image></view>
-			<view class="scroll_item"><image class="image" src="/static/images/imgt.png" mode="heightFix"></image></view>
-			<view class="scroll_item"><image class="image" src="/static/images/imgt.png" mode="heightFix"></image></view>
+			<view class="scroll_item" v-for="(item, index) in imgList" :key="index">
+				<image class="image" :src="item" mode="heightFix"></image>
+			</view>
 		</scroll-view>
-
-		<view class="about_text">
-			杭州口腔医院创建于1952年,是浙江省内历史最悠久、规模最大、在市民中享有广泛盛誉的口腔专科医院。
-			杭州口腔医院创建于1952年,是浙江省内历史最悠久、规模最大、在市民中享有广泛盛誉的口腔专科医院。
-		</view>
+		<view class="about_text">{{ info.descData }}</view>
 	</view>
 </template>
+
+<script setup>
+import { ref, reactive, computed } from 'vue'
+const props = defineProps({
+	// 数据列表
+	info: {
+		type: Object,
+		required: true,
+		default: () => ({})
+	}
+})
+
+const imgList = computed(() => {
+	if (Array.isArray(props.info.innerPics)) {
+		return props.info.innerPics
+	} else {
+		if (props.info.innerPics) {
+			return props.info.innerPics.split(',')
+		}
+		return []
+	}
+})
+</script>
 
 <style lang="scss" scoped>
 .container {
@@ -29,7 +47,6 @@
 	overflow: hidden;
 	.scroll-view_H {
 		white-space: nowrap;
-		margin-top: 20rpx;
 		border-radius: 4rpx;
 		overflow: hidden;
 		.scroll_item {
@@ -45,8 +62,8 @@
 			}
 		}
 	}
-	.about_text{
-		color:$text-color-grey;
+	.about_text {
+		color: $text-color-grey;
 		font-size: 26rpx;
 		line-height: 1.6;
 		text-align: justify;

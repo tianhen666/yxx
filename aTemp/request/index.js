@@ -28,17 +28,16 @@ instance.interceptors.request.use(
 		// console.log(uni.getExtConfigSync())
 
 		// 获取用户信息
-		const mainStore = uni.getStorageSync("mainStore")
+		const userMain = uni.getStorageSync("userMain")
 		const {
 			storeId,
 			token
-		} = mainStore
+		} = userMain
 
 		// 如果有店铺ID
 		if (storeId) {
 			config.data.storeId = parseInt(storeId)
 		}
-
 
 		// 设置token
 		if (token) {

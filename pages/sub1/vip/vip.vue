@@ -11,7 +11,7 @@
 	<view class="blank40 blank_main_color"></view>
 
 	<!-- 会员显示 -->
-	<view class="bg"></view>
+	<view class="pageBg"></view>
 	<view class="vip">
 		<view class="left">
 			<view class="vip_box">

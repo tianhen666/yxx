@@ -38,6 +38,7 @@ export default function(formObj, dataObj, _apiSave) {
 					navigateBackRefresh({
 						currentIndex: prevCurrentIndex.value
 					})
+					showToastText('提交成功~')
 				})
 			})
 			.catch(err => {

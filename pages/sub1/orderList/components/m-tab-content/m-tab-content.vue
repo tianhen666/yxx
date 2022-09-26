@@ -4,7 +4,7 @@
 			class="container_item"
 			v-for="(item, index) in listData"
 			:key="index"
-			@tap="navigateTo('/pages/sub1/orderDetails/orderDetails')"
+			@tap="navigateTo(`/pages/sub1/orderDetails/orderDetails?orderNo=${item.orderNo}`)"
 		>
 			<!-- 订单编号，订单状态 -->
 			<view class="container_item_box">
@@ -12,7 +12,11 @@
 					<view class="order_sn">订单号：{{ item.orderNo }}</view>
 				</view>
 				<view class="container_item_box_right">
-					<view class="order_status style1" v-if="item.status === 1">
+					<view
+						class="order_status"
+						v-if="item.status === 1"
+						:class="{ style1: dayjs(item.createDt).add(30, 'minute') - dayjs() > 0 }"
+					>
 						{{ dayjs(item.createDt).add(30, 'minute') - dayjs() > 0 ? '待支付' : '已过期' }}
 					</view>
 					<view class="order_status style2" v-else-if="item.status === 2">待使用</view>
@@ -45,19 +49,27 @@
 			<view class="blank32"></view>
 			<view class="order_btn_box">
 				<!-- 待支付 -->
-				<view class="time" v-if="item.status === 1">
+				<view
+					class="time"
+					v-if="item.status === 1"
+					:class="{ timeStyle1: dayjs(item.createDt).add(30, 'minute') - dayjs() > 0 }"
+				>
 					{{
 						dayjs(item.createDt).add(30, 'minute') - dayjs() > 0
 							? '待支付：剩余' + _getMinutes(item.createDt, 30) + '分钟'
 							: '订单已过期，请重新下单'
 					}}
 				</view>
-				<view class="item_btn style1" v-if="item.status === 1 && dayjs(item.createDt).add(30, 'minute') - dayjs() > 0">
+				<view
+					class="item_btn style1"
+					v-if="item.status === 1 && dayjs(item.createDt).add(30, 'minute') - dayjs() > 0"
+					@tap.stop.prevent="orderPayment(item.orderNo)"
+				>
 					去付款
 				</view>
 
 				<!-- 已支付 -->
-				<view class="time timeStyle1" v-if="item.status === 2">
+				<view class="time" v-if="item.status === 2">
 					支付时间：{{ dayjs(item.payDt).format('YYYY-MM-DD HH:mm:ss') }}
 				</view>
 				<view class="item_btn style2" v-if="item.status === 2">去使用</view>
@@ -77,7 +89,9 @@
 import { ref } from 'vue'
 import dayjs from 'dayjs'
 import { _getMinutes } from '@/aTemp/utils/tools.js'
-import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
+import { navigateTo, showToastText } from '@/aTemp/utils/uniAppTools.js'
+import { _orderPayment } from '@/aTemp/apis/order.js'
+import { _wxpayWxNotifys } from '@/aTemp/apis/store.js'
 const props = defineProps({
 	listData: {
 		type: Array,
@@ -87,6 +101,41 @@ const props = defineProps({
 		}
 	}
 })
+
+const emits = defineEmits(['onClickItem'])
+
+// 重新付款
+const orderPayment = val => {
+	const orderNo = val
+
+	_orderPayment({ orderNo: orderNo }).then(res => {
+		// 获取唤醒支付必要条件
+		const { data } = res
+		const payInfo = JSON.parse(data)
+		// 唤醒支付
+		uni
+			.requestPayment({
+				timeStamp: payInfo.timeStamp,
+				nonceStr: payInfo.nonceStr,
+				package: payInfo.package,
+				signType: payInfo.signType,
+				paySign: payInfo.sign
+			})
+			.then(val => {
+				showToastText('支付成功~')
+
+				// 支付成功回调，并且分账 status: 2 //2表示已经支付完成，待使用
+				const myParameter = { orderNumExternal: orderNo, status: 2 }
+				_wxpayWxNotifys(myParameter).then(resData => {
+					// 重新获取订单状态
+					emits('defineEmits', 2)
+				})
+			})
+			.catch(err => {
+				showToastText('取消支付~')
+			})
+	})
+}
 </script>
 
 <style lang="scss" scoped>
@@ -115,15 +164,14 @@ const props = defineProps({
 			&_right {
 				> .order_status {
 					font-size: 26rpx;
+					color: $text-color-grey;
 				}
 				> .style1 {
 					color: $sub-color;
 				}
 				> .style2 {
-					color: $text-color-grey;
 				}
 				> .style3 {
-					color: $text-color-grey;
 				}
 			}
 		}
@@ -182,11 +230,11 @@ const props = defineProps({
 			> .time {
 				flex: auto;
 				margin-right: 20rpx;
-				color: $sub-color;
 				font-size: 26rpx;
+				color: $text-color-grey;
 			}
 			> .timeStyle1 {
-				color: $text-color-grey;
+				color: $sub-color;
 			}
 			.item_btn {
 				@include mFlex;

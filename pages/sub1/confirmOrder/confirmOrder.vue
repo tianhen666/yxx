@@ -73,9 +73,9 @@
 <script setup>
 import { ref } from 'vue'
 import { _storeproductGetinfo } from '@/aTemp/apis/shop.js'
-import { _wxpayPayment, _wxpayWxNotify } from '@/aTemp/apis/store.js'
+import { _wxpayPayment, _wxpayWxNotifys } from '@/aTemp/apis/store.js'
 import { onLoad, onShow } from '@dcloudio/uni-app'
-import { navigateTo, showToastText } from '@/aTemp/utils/uniAppTools.js'
+import { navigateTo, showToastText, redirectTo } from '@/aTemp/utils/uniAppTools.js'
 import { _debounce } from '@/aTemp/utils/tools.js'
 // 骨架屏
 import lsSkeleton from '@/components/ls-skeleton/ls-skeleton.nvue'
@@ -107,14 +107,14 @@ onLoad(options => {
 const btnLoading = ref(false)
 const confirm = _debounce(
 	() => {
-		_wxpayPayment({ count: quantity.value, productId: dataId.value })
+		_wxpayPayment({ count: quantity.value, productId: dataId.value, enrollId: 0 })
 			.then(res => {
 				btnLoading.value = false
 				const { data, code, msg } = res
 				const resDataObj = JSON.parse(data)
 				// console.log(resDataObj)
 				// 订单编号
-				const orderNumParent = resDataObj.orderNumParent
+				const orderNumExternal = resDataObj.orderNumExternal
 
 				// 支付信息
 				const payInfo = JSON.parse(resDataObj.pay_info)
@@ -132,12 +132,17 @@ const confirm = _debounce(
 					.then(val => {
 						showToastText('支付成功~')
 
-						// 分账回调
-						_wxpayWxNotify({ orderNumParent: orderNumParent }).then(resData => {
+						// 支付成功回调，并且分账 status: 2 //待使用
+						const myParameter = { orderNumExternal: orderNumExternal, status: 2 }
+						_wxpayWxNotifys(myParameter).then(resData => {
 							console.log('resData')
 						})
+						// 去订单列表页
+						redirectTo('/pages/sub1/orderList/orderList?current=2')
 					})
 					.catch(err => {
+						// 去订单列表页
+						redirectTo('/pages/sub1/orderList/orderList?current=1')
 						showToastText('取消支付~')
 					})
 			})

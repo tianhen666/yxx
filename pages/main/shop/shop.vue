@@ -1,9 +1,9 @@
 <template>
 	<!-- 背景 -->
-	<view class="bg"><image class="image" src="/static/images/bg.png" mode="aspectFill"></image></view>
+	<view class="pageBg"><image class="image" src="/static/images/bg.jpg" mode="aspectFill"></image></view>
 	<!-- #ifndef H5 -->
 	<!-- 标题栏 -->
-	<uni-nav-bar statusBar :title="'商城'" color="#ffffff" :border="false"></uni-nav-bar>
+	<uni-nav-bar statusBar fixed :title="'商城'" color="#ffffff" :border="false"></uni-nav-bar>
 	<!-- #endif -->
 	<view class="blank32"></view>
 
@@ -17,9 +17,9 @@
 import { _storeproductGetlist } from '@/aTemp/apis/shop.js'
 import { onLoad, onShow } from '@dcloudio/uni-app'
 import { ref } from 'vue'
-import { _useMainStore } from '@/aTemp/store/storeMain.js'
+import { _useUserMain } from '@/aTemp/store/userMain.js'
 // 全局变量
-const useMainStore = _useMainStore()
+const useUserMain = _useUserMain()
 
 // 数据列表
 const listData = ref([])

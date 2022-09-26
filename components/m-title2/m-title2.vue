@@ -50,7 +50,7 @@ const moreClick = () => {
 		overflow: hidden;
 		color: $text-color;
 		font-size: 32rpx;
-		font-weight: 500;
+		font-weight: bold;
 		@include mFlex;
 		justify-content: flex-start;
 		> .image {

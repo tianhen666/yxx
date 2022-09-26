@@ -1,14 +1,20 @@
 <template>
 	<view class="content">
 		<!-- tab切换 -->
-		<uni-segmented-control :current="current" :values="items" style-type="text" @clickItem="onClickItem" />
+		<uni-segmented-control
+			:current="current"
+			:values="items"
+			style-type="text"
+			@clickItem="onClickItem"
+			@onClickItem="onClickItem"
+		/>
 		<view class="blank20"></view>
 		<!-- 切换内容 -->
 		<view class="content">
 			<mTabContent :listData="orderListData"></mTabContent>
 			<!-- 加载更多 -->
 			<uni-load-more :status="pageLoadStatus" />
-			
+
 			<view class="blank40"></view>
 			<view class="blank40"></view>
 		</view>
@@ -19,10 +25,11 @@
 import mTabContent from './components/m-tab-content/m-tab-content.vue'
 import { ref, reactive } from 'vue'
 import { onLoad, onReachBottom } from '@dcloudio/uni-app'
-import { _orderAllorder } from '@/aTemp/apis/order.js'
+import { _orderAllorder, _orderPayment } from '@/aTemp/apis/order.js'
+
 // 全局登录信息
-import { _useMainStore } from '@/aTemp/store/storeMain.js'
-const useMainStore = _useMainStore()
+import { _useUserMain } from '@/aTemp/store/userMain.js'
+const useUserMain = _useUserMain()
 
 // 每页数量
 const pageSize = ref(6)
@@ -63,7 +70,7 @@ onLoad(option => {
 const orderGetList = () => {
 	pageLoadStatus.value = 'loading'
 	_orderAllorder({
-		userId: useMainStore.userid,
+		userId: useUserMain.userid,
 		status: current.value,
 		pageNum: pageNum.value,
 		pageSize: pageSize.value

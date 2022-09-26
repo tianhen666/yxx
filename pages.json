@@ -154,7 +154,16 @@
 					"navigationBarTitleText": "服务列表",
 					"enablePullDownRefresh": false
 				}
-			}]
+			}    ,{
+                    "path" : "yuyue/yuyue",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "快速预约",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
+            ]
 		},
 		{
 			"root": "pages/sub2",

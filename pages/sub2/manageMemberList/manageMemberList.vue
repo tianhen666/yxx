@@ -26,7 +26,7 @@
 	</view>
 
 	<!-- 背景 -->
-	<view class="bg"></view>
+	<view class="pageBg"></view>
 
 	<!-- 用户列表 -->
 	<view class="box2 box" style="margin-top: -100rpx;">

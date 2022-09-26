@@ -6,32 +6,32 @@ import router from '@/aTemp/router/index.js'
 import { showToastText } from '@/aTemp/utils/uniAppTools.js'
 
 // 全局登录信息
-import { _useMainStore } from '@/aTemp/store/storeMain.js'
-const useMainStore = _useMainStore()
+import { _useUserMain } from '@/aTemp/store/userMain.js'
+const useUserMain = _useUserMain()
 
-// 监听每当mainStore发生变化时，将整个状态持久化到本地存储
-useMainStore.$subscribe(
+// 监听每当userMain发生变化时，将整个状态持久化到本地存储
+useUserMain.$subscribe(
 	(mutation, state) => {
 		// console.log(mutation, state)
 		// 登录信息
-		uni.setStorageSync('mainStore', state)
+		uni.setStorageSync('userMain', state)
 		// 缓存是否登录
-		uni.setStorageSync('isLogin', useMainStore.isLogin)
+		uni.setStorageSync('isLogin', useUserMain.isLogin)
 	},
 	{ detached: true }
 )
 
-// 获取静态存储mainStore
-const old = uni.getStorageSync('mainStore')
+// 获取静态存储userMain
+const old = uni.getStorageSync('userMain')
 if (old) {
-	useMainStore.$patch({ ...old })
+	useUserMain.$patch({ ...old })
 }
 
 // 小程序启动时执行
 onLaunch(async options => {
-	// console.log(options)
+	console.log(options)
 	// 初始化,检查是否更新
-	init(options) 
+	init(options)
 
 	/*
 	 * 邀请进入小程序
@@ -44,20 +44,20 @@ onLaunch(async options => {
 	// console.log(options.query)
 	const { invitationCode, storeId, scene, targetId } = options.query
 	if (storeId) {
-		useMainStore.$patch({ storeId: storeId })
+		useUserMain.$patch({ storeId: storeId })
 	}
 	if (invitationCode) {
-		useMainStore.$patch({ invitationCode: invitationCode })
+		useUserMain.$patch({ invitationCode: invitationCode })
 	}
 
 	/*
 	 * 直接进入小程序
 	 * 如果缓存中还是没有店铺ID,设置一个默认店铺ID
 	 */
-	const mainStore = uni.getStorageSync('mainStore')
-	const storageStoreId = mainStore.storeId
+	const userMain = uni.getStorageSync('userMain')
+	const storageStoreId = userMain.storeId
 	if (!storageStoreId) {
-		useMainStore.$patch({ storeId: 1 })
+		useUserMain.$patch({ storeId: 1 })
 	}
 
 	// 微信授权登录
@@ -72,18 +72,22 @@ onLaunch(async options => {
 	})
 
 	const { code, data, msg } = resData
-	const { openid, unionid, token, mobile, userid } = data
+	const { openid, unionid, token, mobile, userid, power, avatar, nickname } = data
+
 	// 获取到数据后赋值给全局变量
-	useMainStore.$patch({
+	useUserMain.$patch({
 		openId: openid,
 		unionId: unionid,
 		token: token,
 		mobile: mobile,
-		userid: userid
+		userid: userid,
+		power: power,
+		avatar: avatar,
+		nickname: nickname
 	})
-	
+
 	// 路由拦截
-	router(options) 
+	router(options)
 })
 </script>
 

@@ -39,8 +39,8 @@ import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import config from '@/global-config.js'
 // 全局登录信息
-import { _useMainStore } from '@/aTemp/store/storeMain.js'
-const useMainStore = _useMainStore()
+import { _useUserMain } from '@/aTemp/store/userMain.js'
+const useUserMain = _useUserMain()
 
 // 是否同意协议
 const isAgree = ref(false)
@@ -103,7 +103,7 @@ const getphonenumber = val => {
 		_wxMobile({ code: code, avatar: avatar.value, nickname: nickname.value }).then(res => {
 			const { msg, data, code } = res
 			if (data) {
-				useMainStore.$patch({ mobile: data, avatar: avatar.value, nickname: nickname.value })
+				useUserMain.$patch({ mobile: data })
 			}
 			setTimeout(() => {
 				uni.hideLoading()

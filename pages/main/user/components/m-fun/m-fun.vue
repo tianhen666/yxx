@@ -50,6 +50,8 @@ const itemClick = (item, index) => {
 
 <style lang="scss" scoped>
 .container {
+	position: relative;
+	z-index: 1;
 	.c_wrapper {
 		width: $main-width;
 		padding: $padding;

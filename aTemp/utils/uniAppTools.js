@@ -150,7 +150,7 @@ export function navigateTo(path) {
 	})
 }
 
-// 跳转到tabbar页面
+// 跳转到tabbar页面,关闭其他非tabbar页面
 export function switchTab(path) {
 	uni.switchTab({
 		url: path,
@@ -174,6 +174,14 @@ export function redirectTo(path) {
 	})
 }
 
+//  关闭所有页面跳转
+export function reLaunch(path) {
+	uni.reLaunch({
+		url: path
+	})
+}
+
+
 // 后退页面
 export function navigateBack(index = 1) {
 	uni.navigateBack({
@@ -184,6 +192,9 @@ export function navigateBack(index = 1) {
 // 拨打电话
 export function makePhoneCall(phoneNumber) {
 	uni.makePhoneCall({
-		phoneNumber: phoneNumber
-	});
+		phoneNumber: phoneNumber,
+		fail: (e) => {
+			console.log(e)
+		}
+	})
 }

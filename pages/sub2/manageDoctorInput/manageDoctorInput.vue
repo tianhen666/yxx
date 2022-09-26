@@ -20,7 +20,7 @@
 			</uni-forms-item>
 
 			<!-- 医生简介 -->
-			<uni-forms-item :label="rules.descData.label" name="descData">
+			<uni-forms-item :label="rules.descData.label" name="descData" label-position="top">
 				<fuck-textarea v-model="formData.descData" :placeholder="rules.descData.rules[0].errorMessage"/>
 			</uni-forms-item>
 
@@ -43,7 +43,7 @@
 		</uni-forms>
 
 		<!-- 保存 -->
-		<m-btn-fix-bottom :loading="loading" text="保存信息" @btnClick="saveClick" />
+		<m-btn-fix-bottom :loading="loading" text="立即提交" @btnClick="saveClick" />
 	</view>
 </template>
 

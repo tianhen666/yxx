@@ -28,7 +28,8 @@ export default function(paramsObj) {
 		url,
 		refData,
 		param,
-		selectNum
+		selectNum,
+		baseDir
 	} = paramsObj
 
 
@@ -41,12 +42,21 @@ export default function(paramsObj) {
 			refData.value[param] = val.join(',')
 		}
 	})
-
-
 	/*
 	 * 选择图片,不自动上传,需要裁剪图片
 	 */
 	if (ratio && url) {
+
+		// 监听裁剪后storeCropper的变化
+		watch(
+			storeCropper.imgUrls,
+			(newValue, oldValue) => {
+				if (newValue[param]) {
+					refData.value[param] = newValue[param].join(',')
+				}
+			}
+		)
+
 		const chooseSuccess = res => {
 			// 判断是否为视频
 			if (isVideo(res[0])) {
@@ -54,17 +64,7 @@ export default function(paramsObj) {
 				return
 			}
 
-			// 监听裁剪后storeCropper的变化
-			watch(
-				storeCropper.imgUrls,
-				(newValue, oldValue) => {
-					if (refData.value[param]) {
-						refData.value[param] += ',' + newValue[param].join(',')
-					} else {
-						refData.value[param] = newValue[param].join(',')
-					}
-				}
-			)
+
 
 			// 去裁剪图片页面
 			// res需要裁剪图片地址列表
@@ -72,7 +72,7 @@ export default function(paramsObj) {
 			// url 服务器上传地址
 			// param上传字段
 			uni.navigateTo({
-				url: `/pages/sub2/cropper/cropper?imgUrls=${res}&ratio=${ratio}&url=${url}&param=${param}`
+				url: `/pages/sub2/cropper/cropper?imgUrls=${res}&ratio=${ratio}&url=${url}&param=${param}&baseDir=${baseDir}`
 			})
 		}
 
@@ -103,7 +103,7 @@ export default function(paramsObj) {
 		}
 
 		if (refData.value[param]) {
-			refData.value[param] += ',' + data
+			refData.value[param] = ',' + data
 		} else {
 			refData.value[param] = data
 		}

@@ -2,15 +2,15 @@
 	<view class="info_wrapper">
 		<!-- 详情信息 -->
 		<view class="box1">
-			<image class="logo" :src="props.info.icon" mode="aspectFill"></image>
+			<image class="logo" :src="info.icon" mode="aspectFill"></image>
 			<view class="text_wrapper">
-				<view class="name">{{ props.info.name }}</view>
-				<view class="address">{{ props.info.descData }}</view>
+				<view class="name">{{ info.name }}</view>
+				<view class="address">{{ info.descData }}</view>
 
 				<!-- 营业时间 -->
 				<view class="text_warpper_box1">
-					<view class="work_time" v-if="props.info.businessDt">
-						营业时间：{{ props.info.businessDt.split(',')[0] + '-' + props.info.businessDt.split(',')[1] }}
+					<view class="work_time" v-if="info.businessDt">
+						营业时间：{{ info.businessDt.split(',')[0] + '-' + info.businessDt.split(',')[1] }}
 					</view>
 					<view class="distance">
 						<uni-icons color="#929292" type="location" size="28rpx" />
@@ -25,14 +25,14 @@
 			<view class="icon-wrapper">
 				<image class="icon" src="/static/images/daohang.png" mode="aspectFill"></image>
 				<image
-					@tap="makePhoneCall(props.info.mobile)"
+					@tap="makePhoneCall(info.mobile)"
 					class="icon"
 					src="/static/images/dianhua.png"
 					mode="aspectFill"
 				></image>
 			</view>
 			<!-- 预约服务 -->
-			<view class="addWx" @tap="previewImage([props.info.customer])">
+			<view class="addWx" @tap="navigateTo('/pages/sub1/yuyue/yuyue')">
 				<image class="image" src="/static/images/shijian.png" mode="aspectFill"></image>
 				<text>预约服务</text>
 			</view>
@@ -41,7 +41,7 @@
 </template>
 
 <script setup>
-import { previewImage, makePhoneCall } from '@/aTemp/utils/uniAppTools.js'
+import { previewImage, makePhoneCall, navigateTo } from '@/aTemp/utils/uniAppTools.js'
 const props = defineProps({
 	info: {
 		required: true,
@@ -54,7 +54,7 @@ const props = defineProps({
 <style lang="scss" scoped>
 .info_wrapper {
 	position: relative;
-	z-index: 1;
+	z-index: 2;
 	background-color: #ffffff;
 	width: $main-width;
 	margin: auto;
