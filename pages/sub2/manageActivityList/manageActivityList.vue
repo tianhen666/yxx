@@ -7,28 +7,27 @@
 	<pinapp-empty-page v-if="listData.length === 0" />
 	<view class="tab_content" v-else>
 		<view v-for="(item, index) in listData" :key="index" class="tab_content_item">
-			<!-- 商品信息 -->
-			<view class="tab_content_item_wrapper">
-				<view class="image_box">
-					<image class="image" :src="item.mainPic" mode="scaleToFill" @tap="previewImage([item.mainPic])"></image>
-					<view class="type">
-						<view class="type_item">{{ type[item.type].text }}</view>
-					</view>
+			
+			<!-- 图片 -->
+			<view class="image_box">
+				<image class="image" :src="item.mainPic" mode="scaleToFill" @tap="previewImage([item.mainPic])"></image>
+				<view class="type">
+					<view class="type_item">{{ type[item.type].text }}</view>
 				</view>
-				<view class="center">
-					<!-- 时间 -->
-					<view class="time">
-						{{ dayjs(item.startDt).format('YYYY年MM月DD日') + '--' + dayjs(item.endDt).format('YYYY年MM月DD日') }}
-						<text class="color1">{{ dayjs(item.endDt).valueOf() < Date.now() ? '(已结束)' : '' }}</text>
-					</view>
-					<!-- 标题 -->
-					<view class="title">{{ item.title }}</view>
+			</view>
+
+			<!-- 标题时间 -->
+			<view class="center">
+				<view class="time">
+					{{ dayjs(item.startDt).format('YYYY年MM月DD日') + '--' + dayjs(item.endDt).format('YYYY年MM月DD日') }}
+					<text class="color1">{{ dayjs(item.endDt).valueOf() < Date.now() ? '(活动已结束)' : '' }}</text>
 				</view>
+				<view class="title">{{ item.title }}</view>
 			</view>
 
 			<!-- 按钮 -->
 			<view class="box">
-				<view class="sales">已参与{{ item.sold || 0 }}</view>
+				<view class="sales">已参与 {{ item.sold || 0 }}</view>
 
 				<view class="btn">
 					<view class="btn_item style2" @tap="enrollformDisable(item, index)" v-if="item.status === 0">下架</view>
@@ -74,15 +73,15 @@ const currentIndex = ref(0)
  */
 const type = [
 	{
-		text: '义诊',
+		text: '免费引流',
 		value: 0
 	},
 	{
-		text: '限时',
+		text: '活动促销',
 		value: 1
 	},
 	{
-		text: '拼团',
+		text: '限量秒杀',
 		value: 2
 	}
 ]
@@ -122,6 +121,7 @@ const enrollformDisable = (item, index) => {
 		}
 	})
 }
+
 // 删除
 const enrollformDelete = (item, index) => {
 	showModal('是否删除？').then(res => {
@@ -132,6 +132,7 @@ const enrollformDelete = (item, index) => {
 		}
 	})
 }
+
 // 启用
 const enrollformEnable = (item, index) => {
 	showModal('是否启用？').then(res => {
@@ -158,50 +159,48 @@ const enrollformEnable = (item, index) => {
 		&:last-child {
 			margin-bottom: 0;
 		}
-		&_wrapper {
-			> .image_box {
+		> .image_box {
+			width: 100%;
+			padding-top: 80%;
+			position: relative;
+			overflow: hidden;
+			> .image {
+				position: absolute;
+				top: 0;
+				left: 0;
 				width: 100%;
-				padding-top: 50%;
-				position: relative;
-				overflow: hidden;
-				> .image {
-					position: absolute;
-					top: 0;
-					left: 0;
-					width: 100%;
-					height: 100%;
-				}
-				> .type {
-					position: absolute;
-					bottom: 20rpx;
-					left: 20rpx;
-					> .type_item {
-						display: inline-block;
-						color: #ffffff;
-						background-color: $uni-mask;
-						padding: 10rpx 20rpx;
-						font-size: 26rpx;
-						border-radius: 8rpx;
-					}
+				height: 100%;
+			}
+			> .type {
+				position: absolute;
+				bottom: 20rpx;
+				left: 20rpx;
+				> .type_item {
+					display: inline-block;
+					color: #ffffff;
+					background-color: $uni-mask;
+					padding: 10rpx 20rpx;
+					font-size: 26rpx;
+					border-radius: 8rpx;
 				}
 			}
-			> .center {
-				overflow: hidden;
-				margin: $padding;
-				> .time {
-					font-size: 28rpx;
-					color: $uni-base-color;
-					.color1 {
-						color: $uni-error;
-					}
+		}
+		> .center {
+			overflow: hidden;
+			margin: $padding;
+			> .time {
+				font-size: 28rpx;
+				color: $uni-secondary-color;
+				.color1 {
+					color: $uni-error;
 				}
-				> .title {
-					margin-top: 32rpx;
-					font-weight: bold;
-					color: $uni-main-color;
-					font-size: 30rpx;
-					@include singleLineTextOverHidden;
-				}
+			}
+			> .title {
+				margin-top: 38rpx;
+				font-weight: bold;
+				color: $uni-main-color;
+				font-size: 34rpx;
+				@include singleLineTextOverHidden;
 			}
 		}
 		> .box {

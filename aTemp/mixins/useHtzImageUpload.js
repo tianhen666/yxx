@@ -33,38 +33,52 @@ export default function(paramsObj) {
 	} = paramsObj
 
 
+
+
 	/* 
 		逗号分割的字符串转图片列表
 	 */
 	const picList = computed({
-		get: () => (refData.value[param] ? refData.value[param].split(',') : []),
+		get: () => {
+			let list = []
+			if (refData.value[param]) {
+				list = refData.value[param].split(',')
+			}
+			return list
+		},
 		set: val => {
 			refData.value[param] = val.join(',')
 		}
 	})
+
+
 	/*
 	 * 选择图片,不自动上传,需要裁剪图片
 	 */
 	if (ratio && url) {
 
-		// 监听裁剪后storeCropper的变化
-		watch(
-			storeCropper.imgUrls,
-			(newValue, oldValue) => {
-				if (newValue[param]) {
-					refData.value[param] = newValue[param].join(',')
-				}
-			}
-		)
+		// 初始storeCropper
+		storeCropper.$patch(state => {
+			state.imgUrls[param] = []
+		})
 
+		// 监听裁剪的变化
+		watch(storeCropper.imgUrls[param], (newVal, oldVal) => {
+			if (refData.value[param]) {
+				refData.value[param] = refData.value[param] + ',' + newVal.join(',')
+			} else {
+				refData.value[param] = newVal.join(',')
+			}
+		})
+
+
+		// 选择图片完成
 		const chooseSuccess = res => {
 			// 判断是否为视频
 			if (isVideo(res[0])) {
 				refData.value[param].push(res[0])
 				return
 			}
-
-
 
 			// 去裁剪图片页面
 			// res需要裁剪图片地址列表
@@ -103,7 +117,7 @@ export default function(paramsObj) {
 		}
 
 		if (refData.value[param]) {
-			refData.value[param] = ',' + data
+			refData.value[param] = refData.value[param] + ',' + data
 		} else {
 			refData.value[param] = data
 		}
@@ -113,6 +127,7 @@ export default function(paramsObj) {
 		picList, //图片选择的的列表
 		selectNum, // 选择图片的数量
 		uploadSuccess, //图片自动上传成功的函数
-		uploadimageURL //上传图片的地址
+		uploadimageURL, //上传图片的地址
+		baseDir // 文件前缀
 	}
 }

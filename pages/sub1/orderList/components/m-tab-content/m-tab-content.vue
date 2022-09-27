@@ -28,7 +28,7 @@
 			<!-- 图文信息 -->
 			<view class="container_item_box1">
 				<view class="container_item_box1_left">
-					<image :src="item.productPic" mode="aspectFill" class="goods_img"></image>
+					<image :src="item.productPic?item.productPic.split(',')[0]:'/static/images/no_img.jpg'" mode="aspectFill" class="goods_img"></image>
 				</view>
 				<view class="container_item_box1_right">
 					<view class="title">{{ item.productName }}</view>

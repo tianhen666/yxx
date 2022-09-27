@@ -33,8 +33,8 @@
 			+
 		</view>
 		<!-- 占位 -->
-		<view class="htz-image-upload-Item" v-if="uploadLists.length < 2" style="border: none;"></view>
-		<view class="htz-image-upload-Item" v-if="uploadLists.length < 3" style="border: none;"></view>
+		<view class="htz-image-upload-Item" v-if="uploadLists.length%4<=1" style="border: none;"></view>
+		<view class="htz-image-upload-Item" v-if="uploadLists.length%4<=2" style="border: none;"></view>
 
 		<view class="preview-full" v-if="previewVideoSrc != ''">
 			<video :autoplay="true" :src="previewVideoSrc" :show-fullscreen-btn="false">

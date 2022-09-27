@@ -5,7 +5,12 @@
 		<slot name="title"></slot>
 
 		<!-- 详情列表 -->
-		<view class="container_item" v-for="(item, index) in props.listData" :key="index">
+		<view
+			class="container_item"
+			v-for="(item, index) in props.listData"
+			:key="index"
+			@tap.stop="navigateTo(`/pages/sub1/goodsInfo/goodsInfo?id=${item.id}`)"
+		>
 			<!-- 勾选选项 -->
 			<view
 				class="select_option"
@@ -18,16 +23,11 @@
 					src="/static/default/duigou.png"
 					mode="aspectFill"
 				></image>
-				<view class="select_cover" @tap.stop="selectClick(item)"></view>
+				<view class="select_cover" @tap.stop.prevent="selectClick(item)"></view>
 			</view>
 
 			<!-- 图片 -->
-			<image
-				class="image"
-				:src="item.pics[0]"
-				mode="aspectFill"
-				@tap.stop="navigateTo(`/pages/sub1/goodsInfo/goodsInfo?id=${item.id}`)"
-			></image>
+			<image class="image" :src="item.pics[0]" mode="aspectFill"></image>
 
 			<!-- 商品数据 -->
 			<view class="right">
@@ -48,13 +48,7 @@
 					</view>
 
 					<!-- 购买按钮 -->
-					<button
-						class="btn"
-						@tap.stop="navigateTo(`/pages/sub1/goodsInfo/goodsInfo?id=${item.id}`)"
-						v-if="props.showBtn"
-					>
-						购买
-					</button>
+					<button class="btn" v-if="props.showBtn">购买</button>
 				</view>
 			</view>
 		</view>

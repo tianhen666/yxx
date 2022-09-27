@@ -75,6 +75,7 @@
 					v-model="picList4"
 					mediaType="image"
 					:action="uploadimageURL4"
+					:formData="{baseDir: baseDir4}"
 					@uploadSuccess="uploadSuccess4"
 				/>
 			</uni-forms-item>
@@ -92,6 +93,7 @@
 					:max="selectNum3"
 					v-model="picList3"
 					mediaType="image"
+					:formData="{baseDir: baseDir3}"
 					:action="uploadimageURL3"
 					@uploadSuccess="uploadSuccess3"
 				/>
@@ -195,35 +197,39 @@ const { saveClick,loading } = useSaveApi(formObj, formData, _storeproductSave)
  */
 import useHtzImageUpload from '@/aTemp/mixins/useHtzImageUpload.js'
 
-// 商品图片上传
+// 商品图片上传 裁剪
 const { chooseSuccess: chooseSuccess1, picList: picList1, selectNum: selectNum1 } = useHtzImageUpload({
 	ratio: 1 / 1,
-	url: '/storeproduct/uploadimage',
+	url: '/enrollform/uploadimage',
 	refData: formData,
 	param: 'pics',
-	selectNum: 5
+	selectNum: 5,
+	baseDir: 'shop'
 })
 
-// 分享图片上传
+// 分享图片上传 裁剪
 const { chooseSuccess: chooseSuccess2, picList: picList2, selectNum: selectNum2 } = useHtzImageUpload({
 	ratio: 5 / 4,
-	url: '/storeproduct/uploadimage',
+	url: '/enrollform/uploadimage',
 	refData: formData,
 	param: 'sharePic',
-	selectNum: 1
+	selectNum: 1,
+	baseDir: 'shop'
 })
 
-// 商品详情图片上传
+// 商品详情图片上传 
 const {
 	uploadSuccess: uploadSuccess3,
 	picList: picList3,
 	selectNum: selectNum3,
-	uploadimageURL: uploadimageURL3
+	uploadimageURL: uploadimageURL3,
+	baseDir:baseDir3
 } = useHtzImageUpload({
-	url: '/storeproduct/uploadimage',
+	url: '/enrollform/uploadimage',
 	refData: formData,
 	param: 'detail',
-	selectNum: 5
+	selectNum: 5,
+	baseDir: 'shop'
 })
 
 // 海报图片上传
@@ -231,12 +237,14 @@ const {
 	uploadSuccess: uploadSuccess4,
 	picList: picList4,
 	selectNum: selectNum4,
-	uploadimageURL: uploadimageURL4
+	uploadimageURL: uploadimageURL4,
+	baseDir:baseDir4
 } = useHtzImageUpload({
-	url: '/storeproduct/uploadimage',
+	url: '/enrollform/uploadimage',
 	refData: formData,
 	param: 'postPic',
-	selectNum: 1
+	selectNum: 1,
+	baseDir: 'shop'
 })
 
 </script>

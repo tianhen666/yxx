@@ -91,7 +91,7 @@ const props = defineProps({
 		}
 		> .activity_item_img {
 			width: 100%;
-			padding-top: 50%;
+			padding-top: 80%;
 			position: relative;
 			border-radius: 20rpx;
 			overflow: hidden;

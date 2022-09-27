@@ -1,13 +1,22 @@
 <template>
 	<view class="container">
-		<uni-forms :rules="rules" ref="formObj" :model="formData" label-position="left" label-width="220rpx">
-			<view class="uni-forms-item-wrapper">
-				<!-- 活动类型 -->
-				<uni-forms-item :label="rules.type.label" name="type">
+		<uni-forms :rules="rules" ref="formObj" :model="formData" label-position="left" label-width="240rpx">
+			<!-- 活动类型 -->
+			<view class="uni-forms-item-wrapper1">
+				<!-- <uni-forms-item :label="rules.type.label" name="type" label-position="top">
 					<uni-data-checkbox v-model="formData.type" :localdata="type"></uni-data-checkbox>
-				</uni-forms-item>
+				</uni-forms-item> -->
+				<view class="type_title">活动类型</view>
+				<view class="type_name">
+					<view class="type_name_item" v-for="(item, index) in type" :key="index" @tap="formData.type = index">
+						<view class="text1">
+							{{ `类型${index === 0 ? '一' : index === 1 ? '二' : index === 2 ? '三' : index === 3 ? '四' : ''}` }}
+						</view>
+						<view class="text2" :class="{ current: formData.type === index }">{{ item.text }}</view>
+					</view>
+				</view>
 
-				<view class="tips">
+				<view class="type_tips">
 					{{
 						formData.type === 0
 							? '创建【无金额】活动，适用线下义诊，免费参与等活动'
@@ -71,7 +80,11 @@
 			</uni-forms-item>
 
 			<!-- 分佣价格 -->
-			<uni-forms-item v-if="formData.type === 1" :label="rules.sharePrice.label" name="sharePrice">
+			<uni-forms-item
+				v-if="formData.type === 1 || formData.type === 2"
+				:label="rules.sharePrice.label"
+				name="sharePrice"
+			>
 				<uni-easyinput
 					type="digit"
 					v-model="formData.sharePrice"
@@ -80,17 +93,17 @@
 			</uni-forms-item>
 
 			<!-- 前端是否显示分佣价格 -->
-			<uni-forms-item v-if="formData.type === 1" :label="rules.showShare.label" name="showShare">
+			<uni-forms-item v-if="formData.type === 1 || formData.type === 2" :label="rules.showShare.label" name="showShare">
 				<switch
 					color="#4b8eff"
 					:checked="parseInt(formData.showShare) === 0"
 					style="transform:scale(0.8)"
-					@change="formData.showShare === 1 ? 0 : 1"
+					@change="formData.showShare = Math.abs(parseInt(formData.showShare) - 1)"
 				/>
 			</uni-forms-item>
 
 			<!-- 拼团单独购买价 -->
-			<uni-forms-item v-if="formData.type === 2" :label="rules.alonePrice.label" name="alonePrice">
+			<uni-forms-item v-if="formData.type === 3" :label="rules.alonePrice.label" name="alonePrice">
 				<uni-easyinput
 					type="digit"
 					v-model="formData.alonePrice"
@@ -99,7 +112,7 @@
 			</uni-forms-item>
 
 			<!-- 最低拼团人数 -->
-			<uni-forms-item v-if="formData.type === 2" :label="rules.least.label" name="least">
+			<uni-forms-item v-if="formData.type === 3" :label="rules.least.label" name="least">
 				<uni-number-box :min="2" :step="1" :max="10" v-model="formData.least" />
 			</uni-forms-item>
 
@@ -123,28 +136,10 @@
 			</uni-forms-item>
 			<view class="blank32 blank_bg_color"></view>
 
-			<!-- 排序 -->
-			<uni-forms-item :label="rules.sort.label" name="sort">
-				<uni-number-box :min="1" :max="255" v-model="formData.sort" />
-			</uni-forms-item>
-			<view class="blank32 blank_bg_color"></view>
-
 			<!-- 活动分享图 -->
-			<uni-forms-item :label="rules.sharePic.label" label-position="top" name="sharePic">
+			<!-- 	<uni-forms-item :label="rules.sharePic.label" label-position="top" name="sharePic">
 				<htz-image-upload :max="selectNum2" v-model="picList2" mediaType="image" @chooseSuccess="chooseSuccess2" />
-			</uni-forms-item>
-
-			<!-- 活动海报图 -->
-			<uni-forms-item :label="rules.postPic.label" label-position="top" name="postPic">
-				<htz-image-upload
-					:max="selectNum3"
-					v-model="picList3"
-					mediaType="image"
-					:action="uploadimageURL3"
-					@uploadSuccess="uploadSuccess3"
-				/>
-			</uni-forms-item>
-			<view class="blank32 blank_bg_color"></view>
+			</uni-forms-item> -->
 
 			<!-- 活动介绍 -->
 			<uni-forms-item label-position="top" :label="rules.content.label" name="content">
@@ -158,9 +153,30 @@
 					v-model="picList4"
 					mediaType="image"
 					:action="uploadimageURL4"
+					:formData="{ baseDir: baseDir4 }"
 					@uploadSuccess="uploadSuccess4"
 				/>
 			</uni-forms-item>
+			<view class="blank32 blank_bg_color"></view>
+
+			<!-- 活动海报图 -->
+			<uni-forms-item :label="rules.postPic.label" label-position="top" name="postPic">
+				<htz-image-upload
+					:max="selectNum3"
+					v-model="picList3"
+					mediaType="image"
+					:action="uploadimageURL3"
+					:formData="{ baseDir: baseDir3 }"
+					@uploadSuccess="uploadSuccess3"
+				/>
+			</uni-forms-item>
+			<view class="blank32 blank_bg_color"></view>
+
+			<!-- 排序 -->
+			<uni-forms-item :label="rules.sort.label" name="sort">
+				<uni-number-box :min="1" :max="255" v-model="formData.sort" />
+			</uni-forms-item>
+			<view class="blank32 blank_bg_color"></view>
 		</uni-forms>
 		<m-btn-fix-bottom :loading="loading" text="保存信息" @btnClick="saveClick" />
 	</view>
@@ -182,6 +198,7 @@ const formData = ref({
 	endDt: dayjs(Date.now() + 30 * 24 * 60 * 60 * 1000).format('YYYY-MM-DD HH:mm:ss'), //活动结束默认值
 	quantity: 1000, // 活动数量默认
 	least: 2, //最低拼团人数
+	price: 100, // 价格
 	showShare: 0, //是否显示分佣
 	sort: 1 //排序
 })
@@ -251,7 +268,7 @@ const rules = {
 		label: '活动类型'
 	},
 	price: {
-		rules: [{ required: true, errorMessage: '请输入%价格' }],
+		rules: [{ required: true, errorMessage: '请输入价格' },{ minimum: 1, errorMessage: '价格最小为1元' }],
 		label: '价格'
 	},
 	sharePrice: {
@@ -291,7 +308,7 @@ const rules = {
 		label: '活动介绍'
 	},
 	details: {
-		rules: [{ required: true, errorMessage: '请上传活动详情图' }],
+		rules: [{ errorMessage: '请上传活动详情图' }],
 		label: '活动详情图'
 	}
 }
@@ -310,7 +327,7 @@ const { saveClick, loading } = useSaveApi(formObj, formData, _enrollformSave)
  */
 import useHtzImageUpload from '@/aTemp/mixins/useHtzImageUpload.js'
 
-// 活动封面图上传
+// 活动封面图上传  裁剪
 const { chooseSuccess: chooseSuccess1, picList: picList1, selectNum: selectNum1 } = useHtzImageUpload({
 	ratio: 5 / 4,
 	url: '/enrollform/uploadimage',
@@ -319,21 +336,27 @@ const { chooseSuccess: chooseSuccess1, picList: picList1, selectNum: selectNum1 
 	selectNum: 1,
 	baseDir: 'active'
 })
-// 活动分享图上传
-const { chooseSuccess: chooseSuccess2, picList: picList2, selectNum: selectNum2 } = useHtzImageUpload({
-	ratio: 5 / 4,
-	url: '/enrollform/uploadimage',
-	refData: formData,
-	param: 'sharePic',
-	selectNum: 1,
-	baseDir: 'active'
-})
+
+/* 
+	用主图代替
+ */
+// 活动分享图上传 裁剪
+// const { chooseSuccess: chooseSuccess2, picList: picList2, selectNum: selectNum2 } = useHtzImageUpload({
+// 	ratio: 5 / 4,
+// 	url: '/enrollform/uploadimage',
+// 	refData: formData,
+// 	param: 'sharePic',
+// 	selectNum: 1,
+// 	baseDir: 'active'
+// })
+
 // 活动海报图
 const {
 	uploadSuccess: uploadSuccess3,
 	picList: picList3,
 	selectNum: selectNum3,
-	uploadimageURL: uploadimageURL3
+	uploadimageURL: uploadimageURL3,
+	baseDir: baseDir3
 } = useHtzImageUpload({
 	url: '/enrollform/uploadimage',
 	refData: formData,
@@ -341,12 +364,14 @@ const {
 	selectNum: 1,
 	baseDir: 'active'
 })
+
 // 活动详情图
 const {
 	uploadSuccess: uploadSuccess4,
 	picList: picList4,
 	selectNum: selectNum4,
-	uploadimageURL: uploadimageURL4
+	uploadimageURL: uploadimageURL4,
+	baseDir: baseDir4
 } = useHtzImageUpload({
 	url: '/enrollform/uploadimage',
 	refData: formData,
@@ -363,24 +388,47 @@ const {
 .container {
 	width: 750rpx;
 }
-.uni-forms-item-wrapper {
+.uni-forms-item-wrapper1 {
 	overflow: hidden;
-	background-color: $main-color;
-	.tips {
-		padding: 0 32rpx 32rpx;
+	background-image: linear-gradient(to right bottom, #4b8eff, #1a46ff);
+	.type_title {
+		color: #fff;
+		font-size: 40rpx;
+		text-align: center;
+		padding: 60rpx 32rpx 40rpx;
+		font-weight: bold;
+	}
+	.type_name {
+		@include mFlex;
+		justify-content: space-between;
+		padding: 0 32rpx;
+		.type_name_item {
+			width: 25%;
+			flex: none;
+			text-align: center;
+			.text1 {
+				color: #fff;
+				padding-bottom: 15rpx;
+				font-size: 28rpx;
+			}
+			.text2 {
+				border-radius: 100px;
+				background-image: linear-gradient(to right bottom, #4a8ef9, #1a46ff);
+				font-size: 28rpx;
+				font-weight: bold;
+				color: #fff;
+				padding: 18rpx 0;
+				box-shadow: 5rpx 5rpx 10rpx black;
+			}
+			.current {
+				background-image: linear-gradient(to right bottom, #efd8a2, #fdaf6d);
+			}
+		}
+	}
+	.type_tips {
+		padding: 32rpx 32rpx 32rpx;
 		color: #fff;
 		font-size: 26rpx;
-	}
-	:deep(.uni-forms-item) {
-		background-color: $main-color !important;
-	}
-	:deep(.uni-forms-item__label) {
-		font-weight: bold;
-		color: #fff;
-	}
-	:deep(.checklist-text) {
-		color: #fff !important;
-		font-weight: bold;
 	}
 }
 </style>
