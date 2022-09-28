@@ -35,7 +35,7 @@
 				<view class="sales">已售{{ item.sold || 0 }}</view>
 
 				<view class="btn">
-					<view class="btn_item style2" @tap="storeproductDisable(item, index)" v-if="item.status === 0">
+					<view class="btn_item style1" @tap="storeproductDisable(item, index)" v-if="item.status === 0">
 						下架
 					</view>
 					<view
@@ -141,17 +141,15 @@ const storeproductEnable = (item, index) => {
 </script>
 
 <style lang="scss" scoped>
-:global(page) {
-	background-color: $uni-bg-color;
-}
 .tab_content {
+	width: $main-width;
+	margin: auto;
+	
 	&_item {
 		background-color: #ffffff;
 		padding: $padding;
-		border-bottom: 1px solid $uni-border-4;
-		&:last-child {
-			border: none;
-		}
+		border-radius: 16rpx;
+		overflow: hidden;
 		&_wrapper {
 			@include mFlex;
 			align-items: stretch;
@@ -215,7 +213,9 @@ const storeproductEnable = (item, index) => {
 			}
 		}
 		> .box {
-			margin-top: 30rpx;
+			margin-top: 15rpx;
+			padding-top: 15rpx;
+			border-top: 1px solid $uni-border-1;
 			@include mFlex;
 			justify-content: space-between;
 			> .sales {

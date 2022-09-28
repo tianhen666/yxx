@@ -1,118 +1,144 @@
 <template>
-	<uni-nav-bar
-		@clickLeft="clickLeft"
-		left-icon="left"
-		title="会员中心"
-		statusBar
-		fixed
-		color="#ffffff"
-		:border="false"
-	></uni-nav-bar>
-	<view class="blank40 blank_main_color"></view>
+	<m-page-loading v-if="pageLoading"></m-page-loading>
 
-	<!-- 会员显示 -->
-	<view class="pageBg"></view>
-	<view class="vip">
-		<view class="left">
-			<view class="vip_box">
-				<image class="image" src="/static/user/vip.png" mode="aspectFill"></image>
-				<view class="text">牙小新会员</view>
-			</view>
-			<view class="time_text">您的会员将在2023-07-14到期</view>
-		</view>
-		<view class="right">立即续费</view>
-	</view>
+	<view class="container" v-else>
+		<!-- 背景 -->
+		<view class="pageBg"><image class="image" src="/static/images/bg.jpg" mode="aspectFill"></image></view>
 
-	<view class="blank40"></view>
-	<view class="box">
-		<m-title2 title="会员服务"></m-title2>
-		<view class="wrapper">
-			<view class="item_wrapper" @tap="current = 0" :class="{ current: current === 0 }">
-				<view class="text1">30人，单店使用</view>
-				<view class="text2">标准版</view>
-				<view class="text3">标准版每年售价2980</view>
-				<view class="text4">
-					<text class="text4_cn">￥</text>
-					<text>2980</text>
-					<text class="text4_unit">/年</text>
-				</view>
-			</view>
+		<!-- #ifndef H5 -->
+		<!-- 标题栏 -->
+		<uni-nav-bar
+			@clickLeft="navigateBack"
+			left-icon="left"
+			title="会员中心"
+			statusBar
+			fixed
+			color="#ffffff"
+			:border="false"
+		></uni-nav-bar>
+		<!-- #endif -->
 
-			<view class="item_wrapper" @tap="current = 1" :class="{ current: current === 1 }">
-				<view class="text1">30-50人，多店使用</view>
-				<view class="text2">进阶版</view>
-				<view class="text3">进阶版买两年送一年</view>
-				<view class="text4">
-					<text class="text4_cn">￥</text>
-					<text>5960</text>
-					<text class="text4_unit">/3年</text>
+		<!-- 会员显示 -->
+		<view class="box">
+			<m-title2 title="会员服务"></m-title2>
+
+			<view class="wrapper">
+				<view
+					class="item_wrapper"
+					v-for="(item, index) in vipListData"
+					:key="index"
+					@tap="current = index"
+					:class="{ current: current === index }"
+				>
+					<view class="text1">规格{{ index === 0 ? '一' : index === 1 ? '二' : '' }}</view>
+					<view class="text2">{{ item.vipName }}</view>
+					<view class="text3">{{ item.vipTitle }}</view>
+					<view class="text4">
+						<text class="text4_cn">￥</text>
+						<text>{{ item.vipPaice }}</text>
+					</view>
 				</view>
 			</view>
 		</view>
-		<!-- <view class="agreement">协议</view> -->
-		<button class="btn">立即购买</button>
+
+		<!-- 按钮 -->
+		<m-btn-fix-bottom :loading="btnLoading" text="立即购买" @tap="storeVipOrderPayment" />
 	</view>
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
+import { navigateBack, redirectTo, showToastText } from '@/aTemp/utils/uniAppTools.js'
+import { _storeVipOrderPayment, _storeVipOrderOrderlist, _storeVipOrderWxNotifys } from '@/aTemp/apis/store.js'
+import { _debounce } from '@/aTemp/utils/tools.js'
+const pageLoading = ref(true)
+const vipListData = ref([])
+
+onLoad(options => {
+	// console.log(options)
+
+	_storeVipOrderOrderlist().then(res => {
+		const { msg, data, code } = res
+		vipListData.value = data
+
+		pageLoading.value = false
+	})
+})
+
+// 选中的规格
 const current = ref(0)
-const clickLeft = () => {
-	uni.navigateBack()
-}
+
+// 提交订单函数
+const btnLoading = ref(false)
+const storeVipOrderPayment = _debounce(
+	() => {
+		_storeVipOrderPayment({ type: vipListData.value[current.value].id })
+			.then(res => {
+				btnLoading.value = false
+
+				const { data, code, msg } = res
+
+				// 唤醒支付所需要的参数
+				const resDataObj = JSON.parse(data)
+				console.log(resDataObj)
+
+				// 内部订单编号
+				const orderNumExternal = resDataObj.orderNumExternal
+
+				// 移领订单编号
+				const orderNum = resDataObj.orderNum || resDataObj.orderNumParent
+
+				// 支付信息
+				const payInfo = JSON.parse(resDataObj.pay_info)
+				console.log(payInfo)
+
+				// 错误提示
+				if (!payInfo) {
+					showToastText(resDataObj.result_msg)
+					return
+				}
+
+				return
+
+				// 唤醒支付
+				uni
+					.requestPayment({
+						timeStamp: payInfo.timeStamp,
+						nonceStr: payInfo.nonceStr,
+						package: payInfo.package,
+						signType: payInfo.signType,
+						paySign: payInfo.sign
+					})
+					.then(val => {
+						showToastText('支付成功~')
+
+						// 支付成功回调，并且分账 status: 2 //待使用
+						const myParameter = { orderNumExternal: orderNumExternal, status: 2, orderNum: orderNum }
+						_storeVipOrderWxNotifys(myParameter).then(resData => {
+							console.log('resData')
+						})
+						// 去订单列表页
+						redirectTo('/pages/main/user/user')
+					})
+					.catch(err => {
+						showToastText('取消支付~')
+
+						// 去订单列表页
+						redirectTo('/pages/main/user/user')
+					})
+			})
+			.catch(err => {
+				btnLoading.value = false
+				console.log(err)
+			})
+	},
+	1000,
+	btnLoading
+)
 </script>
 
 <style lang="scss" scoped>
-:global(page) {
-	background-color: #f5f5f5;
-}
-:global(.bg) {
-	height: 100rpx;
-	width: 750rpx;
-	background-image: linear-gradient($main-color 0%, transparent);
-}
-.vip {
-	@include mFlex;
-	justify-content: space-between;
-	width: $main-width;
-	padding: $padding;
-	box-sizing: border-box;
-	border-radius: 16rpx;
-	background-image: linear-gradient(to right, #ffffff, #00000033);
-	margin: auto;
-	margin-top: -100rpx;
-	.left {
-		flex: 1;
-		.vip_box {
-			@include mFlex;
-			justify-content: left;
-			> .image {
-				width: 60rpx;
-				height: 60rpx;
-			}
-			> .text {
-				margin-left: 15rpx;
-				font-weight: bold;
-				font-style: oblique;
-			}
-		}
-		.time_text {
-			margin-top: 10rpx;
-			font-size: 24rpx;
-			color: $text-color-grey;
-		}
-	}
-	.right {
-		color: #ffffff;
-		background-color: $main-color;
-		border-radius: 144rpx;
-		width: 144rpx;
-		padding: 15rpx 0;
-		font-size: 24rpx;
-		text-align: center;
-	}
-}
-
 .box {
 	width: $main-width;
 	background-color: #ffffff;
@@ -120,6 +146,7 @@ const clickLeft = () => {
 	padding: $padding;
 	box-sizing: border-box;
 	margin: auto;
+	margin-top: 30rpx;
 	.wrapper {
 		@include mFlex;
 		justify-content: space-between;
@@ -142,7 +169,7 @@ const clickLeft = () => {
 				font-size: 24rpx;
 				color: #ffffff;
 				border-radius: 16rpx 0px 16rpx 0px;
-				background-color: $main-color;
+				background-image: linear-gradient(to right bottom, #efd8a2, #fdaf6d);
 			}
 			.text2 {
 				padding-top: 100rpx;
@@ -155,16 +182,20 @@ const clickLeft = () => {
 			.text4 {
 				padding-top: 42rpx;
 				color: $main-color;
-				.text4_cn,.text4_unit{
+				.text4_cn {
 					font-size: 24rpx;
 				}
 			}
 		}
 		.current {
 			border: 2px solid $main-color;
-			color: $main-color !important;
+			background-color: $main-color;
+			color: #fff !important;
 			> .text3 {
-				color: $main-color !important;
+				color: #fff !important;
+			}
+			> .text4 {
+				color: #fff !important;
 			}
 		}
 	}

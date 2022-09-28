@@ -37,6 +37,7 @@ instance.interceptors.request.use(
 		// 如果有店铺ID
 		if (storeId) {
 			config.data.storeId = parseInt(storeId)
+			config.url += `?storeId=${storeId}`
 		}
 
 		// 设置token

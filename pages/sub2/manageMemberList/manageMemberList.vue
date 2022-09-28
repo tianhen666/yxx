@@ -1,4 +1,7 @@
 <template>
+	<!-- 背景 -->
+	<view class="pageBg"><image class="image" src="/static/images/bg.jpg" mode="aspectFill"></image></view>
+	<!-- #ifndef H5 -->
 	<!-- 标题栏 -->
 	<uni-nav-bar
 		@clickLeft="navigateBack"
@@ -9,6 +12,7 @@
 		color="#ffffff"
 		:border="false"
 	></uni-nav-bar>
+	<!-- #endif -->
 
 	<view class="box1">
 		<view class="box1_item">
@@ -25,11 +29,8 @@
 		</view>
 	</view>
 
-	<!-- 背景 -->
-	<view class="pageBg"></view>
-
 	<!-- 用户列表 -->
-	<view class="box2 box" style="margin-top: -100rpx;">
+	<view class="box2 box">
 		<!-- 数据筛选 -->
 		<view class="select">
 			<view class="select_item">
@@ -41,25 +42,17 @@
 					@change="onchange1"
 				/>
 			</view>
-			
+
 			<view class="select_item">
-				<uni-data-select
-					v-model="time"
-					:localdata="categoryOption1"
-					placeholder="邀请人"
-				></uni-data-select>
+				<uni-data-select v-model="time" :localdata="categoryOption1" placeholder="邀请人"></uni-data-select>
 			</view>
-			
+
 			<view class="select_item">
-				<uni-data-select
-					v-model="time"
-					:localdata="categoryOption2"
-					placeholder="选择时间"
-				></uni-data-select>
+				<uni-data-select v-model="time" :localdata="categoryOption2" placeholder="选择时间"></uni-data-select>
 			</view>
 		</view>
 		<!-- 日期选择 -->
-		<view class="box2_p" v-show="time===3">
+		<view class="box2_p" v-show="time === 3">
 			<uni-datetime-picker :clearIcon="false" v-model="rangeTime" :end="Date.now()" type="daterange" />
 		</view>
 		<view class="blank32"></view>
@@ -73,16 +66,40 @@
 
 	<view class="blank40"></view>
 	<view class="blank40"></view>
-	
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { navigateBack } from '@/aTemp/utils/uniAppTools.js'
+import { _userDataStatistics } from '@/aTemp/apis/user.js'
 
+// 开始时间
+const startTime = ref('')
+// 结束时间
+const endTime = ref('')
+// 邀请渠道
+const scene = ref('')
+// 邀请人ID
+const inviteUserId = ref('')
 
+// 获取用户列表
+const userDataStatistics = () => {
+	_userDataStatistics({
+		startTime: startTime.value,
+		endTime: endTime.value,
+		scene: scene.value,
+		inviteUserId: inviteUserId.value
+	}).then(res => {
+		console.log(res)
+	})
+}
 
+onLoad(options => {
+	// console.log(options)
+	// 请求参数
+	userDataStatistics()
+})
 // 来源选择
 const onchange1 = res => {
 	console.log(res)
@@ -139,33 +156,28 @@ const rangeTime = ref([])
 :deep(.uni-searchbar) {
 	padding: 0;
 }
-:deep(.placeholder){
-	color: #B3B3B3 !important;
+:deep(.placeholder) {
+	color: #b3b3b3 !important;
 	font-size: 28rpx !important;
-}
-.bg {
-	height: 100rpx;
-	width: 750rpx;
-	background-image: linear-gradient($main-color 0%, transparent);
 }
 
 .box {
 	width: $main-width;
 	padding: $padding;
 	margin: auto;
-	box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.2);
+	box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.4);
 	border-radius: 16rpx;
 	background-color: #fff;
 	overflow: hidden;
 }
+
 .box1 {
-	width: 750rpx;
-	padding: $padding;
+	width: $main-width;
 	@include mFlex;
 	justify-content: space-between;
-	padding-bottom: 40rpx;
-	background-color: $main-color;
+	padding: 40rpx 0;
 	color: #ffffff;
+	margin: auto;
 	.box1_item {
 		width: 33.3%;
 		flex: none;
@@ -184,12 +196,12 @@ const rangeTime = ref([])
 	.select {
 		@include mFlex;
 		justify-content: space-between;
-		&_item{
+		&_item {
 			width: 30%;
 			flex: none;
 		}
 	}
-	&_p{
+	&_p {
 		margin-top: 32rpx;
 	}
 }

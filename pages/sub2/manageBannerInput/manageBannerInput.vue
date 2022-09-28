@@ -112,10 +112,11 @@ import useHtzImageUpload from '@/aTemp/mixins/useHtzImageUpload.js'
 // 图片上传
 const { chooseSuccess: chooseSuccess1, picList: picList1, selectNum: selectNum1 } = useHtzImageUpload({
 	ratio: 2 / 1,
-	url: '/serve/uploadimage',
+	url: '/enrollform/uploadimage',
 	refData: formData,
 	param: 'banner',
-	selectNum: 1
+	selectNum: 1,
+	baseDir: 'banner'
 })
 </script>
 

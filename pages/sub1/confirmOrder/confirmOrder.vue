@@ -119,6 +119,13 @@ const confirm = _debounce(
 				// 支付信息
 				const payInfo = JSON.parse(resDataObj.pay_info)
 				// console.log(payInfo)
+				
+				// 错误提示
+				if (!payInfo) {
+					showToastText(resDataObj.result_msg)
+					return
+				}
+				
 
 				// 唤醒支付
 				uni

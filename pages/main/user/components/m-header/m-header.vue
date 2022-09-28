@@ -13,12 +13,12 @@
 			<view class="userId">ID：{{ useUserMain.userid || 0 }}</view>
 		</view>
 		<!-- 邀请码 -->
-		<view class="invitation">
+		<view class="invitation" @tap="wxWxqrCode">
 			<image class="image" src="/static/images/erweima.png" mode="aspectFill"></image>
 			<text class="text">个人码</text>
 		</view>
-		<!-- 邀请按钮 -->
 
+		<!-- 邀请按钮 -->
 		<view class="invitation">
 			<button class="btn" open-type="share" hover-class="my-hover-class"></button>
 			<image class="image" src="/static/images/yaoqing.png" mode="heightFix"></image>
@@ -28,11 +28,23 @@
 </template>
 
 <script setup>
-import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
+import { _wxWxqrCode } from '@/aTemp/apis/login.js'
+import { previewImage, navigateTo, showLoading } from '@/aTemp/utils/uniAppTools.js'
 // 全局登录信息
 import { _useUserMain } from '@/aTemp/store/userMain.js'
 const useUserMain = _useUserMain()
 
+// base64转图片路径
+import { base64ToPath } from 'image-tools'
+const wxWxqrCode = () => {
+	showLoading('加载中')
+	_wxWxqrCode({ openid: useUserMain.openId, scene: 'pages' }).then(async res => {
+		const { msg, data, code } = res
+		const imgPath = await base64ToPath('data:image/png;base64,' + data)
+		uni.hideLoading()
+		previewImage([imgPath])
+	})
+}
 </script>
 
 <style lang="scss" scoped>

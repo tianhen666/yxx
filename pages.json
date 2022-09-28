@@ -144,7 +144,7 @@
 			}, {
 				"path": "vip/vip",
 				"style": {
-					"navigationBarTitleText": "会员中心",
+					"navigationBarTitleText": "会员支付",
 					"enablePullDownRefresh": false,
 					"navigationStyle": "custom"
 				}
@@ -154,16 +154,13 @@
 					"navigationBarTitleText": "服务列表",
 					"enablePullDownRefresh": false
 				}
-			}    ,{
-                    "path" : "yuyue/yuyue",
-                    "style" :                                                                                    
-                {
-                    "navigationBarTitleText": "快速预约",
-                    "enablePullDownRefresh": false
-                }
-                
-                }
-            ]
+			}, {
+				"path": "yuyue/yuyue",
+				"style": {
+					"navigationBarTitleText": "快速预约",
+					"enablePullDownRefresh": false
+				}
+			}]
 		},
 		{
 			"root": "pages/sub2",
@@ -176,7 +173,7 @@
 			}, {
 				"path": "manageBannerList/manageBannerList",
 				"style": {
-					"navigationBarTitleText": "banner管理",
+					"navigationBarTitleText": "轮播图管理",
 					"enablePullDownRefresh": false
 				}
 			}, {
@@ -319,25 +316,21 @@
 					"navigationBarTitleText": "切换门店",
 					"enablePullDownRefresh": false
 				}
-			}    ,{
-                    "path" : "manageStaffListLogin/manageStaffListLogin",
-                    "style" :                                                                                    
-                {
-                    "navigationBarTitleText": "",
-                    "enablePullDownRefresh": false
-                }
-                
-                }
-                ,{
-                    "path" : "manageUserInfo/manageUserInfo",
-                    "style" :                                                                                    
-                {
-                    "navigationBarTitleText": "个人信息",
-                    "enablePullDownRefresh": false
-                }
-                
-                }
-            ]
+			}, {
+				"path": "manageStaffListLogin/manageStaffListLogin",
+				"style": {
+					"navigationBarTitleText": "",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "manageUserInfo/manageUserInfo",
+				"style": {
+					"navigationBarTitleText": "个人信息",
+					"enablePullDownRefresh": false
+				}
+
+			}]
 		},
 		{
 			"root": "pages/sub3",
@@ -380,16 +373,14 @@
 					"enablePullDownRefresh": false
 				}
 
-			}    ,{
-                    "path" : "posterDrafts/posterDrafts",
-                    "style" :                                                                                    
-                {
-                    "navigationBarTitleText": "门诊素材",
-                    "enablePullDownRefresh": false
-                }
-                
-                }
-            ]
+			}, {
+				"path": "posterDrafts/posterDrafts",
+				"style": {
+					"navigationBarTitleText": "门诊素材",
+					"enablePullDownRefresh": false
+				}
+
+			}]
 		}
 	],
 	"globalStyle": {

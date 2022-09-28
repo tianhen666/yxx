@@ -37,7 +37,7 @@ export function _storeGetone(data) {
 }
 
 
-// 统一支付
+// 商品支付
 export function _wxpayPayment(data) {
 	return http.post({
 		url: '/wxpay/payment',
@@ -49,6 +49,30 @@ export function _wxpayPayment(data) {
 export function _wxpayWxNotifys(data) {
 	return http.post({
 		url: '/wxpay/wxNotifys',
+		data
+	})
+}
+
+// 店铺会员列表
+export function _storeVipOrderOrderlist(data) {
+	return http.post({
+		url: '/store-vip-order/orderlist',
+		data
+	})
+}
+
+// 店铺会员付款
+export function _storeVipOrderPayment(data) {
+	return http.post({
+		url: '/store-vip-order/payment',
+		data
+	})
+}
+
+// 店铺会员，支付成功回调，并且分账
+export function _storeVipOrderWxNotifys(data) {
+	return http.post({
+		url: '/store-vip-order/wxNotifys',
 		data
 	})
 }

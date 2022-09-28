@@ -75,7 +75,7 @@
 				<uni-easyinput
 					type="digit"
 					v-model="formData.price"
-					:placeholder="rules.price.rules[0].errorMessage.replace('%', type[formData.type].text)"
+					:placeholder="rules.price.rules[0].errorMessage"
 				/>
 			</uni-forms-item>
 

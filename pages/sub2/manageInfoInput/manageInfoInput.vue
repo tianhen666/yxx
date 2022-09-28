@@ -50,13 +50,7 @@
 
 			<!-- 门诊介绍 -->
 			<uni-forms-item :label="rules.descData.label" label-position="top" name="descData">
-				<uni-easyinput
-					type="textarea"
-					:cursor-spacing="80"
-					autoHeight
-					v-model="formData.descData"
-					:placeholder="rules.descData.rules[0].errorMessage"
-				/>
+				<fuck-textarea :placeholder="rules.descData.rules[0].errorMessage" v-model="formData.descData" />
 			</uni-forms-item>
 
 			<!-- 店内环境图 -->

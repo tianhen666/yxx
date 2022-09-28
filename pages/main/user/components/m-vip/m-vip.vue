@@ -1,10 +1,10 @@
 <template>
 	<view class="container">
 		<!-- vip续费 -->
-		<view class="vip">
+		<view class="vip" @tap="navigateTo('/pages/sub1/vip/vip')">
 			<image class="image" src="/static/images/vip.png" mode="aspectFill"></image>
 			<view class="time_text">您的会员将在2023-07-14到期</view>
-			<view class="btn" @tap="navigateTo('/pages/sub1/vip/vip')">立即续费</view>
+			<view class="btn">立即续费</view>
 		</view>
 	</view>
 </template>

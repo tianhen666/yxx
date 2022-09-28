@@ -43,3 +43,11 @@ export function _userChangeUserId(data) {
 		data
 	})
 }
+
+// 用户统计列表
+export function _userDataStatistics(data) {
+	return http.post({
+		url: '/user/dataStatistics',
+		data
+	})
+}

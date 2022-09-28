@@ -18,3 +18,11 @@ export function _wxMobile(data) {
 		data
 	})
 }
+
+// 获取个人码
+export function _wxWxqrCode(params) {
+	return http.post({
+		url: '/wx/wxqrCode',
+		params
+	})
+}
