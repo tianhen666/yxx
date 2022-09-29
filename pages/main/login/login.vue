@@ -87,7 +87,7 @@ const clickTips = () => {
 // 获取并上传头像
 const onChooseAvatar = async e => {
 	const avatarUrl = e.detail.avatarUrl
-	const resUploadFile = await uploadFile(avatarUrl, config.BASE_URL + '/store/uploadimage')
+	const resUploadFile = await uploadFile(avatarUrl, config.BASE_URL + '/enrollform/uploadimage',{baseDir: 'avatar'})
 	const { code, data, msg } = JSON.parse(resUploadFile)
 	avatar.value = data
 }
@@ -104,6 +104,8 @@ const getphonenumber = val => {
 			const { msg, data, code } = res
 			if (data) {
 				useUserMain.$patch({ mobile: data })
+				useUserMain.$patch({ avatar: avatar.value })
+				useUserMain.$patch({ nickname: nickname.value })
 			}
 			setTimeout(() => {
 				uni.hideLoading()

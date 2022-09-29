@@ -6,7 +6,6 @@
 			:values="items"
 			style-type="text"
 			@clickItem="onClickItem"
-			@onClickItem="onClickItem"
 		/>
 		<view class="blank20"></view>
 		<!-- 切换内容 -->

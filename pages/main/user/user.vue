@@ -1,6 +1,6 @@
 <template>
 	<!-- 背景 -->
-	<view class="pageBg"><image class="image" src="/static/images/bg.jpg" mode="aspectFill"></image></view>
+	<view class="pageBg uni-navbar--fixed"><image class="image" src="/static/images/bg.jpg" mode="aspectFill"></image></view>
 	<!-- #ifndef H5 -->
 	<!-- 标题栏 -->
 	<uni-nav-bar statusBar fixed :title="'我的'" color="#ffffff" :border="false"></uni-nav-bar>

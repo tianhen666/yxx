@@ -66,20 +66,23 @@ export function _throttle(fun, delay) {
 export function _countDown(time, payTimer) {
 
 	let duration = dayjs.duration(dayjs(time) - dayjs())
-	let hours = duration.hours()
-	let minutes = duration.minutes() % 60 < 10 ? '0' + (duration.minutes() % 60) : duration.minutes() % 60
-	let seconds = duration.seconds() % 60 < 10 ? '0' + (duration.seconds() % 60) : duration.seconds() % 60
-	let milliseconds = duration.milliseconds()
-	if (hours <= 0 && minutes <= 0 && seconds <= 0) {
+	let hours = duration.hours() < 10 ? '0' + duration.hours() : duration.hours()
+	let minutes = duration.minutes() < 10 ? '0' + duration.minutes() : duration.minutes()
+	let seconds = duration.seconds() < 10 ? '0' + duration.seconds() : duration.seconds()
+	let milliseconds = duration.milliseconds() < 10 ? '00' + duration.milliseconds() : duration
+		.milliseconds() < 100 ? '0' + duration.milliseconds() : duration.milliseconds()
+		
+	if (parseInt(hours) <= 0 && parseInt(minutes) <= 0 && parseInt(seconds) <= 0) {
+		// console.log("定时器移除")
 		clearInterval(payTimer)
-		return `${hours}:${minutes}:${seconds}`
+		return `${hours}:${minutes}:${seconds} 000`
 	} else {
 		return `${hours}:${minutes}:${seconds} ${milliseconds} `
 	}
 }
 
 // 根据毫秒获取分钟倒计时
-export function _getMinutes(time,addMinute){
+export function _getMinutes(time, addMinute) {
 	let duration = dayjs.duration(dayjs(time).add(addMinute, 'minute') - dayjs())
 	return parseInt(duration.asMinutes())
 }

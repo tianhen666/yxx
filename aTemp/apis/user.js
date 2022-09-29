@@ -45,9 +45,9 @@ export function _userChangeUserId(data) {
 }
 
 // 用户统计列表
-export function _userDataStatistics(data) {
+export function _userDataStatistics(params) {
 	return http.post({
 		url: '/user/dataStatistics',
-		data
+		params
 	})
 }

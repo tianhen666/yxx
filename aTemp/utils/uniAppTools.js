@@ -36,11 +36,12 @@ export function chooseImage(count) {
 }
 
 // 上传文件
-export function uploadFile(tempFilePath, url) {
+export function uploadFile(tempFilePath, url, formData) {
 	return new Promise((resolve, reject) => {
 		uni.uploadFile({
 			url: url, //仅为示例，非真实的接口地址
 			filePath: tempFilePath,
+			formData: formData,
 			name: 'file',
 		}).then((uploadFileRes) => {
 			const {
@@ -197,4 +198,17 @@ export function makePhoneCall(phoneNumber) {
 			console.log(e)
 		}
 	})
+}
+
+// 复制内容
+export function setClipboardData(text) {
+	uni.setClipboardData({
+		data: text,
+		success: function() {
+			showToastText('复制成功')
+		},
+		fail: function() {
+			showToastText('复制失败')
+		}
+	});
 }

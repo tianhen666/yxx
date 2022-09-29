@@ -1,6 +1,6 @@
 <template>
 	<!-- 背景 -->
-	<view class="pageBg"><image class="image" src="/static/images/bg.jpg" mode="aspectFill"></image></view>
+	<view class="pageBg uni-navbar--fixed"><image class="image" src="/static/images/bg.jpg" mode="aspectFill"></image></view>
 	<!-- #ifndef H5 -->
 	<!-- 标题栏 -->
 	<uni-nav-bar
@@ -17,15 +17,15 @@
 	<view class="box1">
 		<view class="box1_item">
 			<view class="text">全部邀请</view>
-			<view class="text_num">588080</view>
+			<view class="text_num">{{invitationsNumber[0]||0}}</view>
 		</view>
 		<view class="box1_item">
 			<view class="text">今日新增</view>
-			<view class="text_num">588080</view>
+			<view class="text_num">{{invitationsNumber[1]||0}}</view>
 		</view>
 		<view class="box1_item">
 			<view class="text">本月新增</view>
-			<view class="text_num">588080</view>
+			<view class="text_num">{{invitationsNumber[2]||0}}</view>
 		</view>
 	</view>
 
@@ -61,7 +61,10 @@
 		<view class="blank40"></view>
 
 		<!-- 用户列表 -->
-		<m-user-list></m-user-list>
+		<m-user-list :listData="userListData"></m-user-list>
+		
+		<!-- 加载更多 -->
+		<uni-load-more :status="pageLoadStatus" />
 	</view>
 
 	<view class="blank40"></view>
@@ -70,7 +73,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
+import { onLoad,onReachBottom } from '@dcloudio/uni-app'
 import { navigateBack } from '@/aTemp/utils/uniAppTools.js'
 import { _userDataStatistics } from '@/aTemp/apis/user.js'
 
@@ -83,17 +86,56 @@ const scene = ref('')
 // 邀请人ID
 const inviteUserId = ref('')
 
+// 每页数量
+const pageSize = ref(6)
+// 有多少页面
+const pageNum = ref(1)
+// 是否加载完成
+const pageLoadStatus = ref('more')
+
+const invitationsNumber = ref([])
+// 会员列表
+const userListData = ref([])
+
 // 获取用户列表
 const userDataStatistics = () => {
+	pageLoadStatus.value = 'loading'
 	_userDataStatistics({
 		startTime: startTime.value,
 		endTime: endTime.value,
 		scene: scene.value,
-		inviteUserId: inviteUserId.value
+		inviteUserId: inviteUserId.value,
+		pageNum: pageNum.value,
+		pageSize: pageSize.value
 	}).then(res => {
-		console.log(res)
+		const { msg, code, data } = res
+		const { customConditionInquire, resultMonthNewly, resultTodayNewly } = data
+		
+		// 数量统计
+		invitationsNumber.value[0] = customConditionInquire.data.count
+		invitationsNumber.value[1] = resultTodayNewly.data
+		invitationsNumber.value[2] = resultMonthNewly.data
+		
+		// 暂时延时一下
+		setTimeout(() => {
+			userListData.value.push(...customConditionInquire.data.userlist)
+			// console.log(customConditionInquire.data.userlist)
+			// 判断是否加载完成
+			if (customConditionInquire.data.pageindex > pageNum.value) {
+				pageNum.value++
+				pageLoadStatus.value = 'more'
+			} else {
+				pageLoadStatus.value = 'noMore'
+			}
+		}, 1000)
 	})
 }
+// 触底加载
+onReachBottom(() => {
+	if (pageLoadStatus.value === 'more') {
+		userDataStatistics()
+	}
+})
 
 onLoad(options => {
 	// console.log(options)
@@ -165,7 +207,7 @@ const rangeTime = ref([])
 	width: $main-width;
 	padding: $padding;
 	margin: auto;
-	box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.4);
+	box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.4);
 	border-radius: 16rpx;
 	background-color: #fff;
 	overflow: hidden;
@@ -175,7 +217,7 @@ const rangeTime = ref([])
 	width: $main-width;
 	@include mFlex;
 	justify-content: space-between;
-	padding: 40rpx 0;
+	padding: 40rpx 0 50rpx;
 	color: #ffffff;
 	margin: auto;
 	.box1_item {

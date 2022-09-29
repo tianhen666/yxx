@@ -38,6 +38,7 @@ onLaunch(async options => {
 	 * invitationCode 邀请人code
 	 * storeId 店铺ID
 	 * scene 0直接邀请 1活动 2商品 3服务 4海报 5其他
+	 * const scene = ["直接邀请","活动邀请","商品邀请","服务邀请","海报邀请","其他邀请"]
 	 * targetId 场景来源ID
 	 * 获取启动参数并设置店铺ID,邀请人code 并且缓存
 	 */
@@ -74,6 +75,8 @@ onLaunch(async options => {
 	const { code, data, msg } = resData
 	const { openid, unionid, token, mobile, userid, power, avatar, nickname } = data
 
+	// 清理缓存
+	uni.clearStorageSync()
 	// 获取到数据后赋值给全局变量
 	useUserMain.$patch({
 		openId: openid,

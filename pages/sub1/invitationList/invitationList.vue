@@ -30,7 +30,7 @@
 	</view>
 
 	<!-- 背景 -->
-	<view class="pageBg"></view>
+	<view class="pageBg uni-navbar--fixed"></view>
 
 	<view class="box2">
 		<view class="box2_item">

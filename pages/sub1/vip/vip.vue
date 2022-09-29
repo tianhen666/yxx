@@ -3,7 +3,7 @@
 
 	<view class="container" v-else>
 		<!-- 背景 -->
-		<view class="pageBg"><image class="image" src="/static/images/bg.jpg" mode="aspectFill"></image></view>
+		<view class="pageBg uni-navbar--fixed"><image class="image" src="/static/images/bg.jpg" mode="aspectFill"></image></view>
 
 		<!-- #ifndef H5 -->
 		<!-- 标题栏 -->
@@ -91,7 +91,7 @@ const storeVipOrderPayment = _debounce(
 
 				// 支付信息
 				const payInfo = JSON.parse(resDataObj.pay_info)
-				console.log(payInfo)
+				// console.log(payInfo)
 
 				// 错误提示
 				if (!payInfo) {
@@ -99,7 +99,6 @@ const storeVipOrderPayment = _debounce(
 					return
 				}
 
-				return
 
 				// 唤醒支付
 				uni

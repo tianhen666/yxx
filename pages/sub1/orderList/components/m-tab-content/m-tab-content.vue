@@ -28,7 +28,11 @@
 			<!-- 图文信息 -->
 			<view class="container_item_box1">
 				<view class="container_item_box1_left">
-					<image :src="item.productPic?item.productPic.split(',')[0]:'/static/images/no_img.jpg'" mode="aspectFill" class="goods_img"></image>
+					<image
+						:src="item.productPic ? item.productPic.split(',')[0] : '/static/images/no_img.jpg'"
+						mode="aspectFill"
+						class="goods_img"
+					></image>
 				</view>
 				<view class="container_item_box1_right">
 					<view class="title">{{ item.productName }}</view>
@@ -63,7 +67,7 @@
 				<view
 					class="item_btn style1"
 					v-if="item.status === 1 && dayjs(item.createDt).add(30, 'minute') - dayjs() > 0"
-					@tap.stop.prevent="orderPayment(item.orderNo)"
+					@tap.stop.prevent="orderPayment(item)"
 				>
 					去付款
 				</view>
@@ -88,7 +92,7 @@
 <script setup>
 import { ref } from 'vue'
 import dayjs from 'dayjs'
-import { _getMinutes } from '@/aTemp/utils/tools.js'
+import { _getMinutes,_debounce } from '@/aTemp/utils/tools.js'
 import { navigateTo, showToastText } from '@/aTemp/utils/uniAppTools.js'
 import { _orderPayment } from '@/aTemp/apis/order.js'
 import { _wxpayWxNotifys } from '@/aTemp/apis/store.js'
@@ -102,11 +106,9 @@ const props = defineProps({
 	}
 })
 
-const emits = defineEmits(['onClickItem'])
-
 // 重新付款
-const orderPayment = val => {
-	const orderNo = val
+const orderPayment = _debounce(item => {
+	const orderNo = item.orderNo
 
 	_orderPayment({ orderNo: orderNo }).then(res => {
 		// 获取唤醒支付必要条件
@@ -127,15 +129,15 @@ const orderPayment = val => {
 				// 支付成功回调，并且分账 status: 2 //2表示已经支付完成，待使用
 				const myParameter = { orderNumExternal: orderNo, status: 2 }
 				_wxpayWxNotifys(myParameter).then(resData => {
-					// 重新获取订单状态
-					emits('defineEmits', 2)
+					// 修改订单状态
+					item.status = 2
 				})
 			})
 			.catch(err => {
 				showToastText('取消支付~')
 			})
 	})
-}
+}, 1000)
 </script>
 
 <style lang="scss" scoped>

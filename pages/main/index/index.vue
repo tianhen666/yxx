@@ -2,7 +2,7 @@
 	<m-page-loading v-if="loading"></m-page-loading>
 	<view class="container" v-else>
 		<!-- 背景 -->
-		<view class="pageBg"><image class="image" src="/static/images/bg.jpg" mode="aspectFill"></image></view>
+		<view class="pageBg uni-navbar--fixed"><image class="image" src="/static/images/bg.jpg" mode="aspectFill"></image></view>
 		<!-- #ifndef H5 -->
 		<!-- 标题栏 -->
 		<uni-nav-bar fixed statusBar :title="storeInfo.name" color="#ffffff" :border="false"></uni-nav-bar>

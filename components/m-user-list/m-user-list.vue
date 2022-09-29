@@ -1,22 +1,24 @@
 <template>
 	<view class="container">
-		<view class="container_item" v-for="(item, index) in props.listData" :key="index" @tap="popupTap(item)">
+		<view class="container_item" v-for="(item, index) in listData" :key="index" @tap="popupTap(item)">
 			<view class="container_item_box">
 				<!-- 头像 -->
 				<view class="container_item_box_left">
-					<image class="image" src="/static/default/tup4.jpg" mode="aspectFill"></image>
+					<image class="image" :src="item.avatar || '/static/images/default_avatar.png'" mode="aspectFill"></image>
 				</view>
 
 				<!-- 信息 -->
 				<view class="container_item_box_center">
-					<view class="name">{{ item.Rname || item.name }}</view>
-					<view class="mobile">{{ '17730225541' }}</view>
+					<view class="name">{{ item.remarkname || item.nickname }}</view>
+					<view class="mobile">{{ item.mobile }}</view>
 				</view>
 
 				<!-- 拨打电话 -->
 				<view class="container_item_box_right">
-					<view class="copy_mobile">复制号码</view>
-					<view class="call"><image class="image" src="/static/default/phone.png" mode="heightFix"></image></view>
+					<view class="copy_mobile" @tap.stop.prevent="setClipboardData(item.mobile)">复制号码</view>
+					<view class="call" @tap.stop.prevent="makePhoneCall(item.mobile)">
+						<image class="image" src="/static/images/phone.png" mode="heightFix"></image>
+					</view>
 				</view>
 			</view>
 			<view class="blank32"></view>
@@ -31,58 +33,69 @@
 
 			<!-- 会员管理页面显示 -->
 			<view class="container_item_box2" v-else>
-				<view class="source item">来源：直接邀请</view>
-				<view class="Invited item">邀请人：{{ item.InvitedName }}</view>
-				<view class="Invited item">{{ '2022年8月10号' }}</view>
+				<view class="source item">来源：{{ scene[item.scene] || '无' }}</view>
+				<view class="Invited item">邀请人：{{ item.rname || item.yname || '无' }}</view>
+				<view class="Invited item" v-if="item.ytime">{{ dayjs(item.ytime).format('YYYY年M月D日') }}</view>
 			</view>
 			<view class="blank32"></view>
-			<view v-if="!activityShow" class="container_item_box3">{{item.remarks||"点击添加备注信息"}}</view>
-			<view class="blank32"></view>
-			<view v-if="!activityShow" class="container_item_box4">
-				<view class="item"><uni-tag :text="item.sex" size="small" type="primary" /></view>
-				<view class="item"><uni-tag :text="item.age" size="small" type="primary" /></view>
+			<view v-if="!activityShow" class="container_item_box3">
+				{{ jsonToObj(item['userremark'])['remarks'] || '点击添加备注信息' }}
+			</view>
+			<view
+				v-if="!activityShow && (jsonToObj(item['userremark'])['sex'] || jsonToObj(item['userremark'])['age'])"
+				class="container_item_box4"
+			>
+				<view class="item"><uni-tag :text="jsonToObj(item['userremark'])['sex']" size="small" type="primary" /></view>
+				<view class="item"><uni-tag :text="jsonToObj(item['userremark'])['age']" size="small" type="primary" /></view>
 			</view>
 		</view>
-
-		<!-- 弹出框 -->
-		<uni-popup ref="popup" type="bottom" :safe-area="false">
-			<view class="popup_box">
-				<image class="close" @tap="popup.close" src="/static/default/close.png"></image>
-				<uni-forms :rules="rules" ref="formObj" v-model="formData" label-width="220rpx" label-position="top">
-					<!-- 备注名 -->
-					<uni-forms-item :label="rules.Rname.label" name="Rname" label-position="top">
-						<uni-easyinput v-model="formData.Rname" :placeholder="rules.Rname.rules[0].errorMessage"></uni-easyinput>
-					</uni-forms-item>
-
-					<!-- 性别 -->
-					<uni-forms-item :label="rules.sex.label" name="sex">
-						<uni-data-checkbox mode="tag" v-model="formData.sex" :localdata="sex"></uni-data-checkbox>
-					</uni-forms-item>
-
-					<!-- 年龄 -->
-					<uni-forms-item :label="rules.age.label" name="age">
-						<uni-data-checkbox mode="tag" v-model="formData.age" :localdata="age"></uni-data-checkbox>
-					</uni-forms-item>
-
-					<!-- 备注信息 -->
-					<uni-forms-item :label="rules.remarks.label" name="remarks">
-						<fuck-textarea
-							v-model="formData.remarks"
-							:placeholder="rules.remarks.rules[0].errorMessage"
-							:maxlength="50"
-						></fuck-textarea>
-					</uni-forms-item>
-				</uni-forms>
-
-				<button class="btn" :loading="loading" @tap="saveClick">保存信息</button>
-			</view>
-		</uni-popup>
 	</view>
+
+	<!-- 弹出框 -->
+	<uni-popup ref="popup" type="bottom" :safe-area="false">
+		<view class="popup_box">
+			<image class="close" @tap="popup.close" src="/static/images/close.png"></image>
+			<uni-forms :rules="rules" ref="formObj" v-model="formData" label-width="220rpx" label-position="top">
+				<!-- 备注名 -->
+				<uni-forms-item :label="rules.remarkname.label" name="remarkname" label-position="top">
+					<uni-easyinput
+						v-model="formData.remarkname"
+						:placeholder="rules.remarkname.rules[0].errorMessage"
+					></uni-easyinput>
+				</uni-forms-item>
+
+				<!-- 性别 -->
+				<uni-forms-item :label="rules.sex.label" name="sex">
+					<uni-data-checkbox mode="tag" v-model="formData.sex" :localdata="sex"></uni-data-checkbox>
+				</uni-forms-item>
+
+				<!-- 年龄 -->
+				<uni-forms-item :label="rules.age.label" name="age">
+					<uni-data-checkbox mode="tag" v-model="formData.age" :localdata="age"></uni-data-checkbox>
+				</uni-forms-item>
+
+				<!-- 备注信息 -->
+				<uni-forms-item :label="rules.remarks.label" name="remarks">
+					<fuck-textarea
+						v-model="formData.remarks"
+						:placeholder="rules.remarks.rules[0].errorMessage"
+						:maxlength="50"
+					></fuck-textarea>
+				</uni-forms-item>
+			</uni-forms>
+
+			<button class="btn" :loading="loading" @tap="saveClick">保存信息</button>
+		</view>
+	</uni-popup>
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import dayjs from 'dayjs'
 import { _debounce } from '@/aTemp/utils/tools.js'
+import { makePhoneCall, setClipboardData } from '@/aTemp/utils/uniAppTools.js'
+import { _userUpdate } from '@/aTemp/apis/user.js'
+const scene = ['直接邀请', '活动邀请', '商品邀请', '服务邀请', '海报邀请', '其他邀请']
 const props = defineProps({
 	activityShow: {
 		type: Boolean,
@@ -91,31 +104,17 @@ const props = defineProps({
 	listData: {
 		request: true,
 		type: Array,
-		default: () => [
-			{
-				name: '天痕1',
-				views: 1000,
-				join: true,
-				mobile: '17730225541',
-				InvitedName: '王大锤'
-			},
-			{
-				name: '天痕2',
-				views: 600,
-				join: true,
-				mobile: '17730225541',
-				InvitedName: '王小锤'
-			},
-			{
-				name: '天痕3',
-				views: 500,
-				join: false,
-				mobile: '17730225541',
-				InvitedName: '王不锤'
-			}
-		]
+		default: () => []
 	}
 })
+
+const jsonToObj = str => {
+	try {
+		return JSON.parse(str)
+	} catch (e) {
+		return {}
+	}
+}
 
 // 弹出层
 const popup = ref(null)
@@ -143,16 +142,16 @@ const age = [
 		value: '18岁-25岁'
 	},
 	{
-		text: '25岁-35岁',
-		value: '25岁-35岁'
+		text: '26岁-35岁',
+		value: '26岁-35岁'
 	},
 	{
-		text: '34岁-45岁',
-		value: '34岁-45岁'
+		text: '36岁-45岁',
+		value: '36岁-45岁'
 	},
 	{
-		text: '45岁-60岁',
-		value: '45岁-60岁'
+		text: '46岁-60岁',
+		value: '46岁-60岁'
 	},
 	{
 		text: '60岁以上',
@@ -162,7 +161,7 @@ const age = [
 
 // 表单校验
 const rules = {
-	Rname: {
+	remarkname: {
 		rules: [{ errorMessage: '请输入备注名' }],
 		label: '备注名'
 	},
@@ -180,11 +179,21 @@ const rules = {
 	}
 }
 
+// 当前编辑的对象
+let pupItem = {}
 
 // 弹出模态框
-const popupTap = (item) => {
+const popupTap = item => {
+	// 保存当前编辑的对象
+	pupItem = item
 	// 赋值表单数据
-	formData.value = item
+	formData.value = {
+		id: item['id'],
+		remarkname: item['remarkname'],
+		sex: jsonToObj(item['userremark'])['sex'],
+		age: jsonToObj(item['userremark'])['age'],
+		remarks: jsonToObj(item['userremark'])['remarks']
+	}
 	popup.value.open()
 }
 const loading = ref(false)
@@ -194,9 +203,26 @@ const saveClick = _debounce(
 		formObj.value
 			.validate()
 			.then(formRes => {
-				// _apiSave(dataObj.value).then(res => {
-				// 	loading.value = false
-				// })
+				const remarks = {
+					sex: formData.value['sex'],
+					age: formData.value['age'],
+					remarks: formData.value['remarks']
+				}
+
+				// console.log(pupItem)
+
+				_userUpdate({
+					id: formData.value['id'],
+					remarkname: formData.value['remarkname'],
+					userremark: JSON.stringify(remarks)
+				}).then(res => {
+					// 修改成功重新赋值当前修改对象
+					pupItem['remarkname'] = formData.value['remarkname']
+					pupItem['userremark'] = JSON.stringify(remarks)
+
+					// 加载结束
+					loading.value = false
+				})
 				// 关闭弹出框
 				popup.value.close()
 				loading.value = false
@@ -215,8 +241,7 @@ const saveClick = _debounce(
 <style scoped lang="scss">
 .container {
 	background-color: #fff;
-	&_item {
-		padding-bottom: 32rpx;
+	.container_item {
 		margin-bottom: 32rpx;
 		border-bottom: 1px solid $uni-border-2;
 		&:last-child {
@@ -314,15 +339,17 @@ const saveClick = _debounce(
 		}
 
 		&_box3 {
+			padding-bottom: 32rpx;
 			font-size: 26rpx;
 			color: $main-color;
 			@include singleLineTextOverHidden;
 		}
-		
-		&_box4{
+
+		&_box4 {
+			padding-bottom: 32rpx;
 			@include mFlex;
 			justify-content: flex-start;
-			>.item{
+			> .item {
 				margin-right: 20rpx;
 				&:last-child {
 					margin-right: 0;
@@ -330,30 +357,30 @@ const saveClick = _debounce(
 			}
 		}
 	}
+}
 
-	.popup_box {
-		position: relative;
-		background-color: #fff;
-		overflow: hidden;
-		border-radius: 16rpx;
-		width: 750rpx * 0.9;
-		margin: auto;
-		margin-bottom: 90rpx;
-		.btn {
-			margin: 32rpx;
-			margin-top: 0;
-			font-size: 30rpx;
-			color: #fff;
-			background-color: $main-color;
-		}
-		.close {
-			position: absolute;
-			right: 20rpx;
-			top: 20rpx;
-			width: 40rpx;
-			height: 40rpx;
-			z-index: 10;
-		}
+.popup_box {
+	position: relative;
+	background-color: #fff;
+	overflow: hidden;
+	border-radius: 16rpx;
+	width: 750rpx * 0.9;
+	margin: auto;
+	margin-bottom: 90rpx;
+	.btn {
+		margin: 32rpx;
+		margin-top: 0;
+		font-size: 30rpx;
+		color: #fff;
+		background-color: $main-color;
+	}
+	.close {
+		position: absolute;
+		right: 20rpx;
+		top: 20rpx;
+		width: 40rpx;
+		height: 40rpx;
+		z-index: 10;
 	}
 }
 </style>
