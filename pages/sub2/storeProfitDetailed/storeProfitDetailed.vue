@@ -1,0 +1,134 @@
+<template>
+	<view class="container">
+		<z-paging
+			ref="paging"
+			v-model="dataList"
+			@query="queryList"
+			use-page-scroll
+			created-reload
+			min-delay="1000"
+			show-loading-more-when-reload
+		>
+			<view class="item" v-for="(item, index) in dataList" :key="index">
+				<view class="touxiang">
+					<image class="image" :src="item.avatar || '/static/images/default_avatar.png'" mode="aspectFill"></image>
+				</view>
+				<view class="item_right">
+					<view class="left">
+						<view class="name">
+							<text>{{ item.nickname }}</text>
+							<text class="text2">{{ item.mobile }}</text>
+						</view>
+						<view class="source">
+							<text>{{ item.enrollId === 1 ? '活动' : '商品' }}</text>
+							<text class="text2">【{{ item.productName }}】</text>
+						</view>
+					</view>
+					<view class="right">
+						<view class="money">+{{ item.payPrice }}</view>
+						<view class="time">{{ dayjs(item.payDt).format('YYYY-M-D HH:mm:ss') }}</view>
+					</view>
+				</view>
+			</view>
+		</z-paging>
+	</view>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
+import { _enrollformEarningsport } from '@/aTemp/apis/store.js'
+import dayjs from 'dayjs'
+// 数据列表
+const dataList = ref([])
+// 当前选择的索引
+const tabIndex = ref(0)
+// 插件对象
+const paging = ref(null)
+
+// 后台获取数据
+const queryList = (pageNo, pageSize) => {
+	const params = {
+		pageNum: pageNo,
+		pageSize: pageSize
+	}
+	_enrollformEarningsport(params)
+		.then(res => {
+			paging.value.complete(res.data.userlist)
+		})
+		.catch(res => {
+			paging.value.complete(false)
+		})
+}
+</script>
+
+<style lang="scss" scoped>
+:global(page) {
+	background-color: #fff;
+}
+.container {
+}
+.item {
+	width: $main-width;
+	margin: auto;
+	padding-top: 32rpx;
+	@include mFlex;
+	align-items: flex-start;
+	justify-content: space-between;
+	&:last-child {
+		padding-bottom: 0;
+	}
+	.touxiang {
+		flex: none;
+		width: 80rpx;
+		height: 80rpx;
+		overflow: hidden;
+		.image {
+			border-radius: 50%;
+			width: 100%;
+			height: 100%;
+		}
+	}
+
+	.item_right {
+		flex: auto;
+		@include mFlex;
+		justify-content: space-between;
+		align-items: flex-start;
+		border-bottom: 1px solid #eee;
+		padding-bottom: 32rpx;
+		margin-left: 32rpx;
+		> .left {
+			.name {
+				color: #333333;
+				font-size: 30rpx;
+				.text2 {
+					font-size: 26rpx;
+					color: #aaa;
+					padding-left: 20rpx;
+				}
+			}
+			.source {
+				color: #aaa;
+				font-size: 26rpx;
+				margin-top: 32rpx;
+				.text2 {
+				}
+			}
+		}
+		> .right {
+			text-align: right;
+			.money {
+				font-weight: bold;
+				color: $sub-color;
+				font-size: 32rpx;
+			}
+			.time {
+				font-size: 26rpx;
+				color: #aaa;
+				margin-top: 32rpx;
+			}
+		}
+	}
+}
+</style>

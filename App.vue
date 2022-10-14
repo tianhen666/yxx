@@ -1,10 +1,10 @@
 <script setup>
 import { _wxLogin } from '@/aTemp/apis/login.js'
-import { onLaunch } from '@dcloudio/uni-app'
+import { onLaunch, onShow } from '@dcloudio/uni-app'
 import { init } from '@/aTemp/index.js'
 import router from '@/aTemp/router/index.js'
 import { showToastText } from '@/aTemp/utils/uniAppTools.js'
-
+import { getCurrentInstance, ref } from 'vue'
 // 全局登录信息
 import { _useUserMain } from '@/aTemp/store/userMain.js'
 const useUserMain = _useUserMain()
@@ -29,7 +29,11 @@ if (old) {
 
 // 小程序启动时执行
 onLaunch(async options => {
-	console.log(options)
+	console.log('onLaunch', options)
+
+	// 获取vue3全局对象
+	const { proxy } = getCurrentInstance()
+
 	// 初始化,检查是否更新
 	init(options)
 
@@ -65,32 +69,58 @@ onLaunch(async options => {
 	const wxCode = await uni.login()
 
 	// 登录获取
-	const resData = await _wxLogin({
+	_wxLogin({
 		code: wxCode.code,
+		storeId:useUserMain.storeId,
 		invitationCode,
 		scene,
 		targetId
 	})
+		.then(resData => {
+			const { code, data, msg } = resData
+			const { openid, unionid, token, mobile, userid, power, avatar, nickname, remarkname } = data
+			// 清理缓存
+			// uni.clearStorageSync()
 
-	const { code, data, msg } = resData
-	const { openid, unionid, token, mobile, userid, power, avatar, nickname } = data
+			// 获取到数据后赋值给全局变量
+			useUserMain.$patch({
+				openId: openid,
+				unionId: unionid,
+				token: token,
+				mobile: mobile,
+				userid: userid,
+				power: power,
+				avatar: avatar,
+				nickname: nickname,
+				remarkname: remarkname
+			})
 
-	// 清理缓存
-	uni.clearStorageSync()
-	// 获取到数据后赋值给全局变量
-	useUserMain.$patch({
-		openId: openid,
-		unionId: unionid,
-		token: token,
-		mobile: mobile,
-		userid: userid,
-		power: power,
-		avatar: avatar,
-		nickname: nickname
-	})
+			// 路由拦截
+			router(options)
 
-	// 路由拦截
-	router(options)
+			// 放行同步方法
+			proxy.$isResolve()
+
+			onLaunched.value = true
+		})
+		.catch(err => {
+			// 路由拦截
+			router(options)
+
+			// 放行同步方法
+			proxy.$isResolve()
+
+			onLaunched.value = true
+		})
+})
+
+const onLaunched = ref(false)
+// 冷启动拦截
+onShow(options => {
+	if (onLaunched.value) {
+		console.log('onShow', options)
+		router(options)
+	}
 })
 </script>
 

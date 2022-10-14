@@ -34,19 +34,19 @@
 			<!-- 会员管理页面显示 -->
 			<view class="container_item_box2" v-else>
 				<view class="source item">来源：{{ scene[item.scene] || '无' }}</view>
-				<view class="Invited item">邀请人：{{ item.rname || item.yname || '无' }}</view>
+				<view class="Invited item">邀请人：{{ item.yname || item.rname || '无' }}</view>
 				<view class="Invited item" v-if="item.ytime">{{ dayjs(item.ytime).format('YYYY年M月D日') }}</view>
 			</view>
 			<view class="blank32"></view>
 			<view v-if="!activityShow" class="container_item_box3">
-				{{ jsonToObj(item['userremark'])['remarks'] || '点击添加备注信息' }}
+				{{ jsonToObj(item['userremark']).remarks || '点击添加备注信息' }}
 			</view>
 			<view
-				v-if="!activityShow && (jsonToObj(item['userremark'])['sex'] || jsonToObj(item['userremark'])['age'])"
+				v-if="!activityShow && (jsonToObj(item['userremark']).sex || jsonToObj(item['userremark']).age)"
 				class="container_item_box4"
 			>
-				<view class="item"><uni-tag :text="jsonToObj(item['userremark'])['sex']" size="small" type="primary" /></view>
-				<view class="item"><uni-tag :text="jsonToObj(item['userremark'])['age']" size="small" type="primary" /></view>
+				<view class="item"><uni-tag :text="jsonToObj(item['userremark']).sex" size="small" type="primary" /></view>
+				<view class="item"><uni-tag :text="jsonToObj(item['userremark']).age" size="small" type="primary" /></view>
 			</view>
 		</view>
 	</view>
@@ -110,7 +110,7 @@ const props = defineProps({
 
 const jsonToObj = str => {
 	try {
-		return JSON.parse(str)
+		return JSON.parse(str) || {}
 	} catch (e) {
 		return {}
 	}

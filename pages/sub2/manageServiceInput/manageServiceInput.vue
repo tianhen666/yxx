@@ -12,10 +12,22 @@
 			<uni-forms-item :label="rules.title.label" name="title">
 				<uni-easyinput v-model="formData.title" :placeholder="rules.title.rules[0].errorMessage" />
 			</uni-forms-item>
-
-			<!-- 排序 -->
-			<uni-forms-item :label="rules.weight.label" name="weight">
-				<uni-number-box :min="1" :max="255" v-model="formData.weight" />
+			
+			<!-- 服务介绍 -->
+			<uni-forms-item :label="rules.descData.label" label-position="top" name="descData">
+				<fuck-textarea :placeholder="rules.descData.rules[0].errorMessage" v-model="formData.descData" />
+			</uni-forms-item>
+			
+			<!-- 服务详情图 -->
+			<uni-forms-item :label="rules.details.label" label-position="top" name="details">
+				<htz-image-upload
+					:max="selectNum3"
+					v-model="picList3"
+					mediaType="image"
+					:action="uploadimageURL3"
+					:formData="{ baseDir: baseDir3 }"
+					@uploadSuccess="uploadSuccess3"
+				/>
 			</uni-forms-item>
 			<view class="blank32 blank_bg_color"></view>
 
@@ -31,23 +43,12 @@
 				<htz-image-upload :max="selectNum2" v-model="picList2" mediaType="image" @chooseSuccess="chooseSuccess2" />
 			</uni-forms-item>
 			<view class="blank32 blank_bg_color"></view>
-
-			<!-- 服务介绍 -->
-			<uni-forms-item :label="rules.descData.label" label-position="top" name="descData">
-				<fuck-textarea :placeholder="rules.descData.rules[0].errorMessage" v-model="formData.descData" />
+			
+			<!-- 排序 -->
+			<uni-forms-item :label="rules.weight.label" name="weight">
+				<uni-number-box :min="1" :max="255" v-model="formData.weight" />
 			</uni-forms-item>
-			<view class="blank32 blank_bg_color"></view>
-
-			<!-- 服务详情图 -->
-			<uni-forms-item :label="rules.details.label" label-position="top" name="details">
-				<htz-image-upload
-					:max="selectNum3"
-					v-model="picList3"
-					mediaType="image"
-					:action="uploadimageURL3"
-					@uploadSuccess="uploadSuccess3"
-				/>
-			</uni-forms-item>
+			
 		</uni-forms>
 
 		<!-- 保存信息 -->
@@ -157,35 +158,39 @@ const { saveClick, loading } = useSaveApi(formObj, formData, _serveSave)
  */
 import useHtzImageUpload from '@/aTemp/mixins/useHtzImageUpload.js'
 
-// 商品图片上传
-const { chooseSuccess: chooseSuccess1, picList: picList1, selectNum: selectNum1 } = useHtzImageUpload({
+// 主图片上传
+const { chooseSuccess: chooseSuccess1, picList: picList1, selectNum: selectNum1} = useHtzImageUpload({
 	ratio: 2 / 1,
-	url: '/serve/uploadimage',
+	url: '/enrollform/uploadimage',
 	refData: formData,
 	param: 'pic',
-	selectNum: 1
+	selectNum: 1,
+	baseDir: 'service'
 })
 
 // 分享图片上传
 const { chooseSuccess: chooseSuccess2, picList: picList2, selectNum: selectNum2 } = useHtzImageUpload({
 	ratio: 5 / 4,
-	url: '/serve/uploadimage',
+	url: '/enrollform/uploadimage',
 	refData: formData,
 	param: 'sharePic',
-	selectNum: 1
+	selectNum: 1,
+	baseDir: 'service'
 })
 
-// 商品详情图片上传
+// 服务详情图片上传
 const {
 	uploadSuccess: uploadSuccess3,
 	picList: picList3,
 	selectNum: selectNum3,
-	uploadimageURL: uploadimageURL3
+	uploadimageURL: uploadimageURL3,
+	baseDir: baseDir3
 } = useHtzImageUpload({
-	url: '/storeproduct/uploadimage',
+	url: '/enrollform/uploadimage',
 	refData: formData,
 	param: 'details',
-	selectNum: 5
+	selectNum: 5,
+	baseDir: 'service'
 })
 </script>
 

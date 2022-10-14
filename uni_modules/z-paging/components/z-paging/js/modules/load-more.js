@@ -76,12 +76,12 @@ const ZPLoadMore = {
 			default: u.gc('loadingMoreFailText', null)
 		},
 		//当没有更多数据且分页内容未超出z-paging时是否隐藏没有更多数据的view，默认为否
-		hideLoadingMoreWhenNoMoreAndInsideOfPaging: {
+		hideNoMoreInside: {
 			type: Boolean,
-			default: u.gc('hideLoadingMoreWhenNoMoreAndInsideOfPaging', false)
+			default: u.gc('hideNoMoreInside', false)
 		},
 		//当没有更多数据且分页数组长度少于这个值时，隐藏没有更多数据的view，默认为0，代表不限制。
-		hideLoadingMoreWhenNoMoreByLimit: {
+		hideNoMoreByLimit: {
 			type: Number,
 			default: u.gc('hideLoadingMoreWhenNoMoreByLimit', 0)
 		},
@@ -131,7 +131,7 @@ const ZPLoadMore = {
 		}
 	},
 	computed: {
-		zPagingLoadMoreConfig() {
+		zLoadMoreConfig() {
 			return {
 				status: this.loadingStatusAfterRender,
 				defaultAsLoading: this.loadingMoreDefaultAsLoading,
@@ -211,15 +211,11 @@ const ZPLoadMore = {
 		},
 		//触发加载更多时调用,from:0-滑动到底部触发；1-点击加载更多触发
 		_onLoadingMore(from = 'click') {
-			if (from === 'toBottom') {
-				if (!this.scrollToBottomBounceEnabled) {
-					if (this.scrollEnable) {
-						this.scrollEnable = false;
-						this.$nextTick(() => {
-							this.scrollEnable = true;
-						})
-					}
-				}
+			if (from === 'toBottom' && !this.scrollToBottomBounceEnabled && this.scrollEnable) {
+				this.scrollEnable = false;
+				this.$nextTick(() => {
+					this.scrollEnable = true;
+				})
 			}
 			this.$emit('scrolltolower', from);
 			if (from === 'toBottom' && (!this.toBottomLoadingMoreEnabled || this.useChatRecordMode)) return;
@@ -238,7 +234,7 @@ const ZPLoadMore = {
 		//处理开始加载更多
 		_doLoadingMore() {
 			if (this.pageNo >= this.defaultPageNo && this.loadingStatus !== Enum.More.NoMore) {
-				this.pageNo++;
+				this.pageNo ++;
 				this._startLoading(false);
 				if (this.isLocalPaging) {
 					this._localPagingQueryList(this.pageNo, this.defaultPageSize, this.localPagingLoadingTime, (res) => {
@@ -252,12 +248,12 @@ const ZPLoadMore = {
 			}
 		},
 		//(预处理)判断当没有更多数据且分页内容未超出z-paging时是否显示没有更多数据的view
-		_preCheckShowLoadingMoreWhenNoMoreAndInsideOfPaging(newVal, scrollViewNode, pagingContainerNode) {
+		_preCheckShowNoMoreInside(newVal, scrollViewNode, pagingContainerNode) {
 			if (this.loadingStatus === Enum.More.NoMore && this.hideLoadingMoreWhenNoMoreByLimit > 0 && newVal.length) {
 				this.showLoadingMore = newVal.length > this.hideLoadingMoreWhenNoMoreByLimit;
-			} else if ((this.loadingStatus === Enum.More.NoMore && this.hideLoadingMoreWhenNoMoreAndInsideOfPaging && newVal.length) || (this.insideMore && this.insideOfPaging !== false && newVal.length)) {
+			} else if ((this.loadingStatus === Enum.More.NoMore && this.hideNoMoreInside && newVal.length) || (this.insideMore && this.insideOfPaging !== false && newVal.length)) {
 				this.$nextTick(() => {
-					this._checkShowLoadingMoreWhenNoMoreAndInsideOfPaging(newVal, scrollViewNode, pagingContainerNode);
+					this._checkShowNoMoreInside(newVal, scrollViewNode, pagingContainerNode);
 				})
 				if (this.insideMore && this.insideOfPaging !== false && newVal.length) {
 					this.showLoadingMore = newVal.length;
@@ -267,14 +263,14 @@ const ZPLoadMore = {
 			}
 		},
 		//判断当没有更多数据且分页内容未超出z-paging时是否显示没有更多数据的view
-		async _checkShowLoadingMoreWhenNoMoreAndInsideOfPaging(totalData, oldScrollViewNode, oldPagingContainerNode) {
+		async _checkShowNoMoreInside(totalData, oldScrollViewNode, oldPagingContainerNode) {
 			try {
 				const scrollViewNode = oldScrollViewNode || await this._getNodeClientRect('.zp-scroll-view');
 				if (this.usePageScroll) {
 					if (scrollViewNode) {
 						const scrollViewTotalH = scrollViewNode[0].top + scrollViewNode[0].height;
 						this.insideOfPaging = scrollViewTotalH < this.windowHeight;
-						if (this.hideLoadingMoreWhenNoMoreAndInsideOfPaging) {
+						if (this.hideNoMoreInside) {
 							this.showLoadingMore = !this.insideOfPaging;
 						}
 						this._updateInsideOfPaging();
@@ -290,14 +286,14 @@ const ZPLoadMore = {
 						scrollViewH = scrollViewNode[0].height;
 					}
 					this.insideOfPaging = pagingContainerH < scrollViewH;
-					if (this.hideLoadingMoreWhenNoMoreAndInsideOfPaging) {
+					if (this.hideNoMoreInside) {
 						this.showLoadingMore = !this.insideOfPaging;
 					}
 					this._updateInsideOfPaging();
 				}
 			} catch (e) {
 				this.insideOfPaging = !totalData.length;
-				if (this.hideLoadingMoreWhenNoMoreAndInsideOfPaging) {
+				if (this.hideNoMoreInside) {
 					this.showLoadingMore = !this.insideOfPaging;
 				}
 				this._updateInsideOfPaging();

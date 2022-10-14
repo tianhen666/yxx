@@ -1,28 +1,18 @@
 <template>
 	<view class="container">
 		<view class="box1">
-			<uni-search-bar
-				placeholder="输入手机号码/产品名称搜索"
-				radius="50"
-				v-model="formData.text"
-				bgColor="#EEEEEE"
-				@confirm="search"
-			/>
+			<uni-search-bar placeholder="搜索店铺名称" radius="50" v-model="searchText" bgColor="#EEEEEE" @confirm="search" />
 		</view>
-		<view class="blank32"></view>
+		<view class="blank20"></view>
 
-		<view class="box2 box" v-for="index in 10" :key="index">
+		<view class="box2 box" v-for="(item, index) in dataList" :key="index">
 			<!-- 门诊列表 -->
 			<view class="box2_item">
 				<view class="box2_item_box">
-					<view class="box2_item_box_left">
-						<image class="image" src="/static/default/tup4.jpg" mode="aspectFill"></image>
-					</view>
+					<view class="box2_item_box_left"><image class="image" :src="item.icon" mode="aspectFill"></image></view>
 					<view class="box2_item_box_right">
-						<view class="name">吴礼贵口诊所</view>
-						<view class="address">
-							地址地址地址地址地址地址地址地址地址地址地址地址地址地址地址地址地址地址地址地址地址地址地址地址地址地址地址地址地址地址地址地址
-						</view>
+						<view class="name">{{ item.name }}</view>
+						<view class="address">{{ `${item.address}${item.addressDetail}` }}</view>
 					</view>
 				</view>
 
@@ -36,21 +26,41 @@
 
 		<view class="blank40"></view>
 		<view class="blank40"></view>
-		<view class="blank40"></view>
 	</view>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-// 表单数据
-const formData = ref({})
-// 搜索
+import { onLoad } from '@dcloudio/uni-app'
+import { _storeGetinfolist } from '@/aTemp/apis/store.js'
+// 搜索文字
+const searchText = ref('')
+
+// 数据列表
+const dataList = ref([])
+
+// 页面加载，获取数据
+onLoad(options => {
+	storeGetinfolist()
+})
+
+// 搜索确认搜索
 const search = () => {
-	console.log(formData.value)
+	storeGetinfolist()
+}
+
+// 获取店铺连锁店铺
+const storeGetinfolist = () => {
+	_storeGetinfolist({ searchText: searchText.value }).then(res => {
+		dataList.value = res.data
+	})
 }
 </script>
 
 <style scoped lang="scss">
+:global(.uni-searchbar) {
+	padding: 0 !important;
+}
 .container {
 	.box {
 		width: $main-width;
@@ -59,10 +69,12 @@ const search = () => {
 		margin: auto;
 		border-radius: 16rpx;
 	}
+
 	.box1 {
 		background-color: #fff;
-		padding: 0 $padding;
+		padding: $padding;
 	}
+
 	.box2 {
 		margin-bottom: 32rpx;
 		&:after {
@@ -76,19 +88,22 @@ const search = () => {
 				&_left {
 					flex: none;
 					.image {
-						width: 120rpx;
-						height: 120rpx;
+						width: 140rpx;
+						height: 140rpx;
+						border: 1px solid $uni-border-1;
+						border-radius: 10rpx;
+						overflow: hidden;
 					}
 				}
 				&_right {
 					flex: auto;
-					padding-left: 20rpx;
+					padding-left: 40rpx;
 					overflow: hidden;
 					.name {
 						font-size: 32rpx;
-						padding-bottom: 16rpx;
 					}
 					.address {
+						padding-top: 24rpx;
 						color: #999999;
 						font-size: 26rpx;
 						line-height: 1.4;

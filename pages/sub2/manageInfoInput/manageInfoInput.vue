@@ -39,18 +39,34 @@
 
 			<!-- 所在区域 -->
 			<uni-forms-item :label="rules.address.label" name="address">
-				<uni-easyinput v-model="formData.address" :placeholder="rules.address.rules[0].errorMessage" />
+				<uni-easyinput
+					v-model="formData.address"
+					@focus="MchooseLocation"
+					@clear="MchooseLocation"
+					:placeholder="rules.address.rules[0].errorMessage"
+				/>
 			</uni-forms-item>
 
 			<!-- 详情地址 -->
 			<uni-forms-item :label="rules.addressDetail.label" name="addressDetail">
-				<uni-easyinput v-model="formData.addressDetail" :placeholder="rules.addressDetail.rules[0].errorMessage" />
+				<uni-easyinput
+					v-model="formData.addressDetail"
+					@focus="MchooseLocation"
+					@clear="MchooseLocation"
+					:placeholder="rules.addressDetail.rules[0].errorMessage"
+				/>
 			</uni-forms-item>
 			<view class="blank32 blank_bg_color"></view>
 
 			<!-- 门诊介绍 -->
 			<uni-forms-item :label="rules.descData.label" label-position="top" name="descData">
 				<fuck-textarea :placeholder="rules.descData.rules[0].errorMessage" v-model="formData.descData" />
+			</uni-forms-item>
+			<view class="blank32 blank_bg_color"></view>
+
+			<!-- 门头照片 -->
+			<uni-forms-item :label="rules.pics.label" label-position="top" name="pics">
+				<htz-image-upload :max="selectNum5" v-model="picList5" mediaType="image" @chooseSuccess="chooseSuccess5" />
 			</uni-forms-item>
 
 			<!-- 店内环境图 -->
@@ -66,7 +82,7 @@
 		</uni-forms>
 
 		<!-- 保存信息 -->
-		<m-btn-fix-bottom :loading="loading" text="保存信息" @btnClick="saveClick" />
+		<m-btn-fix-bottom :loading="btnLoading" text="保存信息" @btnClick="saveClick" />
 	</view>
 </template>
 
@@ -74,13 +90,15 @@
 import { ref, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { _storeSave, _storeGetinfo } from '@/aTemp/apis/store.js'
-
+import { chooseLocation } from '@/aTemp/utils/uniAppTools.js'
 // 表单数据
 const formData = ref({
-	businessDt: '08:00,23:00'
+	businessDt: '08:00,18:00'
 })
 // 获取表单对象
 const formObj = ref(null)
+// 加载中
+const loading = ref(true)
 
 // 页面开始加载
 onLoad(optios => {
@@ -94,6 +112,8 @@ onLoad(optios => {
 		if (!formData.value.businessDt) {
 			formData.value.businessDt = '08:00,23:00'
 		}
+		// 加载结束
+		loading.value = false
 	})
 })
 
@@ -132,8 +152,12 @@ const rules = {
 		label: '门诊介绍'
 	},
 	customer: {
-		rules: [{ required: true, errorMessage: '请上传客服微信' }],
+		rules: [{ errorMessage: '请上传客服微信' }],
 		label: '客服微信'
+	},
+	pics: {
+		rules: [{ required: true, errorMessage: '请上传门头照片' }],
+		label: '门头照片'
 	},
 	innerPics: {
 		rules: [{ required: true, errorMessage: '请上传店内环境图' }],
@@ -154,11 +178,28 @@ const businessDt1Change = e => {
 }
 
 /*
+ * 选择地址
+ *
+ */
+const MchooseLocation = () => {
+	if (!formData.value.address || !formData.value.addressDetail) {
+		chooseLocation().then(res => {
+			// console.log(res)
+			const { name, address, latitude, longitude } = res
+			formData.value.address = address
+			formData.value.addressDetail = name
+			formData.value.lat = latitude
+			formData.value.lng = longitude
+		})
+	}
+}
+
+/*
  * 保存banenr信息功能
  * 组合式函数引入
  */
 import useSaveApi from '@/aTemp/mixins/useSaveApi.js'
-const { saveClick, loading } = useSaveApi(formObj, formData, _storeSave)
+const { saveClick, btnLoading } = useSaveApi(formObj, formData, _storeSave)
 
 /*
  * 图片选择功能
@@ -169,37 +210,51 @@ import useHtzImageUpload from '@/aTemp/mixins/useHtzImageUpload.js'
 // 门诊标识上传
 const { chooseSuccess: chooseSuccess1, picList: picList1, selectNum: selectNum1 } = useHtzImageUpload({
 	ratio: 1 / 1,
-	url: '/store/uploadimage',
+	url: '/enrollform/uploadimage',
 	refData: formData,
 	param: 'icon',
-	selectNum: 1
+	selectNum: 1,
+	baseDir: 'store_logo'
 })
 
 // 客服微信图片上传
 const { chooseSuccess: chooseSuccess2, picList: picList2, selectNum: selectNum2 } = useHtzImageUpload({
 	ratio: 1 / 1,
-	url: '/store/uploadimage',
+	url: '/enrollform/uploadimage',
 	refData: formData,
 	param: 'customer',
-	selectNum: 1
+	selectNum: 1,
+	baseDir: 'store_kfwx'
 })
 
 // 客服微信图片上传
 const { chooseSuccess: chooseSuccess3, picList: picList3, selectNum: selectNum3 } = useHtzImageUpload({
 	ratio: 5 / 4,
-	url: '/store/uploadimage',
+	url: '/enrollform/uploadimage',
 	refData: formData,
 	param: 'sharePic',
-	selectNum: 1
+	selectNum: 1,
+	baseDir: 'store'
 })
 
 // 店内环境图上传
 const { chooseSuccess: chooseSuccess4, picList: picList4, selectNum: selectNum4 } = useHtzImageUpload({
 	ratio: 5 / 3,
-	url: '/store/uploadimage',
+	url: '/enrollform/uploadimage',
 	refData: formData,
 	param: 'innerPics',
-	selectNum: 8
+	selectNum: 8,
+	baseDir: 'store'
+})
+
+// 店内环境图上传
+const { chooseSuccess: chooseSuccess5, picList: picList5, selectNum: selectNum5 } = useHtzImageUpload({
+	ratio: 4 / 3,
+	url: '/enrollform/uploadimage',
+	refData: formData,
+	param: 'pics',
+	selectNum: 1,
+	baseDir: 'store'
 })
 </script>
 

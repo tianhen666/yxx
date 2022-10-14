@@ -113,6 +113,7 @@ const confirm = _debounce(
 				const { data, code, msg } = res
 				const resDataObj = JSON.parse(data)
 				// console.log(resDataObj)
+				
 				// 订单编号
 				const orderNumExternal = resDataObj.orderNumExternal
 

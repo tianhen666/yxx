@@ -3,25 +3,19 @@
 	<view style="height: 100%;">
 		<view :class="showUpdateTime?'zp-r-container zp-r-container-padding':'zp-r-container'">
 			<view class="zp-r-left">
-				<image v-if="status!==R.Loading" :class="leftImageClass"
-					:style="[leftImageStyle,imgStyle]"
-					:src="leftImageSrc" />
+				<image v-if="status!==R.Loading" :class="leftImageClass" :style="[leftImageStyle,imgStyle]" :src="leftImageSrc" />
 				<!-- #ifndef APP-NVUE -->
-				<image v-else class="zp-line-loading-image zp-r-left-image"
-					:style="[leftImageStyle,imgStyle]"
-					:src="leftImageSrc" />
+				<image v-else class="zp-line-loading-image zp-r-left-image" :style="[leftImageStyle,imgStyle]" :src="leftImageSrc" />
 				<!-- #endif -->
 				<!-- #ifdef APP-NVUE -->
 				<view v-else :style="[{'margin-right':showUpdateTime?'18rpx':'12rpx'}]">
-					<loading-indicator :class="systemInfo.platform==='ios'?'zp-loading-image-ios':'zp-loading-image-android'" 
-					:style="[{color:defaultThemeStyle==='white'?'white':'#777777'},imgStyle]" animating />
+					<loading-indicator :class="isIos?'zp-loading-image-ios':'zp-loading-image-android'" 
+					:style="[{color:theme.indicator[ts]},imgStyle]" :animating="true" />
 				</view>
 				<!-- #endif -->
 			</view>
 			<view class="zp-r-right">
-				<text class="zp-r-right-text" :style="[rightTextStyle,titleStyle]">
-					{{currentTitle}}
-				</text>
+				<text class="zp-r-right-text" :style="[rightTextStyle,titleStyle]">{{currentTitle}}</text>
 				<text v-if="showUpdateTime&&refresherTimeText.length" class="zp-r-right-text zp-r-right-time-text" :style="[rightTextStyle,updateTimeStyle]">
 					{{refresherTimeText}}
 				</text>
@@ -30,7 +24,6 @@
 	</view>
 </template>
 <script>
-	const systemInfo = uni.getSystemInfoSync();
 	import zStatic from '../js/z-paging-static'
 	import u from '../js/z-paging-utils'
 	import Enum from '../js/z-paging-enum'
@@ -40,68 +33,34 @@
 		data() {
 			return {
 				R: Enum.Refresher,
-				systemInfo: systemInfo,
-				base64Arrow: zStatic.base64Arrow,
-				base64ArrowWhite: zStatic.base64ArrowWhite,
-				base64Flower: zStatic.base64Flower,
-				base64FlowerWhite: zStatic.base64FlowerWhite,
-				base64Success: zStatic.base64Success,
-				base64SuccessWhite: zStatic.base64SuccessWhite,
+				isIos: uni.getSystemInfoSync().platform === 'ios',
 				refresherTimeText: '',
-				leftImageLoaded: false
+				theme: {
+					title: { white: '#efefef', black: '#555555' },
+					arrow: { white: zStatic.base64ArrowWhite, black: zStatic.base64Arrow },
+					flower: { white: zStatic.base64FlowerWhite, black: zStatic.base64Flower },
+					success: { white: zStatic.base64SuccessWhite, black: zStatic.base64Success },
+					indicator: { white: '#eeeeee', black: '#777777' }
+				}
 			};
 		},
-		props: {
-			'status': {
-				default: Enum.Refresher.Default
-			},
-			'defaultThemeStyle': {},
-			'defaultText': '',
-			'pullingText': '',
-			'refreshingText': '',
-			'completeText': '',
-			'defaultImg': '',
-			'pullingImg': '',
-			'refreshingImg': '',
-			'completeImg': '',
-			'showUpdateTime': {
-				default: false
-			},
-			'updateTimeKey': '',
-			'imgStyle': {
-				default: {}
-			},
-			'titleStyle': {
-				default: {}
-			},
-			'updateTimeStyle': {
-				default: {}
-			},
-		},
+		props: ['status', 'defaultThemeStyle', 'defaultText', 'pullingText', 'refreshingText', 'completeText', 'defaultImg', 'pullingImg', 
+			'refreshingImg', 'completeImg', 'showUpdateTime', 'updateTimeKey', 'imgStyle', 'titleStyle', 'updateTimeStyle', 'updateTimeTextMap'
+		],
 		computed: {
+			ts() {
+				return this.defaultThemeStyle;
+			},
 			statusTextArr() {
-				this.updateTime(this.updateTimeKey);
+				this.updateTime();
 				return [this.defaultText,this.pullingText,this.refreshingText,this.completeText];
 			},
 			currentTitle() {
 				return this.statusTextArr[this.status] || this.defaultText;
 			},
 			leftImageClass() {
-				if(this.status === this.R.Complete){
-					return 'zp-r-left-image-no-transform zp-r-left-image-pre-size';
-				}
-				let cls = 'zp-r-left-image ';
-				if (this.status === this.R.Default) {
-					if (this.leftImageLoaded) {
-						cls += 'zp-r-arrow-down';
-					} else {
-						this.leftImageLoaded = true;
-						cls += 'zp-r-arrow-down-no-duration';
-					}
-				} else {
-					cls += 'zp-r-arrow-top';
-				}
-				return cls + ' zp-r-left-image-pre-size';
+				if (this.status === this.R.Complete) return 'zp-r-left-image-pre-size';
+				return `zp-r-left-image zp-r-left-image-pre-size ${this.status === this.R.Default ? 'zp-r-arrow-down' : 'zp-r-arrow-top'}`;
 			},
 			leftImageStyle() {
 				const showUpdateTime = this.showUpdateTime;
@@ -111,53 +70,36 @@
 			leftImageSrc() {
 				const R = this.R;
 				const status = this.status;
-				const isWhite = this.defaultThemeStyle === 'white';
-				if (status  === R.Default) {
+				if (status === R.Default) {
 					if (!!this.defaultImg) return this.defaultImg;
-					return isWhite ? this.base64ArrowWhite : this.base64Arrow;
+					return this.theme.arrow[this.ts];
 				} else if (status  === R.ReleaseToRefresh) {
 					if (!!this.pullingImg) return this.pullingImg;
 					if (!!this.defaultImg) return this.defaultImg;
-					return isWhite ? this.base64ArrowWhite : this.base64Arrow;
+					return this.theme.arrow[this.ts];
 				} else if (status  === R.Loading) {
 					if (!!this.refreshingImg) return this.refreshingImg;
-					return isWhite ? this.base64FlowerWhite : this.base64Flower;
+					return this.theme.flower[this.ts];;
 				} else if (status  === R.Complete) {
 					if (!!this.completeImg) return this.completeImg;
-					return isWhite ? this.base64SuccessWhite : this.base64Success;
+					return this.theme.success[this.ts];;
 				}
 				return '';
 			},
 			rightTextStyle() {
 				let stl = {};
-				let color = '#555555';
-				if (this.defaultThemeStyle === 'white') {
-					color = '#efefef';
-				}
 				// #ifdef APP-NVUE
-				if (this.showUpdateTime) {
-					stl = {
-						'height': '40rpx',
-						'line-height': '40rpx'
-					};
-				} else {
-					stl = {
-						'height': '80rpx',
-						'line-height': '80rpx'
-					};
-				}
+				const textHeight = this.showUpdateTime ? '40rpx' : '80rpx';
+				stl = {'height': textHeight, 'line-height': textHeight}
 				// #endif
-				stl['color'] = color;
+				stl['color'] = this.theme.title[this.ts];
 				return stl;
 			}
 		},
 		methods: {
-			updateTime(updateTimeKey) {
-				if (!updateTimeKey) {
-					updateTimeKey = this.updateTimeKey;
-				}
+			updateTime() {
 				if (this.showUpdateTime) {
-					this.refresherTimeText = u.getRefesrherFormatTimeByKey(updateTimeKey);
+					this.refresherTimeText = u.getRefesrherFormatTimeByKey(this.updateTimeKey, this.updateTimeTextMap);
 				}
 			}
 		}
@@ -196,26 +138,9 @@
 	}
 
 	.zp-r-left-image {
-		/* #ifndef APP-NVUE */
-		transform: rotate(180deg);
-		margin-top: 2rpx;
-		/* #endif */
-		/* #ifdef APP-NVUE */
 		transition-duration: .2s;
 		transition-property: transform;
 		color: #666666;
-		/* #endif */
-	}
-	
-	.zp-r-left-image-no-transform {
-		/* #ifndef APP-NVUE */
-		margin-top: 2rpx;
-		/* #endif */
-		/* #ifdef APP-NVUE */
-		transition-duration: .2s;
-		transition-property: transform;
-		color: #666666;
-		/* #endif */
 	}
 	
 	.zp-r-left-image-pre-size{
@@ -227,39 +152,11 @@
 	}
 
 	.zp-r-arrow-top {
-		/* #ifndef APP-NVUE */
-		animation: refresher-arrow-top .2s linear;
-		-webkit-animation: refresher-arrow-top .2s linear;
-		animation-fill-mode: forwards;
-		-webkit-animation-fill-mode: forwards;
-		/* #endif */
-		/* #ifdef APP-NVUE */
 		transform: rotate(0deg);
-		/* #endif */
 	}
 
 	.zp-r-arrow-down {
-		/* #ifndef APP-NVUE */
-		animation: refresher-arrow-down .2s linear;
-		-webkit-animation: refresher-arrow-down .2s linear;
-		animation-fill-mode: forwards;
-		-webkit-animation-fill-mode: forwards;
-		/* #endif */
-		/* #ifdef APP-NVUE */
 		transform: rotate(180deg);
-		/* #endif */
-	}
-
-	.zp-r-arrow-down-no-duration {
-		/* #ifndef APP-NVUE */
-		animation: refresher-arrow-down 0s linear;
-		-webkit-animation: refresher-arrow-down 0s linear;
-		animation-fill-mode: forwards;
-		-webkit-animation-fill-mode: forwards;
-		/* #endif */
-		/* #ifdef APP-NVUE */
-		transform: rotate(180deg);
-		/* #endif */
 	}
 
 	.zp-r-right {
@@ -282,28 +179,4 @@
 		margin-top: 10rpx;
 		font-size: 24rpx;
 	}
-	
-	/* #ifndef APP-NVUE */
-	@keyframes refresher-arrow-top {
-		0% {
-			-webkit-transform: rotate(180deg);
-			transform: rotate(180deg);
-		}
-		100% {
-			-webkit-transform: rotate(0deg);
-			transform: rotate(0deg);
-		}
-	}
-	
-	@keyframes refresher-arrow-down {
-		0% {
-			-webkit-transform: rotate(0deg);
-			transform: rotate(0deg);
-		}
-		100% {
-			-webkit-transform: rotate(180deg);
-			transform: rotate(180deg);
-		}
-	}
-	/* #endif */
 </style>

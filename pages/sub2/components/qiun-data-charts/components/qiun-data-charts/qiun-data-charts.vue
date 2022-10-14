@@ -156,6 +156,8 @@
 </template>
 
 <script>
+import qiunError from '../qiun-error/qiun-error.vue'
+import qiunLoading from '../qiun-loading/qiun-loading.vue'
 import uCharts from '../../js_sdk/u-charts/u-charts.js';
 import cfu from '../../js_sdk/u-charts/config-ucharts.js';
 // #ifdef APP-VUE || H5
@@ -231,6 +233,7 @@ function debounce(fn, wait) {
 
 export default {
   name: 'qiun-data-charts',
+	components:{qiunLoading,qiunError},
   mixins: [uniCloud.mixinDatacom],
   props: {
     type: {
@@ -866,8 +869,10 @@ export default {
       if (this.echrts !== true && cfu.option[cid] && cfu.option[cid].context) {
         const ctx = cfu.option[cid].context;
         if(typeof ctx === "object" && !cfu.option[cid].update){
-          ctx.clearRect(0, 0, this.cWidth, this.cHeight);
-          ctx.draw();
+          // ctx.clearRect(0, 0, this.cWidth, this.cHeight);
+          // ctx.draw();
+					ctx.clearRect(0, 0, this.cWidth * this.pixel, this.cHeight * this.pixel)
+					ctx.beginPath()
         }
       }
     },

@@ -32,9 +32,6 @@ export default function(paramsObj) {
 		baseDir
 	} = paramsObj
 
-
-
-
 	/* 
 		逗号分割的字符串转图片列表
 	 */

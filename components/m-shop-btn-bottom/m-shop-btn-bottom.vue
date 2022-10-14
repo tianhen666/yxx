@@ -1,77 +1,136 @@
 <template>
-	<view class="bottom_btn">
-		<view class="flx_box">
-			<view class="item_box">
-				<image class="image" src="/static/default/home.png" mode="aspectFill"></image>
-				<text>首页</text>
-			</view>
-
-			<view class="item_box">
-				<image class="image" src="/static/default/share.png" mode="aspectFill"></image>
-				<text>分享</text>
-			</view>
-
-			<view class="right">
-				<view class="item_btn color1">咨询客服</view>
-				<view class="item_btn color2" @tap="clickBuy">立即购买</view>
+	<view class="btn_fix_wrapper">
+		<view class="btn_fix">
+			<view class="btn_container">
+				<view class="left">
+					<button class="btn" open-type="share">
+						<view class="text">分享{{ dataObj.myType === '活动' ? '活动' : '商品' }}</view>
+						<view class="price" v-if="dataObj.showShare === 0">赚￥{{ dataObj.sharePrice }}</view>
+					</button>
+				</view>
+				<view class="center" @tap="tapCreateImg">
+					<view class="text">分享海报</view>
+					<view class="price" v-if="dataObj.showShare === 0">赚￥{{ dataObj.sharePrice }}</view>
+				</view>
+				<view class="right">
+					<button class="right_btn" @tap="payConfirm">
+						<view class="text" v-if="dataObj.myType === '活动'">
+							{{ dataObj.myJionCount > 0 ? '已参与' : '参与活动' }}
+						</view>
+						<view class="text" v-else>立即购买</view>
+						<view class="price" v-if="dataObj.price > 0">￥{{ dataObj.price }}</view>
+					</button>
+				</view>
 			</view>
 		</view>
 	</view>
 </template>
 
 <script setup>
-const emits = defineEmits(['clickBuy'])
-const clickBuy = () => {
-	emits('clickBuy')
+const emits = defineEmits(['payConfirm', 'tapCreateImg'])
+const props = defineProps({
+	dataObj: {
+		required: true,
+		type: Object,
+		default() {
+			return []
+		}
+	}
+})
+
+const payConfirm = () => {
+	emits('payConfirm')
+}
+const tapCreateImg = () => {
+	emits('tapCreateImg')
 }
 </script>
 
 <style lang="scss" scoped>
-.bottom_btn {
-	height: 100rpx;
-	padding-bottom: constant(safe-area-inset-bottom);
-	padding-bottom: env(safe-area-inset-bottom);
-	box-sizing: content-box;
-	.flx_box {
-		box-sizing: content-box;
-		width: 750rpx;
-		height: 100rpx;
-		@include mFlex;
-		justify-content: space-between;
-		background-color: #fff;
-		padding-left: 32rpx;
-		padding-bottom: constant(safe-area-inset-bottom);
-		padding-bottom: env(safe-area-inset-bottom);
-		font-size: 28rpx;
+/* 底部按钮 */
+.btn_fix_wrapper {
+	height: 160rpx;
+	padding-bottom: 40rpx;
+	.btn_fix {
 		position: fixed;
-		left: 0;
 		bottom: 0;
-		> .item_box {
+		width: 100%;
+		height: 160rpx;
+		background: #fff;
+		padding-bottom: 40rpx;
+		border-top: 1px solid #ddd;
+		.btn_container {
+			height: 100%;
 			@include mFlex;
-			flex: none;
-			width: 120rpx;
-			color: $text-color-grey;
-			> .image {
-				width: 32rpx;
-				height: 32rpx;
-				margin-right: 15rpx;
-			}
-		}
-		> .right {
-			@include mFlex;
-			flex: none;
-			> .item_btn {
-				width: 200rpx;
-				height: 100rpx;
-				color: #fff;
-				text-align: center;
+			justify-content: space-around;
+			align-items: stretch;
+			text-align: center;
+			.left {
 				@include mFlex;
+				flex-direction: column;
+				flex: none;
+				.btn {
+					padding: 10rpx;
+					font-weight: bold;
+					font-size: 32rpx;
+					border-radius: 0;
+					color: $main-color;
+					background-color: transparent;
+					line-height: 1;
+					&:after {
+						border: none;
+					}
+				}
+				.price {
+					color: $main-color;
+					padding-top: 15rpx;
+					font-weight: normal;
+					font-size: 26rpx;
+				}
 			}
-			> .color1 {
-				background: $main-color;
+			.center {
+				@include mFlex;
+				flex-direction: column;
+				flex: none;
+				color: $main-color;
+				font-size: 32rpx;
+				.text {
+					font-size: 32rpx;
+					font-weight: bold;
+				}
+				.price {
+					padding-top: 15rpx;
+					font-weight: normal;
+					font-size: 26rpx;
+				}
 			}
-			> .color2 {
-				background: $sub-color;
+			.right {
+				@include mFlex;
+				flex: none;
+				width: 33.3%;
+				color: #fff;
+				.right_btn {
+					width: 100%;
+					height: 100rpx;
+					@include mFlex;
+					flex-direction: column;
+					background-color: $main-color;
+					border-radius: 16rpx;
+					color: #fff;
+					line-height: 1;
+					&:after {
+						border: none;
+					}
+					.text {
+						font-size: 32rpx;
+						font-weight: bold;
+					}
+					.price {
+						padding-top: 15rpx;
+						font-weight: normal;
+						font-size: 28rpx;
+					}
+				}
 			}
 		}
 	}

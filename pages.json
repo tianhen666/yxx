@@ -24,7 +24,7 @@
 	}, {
 		"path": "pages/main/case/case",
 		"style": {
-			"navigationBarTitleText": "科普案例",
+			"navigationBarTitleText": "门诊案例",
 			"enablePullDownRefresh": false,
 			"navigationStyle": "custom"
 		}
@@ -55,12 +55,6 @@
 	"subPackages": [{
 			"root": "pages/sub1",
 			"pages": [{
-				"path": "aaa/aaa",
-				"style": {
-					"navigationBarTitleText": "",
-					"enablePullDownRefresh": false
-				}
-			}, {
 				"path": "activityList/activityList",
 				"style": {
 					"navigationBarTitleText": "活动列表",
@@ -70,7 +64,12 @@
 				"path": "activityInfo/activityInfo",
 				"style": {
 					"navigationBarTitleText": "活动详情",
-					"enablePullDownRefresh": false
+					"enablePullDownRefresh": false,
+					"usingComponents": {
+						// #ifdef APP-PLUS || H5 || MP-WEIXIN || MP-QQ
+						"w-painter": "/wxcomponents/painter/painter"
+						// #endif
+					}
 				}
 			}, {
 				"path": "serveInfo/serveInfo",
@@ -330,6 +329,13 @@
 					"enablePullDownRefresh": false
 				}
 
+			}, {
+				"path": "storeProfitDetailed/storeProfitDetailed",
+				"style": {
+					"navigationBarTitleText": "收益明细",
+					"enablePullDownRefresh": false
+				}
+
 			}]
 		},
 		{
@@ -416,7 +422,7 @@
 			"pagePath": "pages/main/case/case",
 			"iconPath": "static/tabbar/case.png",
 			"selectedIconPath": "static/tabbar/slt_case.png",
-			"text": "科普案例"
+			"text": "门诊案例"
 		}, {
 			"pagePath": "pages/main/user/user",
 			"iconPath": "static/tabbar/user.png",

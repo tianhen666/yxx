@@ -1,6 +1,6 @@
 <template>
 	<!-- 收益 -->
-	<m-profit></m-profit>
+	<m-profit :statistics="statistics"></m-profit>
 	<view class="blank30"></view>
 
 	<!-- 模块 -->
@@ -16,24 +16,40 @@
 import mFun from './m-fun/m-fun.vue'
 import mOption from './m-option/m-option.vue'
 import mProfit from './m-profit/m-profit.vue'
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
+import { _userPersonagedata } from '@/aTemp/apis/user.js'
+
+// 全局登录信息
+import { _useUserMain } from '@/aTemp/store/userMain.js'
+const useUserMain = _useUserMain()
+
+// 收益统计
+const statistics = ref({})
+onLoad(options => {
+	// 个人邀请数据统计
+	_userPersonagedata({ inviteUserId: useUserMain.userid }).then(res => {
+		const { msg, data, code } = res
+		statistics.value = data
+	})
+})
 
 const myFunItems = {
 	title: '其他选项',
 	sub: [
 		{
 			imgUrl: '/static/images/u-yuangong.png',
-			title: '我邀请的好友',
+			name: '我邀请的好友',
 			path: '/pages/sub1/invitationList/invitationList'
 		},
 		{
 			imgUrl: '/static/images/u-wddingdan.png',
-			title: '我的推广收益',
+			name: '我的推广收益',
 			path: '/pages/sub1/profitList/profitList'
 		},
 		{
 			imgUrl: '/static/images/u-qhmenzhen.png',
-			title: '切换门店',
+			name: '切换门店',
 			path: '/pages/sub2/switchStore/switchStore'
 		}
 	]

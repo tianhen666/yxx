@@ -1,26 +1,25 @@
 <template>
-	<pinapp-empty-page v-if="props.listData.length === 0" />
-	<view class="container" v-else>
+	<view class="container">
 		<!-- 标题插槽 -->
 		<slot name="title"></slot>
 
 		<!-- 详情列表 -->
 		<view
 			class="container_item"
-			v-for="(item, index) in props.listData"
+			v-for="(item, index) in listData"
 			:key="index"
-			@tap.stop="navigateTo(`/pages/sub1/goodsInfo/goodsInfo?id=${item.id}`)"
+			@tap.stop="navigateTo(`/pages/sub1/goodsInfo/goodsInfo?targetId=${item.id}`)"
 		>
-			<!-- 勾选选项 -->
+			<!-- 勾选-选项 -->
 			<view
 				class="select_option"
 				v-if="selectOption"
-				:class="props.selectListId.includes(item.id + '') ? 'select_option_color' : ''"
+				:class="selectListId.includes(item.id + '') ? 'select_option_color' : ''"
 			>
 				<image
 					class="image"
-					v-if="props.selectListId.includes(item.id + '')"
-					src="/static/default/duigou.png"
+					v-if="selectListId.includes(item.id + '')"
+					src="/static/images/duigou.png"
 					mode="aspectFill"
 				></image>
 				<view class="select_cover" @tap.stop.prevent="selectClick(item)"></view>
@@ -48,7 +47,7 @@
 					</view>
 
 					<!-- 购买按钮 -->
-					<button class="btn" v-if="props.showBtn">购买</button>
+					<button class="btn" v-if="showBtn">购买</button>
 				</view>
 			</view>
 		</view>

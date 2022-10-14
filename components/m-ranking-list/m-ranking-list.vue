@@ -2,7 +2,7 @@
 	<view class="container">
 		<view class="container_item" v-for="(item, index) in listData" :key="index">
 			<view class="container_item_left">
-				<image class="image" src="/static/default/tup4.jpg" mode="aspectFill"></image>
+				<image class="image" src="/static/images/default_avatar.png" mode="aspectFill"></image>
 				<view class="index" :class="'style' + (index + 1)" v-if="index < 10">{{ index + 1 }}</view>
 			</view>
 			<view class="container_item_right">

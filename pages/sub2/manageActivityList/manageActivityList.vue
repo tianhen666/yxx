@@ -77,12 +77,16 @@ const type = [
 		value: 0
 	},
 	{
-		text: '活动促销',
+		text: '爆款活动',
 		value: 1
 	},
 	{
 		text: '限量秒杀',
 		value: 2
+	},
+	{
+		text: '拼团活动',
+		value: 3
 	}
 ]
 

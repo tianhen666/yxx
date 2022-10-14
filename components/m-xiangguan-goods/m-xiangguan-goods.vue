@@ -33,7 +33,7 @@
 
 	<!-- 去选择页面按钮 -->
 	<view class="xiangguang_box1" @tap="navigateTo(`/pages/sub2/selectShopItem/selectShopItem`)">
-		<image class="image" src="/static/default/add.png" mode="aspectFill"></image>
+		<image class="image" src="/static/images/add.png" mode="aspectFill"></image>
 		<view class="text">添加相关商品</view>
 	</view>
 </template>

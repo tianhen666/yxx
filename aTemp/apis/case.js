@@ -37,8 +37,6 @@ export function _storecaseSave(data) {
 }
 
 
-
-
 /* 
  * 案例分类接口
  */
@@ -51,7 +49,7 @@ export function _storecaseFdelete(data) {
 	})
 }
 
-// 获取案例分类详情
+// 获取案例分类列表
 export function _storecaseGetcategory(data) {
 	return http.get({
 		url: '/storecase/getcategory',

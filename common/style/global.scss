@@ -8,8 +8,10 @@ page {
 	position: relative;
 }
 /* 顶部背景颜色 */
+.uni-navbar {
+}
 .uni-navbar--fixed {
-	background-image: url('@/static/images/bg.jpg');
+	background: url('@/static/images/bg.jpg');
 	background-size: 750rpx 514rpx;
 	background-repeat: no-repeat;
 }
@@ -17,7 +19,7 @@ page {
 	position: fixed;
 	left: 0;
 	top: 0;
-	z-index: -1;
+	z-index: 0;
 	width: 750rpx;
 	height: 514rpx;
 	> .image {
@@ -74,8 +76,8 @@ textarea {
 /* uni组件样式覆盖 */
 
 /* 页面标题组件 */
-.uni-status-bar{
-	height: 34px !important;
+.uni-status-bar {
+	height: 44px !important;
 }
 .uni-status-bar,
 .uni-navbar__content,
@@ -90,7 +92,7 @@ textarea {
 .segmented-control {
 	background-color: #fff;
 }
-.control--segmented-control__text {
+.segmented-control__text {
 	font-size: 30rpx !important;
 	border-bottom-style: solid;
 	border-bottom-width: 2px;

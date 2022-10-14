@@ -1,6 +1,6 @@
 <template>
 	<view class="container">
-		<bt-cropper ref="cropper" showGrid compress :quality="0.8" :ratio="ratio" :imageSrc="imageSrcs[imageSrcIndex]">
+		<bt-cropper ref="cropper" showGrid compress :quality="0.8" :fileType="imgFormat" :ratio="ratio" :imageSrc="imageSrcs[imageSrcIndex]">
 			<!-- 你想插入的内容 -->
 			<m-btn-fix-bottom :text="`正在裁剪第${imageSrcIndex + 1}张图片(共${imageSrcs.length})`" @btnClick="crop" />
 		</bt-cropper>
@@ -32,7 +32,7 @@ const resImageSrcs = ref([]) //裁剪完成的图片
 const cropper = ref(null) //裁剪组件对象
 const param = ref('') //裁剪store字段参数
 const baseDir = ref('') //上传到服务端的文件夹
-
+const imgFormat = ref('jpg') // 生成图片的格式
 onLoad(option => {
 	imageSrcs.value = option.imgUrls ? decodeURIComponent(option.imgUrls).split(',') : []
 	ratio.value = parseFloat(option.ratio) || 1
@@ -47,6 +47,14 @@ const crop = () => {
 		title: '裁剪，上传中',
 		mask: true
 	})
+	
+	// 设置图片格式 是jpg, 还是png
+	try{
+		imgFormat.value = imageSrcs.value[imageSrcIndex.value].split('.')[1]
+	}catch(e){
+		imgFormat.value = 'jpg'
+	}
+	
 	// 通过组件定义的ref调用cropper方法，返回一个promise对象
 	cropper.value.crop().then(([err, res]) => {
 		if (!err) {

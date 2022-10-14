@@ -151,7 +151,7 @@ export function navigateTo(path) {
 	})
 }
 
-// 跳转到tabbar页面,关闭其他非tabbar页面
+// 跳转到tabbar页面,关闭其他非tabbar页面,不能带参数
 export function switchTab(path) {
 	uni.switchTab({
 		url: path,
@@ -211,4 +211,90 @@ export function setClipboardData(text) {
 			showToastText('复制失败')
 		}
 	});
+}
+
+// 打开地图选择位置
+export function chooseLocation() {
+	return new Promise((resolve, reject) => {
+		// 获取是否开启位置授权
+		uni.authorize({
+			scope: 'scope.userLocation',
+		}).then(res => {
+			// 已开启授权
+			// console.log(res)
+			uni.chooseLocation({
+				success: function(res) {
+					resolve(res)
+				}
+			})
+		}).catch(err => {
+			// 拒绝授权
+			// console.log(err)
+			showModal('检测到，您没有打开获取位置授权，是否打开设置？').then(e => {
+				console.log(e)
+				if (e.confirm) {
+					uni.openSetting()
+				}
+			})
+		})
+	})
+}
+
+// 打开内置地图导航
+export function openLocation(latitude, longitude, name, address) {
+	return new Promise((resolve, reject) => {
+		// 获取是否开启位置授权
+		uni.authorize({
+			scope: 'scope.userLocation',
+		}).then(res => {
+			// 已开启授权
+			// console.log(res)
+			uni.openLocation({
+				latitude: latitude,
+				longitude: longitude,
+				name: name,
+				address: address,
+				success: function(res) {
+					resolve(res)
+				}
+			})
+		}).catch(err => {
+			// 拒绝授权
+			// console.log(err)
+			showModal('检测到，您没有打开获取位置授权，是否打开设置？').then(e => {
+				console.log(e)
+				if (e.confirm) {
+					uni.openSetting()
+				}
+			})
+		})
+	})
+}
+
+// 获取当前位置
+export function getLocation() {
+	return new Promise((resolve, reject) => {
+		// 获取是否开启位置授权
+		uni.authorize({
+			scope: 'scope.userLocation',
+		}).then(res => {
+			// 已开启授权
+			// console.log(res)
+			uni.getLocation({
+				type: 'gcj02',
+				success: function(res) {
+					resolve(res)
+				}
+			})
+		}).catch(err => {
+			// 拒绝授权
+			// console.log(err)
+			showModal('检测到，您没有打开获取位置授权，是否打开设置？').then(e => {
+				console.log(e)
+				if (e.confirm) {
+					uni.openSetting()
+				}
+			})
+		})
+	})
 }

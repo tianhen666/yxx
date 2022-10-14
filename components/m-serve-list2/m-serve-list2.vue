@@ -7,7 +7,7 @@
 				v-for="(item, index) in props.listData"
 				:key="index"
 				:class="'bg' + (1 + index)"
-				@tap="navigateTo(`/pages/sub1/serveInfo/serveInfo?id=${item.id}`)"
+				@tap="navigateTo(`/pages/sub1/serveInfo/serveInfo?targetId=${item.id}`)"
 			>
 				<view class="title">{{ item.title }}</view>
 				<view class="peculiarity">{{ item.peculiarity || '门诊首推' }}</view>

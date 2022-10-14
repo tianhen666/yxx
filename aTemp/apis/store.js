@@ -36,6 +36,15 @@ export function _storeGetone(data) {
 	})
 }
 
+// 获取连锁门诊
+export function _storeGetinfolist(data) {
+	return http.get({
+		url: '/store/getinfolist',
+		data
+	})
+}
+
+
 
 // 商品支付
 export function _wxpayPayment(data) {
@@ -45,7 +54,7 @@ export function _wxpayPayment(data) {
 	})
 }
 
-// 支付成功回调，并且分账
+// 商品支付成功回调，并且分账
 export function _wxpayWxNotifys(data) {
 	return http.post({
 		url: '/wxpay/wxNotifys',
@@ -74,5 +83,33 @@ export function _storeVipOrderWxNotifys(data) {
 	return http.post({
 		url: '/store-vip-order/wxNotifys',
 		data
+	})
+}
+
+
+
+
+// 店铺数据统计
+export function _storeproductStatistics(params) {
+	return http.post({
+		url: '/storeproduct/statistics',
+		params
+	})
+}
+
+
+//  门诊收益详情查询
+export function _enrollformEarningsport(params) {
+	return http.get({
+		url: '/enrollform/earningsport',
+		params
+	})
+}
+
+//  门诊收益导出
+export function _enrollformEarningsportexport(params) {
+	return http.get({
+		url: '/enrollform/earningsportexport',
+		params
 	})
 }

@@ -10,7 +10,7 @@ const ZPData = {
 		defaultPageNo: {
 			type: [Number, String],
 			default: u.gc('defaultPageNo', 1),
-			observer: function(newVal, oldVal) {
+			observer: function(newVal) {
 				this.pageNo = newVal;
 			},
 		},
@@ -48,21 +48,12 @@ const ZPData = {
 		//自动注入的list名，可自动修改父view(包含ref="paging")中对应name的list值
 		autowireListName: {
 			type: String,
-			default: function() {
-				return u.gc('autowireListName', '');
-			},
+			default: u.gc('autowireListName', '')
 		},
 		//自动注入的query名，可自动调用父view(包含ref="paging")中的query方法
 		autowireQueryName: {
 			type: String,
-			default: function() {
-				return u.gc('autowireQueryName', '');
-			},
-		},
-		//z-paging mounted后自动调用reload方法(mounted后自动调用接口)，默认为是。请使用简便写法：auto
-		mountedAutoCallReload: {
-			type: Boolean,
-			default: u.gc('mountedAutoCallReload', true)
+			default: u.gc('autowireQueryName', '')
 		},
 		//z-paging mounted后自动调用reload方法(mounted后自动调用接口)，默认为是
 		auto: {
@@ -237,7 +228,7 @@ const ZPData = {
 			if (totalCount == 'undefined') {
 				this.customNoMore = -1;
 			} else {
-				let dataTypeRes = this._checkDataType(data, success, false);
+				const dataTypeRes = this._checkDataType(data, success, false);
 				data = dataTypeRes.data;
 				success = dataTypeRes.success;
 				if (totalCount >= 0 && success) {
@@ -325,9 +316,7 @@ const ZPData = {
 		//重新设置列表数据，调用此方法不会影响pageNo和pageSize，也不会触发请求。适用场景：当需要删除列表中某一项时，将删除对应项后的数组通过此方法传递给z-paging。(当出现类似的需要修改列表数组的场景时，请使用此方法，请勿直接修改page中:list.sync绑定的数组)
 		resetTotalData(data) {
 			if (data == undefined) {
-				if (this.showConsoleError) {
-					u.consoleErr('方法resetTotalData参数缺失！');
-				}
+				u.consoleErr('方法resetTotalData参数缺失！');
 				return;
 			}
 			this.isTotalChangeFromAddData = true;
@@ -459,8 +448,8 @@ const ZPData = {
 		//重新加载分页数据
 		_reload(isClean = false, isFromMounted = false, isUserPullDown = false) {
 			this.isAddedData = false;
-			this.cacheScrollNodeHeight = -1;
 			this.insideOfPaging = -1;
+			this.cacheScrollNodeHeight = -1;
 			this.pageNo = this.defaultPageNo;
 			this._cleanRefresherEndTimeout();
 			!this.privateShowRefresherWhenReload && !isClean && this._startLoading(true);
@@ -483,17 +472,8 @@ const ZPData = {
 					// #ifdef APP-NVUE
 					checkedNRefresherLoading = !this.nRefresherLoading;
 					// #endif
-					if (checkedNRefresherLoading) {
-						this._scrollToTop(false);
-					}
+					checkedNRefresherLoading && this._scrollToTop(false);
 				}
-				// #ifndef APP-NVUE
-				if (!this.usePageScroll && this.useChatRecordMode) {
-					if (this.showConsoleError) {
-						u.consoleWarn('使用聊天记录模式时，建议使用页面滚动，可将usePageScroll设置为true以启用页面滚动！！');
-					}
-				}
-				// #endif
 			}
 			this.$nextTick(() => {
 				// #ifdef APP-NVUE
@@ -511,7 +491,6 @@ const ZPData = {
 			const tempIsUserPullDown = this.isUserPullDown;
 			if (this.showRefresherUpdateTime && this.isFirstPage) {
 				u.setRefesrherTime(u.getTime(), this.refresherUpdateTimeKey);
-				this.tempLanguageUpdateKey = u.getTime();
 				this.$refs.refresh && this.$refs.refresh.updateTime();
 			}
 			if (tempIsUserPullDown && this.isFirstPage) {
@@ -564,7 +543,7 @@ const ZPData = {
 				this._currentDataChange(data, this.currentData);
 				this.loadingStatus = Enum.More.Fail;
 				if (this.loadingType === Enum.LoadingType.LoadingMore) {
-					this.pageNo--;
+					this.pageNo --;
 				}
 			}
 		},
@@ -596,7 +575,7 @@ const ZPData = {
 							this.$emit('contentHeightChanged', res[0].height);
 						}
 					});
-				},this.isIos?100:300)
+				},this.isIos ? 100 : 300)
 				// #ifdef APP-NVUE
 				if (this.useChatRecordMode && this.nIsFirstPageAndNoMore && this.isFirstPage && !this.nFirstPageAndNoMoreChecked) {
 					this.nFirstPageAndNoMoreChecked = true;
@@ -616,15 +595,13 @@ const ZPData = {
 				},100)
 			})
 			// #ifndef APP-NVUE
-			if (this.finalUseVirtualList) {
-				this._setCellIndex(newVal,this.totalData.length === 0);
-			}
+			this.finalUseVirtualList && this._setCellIndex(newVal,this.totalData.length === 0)
 			this.useChatRecordMode && newVal.reverse();
 			// #endif
 			if (this.isFirstPage && this.finalConcat) {
 				this.totalData = [];
 			}
-			if (this.customNoMore !== -1) {
+			if (this.customNoMore !== -1 && (this.customNoMore === 0 || !newVal.length)) {
 				if (this.customNoMore === 0 || !newVal.length) {
 					this.loadingStatus = Enum.More.NoMore;
 				}
@@ -694,28 +671,13 @@ const ZPData = {
 		},
 		//本地分页请求
 		_localPagingQueryList(pageNo, pageSize, localPagingLoadingTime, callback) {
-			pageNo = parseInt(pageNo);
-			pageSize = parseInt(pageSize);
-			if (pageNo < 0 || pageSize <= 0) {
-				this._localPagingQueryResult(callback, [], localPagingLoadingTime);
-				return;
-			}
-			pageNo = Math.max(1,pageNo);
-			let totalPagingList = [...this.totalLocalPagingList];
-			let pageNoIndex = (pageNo - 1) * pageSize;
-			if (pageNoIndex + pageSize <= totalPagingList.length) {
-				this._localPagingQueryResult(callback, totalPagingList.splice(pageNoIndex, pageSize), localPagingLoadingTime);
-			} else if (pageNoIndex < totalPagingList.length) {
-				this._localPagingQueryResult(callback, totalPagingList.splice(pageNoIndex, totalPagingList.length - pageNoIndex), localPagingLoadingTime);
-			} else {
-				this._localPagingQueryResult(callback, [], localPagingLoadingTime);
-			}
-		},
-		//本地分页请求回调
-		_localPagingQueryResult(callback, arg, localPagingLoadingTime) {
-			setTimeout(() => {
-				callback(arg);
-			}, localPagingLoadingTime)
+			pageNo = Math.max(1, pageNo);
+			pageSize = Math.max(1, pageSize);
+			const totalPagingList = [...this.totalLocalPagingList];
+			const pageNoIndex = (pageNo - 1) * pageSize;
+			const finalPageNoIndex = Math.min(totalPagingList.length, pageNoIndex + pageSize);
+			const resultPagingList = totalPagingList.splice(pageNoIndex, finalPageNoIndex - pageNoIndex);
+			setTimeout(() => callback(resultPagingList), localPagingLoadingTime)
 		},
 		//存储列表缓存数据
 		_saveLocalCache(data) {
@@ -769,11 +731,8 @@ const ZPData = {
 				data = [];
 			} else if (dataType !== '[object Array]') {
 				data = [];
-				let methodStr = isLocal ? 'setLocalPaging' : 'complete';
 				if (dataType !== '[object Undefined]') {
-					if (this.showConsoleError) {
-						u.consoleErr(`${methodStr}参数类型不正确，第一个参数类型必须为Array!`);
-					}
+					u.consoleErr(`${isLocal ? 'setLocalPaging' : 'complete'}参数类型不正确，第一个参数类型必须为Array!`);
 				}
 			}
 			return {data,success};

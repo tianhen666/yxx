@@ -4,10 +4,11 @@ import http from '@/aTemp/request';
 	登录相关接口
  */
 // 微信登录接口，获取openID
-export function _wxLogin(data) {
+export function _wxLogin(data,params) {
 	return http.post({
 		url: '/wx/login',
-		data
+		data,
+		params
 	})
 }
 

@@ -2,20 +2,30 @@
 	<view class="container">
 		<view class="left">
 			<view class="text">本月邀请</view>
-			<view class="text_num">588080人</view>
+			<view class="text_num">{{ statistics.monthNewlyone }}人</view>
 		</view>
 		<view class="center">
 			<view class="text">累计邀请</view>
-			<view class="text_num">626262人</view>
+			<view class="text_num">{{statistics.countSum}}人</view>
 		</view>
 		<view class="right">
 			<view class="text">累计收益</view>
-			<view class="text_num">88.88元</view>
+			<view class="text_num">{{statistics.earningsSum}}元</view>
 		</view>
 	</view>
 </template>
 
-<script></script>
+<script setup>
+const props = defineProps({
+	statistics: {
+		type: Object,
+		required: true,
+		default() {
+			return {}
+		}
+	}
+})
+</script>
 
 <style lang="scss" scoped>
 .container {
@@ -30,7 +40,7 @@
 	position: relative;
 	z-index: 1;
 	margin-top: 38rpx;
-	background-image: linear-gradient(to right, #fde399 , #fdae69);
+	background-image: linear-gradient(to right, #fde399, #fdae69);
 	border-radius: 16rpx;
 	.left,
 	.right,

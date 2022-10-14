@@ -3,7 +3,7 @@
 
 	<view class="container" v-else>
 		<!-- 背景 -->
-		<view class="pageBg uni-navbar--fixed"><image class="image" src="/static/images/bg.jpg" mode="aspectFill"></image></view>
+		<view class="pageBg"><image class="image" src="/static/images/bg.png" mode="aspectFill"></image></view>
 
 		<!-- #ifndef H5 -->
 		<!-- 标题栏 -->

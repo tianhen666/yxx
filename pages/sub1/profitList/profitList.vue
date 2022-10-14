@@ -1,131 +1,121 @@
 <template>
+	<!-- 背景 -->
+	<view class="pageBg">
+		<image class="image" src="/static/images/bg.png" mode="aspectFill"></image>
+	</view>
+	<!-- #ifndef H5 -->
 	<!-- 标题栏 -->
 	<uni-nav-bar
-		@clickLeft="clickLeft"
+		@clickLeft="navigateBack"
 		left-icon="left"
-		title="我的推广收益"
 		statusBar
 		fixed
+		:title="'我的收益'"
 		color="#ffffff"
 		:border="false"
 	></uni-nav-bar>
+	<!-- #endif -->
 
-	<view class="box">
-		<view class="profit_add">您的当前累计收益</view>
-		<view class="profit_number">6666.66</view>
-	</view>
-
-	<!-- 背景 -->
-	<view class="pageBg uni-navbar--fixed"></view>
-
-	<view class="box1">
+	<view class="box1 box">
 		<view class="box1_item">
-			<view class="text">今日收益</view>
-			<view class="text_num">588080</view>
-		</view>
-		<view class="box1_item">
-			<view class="text">本周收益</view>
-			<view class="text_num">588080</view>
+			<view class="text">累计收益</view>
+			<view class="text_num">{{ statistics.earningSum }}元</view>
 		</view>
 		<view class="box1_item">
 			<view class="text">本月收益</view>
-			<view class="text_num">588080</view>
+			<view class="text_num">{{ statistics.earningCurdate }}元</view>
+		</view>
+		<view class="box1_item">
+			<view class="text">今日收益</view>
+			<view class="text_num">{{ statistics.earningdays }}元</view>
 		</view>
 	</view>
 	<view class="blank40"></view>
-	
-	<view class="title_box">
-		<m-title2 title="收益记录"></m-title2>
-	</view>
-	
-	<view class="box2">
-		<view class="box2_item">
-			<view class="left">用户信息</view>
-			<view class="center">邀请时间</view>
-			<view class="right">收益总计</view>
-		</view>
-		<view class="box2_item" v-for="(item, index) in listData" :key="index">
-			<view class="left">
-				<view class="wrapper">
-					<image class="image" :src="item.imgUrl" mode="aspectFill"></image>
-					<text class="text">{{ item.name }}</text>
+	<view class="blank20"></view>
+	<view class="box"><m-title2 title="收益明细"></m-title2></view>
+
+	<view class="box2 box">
+		<z-paging
+			ref="pagingObj"
+			v-model="dataList"
+			@query="queryList"
+			:fixed="false"
+			min-delay="1000"
+			created-reload
+			show-loading-more-when-reload
+		>
+			<view class="box2_item" v-for="(item, index) in dataList" :key="index">
+				<view class="left">
+					<view class="wrapper">
+						<image class="image" :src="item.avatar" mode="aspectFill"></image>
+						<text class="name">{{ item.nickname }}</text>
+					</view>
+				</view>
+				<view class="right">
+					<text class="money">+ {{ item.shareparicenum }}</text>
+					<text class="time">{{ dayjs(item.pay_Dt).format('YYYY-M-D HH:mm:ss') }}</text>
 				</view>
 			</view>
-			<view class="center">
-				<text class="text">{{ item.time }}</text>
-			</view>
-			<view class="right">
-				<text class="text">+{{ item.meony }}</text>
-			</view>
-		</view>
+		</z-paging>
 	</view>
-
-	<!-- 底部邀请 -->
-	<m-invitation-btn-fix></m-invitation-btn-fix>
 </template>
 
 <script setup>
-import { reactive } from 'vue'
-const listData = reactive([
-	{
-		imgUrl: '/static/default/banner.png',
-		name: '昵称昵称昵称',
-		time: '2022-07-18',
-		meony: '16.68'
-	},
-	{
-		imgUrl: '/static/default/banner.png',
-		name: '昵称昵称昵称',
-		time: '2022-07-18',
-		meony: '16.68'
-	},
-	{
-		imgUrl: '/static/default/banner.png',
-		name: '昵称昵称昵称',
-		time: '2022-07-18',
-		meony: '16.68'
+import { ref } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
+import { _userEarningData } from '@/aTemp/apis/user.js'
+import dayjs from 'dayjs'
+import { navigateBack } from '@/aTemp/utils/uniAppTools.js'
+// 全局登录信息
+import { _useUserMain } from '@/aTemp/store/userMain.js'
+const useUserMain = _useUserMain()
+
+// 数据列表
+const dataList = ref([])
+// 当前选择的索引
+const tabIndex = ref(0)
+// 插件对象
+const pagingObj = ref(null)
+// 收益统计
+const statistics = ref({})
+
+// 后台获取数据
+const queryList = (pageNo, pageSize) => {
+	const params = {
+		pageNum: pageNo,
+		pageSize: pageSize,
+		userId: useUserMain.userid
 	}
-])
-const clickLeft = () => {
-	uni.navigateBack()
+	_userEarningData(params)
+		.then(res => {
+			statistics.value = res.data
+
+			// 列表赋值
+			pagingObj.value.complete(res.data?.earningsrecord?.userlist || [])
+		})
+		.catch(res => {
+			pagingObj.value.complete(false)
+		})
 }
 </script>
 
 <style lang="scss" scoped>
-:global(page) {
-	background-color: #f5f5f5;
-}
-:global(.bg) {
-	height: 100rpx;
-	width: 750rpx;
-	background-image: linear-gradient($main-color 0%, transparent);
-}
 .box {
-	text-align: center;
-	background-color: $main-color;
-	color: #ffffff;
-	padding-bottom: 40rpx;
-	.profit_add {
-		font-size: 36rpx;
-		padding-top: 46rpx;
-	}
-	.profit_number {
-		font-size: 52rpx;
-		padding-top: 35rpx;
-	}
-}
-.box1 {
 	width: $main-width;
+	margin: auto;
+	position: relative;
+	z-index: 2;
+}
+
+.box1 {
 	background-color: #ffffff;
 	@include mFlex;
 	justify-content: space-between;
-	color: $text-color;
-	font-size: 28rpx;
-	margin: auto;
-	margin-top: -100rpx;
 	border-radius: 16rpx;
-	padding: 24rpx 0;
+	padding: 32rpx 24rpx;
 	.box1_item {
+		color: $text-color;
+		font-size: 28rpx;
 		width: 33.3%;
 		flex: none;
 		overflow: hidden;
@@ -133,31 +123,28 @@ const clickLeft = () => {
 		> .text {
 			margin-bottom: 30rpx;
 		}
+		> .text_num {
+			color: #999;
+		}
 	}
 }
-.title_box{
-	width: $main-width;
-	margin: auto;
-}
+
 .box2 {
-	margin: auto;
 	background-color: #ffffff;
-	width: $main-width;
-	box-sizing: border-box;
 	padding: $padding;
 	border-radius: 16rpx;
+	height: #{calc(100vh - 280px)};
+	box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.1);
+
 	.box2_item {
 		@include mFlex;
 		justify-content: space-between;
 		text-align: center;
-		border-bottom: 1px solid $border-color;
+		border-bottom: 1px solid #eee;
 		padding-bottom: 20rpx;
 		margin-bottom: 20rpx;
 		font-size: 28rpx;
-		&:first-child {
-			border: none;
-		}
-		&:last-child {
+		&:last-of-type {
 			border: none;
 			padding-bottom: 0;
 			margin-bottom: 0;
@@ -175,9 +162,9 @@ const clickLeft = () => {
 					border-radius: 50%;
 					flex: none;
 				}
-				> .text {
+				> .name {
 					flex: auto;
-					margin-left: 10rpx;
+					margin-left: 20rpx;
 					color: $text-color-grey;
 					@include singleLineTextOverHidden;
 					font-size: 28rpx;
@@ -185,22 +172,21 @@ const clickLeft = () => {
 				}
 			}
 		}
-		.center {
-			width: 28%;
-			flex: none;
-			overflow: hidden;
-			> .text {
-				color: $text-color-grey;
-				font-size: 26rpx;
-			}
-		}
 		.right {
-			width: 20%;
+			width: 40%;
 			flex: none;
 			overflow: hidden;
-			> .text {
+			text-align: right;
+			> .money {
 				color: $sub-color;
 				font-size: 28rpx;
+				font-weight: bold;
+				font-size: 32rpx;
+			}
+			> .time {
+				margin-top: 20rpx;
+				color: #aaa;
+				font-size: 26rpx;
 			}
 		}
 	}

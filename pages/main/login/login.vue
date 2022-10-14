@@ -103,9 +103,7 @@ const getphonenumber = val => {
 		_wxMobile({ code: code, avatar: avatar.value, nickname: nickname.value }).then(res => {
 			const { msg, data, code } = res
 			if (data) {
-				useUserMain.$patch({ mobile: data })
-				useUserMain.$patch({ avatar: avatar.value })
-				useUserMain.$patch({ nickname: nickname.value })
+				useUserMain.$patch({ mobile: data,avatar: avatar.value,nickname: nickname.value })
 			}
 			setTimeout(() => {
 				uni.hideLoading()

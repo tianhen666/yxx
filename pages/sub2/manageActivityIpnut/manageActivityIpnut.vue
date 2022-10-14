@@ -38,7 +38,7 @@
 			<view class="blank32 blank_bg_color"></view>
 
 			<!-- 开始时间 -->
-			<uni-forms-item :label="rules.startDt.label" name="startDt" v-if="formData.type !== 2">
+			<uni-forms-item :label="rules.startDt.label" name="startDt">
 				<uni-datetime-picker
 					:start="Date.now()"
 					:placeholder="rules.startDt.rules[0].errorMessage"
@@ -49,7 +49,7 @@
 			</uni-forms-item>
 
 			<!-- 结束时间 -->
-			<uni-forms-item :label="rules.endDt.label" name="endDt" v-if="formData.type !== 2">
+			<uni-forms-item :label="rules.endDt.label" name="endDt">
 				<uni-datetime-picker
 					:start="Date.now()"
 					:placeholder="rules.endDt.rules[0].errorMessage"
@@ -58,7 +58,7 @@
 					v-model="formData.endDt"
 				/>
 			</uni-forms-item>
-			<view class="blank32 blank_bg_color" v-if="formData.type !== 2"></view>
+			<view class="blank32 blank_bg_color"></view>
 
 			<!-- 活动标题 -->
 			<uni-forms-item :label="rules.title.label" name="title">
@@ -72,10 +72,19 @@
 
 			<!-- 活动价格 -->
 			<uni-forms-item v-if="formData.type !== 0" :label="type[formData.type].text + rules.price.label" name="price">
+				<uni-easyinput type="digit" v-model="formData.price" :placeholder="rules.price.rules[0].errorMessage" />
+			</uni-forms-item>
+
+			<!-- 原价 -->
+			<uni-forms-item
+				v-if="formData.type === 1 || formData.type === 2"
+				:label="rules.alonePrice.label"
+				name="alonePrice"
+			>
 				<uni-easyinput
 					type="digit"
-					v-model="formData.price"
-					:placeholder="rules.price.rules[0].errorMessage"
+					v-model="formData.alonePrice"
+					:placeholder="rules.alonePrice.rules[0].errorMessage"
 				/>
 			</uni-forms-item>
 
@@ -99,15 +108,6 @@
 					:checked="parseInt(formData.showShare) === 0"
 					style="transform:scale(0.8)"
 					@change="formData.showShare = Math.abs(parseInt(formData.showShare) - 1)"
-				/>
-			</uni-forms-item>
-
-			<!-- 拼团单独购买价 -->
-			<uni-forms-item v-if="formData.type === 3" :label="rules.alonePrice.label" name="alonePrice">
-				<uni-easyinput
-					type="digit"
-					v-model="formData.alonePrice"
-					:placeholder="rules.alonePrice.rules[0].errorMessage"
 				/>
 			</uni-forms-item>
 
@@ -197,9 +197,10 @@ const formData = ref({
 	startDt: dayjs().format('YYYY-MM-DD HH:mm:ss'), //活动开始时间,默认值
 	endDt: dayjs(Date.now() + 30 * 24 * 60 * 60 * 1000).format('YYYY-MM-DD HH:mm:ss'), //活动结束默认值
 	quantity: 1000, // 活动数量默认
-	least: 2, //最低拼团人数
+	limitCount: 1, //默认限购1
 	price: 100, // 价格
-	showShare: 0, //是否显示分佣
+	showShare: 1, //是否显示分佣
+	least: 2, //最低拼团人数
 	sort: 1 //排序
 })
 // 获取表单对象
@@ -213,7 +214,7 @@ const type = [
 		value: 0
 	},
 	{
-		text: '活动促销',
+		text: '爆款活动',
 		value: 1
 	},
 	{
@@ -221,7 +222,7 @@ const type = [
 		value: 2
 	}
 ]
-/* 
+/*
  {
  	text: '拼团活动',
  	value: 3
@@ -236,7 +237,7 @@ onLoad(optios => {
 		_enrollformGetinfo({ id: dataId.value }).then(res => {
 			const { data } = res
 			// 数据赋值
-			formData.value = data
+			formData.value = data.getinfo
 		})
 	}
 })
@@ -268,20 +269,54 @@ const rules = {
 		label: '活动类型'
 	},
 	price: {
-		rules: [{ required: true, errorMessage: '请输入价格' },{ minimum: 1, errorMessage: '价格最小为1元' }],
+		rules: [
+			{ required: true, errorMessage: '请输入价格' },
+			{
+				validateFunction: function(rule, value, data, callback) {
+					if (parseFloat(value) <= 0) {
+						callback('价格需要大于零')
+					}
+					return true
+				}
+			}
+		],
 		label: '价格'
 	},
+	alonePrice: {
+		rules: [
+			{ errorMessage: '请输入原价' },
+			{
+				validateFunction: function(rule, value, data, callback) {
+					if (parseFloat(value) <= 0) {
+						callback('原价需要大于零')
+					}
+					return true
+				}
+			}
+		],
+		label: '原价'
+	},
 	sharePrice: {
-		rules: [{ required: true, errorMessage: '请输入分佣金额' }],
+		rules: [
+			{ required: true, errorMessage: '请输入分佣金额' },
+			{
+				validateFunction: function(rule, value, data, callback) {
+					if (parseFloat(value) <= 0) {
+						callback('分佣需要大于零')
+					}
+					if (parseFloat(value) > parseFloat(data.price) * 0.3) {
+						callback('分佣价格不能高于活动价格的30%')
+					}
+
+					return true
+				}
+			}
+		],
 		label: '分佣金额'
 	},
 	showShare: {
 		rules: [{ required: true, errorMessage: '请选择是否展示分佣' }],
 		label: '展示分佣'
-	},
-	alonePrice: {
-		rules: [{ required: true, errorMessage: '请输入单独购买价格' }],
-		label: '单独购买'
 	},
 	least: {
 		rules: [{ required: true, errorMessage: '请输入成团人数' }],
@@ -337,10 +372,10 @@ const { chooseSuccess: chooseSuccess1, picList: picList1, selectNum: selectNum1 
 	baseDir: 'active'
 })
 
-/* 
-	用主图代替
+/*
+ * 用主图代替
+ * 分享图
  */
-// 活动分享图上传 裁剪
 // const { chooseSuccess: chooseSuccess2, picList: picList2, selectNum: selectNum2 } = useHtzImageUpload({
 // 	ratio: 5 / 4,
 // 	url: '/enrollform/uploadimage',

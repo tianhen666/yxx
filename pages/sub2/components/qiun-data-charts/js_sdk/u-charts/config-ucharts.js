@@ -86,8 +86,18 @@ const cfu = {
 		"seriesDemo1": function(val, index, series, opts) {
 			return val + '元'
 		},
+		"seriesMy": function(val, index, series, opts) {
+			return val + '元'
+		},
+		"seriesMy1": function(val, index, series, opts) {
+			return val + '个'
+		},
 		"tooltipMy": function(item, category, index, opts) {
+			// console.log(item, category, index, opts)
 			return dayjs(category).format('YYYY年M月D日') + " 收款" + item.data
+		},
+		"tooltipMy1": function(item, category, index, opts) {
+			return dayjs(category).format('YYYY年M月D日') + " 订单" + item.data
 		},
 		"tooltipDemo1": function(item, category, index, opts) {
 			if (index == 0) {
@@ -95,9 +105,6 @@ const cfu = {
 			} else {
 				return '其他我没改' + item.data + '天'
 			}
-		},
-		"seriesMy": function(val, index, series, opts) {
-			return val + '元'
 		},
 		"pieDemo": function(val, index, series, opts) {
 			if (index !== undefined) {
@@ -345,6 +352,8 @@ const cfu = {
 			"disableGrid": true,
 		},
 		"yAxis": {
+			"gridType":"dash",
+			"dashLength": 2,
 			"data": [{
 				"min": 0
 			}]

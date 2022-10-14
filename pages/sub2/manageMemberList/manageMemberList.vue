@@ -1,6 +1,8 @@
 <template>
 	<!-- 背景 -->
-	<view class="pageBg uni-navbar--fixed"><image class="image" src="/static/images/bg.jpg" mode="aspectFill"></image></view>
+	<view class="pageBg">
+		<image class="image" src="/static/images/bg.png" mode="aspectFill"></image>
+	</view>
 	<!-- #ifndef H5 -->
 	<!-- 标题栏 -->
 	<uni-nav-bar
@@ -17,15 +19,15 @@
 	<view class="box1">
 		<view class="box1_item">
 			<view class="text">全部邀请</view>
-			<view class="text_num">{{invitationsNumber[0]||0}}</view>
+			<view class="text_num">{{ invitationsNumber[0] || 0 }}</view>
 		</view>
 		<view class="box1_item">
 			<view class="text">今日新增</view>
-			<view class="text_num">{{invitationsNumber[1]||0}}</view>
+			<view class="text_num">{{ invitationsNumber[1] || 0 }}</view>
 		</view>
 		<view class="box1_item">
 			<view class="text">本月新增</view>
-			<view class="text_num">{{invitationsNumber[2]||0}}</view>
+			<view class="text_num">{{ invitationsNumber[2] || 0 }}</view>
 		</view>
 	</view>
 
@@ -34,35 +36,46 @@
 		<!-- 数据筛选 -->
 		<view class="select">
 			<view class="select_item">
-				<uni-data-picker
-					placeholder="用户来源"
-					popup-title="用户来源"
-					:localdata="dataTree"
-					v-model="classes"
-					@change="onchange1"
-				/>
+				<uni-data-picker placeholder="用户来源" popup-title="用户来源" :localdata="dataTree" v-model="scene" />
+			</view>
+
+			<view class="select_item select_invite">
+				<uni-data-select v-model="inviteUserId" :localdata="categoryOption1" placeholder="邀请人"></uni-data-select>
 			</view>
 
 			<view class="select_item">
-				<uni-data-select v-model="time" :localdata="categoryOption1" placeholder="邀请人"></uni-data-select>
-			</view>
-
-			<view class="select_item">
-				<uni-data-select v-model="time" :localdata="categoryOption2" placeholder="选择时间"></uni-data-select>
+				<uni-data-select
+					@change="timeChange"
+					v-model="timeType"
+					:localdata="categoryOption2"
+					placeholder="选择时间"
+				></uni-data-select>
 			</view>
 		</view>
 		<!-- 日期选择 -->
-		<view class="box2_p" v-show="time === 3">
-			<uni-datetime-picker :clearIcon="false" v-model="rangeTime" :end="Date.now()" type="daterange" />
+		<view class="box2_p" v-if="timeType === 3">
+			<uni-datetime-picker
+				return-type="string"
+				:clearIcon="false"
+				v-model="rangeTime"
+				:end="Date.now()"
+				type="daterange"
+			/>
 		</view>
 		<view class="blank32"></view>
 		<!-- 搜索 -->
-		<uni-search-bar v-model="search.title" placeholder="输入手机号/用户名搜索" cancelButton="none"></uni-search-bar>
+		<uni-search-bar
+			v-model="search"
+			placeholder="输入手机号/用户名搜索"
+			cancelButton="none"
+			@confirm="searchFun"
+			@clear="searchFun"
+		></uni-search-bar>
 		<view class="blank40"></view>
 
 		<!-- 用户列表 -->
 		<m-user-list :listData="userListData"></m-user-list>
-		
+
 		<!-- 加载更多 -->
 		<uni-load-more :status="pageLoadStatus" />
 	</view>
@@ -72,30 +85,33 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { onLoad,onReachBottom } from '@dcloudio/uni-app'
+import { ref, computed, watch } from 'vue'
+import { onLoad, onReachBottom } from '@dcloudio/uni-app'
 import { navigateBack } from '@/aTemp/utils/uniAppTools.js'
 import { _userDataStatistics } from '@/aTemp/apis/user.js'
+import dayjs from 'dayjs'
 
 // 开始时间
-const startTime = ref('')
+const startTime = computed(() => rangeTime.value[0])
 // 结束时间
-const endTime = ref('')
+const endTime = computed(() => rangeTime.value[1])
 // 邀请渠道
 const scene = ref('')
 // 邀请人ID
 const inviteUserId = ref('')
+// 搜索
+const search = ref('')
 
 // 每页数量
 const pageSize = ref(6)
 // 有多少页面
 const pageNum = ref(1)
 // 是否加载完成
-const pageLoadStatus = ref('more')
-
-const invitationsNumber = ref([])
+const pageLoadStatus = ref('loading')
 // 会员列表
 const userListData = ref([])
+// 数量统计
+const invitationsNumber = ref([])
 
 // 获取用户列表
 const userDataStatistics = () => {
@@ -106,16 +122,20 @@ const userDataStatistics = () => {
 		scene: scene.value,
 		inviteUserId: inviteUserId.value,
 		pageNum: pageNum.value,
-		pageSize: pageSize.value
+		pageSize: pageSize.value,
+		search: search.value
 	}).then(res => {
 		const { msg, code, data } = res
-		const { customConditionInquire, resultMonthNewly, resultTodayNewly } = data
-		
+		const { customConditionInquire, resultMonthNewly, resultTodayNewly, distinctness } = data
+
 		// 数量统计
 		invitationsNumber.value[0] = customConditionInquire.data.count
 		invitationsNumber.value[1] = resultTodayNewly.data
 		invitationsNumber.value[2] = resultMonthNewly.data
-		
+
+		// 邀请人列表赋值
+		categoryOption1.value = distinctness.data
+
 		// 暂时延时一下
 		setTimeout(() => {
 			userListData.value.push(...customConditionInquire.data.userlist)
@@ -130,6 +150,8 @@ const userDataStatistics = () => {
 		}, 1000)
 	})
 }
+
+
 // 触底加载
 onReachBottom(() => {
 	if (pageLoadStatus.value === 'more') {
@@ -139,42 +161,47 @@ onReachBottom(() => {
 
 onLoad(options => {
 	// console.log(options)
-	// 请求参数
+	pageNum.value = 1
+	pageLoadStatus.value = 'loading'
+	userListData.value.length = 0
 	userDataStatistics()
 })
-// 来源选择
-const onchange1 = res => {
-	console.log(res)
-}
-const classes = ref('')
+
+// 监听来源选择的变化重新获取数据
+watch(scene, (newVal, oldVal) => {
+	pageNum.value = 1
+	pageLoadStatus.value = 'loading'
+	userListData.value.length = 0
+	userDataStatistics()
+})
 const dataTree = [
 	{
 		text: '直接邀请',
-		value: '1-0'
+		value: '0'
 	},
 	{
-		text: '活动',
-		value: '2-0',
-		children: [
-			{
-				text: '1.1班',
-				value: '2-1'
-			},
-			{
-				text: '1.2班11111111111',
-				value: '2-2'
-			}
-		]
+		text: '活动邀请',
+		value: '1'
+	},
+	{
+		text: '服务邀请',
+		value: '2'
+	},
+	{
+		text: '商品邀请',
+		value: '3'
+	},
+	{
+		text: '海报邀请',
+		value: '4'
+	},
+	{
+		text: '其他邀请',
+		value: '5'
 	}
 ]
 
-// 搜索
-const search = ref({
-	title: ''
-})
-
 // 时间选择
-const time = ref()
 const categoryOption2 = ref([
 	{
 		value: 1,
@@ -189,12 +216,65 @@ const categoryOption2 = ref([
 		text: '自定义'
 	}
 ])
+const timeType = ref()
+let rangeTime = ref([])
+const timeChange = e => {
+	const nowTime = dayjs()
+	if (e === 1) {
+		rangeTime.value = [nowTime.subtract(7, 'day').format('YYYY-MM-DD'), nowTime.format('YYYY-MM-DD')]
+	} else if (e === 2) {
+		rangeTime.value = [nowTime.subtract(1, 'month').format('YYYY-MM-DD'), nowTime.format('YYYY-MM-DD')]
+	} else {
+		rangeTime.value = []
+	}
+}
+// 监听选择时间的变化重新获取数据
+watch(rangeTime, (newVal, oldVal) => {
+	if (newVal.length > 0) {
+		pageNum.value = 1
+		pageLoadStatus.value = 'loading'
+		userListData.value.length = 0
+		userDataStatistics()
+	}
+})
 
-// 日期
-const rangeTime = ref([])
+// 邀请人筛选
+const categoryOption1 = ref([])
+watch(inviteUserId, (newVal, oldVal) => {
+	pageNum.value = 1
+	pageLoadStatus.value = 'loading'
+	userListData.value.length = 0
+	userDataStatistics()
+})
+
+// 搜索筛选
+const searchFun = e => {
+	pageNum.value = 1
+	pageLoadStatus.value = 'loading'
+	userListData.value.length = 0
+	setTimeout(() => {
+		userDataStatistics()
+	}, 500)
+}
 </script>
 
 <style lang="scss" scoped>
+:deep(.uni-select__input-box) {
+	overflow: hidden;
+}
+:deep(.select_invite) {
+	.uni-select__selector {
+		width: 200%;
+		.uni-select__selector-item {
+			text {
+				overflow: hidden; /*超出隐藏*/
+				text-overflow: ellipsis; /*隐藏后添加省略号*/
+				white-space: nowrap; /*强制不换行*/
+				width: 100%;
+			}
+		}
+	}
+}
 :deep(.uni-searchbar) {
 	padding: 0;
 }
@@ -204,6 +284,8 @@ const rangeTime = ref([])
 }
 
 .box {
+	position: relative;
+	z-index: 2;
 	width: $main-width;
 	padding: $padding;
 	margin: auto;
@@ -214,6 +296,8 @@ const rangeTime = ref([])
 }
 
 .box1 {
+	position: relative;
+	z-index: 2;
 	width: $main-width;
 	@include mFlex;
 	justify-content: space-between;

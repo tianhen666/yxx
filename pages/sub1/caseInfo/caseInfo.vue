@@ -1,118 +1,149 @@
 <template>
-	<view class="container">
-		<!-- 头像名称 -->
-		<view class="box1">
-			<m-left-right-layout rightWidth="580rpx">
-				<template #left>
-					<image class="logo" src="/static/default/banner.png" mode="aspectFill"></image>
-				</template>
-				<template #right>
-					<view class="title">牙小新口腔门诊</view>
-					<view class="time">2022-07-18</view>
-				</template>
-			</m-left-right-layout>
-		</view>
-		<view class="blank30"></view>
-
+	<m-page-loading v-if="loading"></m-page-loading>
+	<view class="container" v-else>
 		<!-- 内容 -->
 		<view class="box2">
-			<m-title2 title="案例详情"></m-title2>
+			<m-title2 :title="dataObj.title"></m-title2>
 			<view class="cycle">
 				<text class="text1">治疗周期：</text>
-				<text>2022-07-18 - 2022-08-18</text>
+				<text>
+					{{ dayjs(dataObj.startDt).format('YYYY年M月D日') }} - {{ dayjs(dataObj.endDt).format('YYYY年M月D日') }}
+				</text>
 			</view>
-			<text class="desc">
+			<view class="desc">
 				<text class="text1">案例描述：</text>
-				拔牙拔牙，拔牙拔牙拔牙拔牙拔牙，拔牙拔牙拔牙拔牙拔牙拔牙拔牙拔牙拔牙拔牙拔牙拔牙拔牙拔牙拔牙拔牙拔牙拔牙拔拔牙拔牙拔牙拔牙拔牙拔牙拔牙拔牙拔牙拔牙拔牙拔牙拔牙拔牙拔牙拔牙拔牙拔牙拔
-			</text>
+				<text>{{ dataObj.detail }}</text>
+			</view>
+			<view class="blank20"></view>
+			<view class="content_img"><image class="image" :src="dataObj.mainPic" mode="aspectFill"></image></view>
 		</view>
 		<view class="blank30"></view>
 
-		<image class="image" src="/static/default/banner.png" mode="aspectFill"></image>
-
 		<!-- 治疗前 -->
-		<view class="blank20"></view>
-		<m-title1 title="治疗前"></m-title1>
-		<image class="image" src="/static/default/banner.png" mode="aspectFill"></image>
-		<image class="image" src="/static/default/banner.png" mode="aspectFill"></image>
-		<image class="image" src="/static/default/banner.png" mode="aspectFill"></image>
-		<image class="image" src="/static/default/banner.png" mode="aspectFill"></image>
-
-		<!-- 治疗后 -->
-		<view class="blank20"></view>
-		<m-title1 title="治疗后"></m-title1>
-		<image class="image" src="/static/default/banner.png" mode="aspectFill"></image>
-		<image class="image" src="/static/default/banner.png" mode="aspectFill"></image>
-		<image class="image" src="/static/default/banner.png" mode="aspectFill"></image>
-		<image class="image" src="/static/default/banner.png" mode="aspectFill"></image>
-
-		<view class="btn_wrapper">
-			<view class="flx_box"><button class="shareBtn">分享给好友</button></view>
+		<view class="box3">
+			<m-title1 title="治疗前"></m-title1>
+			<view class="content_text">{{ dataObj.beforeDesc }}</view>
+			<view class="content_img" v-if="dataObj.beforePics">
+				<image
+					class="image"
+					v-for="(item, index) in dataObj.beforePics.split(',')"
+					:key="index"
+					:src="item"
+					@tap="previewImage(dataObj.beforePics.split(','), index)"
+					mode="widthFix"
+				></image>
+			</view>
 		</view>
+		<view class="blank20"></view>
+
+		<view class="box4">
+			<!-- 治疗后 -->
+			<m-title1 title="治疗后"></m-title1>
+			<view class="content_text">{{ dataObj.afterDesc }}</view>
+			<view class="content_img" v-if="dataObj.afterPics">
+				<image
+					class="image"
+					v-for="(item, index) in dataObj.afterPics.split(',')"
+					:key="index"
+					:src="item"
+					@tap="previewImage(dataObj.afterPics.split(','), index)"
+					mode="widthFix"
+				></image>
+			</view>
+		</view>
+		<view class="blank40"></view>
+		<view class="blank40"></view>
 	</view>
 </template>
 
-<script setup></script>
+<script setup>
+import { ref, reactive, computed, getCurrentInstance } from 'vue'
+import { onLoad, onUnload } from '@dcloudio/uni-app'
+import { _storecaseGetinfo } from '@/aTemp/apis/case.js'
+import dayjs from 'dayjs'
+import { navigateTo, previewImage } from '@/aTemp/utils/uniAppTools.js'
+
+// 加载中
+const loading = ref(true)
+// 数据ID
+const dataId = ref(0)
+// 数据对象
+const dataObj = ref({})
+
+// 页面开始加载
+onLoad(async options => {
+	// console.log(options)
+	const { proxy } = getCurrentInstance()
+	// 等待onLaunch中放行后执行
+	await proxy.$onLaunched
+
+	dataId.value = parseInt(options.targetId) || 0
+
+	// 获取活动详情
+	storecaseGetinfo()
+})
+
+const storecaseGetinfo = () => {
+	_storecaseGetinfo({ id: dataId.value }).then(res => {
+		const { msg, data, code } = res
+		dataObj.value = data
+		loading.value = false
+	})
+}
+</script>
 
 <style lang="scss" scoped>
+:global(page) {
+	background-color: #ffffff;
+}
 .container {
-	padding: 32rpx 32rpx 0;
-	.box1 {
-		border-bottom: 1px solid $border-color;
-		padding-bottom: 32rpx;
-		.logo {
-			width: 80rpx;
-			height: 80rpx;
-			border-radius: 50%;
-		}
-		.title {
-			font-size: 28rpx;
-			color: $text-color;
-			margin-bottom: 20rpx;
-		}
-		.time {
-			font-size: 24rpx;
-			color: $text-color-grey;
+	width: $main-width;
+	margin: auto;
+	padding-top: 32rpx;
+}
+
+.box2 {
+	font-size: 26rpx;
+	.text1 {
+		color: $text-color-grey;
+	}
+	.cycle {
+		margin-top: 32rpx;
+	}
+	.desc {
+		margin-top: 20rpx;
+		text-align: justify;
+		line-height: 1.5;
+	}
+	.content_img {
+		.image {
+			width: 686rpx;
+			height: 368rpx;
 		}
 	}
-	.box2 {
+}
+
+.box3 {
+	.content_text {
+		text-align: justify;
+		line-height: 1.5;
 		font-size: 26rpx;
-		.text1 {
-			color: $text-color-grey;
-		}
-		.cycle {
-			margin-bottom: 32rpx;
-		}
-		.desc {
-			text-align: justify;
-			line-height: 1.5;
+	}
+	.content_img {
+		.image {
+			width: 100%;
 		}
 	}
-	> .image {
-		width: 686rpx;
-		height: 368rpx;
-		margin-bottom: 30rpx;
+}
+.box4 {
+	.content_text {
+		text-align: justify;
+		line-height: 1.5;
+		font-size: 26rpx;
 	}
-	> .btn_wrapper {
-		height: 88rpx;
-		padding-bottom: constant(safe-area-inset-bottom);
-		padding-bottom: env(safe-area-inset-bottom);
-		> .flx_box {
-			padding-bottom: constant(safe-area-inset-bottom);
-			padding-bottom: env(safe-area-inset-bottom);
-			width: $main-width;
-			position: fixed;
-			left: 0;
-			right: 0;
-			bottom: 0;
-			margin: auto;
-			height: 88rpx;
-			line-height: 88rpx;
-			> .shareBtn {
-				color: #ffffff;
-				background-color: $main-color;
-				font-size: 32rpx;
-			}
+	.content_img {
+		.image {
+			width: 100%;
 		}
 	}
 }

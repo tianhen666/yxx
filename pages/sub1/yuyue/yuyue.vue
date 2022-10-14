@@ -55,6 +55,22 @@
 					</template>
 				</view>
 			</view>
+
+			<!-- 已购项目 -->
+			<view class="doctorproject">
+				<view class="doctorproject_title">
+					{{ rules.remark.label }}
+					<text>(非必须)</text>
+				</view>
+				<view class="doctorproject_content">
+					<view class="textarea" style="width: 100%;flex: none;margin-top: 30rpx;">
+						<fuck-textarea
+							v-model="formData.remark"
+							:placeholder="rules.remark.rules[0].errorMessage"
+						></fuck-textarea>
+					</view>
+				</view>
+			</view>
 		</uni-forms>
 
 		<!-- 保存 -->
@@ -94,6 +110,10 @@ const rules = {
 	doctorproject: {
 		rules: [{ errorMessage: '请选择就诊项目' }],
 		label: '就诊项目'
+	},
+	remark: {
+		rules: [{ errorMessage: '预约已购项目' }],
+		label: '已购项目'
 	}
 }
 

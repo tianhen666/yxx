@@ -1,18 +1,77 @@
 import {
-	onLoad
-} from '@dcloudio/uni-app'
-import {
-	ref
+	ref,
+	watch
 } from 'vue'
 import uCharts from '@/pages/sub2/components/qiun-data-charts/js_sdk/u-charts/config-ucharts.js'
 import dayjs from 'dayjs'
 
 export default function(paramsObj) {
 	let {
-		errorMessage
+		zData
 	} = paramsObj
-	// 数据加载失败提示
-	errorMessage = ref(errorMessage || '数据加载失败')
+
+	// 加载失败时设置值
+	const errorMessage = ref('')
+
+	// 漏斗图数据格式
+	const chartData = ref({
+		series: []
+	})
+	// series: [{
+	// 	data: [{
+	// 		"name": "浏览人数",
+	// 		"value": 100,
+	// 		legendShape: 'triangle'
+	// 	}, {
+	// 		"name": "授权人数",
+	// 		"value": 70,
+	// 		legendShape: 'circle'
+	// 	}, {
+	// 		"name": "参与人数",
+	// 		"value": 30,
+	// 		legendShape: 'diamond'
+	// 	}]
+	// }]
+
+	watch(zData, (newVal, oldVal) => {
+		// console.log(newVal)
+		// console.log(oldVal)
+		chartData.value = {
+			series: []
+		}
+		errorMessage.value = ""
+		
+		// console.log(newVal.countNum)
+		// console.log(newVal.countNumempower)
+		// console.log(newVal.participate)
+		setTimeout(() => {
+			if (newVal.countNum > 0) {
+				const dataObj = {
+					series: [{
+						data: [{
+							name: "浏览人数",
+							value: newVal.countNum,
+							legendShape: 'triangle'
+						}, {
+							name: "授权人数",
+							value: newVal.countNumempower,
+							legendShape: 'circle'
+						}, {
+							name: "参与人数",
+							value: newVal.participate,
+							legendShape: 'diamond'
+						}]
+					}]
+				}
+
+				chartData.value = dataObj
+
+			} else {
+				errorMessage.value = "加载失败"
+			}
+		}, 500)
+
+	})
 
 	// 图表加载完成后触发
 	const chartsComplete = res => {
@@ -33,43 +92,9 @@ export default function(paramsObj) {
 		})
 	}
 
-	//拉取图表数据
-	const getServerData = () => {
-		//模拟从服务器获取数据时的延时
-		setTimeout(() => {
-			//模拟服务器返回数据，如果数据格式和标准格式不同，需自行按下面的格式拼接
-			let res = {
-				series: [{
-					data: [{
-						"name": "浏览人数",
-						"value": 100,
-						legendShape: 'triangle'
-					}, {
-						"name": "授权人数",
-						"value": 70,
-						legendShape: 'circle'
-					}, {
-						"name": "参与人数",
-						"value": 30,
-						legendShape: 'diamond'
-					}]
-				}]
-			};
-			chartData.value = JSON.parse(JSON.stringify(res));
-		}, 500);
-	}
-
-	onLoad(options => {
-		getServerData()
-	})
-
-	// 图表数据
-	const chartData = ref({})
-
-
 	// 图表配置
 	const opts = {
-		padding:[0,0,0,0],
+		padding: [0, 0, 0, 0],
 		legend: {
 			// show: false,
 		},
@@ -78,10 +103,16 @@ export default function(paramsObj) {
 		}
 	}
 
+	//  图表加载失败后触发
+	const chartsError = (e) => {
+		console.log(e)
+	}
+
 	return {
 		chartData,
 		opts,
 		errorMessage,
-		chartsComplete
+		chartsComplete,
+		chartsError
 	}
 }

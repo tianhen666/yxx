@@ -10,6 +10,18 @@ const ZPVirtualList = {
 			type: Boolean,
 			default: u.gc('useVirtualList', false)
 		},
+		//在使用虚拟列表时，是否使用兼容模式，默认为否
+		useCompatibilityMode: {
+			type: Boolean,
+			default: u.gc('useCompatibilityMode', false)
+		},
+		//使用兼容模式时传递的附加数据
+		extraData: {
+			type: Object,
+			default: function() {
+				return u.gc('extraData', {});
+			}
+		},
 		//是否在z-paging内部循环渲染列表(内置列表)，默认为否。若use-virtual-list为true，则此项恒为true
 		useInnerList: {
 			type: Boolean,
@@ -51,17 +63,17 @@ const ZPVirtualList = {
 		//虚拟列表cell高度模式，默认为fixed，也就是每个cell高度完全相同，将以第一个cell高度为准进行计算。可选值【dynamic】，即代表高度是动态非固定的，【dynamic】性能低于【fixed】。
 		cellHeightMode: {
 			type: String,
-			default: u.gc('cellHeightMode', Enum.CacheMode.Fixed)
+			default: u.gc('cellHeightMode', Enum.CellHeightMode.Fixed)
 		},
 		//虚拟列表列数，默认为1。常用于每行有多列的情况，例如每行有2列数据，需要将此值设置为2
 		virtualListCol: {
 			type: [Number, String],
 			default: u.gc('virtualListCol', 1)
 		},
-		//虚拟列表scroll取样帧率，默认为60，过高可能出现卡顿等问题
+		//虚拟列表scroll取样帧率，默认为80，过低容易出现白屏问题，过高容易出现卡顿问题
 		virtualScrollFps: {
 			type: [Number, String],
-			default: u.gc('virtualScrollFps', 60)
+			default: u.gc('virtualScrollFps', 80)
 		},
 	},
 	data() {
@@ -122,10 +134,8 @@ const ZPVirtualList = {
 		},
 		finalCellKeyName() {
 			// #ifdef APP-NVUE
-			if (this.finalUseVirtualList){
-				if (!this.cellKeyName.length){
-					u.consoleErr('在nvue中开启use-virtual-list必须设置cell-key-name，否则将可能导致列表渲染错误！');
-				}
+			if (this.finalUseVirtualList && !this.cellKeyName.length){
+				u.consoleErr('在nvue中开启use-virtual-list必须设置cell-key-name，否则将可能导致列表渲染错误！');
 			}
 			// #endif
 			return this.cellKeyName;
@@ -142,6 +152,39 @@ const ZPVirtualList = {
 		},
 	},
 	methods: {
+		//在使用动态高度虚拟列表时，手动更新指定cell的缓存高度(当cell高度在初始化之后再次改变时调用)，index代表需要更新的cell在列表中的位置，从0开始
+		didUpdateVirtualListCell(index) {
+			if (this.cellHeightMode !== Enum.CellHeightMode.Dynamic) return;
+			const currentNode = this.virtualHeightCacheList[index];
+			this._getNodeClientRect(`#zp-id-${index}`,this.finalUseInnerList).then(cellNode => {
+				const cellNodeHeight = cellNode && cellNode.length ? cellNode[0].height : 0;
+				
+				const heightDis = cellNodeHeight - currentNode.height;
+				currentNode.height = cellNodeHeight;
+				currentNode.totalHeight = currentNode.lastHeight + cellNodeHeight;
+				
+				for (let i = index + 1; i < this.virtualHeightCacheList.length; i++) {
+					const thisNode = this.virtualHeightCacheList[i];
+					if (i === index + 1) {
+						thisNode.lastHeight = cellNodeHeight;
+					}
+					thisNode.totalHeight += heightDis;
+				}
+			});
+		},
+		//在使用动态高度虚拟列表时，若删除了列表数组中的某个item，需要调用此方法以更新高度缓存数组，index代表需要更新的cell在列表中的位置，从0开始
+		didDeleteVirtualListCell(index) {
+			if (this.cellHeightMode !== Enum.CellHeightMode.Dynamic) return;
+			const currentNode = this.virtualHeightCacheList[index];
+			for (let i = index + 1; i < this.virtualHeightCacheList.length; i++) {
+				const thisNode = this.virtualHeightCacheList[i];
+				if (i === index + 1) {
+					thisNode.lastHeight = currentNode.lastHeight;
+				}
+				thisNode.totalHeight -= currentNode.height;
+			}
+			this.virtualHeightCacheList.splice(index, 1);
+		},
 		//初始化虚拟列表
 		_virtualListInit() {
 			this.$nextTick(() => {
@@ -163,10 +206,8 @@ const ZPVirtualList = {
 						const hasCellNode = cellNode && cellNode.length;
 						if (!hasCellNode) {
 							clearTimeout(updateFixedCellHeightTimeout);
-							if (this.getCellHeightRetryCount.fixed > 10) {
-								return;
-							}
-							this.getCellHeightRetryCount.fixed++;
+							if (this.getCellHeightRetryCount.fixed > 10) return;
+							this.getCellHeightRetryCount.fixed ++;
 							this._updateFixedCellHeight();
 						} else {
 							this.virtualCellHeight = cellNode[0].height;
@@ -188,17 +229,12 @@ const ZPVirtualList = {
 						if (!hasCellNode) {
 							clearTimeout(updateDynamicCellHeightTimeout);
 							this.virtualHeightCacheList = this.virtualHeightCacheList.slice(-i);
-							if (this.getCellHeightRetryCount.dynamic > 10) {
-								return;
-							}
+							if (this.getCellHeightRetryCount.dynamic > 10) return;
 							this.getCellHeightRetryCount.dynamic++;
 							this._updateDynamicCellHeight(list);
 							break;
 						}
-						let lastHeightCache = null;
-						if (this.virtualHeightCacheList.length) {
-							lastHeightCache = this.virtualHeightCacheList.slice(-1)[0];
-						}
+						const lastHeightCache = this.virtualHeightCacheList.length ? this.virtualHeightCacheList.slice(-1)[0] : null;
 						const lastHeight = lastHeightCache ? lastHeightCache.totalHeight : 0;
 						this.virtualHeightCacheList.push({
 							height: currentHeight,
@@ -212,13 +248,10 @@ const ZPVirtualList = {
 		},
 		//设置cellItem的index
 		_setCellIndex(list, isFirstPage) {
-			let lastItem = null;
 			let lastItemIndex = 0;
 			if (!isFirstPage) {
 				lastItemIndex = this.realTotalData.length;
-				if (this.realTotalData.length) {
-					lastItem = this.realTotalData.slice(-1)[0];
-				}
+				const lastItem = this.realTotalData.length ? this.realTotalData.slice(-1)[0] : null;
 				if (lastItem && lastItem[c.listCellIndexKey] !== undefined) {
 					lastItemIndex = lastItem[c.listCellIndexKey] + 1;
 				}
@@ -240,13 +273,11 @@ const ZPVirtualList = {
 		//更新scroll滚动
 		_updateVirtualScroll(scrollTop, scrollDiff = 0) {
 			const currentTimeStamp = u.getTime();
-			if (scrollTop === 0) {
-				this._resetTopRange();
-			}
+			scrollTop === 0 && this._resetTopRange();
 			if (scrollTop !== 0 && this.virtualScrollTimeStamp && currentTimeStamp - this.virtualScrollTimeStamp <= this.virtualScrollDisTimeStamp) {
 				return;
 			}
-			this.virtualScrollTimeStamp = Number(currentTimeStamp);
+			this.virtualScrollTimeStamp = currentTimeStamp;
 			
 			let scrollIndex = 0;
 			const cellHeightMode = this.cellHeightMode;
@@ -359,12 +390,16 @@ const ZPVirtualList = {
 					this._getNodeClientRect('.zp-paging-touch-view').then(node => {
 						const hasNode = node && node.length;
 						const currentTop = hasNode ? node[0].top : 0;
-						if (!hasNode || (currentTop === this.pagingOrgTop && this.virtualPlaceholderTopHeight !== 0)){
+						if (!hasNode || (currentTop === this.pagingOrgTop && this.virtualPlaceholderTopHeight !== 0)) {
 							this._updateVirtualScroll(0);
 						}
 					});
 				})
 			}
+		},
+		//处理使用内置列表时点击了cell事件
+		_innerCellClick(item, index) {
+			this.$emit('innerCellClick', item, index);
 		}
 	}
 }

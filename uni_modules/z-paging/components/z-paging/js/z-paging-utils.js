@@ -1,6 +1,5 @@
 // [z-paging]工具类
 
-import zI18n from './z-paging-i18n'
 import zConfig from './z-paging-config'
 import zLocalConfig from '../config/index'
 
@@ -38,15 +37,6 @@ function gc(key, defaultValue) {
 	return value === undefined ? defaultValue : value;
 }
 
-//判断两个数组是否相等
-function arrayIsEqual(arr1, arr2) {
-	if (arr1 === arr2) return true;
-	if (arr1.length !== arr2.length) return false;
-	for (let i = 0; i < arr1.length; i++) {
-		if (arr1[i] !== arr2[i]) return false;
-	}
-	return true;
-}
 
 //获取最终的touch位置
 function getTouch(e) {
@@ -75,15 +65,15 @@ function getTouchFromZPaging(target) {
 		const classList = target.classList;
 		if (classList && classList.contains('z-paging-content')) {
 			return {
-				'isFromZp': true, 
-				'isPageScroll': classList.contains('z-paging-content-page'), 
-				'isReachedTop': classList.contains('z-paging-reached-top')
+				isFromZp: true, 
+				isPageScroll: classList.contains('z-paging-content-page'), 
+				isReachedTop: classList.contains('z-paging-reached-top')
 			};
 		} else {
 			return getTouchFromZPaging(target.parentNode);
 		}
 	} else {
-		return {'isFromZp': false};
+		return {isFromZp: false};
 	}
 }
 
@@ -99,59 +89,35 @@ function consoleErr(err) {
 	console.error(`[z-paging]${err}`);
 }
 
-//打印警告信息
-function consoleWarn(warn) {
-	console.warn(`[z-paging]${warn}`);
-}
-
 //设置下拉刷新时间
 function setRefesrherTime(time, key) {
-	try {
-		let datas = getRefesrherTime();
-		if (!datas) {
-			datas = {};
-		}
-		datas[key] = time;
-		uni.setStorageSync(storageKey, datas);
-	} catch (e) {}
+	const datas = getRefesrherTime() || {};
+	datas[key] = time;
+	uni.setStorageSync(storageKey, datas);
 }
 
 //获取下拉刷新时间
 function getRefesrherTime() {
-	try {
-		const datas = uni.getStorageSync(storageKey);
-		return datas;
-	} catch (e) {
-		return null;
-	}
+	return uni.getStorageSync(storageKey);
 }
 
 //通过下拉刷新标识key获取下拉刷新时间
 function getRefesrherTimeByKey(key) {
 	const datas = getRefesrherTime();
-	if (datas) {
-		const data = datas[key];
-		if (data) return data;
-	}
-	return null;
+	return datas && datas[key] ? datas[key] : null;
 }
 
 //通过下拉刷新标识key获取下拉刷新时间(格式化之后)
-function getRefesrherFormatTimeByKey(key) {
+function getRefesrherFormatTimeByKey(key, textMap) {
 	const time = getRefesrherTimeByKey(key);
-	let timeText = zI18n.t['refresherUpdateTimeNoneText'][zI18n.getLanguage()];
-	if (time) {
-		timeText = _timeFormat(time);
-	}
-	return `${zI18n.t['refresherUpdateTimeText'][zI18n.getLanguage()]}${timeText}`;
+	const timeText = time ? _timeFormat(time, textMap) : textMap.none;
+	return `${textMap.title}${timeText}`;
 }
 
 //将文本的px或者rpx转为px的值
 function convertTextToPx(text) {
 	const dataType = Object.prototype.toString.call(text);
-	if (dataType === '[object Number]') {
-		return text;
-	}
+	if (dataType === '[object Number]') return text;
 	let isRpx = false;
 	if (text.indexOf('rpx') !== -1 || text.indexOf('upx') !== -1) {
 		text = text.replace('rpx', '').replace('upx', '');
@@ -183,7 +149,7 @@ function getInstanceId() {
 
 //------------------ 私有方法 ------------------------
 //时间格式化
-function _timeFormat(time) {
+function _timeFormat(time, textMap) {
 	const date = new Date(time);
 	const currentDate = new Date();
 	const dateDay = new Date(time).setHours(0, 0, 0, 0);
@@ -192,9 +158,9 @@ function _timeFormat(time) {
 	let dayStr = '';
 	const timeStr = _dateTimeFormat(date);
 	if (disTime === 0) {
-		dayStr = zI18n.t['refresherUpdateTimeTodayText'][zI18n.getLanguage()];
+		dayStr = textMap.today;
 	} else if (disTime === -86400000) {
-		dayStr = zI18n.t['refresherUpdateTimeYesterdayText'][zI18n.getLanguage()];
+		dayStr = textMap.yesterday;
 	} else {
 		dayStr = _dateDayFormat(date, date.getFullYear() !== currentDate.getFullYear());
 	}
@@ -206,11 +172,7 @@ function _dateDayFormat(date, showYear = true) {
 	const year = date.getFullYear();
 	const month = date.getMonth() + 1;
 	const day = date.getDate();
-	if (showYear) {
-		return `${year}-${_fullZeroToTwo(month)}-${_fullZeroToTwo(day)}`;
-	} else {
-		return `${_fullZeroToTwo(month)}-${_fullZeroToTwo(day)}`;
-	}
+	return showYear ? `${year}-${_fullZeroToTwo(month)}-${_fullZeroToTwo(day)}` : `${_fullZeroToTwo(month)}-${_fullZeroToTwo(day)}`;
 }
 
 //data格式化为时分
@@ -223,8 +185,7 @@ function _dateTimeFormat(date) {
 //不满2位在前面填充0
 function _fullZeroToTwo(str) {
 	str = str.toString();
-	if (str.length === 1) return '0' + str;
-	return str;
+	return str.length === 1 ? '0' + str : str;
 }
 
 //驼峰转短横线
@@ -236,13 +197,11 @@ export default {
 	gc,
 	setRefesrherTime,
 	getRefesrherFormatTimeByKey,
-	arrayIsEqual,
 	getTouch,
 	getTouchFromZPaging,
 	getParent,
 	convertTextToPx,
 	getTime,
 	getInstanceId,
-	consoleErr,
-	consoleWarn
+	consoleErr
 };

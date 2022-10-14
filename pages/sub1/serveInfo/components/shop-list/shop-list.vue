@@ -1,12 +1,15 @@
 <template>
 	<view class="container">
 		<slot name="title"></slot>
-		<view class="container_item" v-for="(item, index) in list" :key="index">
-			<image class="image" :src="item.img" mode="aspectFill"></image>
+		<view
+			class="container_item"
+			v-for="(item, index) in listData"
+			:key="index"
+			@tap="navigateTo(`/pages/sub1/goodsInfo/goodsInfo?targetId=${item.id}`)"
+		>
+			<image class="image" :src="item.pics.split(',')[0]" mode="aspectFill"></image>
 			<view class="right">
-				<view class="title">
-					金属托槽矫正金属托槽矫正金属托槽矫正金属托槽矫正金属托槽矫正金属托槽矫正金属托槽矫正金属托槽矫正
-				</view>
+				<view class="title">{{ item.title }}</view>
 
 				<!-- 价格 -->
 				<view class="box">
@@ -15,13 +18,13 @@
 							<text class="price_cn">￥</text>
 							<text>{{ item.price }}</text>
 						</view>
-						<view class="originalPrice">
+						<view class="originalPrice" v-if="item.priceNormal">
 							<text>￥</text>
-							<text class="originalPrice_through">{{ item.originalPrice }}</text>
+							<text class="originalPrice_through">{{ item.priceNormal }}</text>
 						</view>
 					</view>
 
-					<view class="right">立即购买</view>
+					<view class="right">购买</view>
 				</view>
 			</view>
 		</view>
@@ -29,36 +32,14 @@
 </template>
 
 <script setup>
-const list = [
-	{
-		title: '测试标题测试标题测试标题测试标题测试标题测试标题测试标题测试标题测试标题测试标题测试标题测试标题测试标题',
-		time: '2022.08.18-2022.08.28',
-		img: '/static/default/banner.png',
-		price: 888888888888888888888888,
-		originalPrice: 888888888888,
-		jion: 99,
-		type: '拼团'
-	},
-	{
-		title: '测试标题',
-		desc: '描述信息描述信息描述信息描述信息',
-		img: '/static/default/banner.png',
-		time: '2022.08.18-2022.08.28',
-		price: 8888,
-		originalPrice: 180,
-		jion: 99,
-		type: '拼团'
-	},
-	{
-		title: '测试标题',
-		desc: '描述信息描述信息描述信息描述信息',
-		img: '/static/default/banner.png',
-		price: 8888,
-		originalPrice: 180,
-		jion: 99,
-		type: '拼团'
+import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
+const props = defineProps({
+	listData: {
+		required: true,
+		type: Array,
+		default: () => []
 	}
-]
+})
 </script>
 
 <style lang="scss" scoped>
@@ -72,18 +53,18 @@ const list = [
 		@include mFlex;
 		justify-content: space-between;
 		margin-bottom: 20rpx;
-		&:last-child{
+		&:last-child {
 			margin-bottom: 0;
 		}
 		> .image {
-			width: 220rpx;
-			height: 220rpx;
+			width: 140rpx;
+			height: 140rpx;
 			flex: none;
 			border-radius: 8rpx;
 		}
 		> .right {
 			flex: auto;
-			padding-left:30rpx;
+			padding-left: 30rpx;
 			> .title {
 				color: $text-color;
 				text-align: justify;
@@ -95,11 +76,10 @@ const list = [
 			> .box {
 				@include mFlex;
 				justify-content: space-between;
-				margin-top: 30rpx;
+				margin-top: 20rpx;
 				> .price_wrapper {
 					flex: none;
 					white-space: nowrap;
-					width: 226rpx;
 					overflow: hidden;
 					@include mFlex;
 					justify-content: left;
@@ -130,6 +110,7 @@ const list = [
 					background-color: $sub-color;
 					padding: 15rpx 0;
 					border-radius: 8rpx;
+					margin-left: 20rpx;
 				}
 			}
 		}

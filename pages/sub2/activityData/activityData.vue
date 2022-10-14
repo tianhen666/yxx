@@ -26,7 +26,13 @@
 			<!-- 标题 -->
 			<m-title2 title="活动收益" />
 
-			<view class="time">(统计时间：2022年8月23--2022年8月30)</view>
+			<view class="time">
+				{{
+					`(统计时间：${dayjs(categoryOption1[activityId]?.startDt).format('YYYY年MM月DD日')} - ${dayjs(
+						categoryOption1[activityId]?.endDt
+					).format('YYYY年MM月DD日')})`
+				}}
+			</view>
 			<view class="blank32"></view>
 
 			<view class="box2_total">
@@ -34,7 +40,7 @@
 				<view class="box2_total_item">
 					<text class="text">总收益</text>
 					<view class="num">
-						{{ 10334 }}
+						{{ totleData.spocoalesce || 0 }}
 						<text>元</text>
 					</view>
 				</view>
@@ -42,7 +48,7 @@
 				<view class="box2_total_item border">
 					<text class="text">浏览人数</text>
 					<view class="num">
-						{{ 66666 }}
+						{{ totleData.eicount || 0 }}
 						<text>人</text>
 					</view>
 				</view>
@@ -50,7 +56,7 @@
 				<view class="box2_total_item">
 					<text class="text">参与人数</text>
 					<view class="num">
-						{{ 1234 }}
+						{{ totleData.stcount || 0 }}
 						<text>人</text>
 					</view>
 				</view>
@@ -66,6 +72,7 @@
 					:canvas2d="true"
 					canvasId="YgBRQEqhjzgZiUNLcQHAEjuiydoujlta"
 					tooltipFormat="tooltipMy"
+					:errorReload="false"
 					:errorMessage="errorMessage1"
 					@complete="chartsComplete1"
 				/>
@@ -78,7 +85,13 @@
 			<!-- 标题 -->
 			<m-title2 title="数据分析" moreText="查看详情" path="/pages/sub2/activityDataDetails/activityDataDetails" />
 
-			<view class="time">(统计时间：2022年8月23--2022年8月30)</view>
+			<view class="time">
+				{{
+					`(统计时间：${dayjs(categoryOption1[activityId]?.startDt).format('YYYY年MM月DD日')} - ${dayjs(
+						categoryOption1[activityId]?.endDt
+					).format('YYYY年MM月DD日')})`
+				}}
+			</view>
 
 			<!-- 漏斗图 -->
 			<view class="charts-box">
@@ -88,6 +101,7 @@
 					:chartData="chartData2"
 					:canvas2d="true"
 					canvasId="cKBfAErggEvpwVTWLRPQcfwcZxDrbULO"
+					:errorReload="false"
 					:errorMessage="errorMessage2"
 					@complete="chartsComplete2"
 				/>
@@ -100,7 +114,13 @@
 			<!-- 标题 -->
 			<m-title2 title="邀请排行榜" moreText="查看详情" path="/pages/sub2/activityDataDetails/activityDataDetails" />
 
-			<view class="time">(统计时间：2022年8月23--2022年8月30)</view>
+			<view class="time">
+				{{
+					`(统计时间：${dayjs(categoryOption1[activityId]?.startDt).format('YYYY年MM月DD日')} - ${dayjs(
+						categoryOption1[activityId]?.endDt
+					).format('YYYY年MM月DD日')})`
+				}}
+			</view>
 			<view class="blank32"></view>
 
 			<!-- 排行榜数据 -->
@@ -112,20 +132,84 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
-import { _enrollformGetlist } from '@/aTemp/apis/activity.js'
 import qiunDataCharts from '@/pages/sub2/components/qiun-data-charts/components/qiun-data-charts/qiun-data-charts.vue'
+import dayjs from 'dayjs'
+import { _enrollformGetlist } from '@/aTemp/apis/activity.js'
+import { _storeproductStatistics } from '@/aTemp/apis/store.js'
+
 // 活动数据列表
 const categoryOption1 = ref([])
 // 当前活动ID
-const activityId = ref(1)
+const activityId = ref(0)
 
-onLoad(() => {
-	_enrollformGetlist({ status: 0 }).then(res => {
+// 每页数量
+// const pageSize = ref(6)
+// 有多少页面
+// const pageNum = ref(1)
+// 是否加载完成
+const pageLoadStatus = ref('loading')
+
+// 数据统计
+const totleData = ref({})
+// 折线图表数据
+const zLineData = ref([])
+// 漏斗数据
+const zLouDouData = ref([])
+
+// 获取活动列表
+const getListData = data => {
+	_enrollformGetlist(data).then(res => {
 		const { code, data, msg } = res
-		categoryOption1.value = data
+		categoryOption1.value = data.map((item, index) => {
+			return {
+				value: index,
+				text: item.title,
+				id: item.id,
+				startDt: item.startDt,
+				endDt: item.endDt
+			}
+		})
+		// 获取数据统计
+		storeproductStatistics()
 	})
+}
+
+// 获取统计数据
+const storeproductStatistics = () => {
+	pageLoadStatus.value = 'loading'
+	_storeproductStatistics({ productid: categoryOption1.value[activityId.value].id })
+		.then(res => {
+			const { code, msg, data } = res
+
+			totleData.value = {
+				eicount: data[1].activitystatistics[0].eicount,
+				spocoalesce: data[1].activitystatistics[0].spocoalesce,
+				stcount: data[1].activitystatistics[0].stcount
+			}
+			zLineData.value = data[1].activityNum || []
+			zLouDouData.value = data[1].activityenrollinfoNum[0] || {}
+			pageLoadStatus.value = 'noMore'
+		})
+		.catch(err => {
+			zLineData.value.length = 0
+			zLouDouData.value.length = 0
+			pageLoadStatus.value = 'noMore'
+		})
+}
+
+onLoad(options => {
+	getListData()
+})
+
+// 监听选择活动的变化,重新获取数据
+watch(activityId, (newVal, oldVal) => {
+	if (newVal >= 0) {
+		zLineData.value.length = 0
+		zLouDouData.value.length = 0
+		storeproductStatistics()
+	}
 })
 
 /*
@@ -136,9 +220,10 @@ const {
 	chartData: chartData1,
 	opts: opts1,
 	errorMessage: errorMessage1,
-	chartsComplete: chartsComplete1
+	chartsComplete: chartsComplete1,
+	chartsError: chartsError1
 } = UseLineChart({
-	errorMessage: '数据加载失败'
+	zData: zLineData
 })
 
 /*
@@ -150,7 +235,7 @@ const {
 	opts: opts2,
 	errorMessage: errorMessage2,
 	chartsComplete: chartsComplete2
-} = UseFunnelChart({ errorMessage: '数据加载失败' })
+} = UseFunnelChart({ zData: zLouDouData })
 </script>
 
 <style lang="scss" scoped>

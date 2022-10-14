@@ -1,16 +1,11 @@
 <template>
 	<view class="content">
 		<!-- tab切换 -->
-		<uni-segmented-control
-			:current="current"
-			:values="items"
-			style-type="text"
-			@clickItem="onClickItem"
-		/>
+		<uni-segmented-control :current="current" :values="items" style-type="text" @clickItem="onClickItem" />
 		<view class="blank20"></view>
 		<!-- 切换内容 -->
 		<view class="content">
-			<mTabContent :listData="orderListData"></mTabContent>
+			<m-tab-content :listData="orderListData"></m-tab-content>
 			<!-- 加载更多 -->
 			<uni-load-more :status="pageLoadStatus" />
 
@@ -46,14 +41,12 @@ const orderListData = ref([])
 
 // tab切换
 const onClickItem = e => {
-	if (current.value !== e.currentIndex) {
-		current.value = e.currentIndex
+	current.value = e.currentIndex
 
-		// 重置数据和分页
-		orderListData.value = []
-		pageNum.value = 1
-		orderGetList()
-	}
+	// 重置数据和分页
+	orderListData.value = []
+	pageNum.value = 1
+	orderGetList()
 }
 
 // 页面加载

@@ -3,7 +3,7 @@
 		<slot name="title"></slot>
 		<!-- 滚动图片 -->
 		<scroll-view scroll-x="true" class="scroll-view_H" scroll-left="20">
-			<view class="scroll_item" v-for="(item, index) in imgList" :key="index">
+			<view class="scroll_item" v-for="(item, index) in imgList" :key="index" @tap="previewImage(imgList,index)">
 				<image class="image" :src="item" mode="heightFix"></image>
 			</view>
 		</scroll-view>
@@ -13,6 +13,8 @@
 
 <script setup>
 import { ref, reactive, computed } from 'vue'
+import { previewImage } from '@/aTemp/utils/uniAppTools.js'
+
 const props = defineProps({
 	// 数据列表
 	info: {

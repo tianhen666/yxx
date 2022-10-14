@@ -5,7 +5,7 @@
 		<view class="box1 box">
 			<view class="box1_item" v-for="(item, index) in listData" :key="index">
 				<view class="box1_item_left">
-					<image class="image" :src="item.avatar||'/static/images/default_avatar.png'" mode="aspectFill"></image>
+					<image class="image" :src="item.avatar || '/static/images/default_avatar.png'" mode="aspectFill"></image>
 				</view>
 				<view class="box1_item_center">
 					<view class="box1_item_center_box1">
@@ -24,7 +24,13 @@
 					</view>
 				</view>
 				<view class="box1_item_right">
-					<button class="box1_item_right_btn" v-if="item.power !== 1" @tap="popupTap(item)">员工设置</button>
+					<button
+						class="box1_item_right_btn"
+						v-if="item.power !== 1 && useUserMain.power === 1"
+						@tap="popupTap(item, index)"
+					>
+						员工设置
+					</button>
 				</view>
 			</view>
 		</view>
@@ -87,15 +93,14 @@ const shareInfo = reactive({ title: '', path: '', imageUrl: '', query: '' })
 // 设置分享
 useShare(shareInfo)
 
-
 //  设置分享参数
 onLoad(options => {
 	wx.hideShareMenu()
-	
+
 	// 获取店铺信息
 	_storeGetinfo().then(res => {
 		const { code, msg, data } = res
-		shareInfo.title = `邀请您加入【${data.name}】`
+		shareInfo.title = `${useUserMain.nickname}-邀请您加入【${data.name}】`
 		shareInfo.path = computed(
 			() =>
 				`/pages/sub2/manageStaffListLogin/manageStaffListLogin?invitationCode=${useUserMain.openId}&storeId=${
@@ -125,7 +130,7 @@ onLoad(options => {
 // 表单校验
 const rules = {
 	remarkname: {
-		rules: [{ required: true, errorMessage: '请输入姓名备注' }],
+		rules: [{ errorMessage: '请输入姓名备注' }],
 		label: '姓名备注'
 	},
 	power: {
@@ -138,13 +143,16 @@ const optionPower = [
 	{ value: 1, text: '创建者', disable: true },
 	{ value: 2, text: '管理员' },
 	{ value: 3, text: '订单核销' },
-	{ value: 4, text: '活动管理' }
+	{ value: 4, text: '活动管理' },
+	{ value: 0, text: '无权限' }
 ]
 
 // 弹出层
 const popup = ref(null)
 // 表单数据
 const formData = ref({})
+// 当前修改的列表索引
+const currentListDataIndex = ref('')
 // 获取表单对象
 const formObj = ref(null)
 // 加载中1
@@ -153,8 +161,9 @@ const loading1 = ref(false)
 const loading2 = ref(false)
 
 // 弹出弹框
-const popupTap = item => {
-	formData.value = item
+const popupTap = (item, index) => {
+	formData.value = JSON.parse(JSON.stringify(item))
+	currentListDataIndex.value = index
 	popup.value.open()
 }
 
@@ -162,7 +171,7 @@ const popupTap = item => {
 const popupClose = () => {
 	popup.value.close()
 	// 重新获取员工列表
-	getUserList()
+	// getUserList()
 }
 
 // 移除员工
@@ -176,25 +185,26 @@ const deleteClick = () => {
 				// 关闭弹出框
 				popup.value.close()
 				loading2.value = false
-				// 重新获取员工列表
-				getUserList()
+
+				// 移除列表中的元素
+				delete listData.value[currentListDataIndex.value]
 			})
 		}
 	})
 }
 
-// 保持备注信息
+// 保存备注信息
 const saveClick = _debounce(
 	() => {
 		formObj.value
 			.validate()
 			.then(formRes => {
 				_userUpdate(formData.value).then(res => {
+					listData.value[currentListDataIndex.value] = JSON.parse(JSON.stringify(formData.value))
+					// 关闭弹出框
+					popup.value.close()
 					loading1.value = false
 				})
-				// 关闭弹出框
-				popup.value.close()
-				loading1.value = false
 			})
 			.catch(err => {
 				// console.log('表单错误信息：', err)
@@ -209,7 +219,10 @@ const saveClick = _debounce(
 // 修改权限
 const setUserPower = e => {
 	let powerId = e.detail.data.value
-	_userPower({ power: powerId, userId: formData.value.id }).then(res => {})
+	_userPower({ power: powerId, userId: formData.value.id }).then(res => {
+		// 修改成功重新赋值
+		listData.value[currentListDataIndex.value].power = formData.value.power
+	})
 }
 </script>
 

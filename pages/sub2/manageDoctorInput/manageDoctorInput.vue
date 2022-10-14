@@ -30,8 +30,10 @@
 					:max="selectNum2"
 					v-model="picList2"
 					mediaType="image"
+					:formData="{baseDir:baseDir2}"
 					:action="uploadimageURL2"
 					@uploadSuccess="uploadSuccess2"
+					
 				/>
 			</uni-forms-item>
 			<view class="blank32 blank_bg_color"></view>
@@ -116,10 +118,11 @@ import useHtzImageUpload from '@/aTemp/mixins/useHtzImageUpload.js'
 // 医生图片上传
 const { chooseSuccess: chooseSuccess1, picList: picList1, selectNum: selectNum1 } = useHtzImageUpload({
 	ratio: 3 / 4,
-	url: '/storedoctor/uploadimage',
+	url: '/enrollform/uploadimage',
 	refData: formData,
 	param: 'avatar',
-	selectNum: 1
+	selectNum: 1,
+	baseDir: 'doctor'
 })
 
 // 详情图片上传
@@ -127,12 +130,14 @@ const {
 	uploadSuccess: uploadSuccess2,
 	picList: picList2,
 	selectNum: selectNum2,
-	uploadimageURL: uploadimageURL2
+	uploadimageURL: uploadimageURL2,
+	baseDir: baseDir2
 } = useHtzImageUpload({
-	url: '/storedoctor/uploadimage',
+	url: '/enrollform/uploadimage',
 	refData: formData,
 	param: 'detail',
-	selectNum: 4
+	selectNum: 4,
+	baseDir: 'doctor'
 })
 </script>
 

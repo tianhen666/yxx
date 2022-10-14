@@ -2,17 +2,18 @@
 	<view class="activity">
 		<view
 			class="activity_item"
-			v-for="(item, index) in props.listData"
+			v-for="(item, index) in listData"
 			:key="index"
-			@tap="navigateTo(`/pages/sub1/activityInfo/activityInfo?id=${item.id}`)"
+			@tap="navigateTo(`/pages/sub1/activityInfo/activityInfo?targetId=${item.id}`)"
 		>
+			<!-- 封面图 -->
 			<view class="activity_item_img">
 				<image class="image" :src="item.mainPic" mode="aspectFill"></image>
 				<!-- 活动类型 -->
 				<view class="type">
-					<image class="image" :src="`/static/images/type${index + 1}.png`" mode="aspectFill"></image>
+					<image class="image" :src="`/static/images/type${index%2 + 1}.png`" mode="aspectFill"></image>
 					<text class="text">
-						{{ item.type === 0 ? '义诊' : item.type === 1 ? '秒杀' : item.type === 2 ? '拼团' : '' }}活动
+						{{ item.type === 0 ? '免费引流' : item.type === 1 ? '爆款活动' : item.type === 2 ? '限量秒杀' : '' }}
 					</text>
 				</view>
 			</view>
@@ -25,9 +26,9 @@
 					<view class="time">
 						{{ dayjs(item.startDt).format('M月D日') + '——' + dayjs(item.endDt).format('M月D日') }}
 					</view>
-					<view class="price_wrapper" v-if="parseInt(item.price) > 0">
+					<view class="price_wrapper" v-if="parseFloat(item.price) > 0">
 						<!-- 划线价格 -->
-						<view class="originalPrice">
+						<view class="originalPrice" v-if="item.alonePrice">
 							<text class="through">￥{{ item.alonePrice }}</text>
 						</view>
 						<!-- 出售价格 -->
@@ -42,25 +43,34 @@
 				<view class="add_wrapper">
 					<view class="left">
 						<view class="img_wrapper">
-							<view class="image_box style1">
-								<image class="image" src="/static/default/tup4.jpg" mode="aspectFill"></image>
-							</view>
-							<view class="image_box style2">
-								<image class="image" src="/static/default/tup4.jpg" mode="aspectFill"></image>
-							</view>
-							<view class="image_box style3">
-								<image class="image" src="/static/default/tup4.jpg" mode="aspectFill"></image>
-							</view>
+							<template v-for="(subItem, subIndex) in item.infoList" :key="subIndex">
+								<view
+									class="image_box"
+									:style="{ zIndex: subIndex + 1, left: subIndex * 40 + 'rpx' }"
+									v-if="subItem && subIndex < 5"
+								>
+									<image
+										class="image"
+										:src="subItem.avatar || '/static/images/default_avatar.png'"
+										mode="aspectFill"
+									></image>
+								</view>
+							</template>
 						</view>
-						<view class="text">已有{{ item.jion }}人参与</view>
+						<view class="text">已有{{ (item.infocount || 0) + 50 }}人参与</view>
 					</view>
-					<view class="jion" :class="`style${index + 1}`">
-						<text>参与{{ item.type === 0 ? '义诊' : item.type === 1 ? '秒杀' : item.type === 2 ? '拼团' : '' }}</text>
+					<view class="jion" :class="`style${index%2 + 1}`">
+						<text>参与活动</text>
 						<image class="image" :src="`/static/images/right${index + 1}.png`" mode="aspectFill"></image>
 					</view>
 				</view>
 			</view>
 		</view>
+	</view>
+
+	<view class="more" @click="navigateTo('/pages/sub1/activityList/activityList')" v-if="listData.length > 2 && more">
+		<text class="text">查看更多</text>
+		<uni-icons type="bottom" size="16" color="#bbb"></uni-icons>
 	</view>
 </template>
 
@@ -74,11 +84,27 @@ const props = defineProps({
 		default() {
 			return []
 		}
+	},
+	more: {
+		type: Boolean,
+		default: false
 	}
 })
 </script>
 
 <style lang="scss" scoped>
+.more {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-top: 30rpx;
+	.text {
+		color: #bbb;
+		font-size: 26rpx;
+		padding-right: 3px;
+	}
+}
+
 .activity {
 	&_item {
 		border-radius: 20rpx;
@@ -202,7 +228,7 @@ const props = defineProps({
 						position: relative;
 						overflow: hidden;
 						height: 54rpx;
-						width: 130rpx;
+						width: 216rpx;
 						> .image_box {
 							position: absolute;
 							top: 0;
@@ -218,22 +244,6 @@ const props = defineProps({
 								border-radius: 50%;
 							}
 						}
-						> .style1 {
-							left: 0;
-							z-index: 1;
-						}
-						> .style2 {
-							left: 32rpx;
-							z-index: 2;
-						}
-						> .style3 {
-							left: 64rpx;
-							z-index: 3;
-						}
-						> .style4 {
-							left: 96rpx;
-							z-index: 4;
-						}
 					}
 					> .text {
 						flex: auto;
@@ -242,6 +252,7 @@ const props = defineProps({
 						color: $text-color-grey;
 						font-size: 24rpx;
 						color: #cdcdcd;
+						margin-left: 10rpx;
 					}
 				}
 				> .jion {
@@ -266,6 +277,10 @@ const props = defineProps({
 				> .style2 {
 					color: #fb4646;
 					background: linear-gradient(to right, transparent, rgba(251, 70, 70, 0.3));
+				}
+				> .style3 {
+					color: #4685fb;
+					background: linear-gradient(to right, transparent, rgba(70, 133, 251, 0.3));
 				}
 			}
 		}

@@ -10,11 +10,11 @@
 					@chooseavatar="onChooseAvatar"
 					hover-class="avatar-button-hover"
 				>
-					<image src="/static/images/default_avatar.png" class="image" mode="aspectFill"></image>
+					<image :src="formData.avatar || '/static/images/default_avatar.png'" class="image" mode="aspectFill"></image>
 				</button>
 			</uni-forms-item>
 			<view class="tips">点击图片，可以更换头像</view>
-			
+
 			<!-- 昵称 -->
 			<uni-forms-item :label="rules.nickname.label" name="nickname">
 				<uni-easyinput
@@ -36,6 +36,14 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
+import config from '@/global-config.js'
+import { uploadFile } from '@/aTemp/utils/uniAppTools.js'
+import { _userUpdate } from '@/aTemp/apis/user.js'
+import { showToastText,navigateBack } from '@/aTemp/utils/uniAppTools'
+import { _debounce } from '@/aTemp/utils/tools.js'
+// 全局登录信息
+import { _useUserMain } from '@/aTemp/store/userMain.js'
+const useUserMain = _useUserMain()
 
 // 表单校验
 const rules = {
@@ -50,7 +58,11 @@ const rules = {
 }
 
 // 表单数据
-const formData = ref({})
+const formData = ref({
+	avatar: useUserMain.avatar,
+	nickname: useUserMain.nickname,
+	id: useUserMain.userid
+})
 // 获取表单对象
 const formObj = ref(null)
 
@@ -58,15 +70,39 @@ const formObj = ref(null)
 onLoad(optios => {})
 
 // 获取头像
-const onChooseAvatar = e => {
+const onChooseAvatar = async e => {
 	const avatarUrl = e.detail.avatarUrl
+	const resUploadFile = await uploadFile(avatarUrl, config.BASE_URL + '/enrollform/uploadimage', { baseDir: 'avatar' })
+	const { code, data, msg } = JSON.parse(resUploadFile)
+	formData.value.avatar = data
 }
 /*
- * 保存banenr信息功能
- * 组合式函数引入
+ * 保存
  */
-// import useSaveApi from '@/aTemp/mixins/useSaveApi.js'
-// const { saveClick, loading } = useSaveApi(formObj, formData, _bannerSave)
+const loading = ref(false)
+const saveClick = _debounce(
+	() => {
+		formObj.value
+			.validate()
+			.then(formRes => {
+				// 保存信息接口
+				_userUpdate(formData.value).then(res => {
+					loading.value = false
+					useUserMain.$patch({ avatar: formData.value.avatar, nickname: formData.value.nickname })
+					showToastText('提交成功~')
+					// 返回上一级
+					navigateBack()
+				})
+			})
+			.catch(err => {
+				loading.value = false
+				showToastText(err[0].errorMessage)
+				console.log('表单错误信息：', err)
+			})
+	},
+	1000,
+	loading
+)
 </script>
 
 <style lang="scss" scoped>

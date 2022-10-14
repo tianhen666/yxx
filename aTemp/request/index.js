@@ -23,21 +23,28 @@ instance.interceptors.request.use(
 		if (!config.data) {
 			config.data = {}
 		}
+		// config.params如果是undefined 赋值为对象
+		if (!config.params) {
+			config.params = {}
+		}
 
 		// 获取第三方平台自定义的数据字段
 		// console.log(uni.getExtConfigSync())
 
-		// 获取用户信息
+		// 获取缓存中登录信息
 		const userMain = uni.getStorageSync("userMain")
 		const {
 			storeId,
 			token
 		} = userMain
 
-		// 如果有店铺ID
-		if (storeId) {
+		/* 
+		 * 设置默认请求参数,url,body中,排除 "/wx/login"
+		 */
+		// console.log(config)
+		if (storeId && config.url != "/wx/login") {
 			config.data.storeId = parseInt(storeId)
-			config.url += `?storeId=${storeId}`
+			config.params.storeId = parseInt(storeId)
 		}
 
 		// 设置token

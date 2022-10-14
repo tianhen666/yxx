@@ -29,13 +29,14 @@
 
 <script setup>
 import { _wxWxqrCode } from '@/aTemp/apis/login.js'
+// base64转图片路径
+import { base64ToPath } from 'image-tools'
 import { previewImage, navigateTo, showLoading } from '@/aTemp/utils/uniAppTools.js'
 // 全局登录信息
 import { _useUserMain } from '@/aTemp/store/userMain.js'
 const useUserMain = _useUserMain()
 
-// base64转图片路径
-import { base64ToPath } from 'image-tools'
+
 const wxWxqrCode = () => {
 	showLoading('加载中')
 	_wxWxqrCode({ openid: useUserMain.openId, scene: 'pages' }).then(async res => {

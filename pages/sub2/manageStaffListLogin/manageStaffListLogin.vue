@@ -1,4 +1,5 @@
 <template>
+	<m-page-loading v-if="loading"></m-page-loading>
 	<view class="container">
 		<image class="bg_img" src="https://imgs.fenxiangzl.com/store/tooth/invitbg1.png" mode="widthFix"></image>
 		<view class="box box1">
@@ -10,22 +11,33 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue'
+import { ref, getCurrentInstance } from 'vue'
 import { _userChangeUserId } from '@/aTemp/apis/user.js'
 import { _storeGetinfo } from '@/aTemp/apis/store.js'
 import { onLoad } from '@dcloudio/uni-app'
-import { showToastText,redirectTo } from '@/aTemp/utils/uniAppTools.js'
+import { showToastText, redirectTo } from '@/aTemp/utils/uniAppTools.js'
 
 // 全局登录信息
 import { _useUserMain } from '@/aTemp/store/userMain.js'
 const useUserMain = _useUserMain()
 
+// 店铺信息
 const storeInfo = ref({})
-onLoad(options => {
+// 加载中
+const loading = ref(true)
+onLoad(async options => {
 	// console.log(options)
+
+	// 等待onLaunch中放行后执行
+	const { proxy } = getCurrentInstance()
+	await proxy.$onLaunched
+
 	_storeGetinfo().then(res => {
 		const { data, msg, code } = res
 		storeInfo.value = data
+		setTimeout(()=>{
+			loading.value = false
+		},1000)
 	})
 })
 
@@ -33,13 +45,16 @@ onLoad(options => {
 const jionStore = () => {
 	_userChangeUserId({
 		userid: useUserMain.userid
-	}).then(res=>{
+	}).then(res => {
 		const { data, msg, code } = res
-		showToastText("加入成功,正在跳转...")
-		
-		setTimeout(()=>{
+		showToastText('加入成功,正在跳转...')
+
+		// 修改用户权限
+		useUserMain.$patch({ power: 0 })
+
+		setTimeout(() => {
 			redirectTo('/pages/main/index/index')
-		},1000)
+		}, 1000)
 	})
 }
 </script>

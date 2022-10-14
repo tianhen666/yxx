@@ -134,9 +134,7 @@ export default {
 		//loading(下拉刷新、上拉加载更多)的主题样式，支持black，white，默认black
 		defaultThemeStyle: {
 			type: String,
-			default: function() {
-				return u.gc('defaultThemeStyle', 'black');
-			}
+			default: u.gc('defaultThemeStyle', 'black')
 		},
 		//z-paging是否使用fixed布局，若使用fixed布局，则z-paging的父view无需固定高度，z-paging高度默认为100%，默认为是(当使用内置scroll-view滚动时有效)
 		fixed: {
@@ -178,14 +176,9 @@ export default {
 			type: Boolean,
 			default: u.gc('watchTouchDirectionChange', false)
 		},
-		//是否将错误信息打印至控制台，默认为是
-		showConsoleError: {
-			type: Boolean,
-			default: u.gc('showConsoleError', true)
-		},
 	},
 	created(){
-		if (this.createdReload && !this.refresherOnly && (this.mountedAutoCallReload && this.auto)) {
+		if (this.createdReload && !this.refresherOnly && this.auto) {
 			this._startLoading();
 			this._preReload();
 		}
@@ -193,7 +186,7 @@ export default {
 	mounted() {
 		this.wxsPropType = u.getTime().toString();
 		this.renderJsIgnore;
-		if (!this.createdReload && !this.refresherOnly && (this.mountedAutoCallReload && this.auto)) {
+		if (!this.createdReload && !this.refresherOnly && this.auto) {
 			this.$nextTick(() => {
 				this._preReload();
 			})
@@ -205,9 +198,7 @@ export default {
 		// #endif
 		this.$nextTick(() => {
 			this.systemInfo = uni.getSystemInfoSync();
-			if (!this.usePageScroll && this.autoHeight) {
-				this._setAutoHeight();
-			}
+			!this.usePageScroll && this.autoHeight && this._setAutoHeight();
 			this.loaded = true;
 		})
 		this.updatePageScrollTopHeight();
@@ -254,14 +245,10 @@ export default {
 			immediate: true
 		},
 		autoHeight(newVal, oldVal) {
-			if (this.loaded && !this.usePageScroll) {
-				this._setAutoHeight(newVal);
-			}
+			this.loaded && !this.usePageScroll && this._setAutoHeight(newVal);
 		},
 		autoHeightAddition(newVal, oldVal) {
-			if (this.loaded && !this.usePageScroll && this.autoHeight) {
-				this._setAutoHeight(newVal);
-			}
+			this.loaded && !this.usePageScroll && this.autoHeight && this._setAutoHeight(newVal);
 		},
 	},
 	computed: {
@@ -385,15 +372,15 @@ export default {
 				// #ifndef APP-NVUE
 				this.$nextTick(() => {
 					this._checkScrollViewShouldFullHeight((scrollViewNode, pagingContainerNode) => {
-						this._preCheckShowLoadingMoreWhenNoMoreAndInsideOfPaging(totalData, scrollViewNode, pagingContainerNode)
+						this._preCheckShowNoMoreInside(totalData, scrollViewNode, pagingContainerNode)
 					});
 				})
 				// #endif
 				// #ifdef APP-NVUE
-				this._preCheckShowLoadingMoreWhenNoMoreAndInsideOfPaging(totalData)
+				this._preCheckShowNoMoreInside(totalData)
 				// #endif
 			} else {
-				this._preCheckShowLoadingMoreWhenNoMoreAndInsideOfPaging(totalData)
+				this._preCheckShowNoMoreInside(totalData)
 			} 
 		},
 		//检测z-paging是否要全屏覆盖(当使用页面滚动并且不满全屏时，默认z-paging需要铺满全屏，避免数据过少时内部的empty-view无法正确展示)
@@ -417,15 +404,13 @@ export default {
 		},
 		//设置z-paging高度
 		async _setAutoHeight(shouldFullHeight = true, scrollViewNode = null) {
-			let heightKey = 'height';
+			let heightKey = 'min-height';
 			// #ifndef APP-NVUE
-			if (this.usePageScroll) {
-				heightKey = 'min-height';
-			}
+			heightKey = 'min-height';
 			// #endif
 			try {
 				if (shouldFullHeight) {
-					let finalScrollViewNode = scrollViewNode ? scrollViewNode : await this._getNodeClientRect('.scroll-view');
+					let finalScrollViewNode = scrollViewNode ? scrollViewNode : await this._getNodeClientRect('.zp-scroll-view');
 					let finalScrollBottomNode = await this._getNodeClientRect('.zp-page-bottom');
 					if (finalScrollViewNode) {
 						const scrollViewTop = finalScrollViewNode[0].top;
@@ -433,9 +418,10 @@ export default {
 						if(finalScrollBottomNode){
 							scrollViewHeight -= finalScrollBottomNode[0].height;
 						}
-						let additionHeight = u.convertTextToPx(this.autoHeightAddition);
-						this.$set(this.scrollViewStyle, heightKey, scrollViewHeight + additionHeight - (this.insideMore ? 1 : 0) + 'px');
-						this.$set(this.scrollViewInStyle, heightKey, scrollViewHeight + additionHeight - (this.insideMore ? 1 : 0) + 'px');
+						const additionHeight = u.convertTextToPx(this.autoHeightAddition);
+						const finalHeight = scrollViewHeight + additionHeight - (this.insideMore ? 1 : 0) + 'px !important';
+						this.$set(this.scrollViewStyle, heightKey, finalHeight);
+						this.$set(this.scrollViewInStyle, heightKey, finalHeight);
 					}
 				} else {
 					this.$delete(this.scrollViewStyle, heightKey);
@@ -507,9 +493,6 @@ export default {
 		},
 		//添加全局emit监听
 		_onEmit() {
-			uni.$on(c.i18nUpdateKey, () => {
-				this.tempLanguageUpdateKey = u.getTime();
-			})
 			uni.$on(c.errorUpdateKey, () => {
 				if (this.loading) {
 					this.complete(false);
@@ -548,7 +531,6 @@ export default {
 		},
 		//销毁全局emit和listener监听
 		_offEmit(){
-			uni.$off(c.i18nUpdateKey);
 			uni.$off(c.errorUpdateKey);
 			uni.$off(c.completeUpdateKey);
 		}

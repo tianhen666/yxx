@@ -8,6 +8,7 @@ const weexAnimation = weex.requireModule('animation');
 // #endif
 const ZPNvue = {
 	props: {
+		// #ifdef APP-NVUE
 		//nvue中修改列表类型，可选值有list、waterfall和scroller，默认为list
 		nvueListIs: {
 			type: String,
@@ -57,6 +58,7 @@ const ZPNvue = {
 			type: Number,
 			default: u.gc('offsetAccuracy', 10)
 		},
+		// #endif
 	},
 	data() {
 		return {
@@ -76,8 +78,7 @@ const ZPNvue = {
 	watch: {
 		nIsFirstPageAndNoMore: {
 			handler(newVal) {
-				const cellStyle = !this.useChatRecordMode || newVal ? {} : {transform: 'rotate(180deg)'};
-				this.$emit('update:cellStyle', cellStyle);
+				this.$emit('update:cellStyle', !this.useChatRecordMode || newVal ? {} : {transform: 'rotate(180deg)'});
 			},
 			immediate: true
 		}
@@ -118,9 +119,7 @@ const ZPNvue = {
 		finalNvueListIs() {
 			if (this.usePageScroll) return 'view';
 			const nvueListIsLowerCase = this.nvueListIs.toLowerCase();
-			if (['list','waterfall','scroller'].indexOf(nvueListIsLowerCase) !== -1) {
-				return nvueListIsLowerCase;
-			}
+			if (['list','waterfall','scroller'].indexOf(nvueListIsLowerCase) !== -1) return nvueListIsLowerCase;
 			return 'list';
 		},
 		finalNvueSuperListIs() {

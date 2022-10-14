@@ -1,5 +1,4 @@
 <template>
-
 	<!-- vip -->
 	<m-vip></m-vip>
 	<view class="blank30"></view>
@@ -37,12 +36,9 @@
 		<view class="popup_box">
 			<image class="close" @tap="popup.close" src="/static/images/close.png"></image>
 			<uni-forms :rules="rules" ref="formObj" v-model="formData" label-width="220rpx" label-position="top">
-				<!-- 订单秘钥 -->
-				<uni-forms-item :label="rules.orderSecretKey.label" name="orderSecretKey" label-position="top">
-					<uni-easyinput
-						v-model="formData.orderSecretKey"
-						:placeholder="rules.orderSecretKey.rules[0].errorMessage"
-					></uni-easyinput>
+				<!-- 订单编号 -->
+				<uni-forms-item :label="rules.orderNo.label" name="orderNo" label-position="top">
+					<uni-easyinput v-model="formData.orderNo" :placeholder="rules.orderNo.rules[0].errorMessage"></uni-easyinput>
 				</uni-forms-item>
 			</uni-forms>
 
@@ -58,6 +54,9 @@ import mVip from './m-vip/m-vip.vue'
 import { showToastText, navigateTo } from '@/aTemp/utils/uniAppTools.js'
 import { _debounce } from '@/aTemp/utils/tools.js'
 import { ref } from 'vue'
+
+// 订单核销
+import { _orderVerificationSheet } from '@/aTemp/apis/order.js'
 
 const module1 = {
 	title: '门诊管理',
@@ -169,9 +168,9 @@ const module4 = {
 
 // 表单校验
 const rules = {
-	orderSecretKey: {
-		rules: [{ required: true, errorMessage: '请输入订单秘钥' }],
-		label: '订单秘钥'
+	orderNo: {
+		rules: [{ required: true, errorMessage: '请输入订单编号' }],
+		label: '订单编号'
 	}
 }
 // 弹出层
@@ -182,6 +181,14 @@ const formData = ref({})
 const formObj = ref(null)
 // 加载中
 const loading = ref(false)
+
+// 调用核销接口
+const orderVerificationSheet = orderNo => {
+	_orderVerificationSheet({ orderNo }).then(res => {
+		const { msg, data, code } = res
+		showToastText('核销成功')
+	})
+}
 
 const module3Fun = listIndex => {
 	// 扫码核销
@@ -195,9 +202,12 @@ const module3Fun = listIndex => {
 					showToastText('请扫描核销码~')
 					return
 				}
-
-				// 核销请求
-				console.log('条码内容：' + res.result)
+				// console.log('条码内容：' + res.result)
+				// 调用订单核销接口
+				orderVerificationSheet(res.result)
+				
+			}).catch(err=>{
+				// console.log(err)
 			})
 	}
 	// 手动核销
@@ -211,9 +221,9 @@ const secretKeyClick = _debounce(
 		formObj.value
 			.validate()
 			.then(formRes => {
-				// _apiSave(dataObj.value).then(res => {
-				// 	loading.value = false
-				// })
+				// 调用订单核销接口
+				orderVerificationSheet(formData.value.orderNo)
+
 				// 关闭弹出框
 				popup.value.close()
 				loading.value = false
@@ -233,17 +243,27 @@ const module5 = {
 	sub: [
 		{
 			imgUrl: '/static/images/u-yuangong.png',
-			title: '员工管理',
+			name: '员工管理',
 			path: '/pages/sub2/manageStaffList/manageStaffList'
 		},
 		{
 			imgUrl: '/static/images/u-wddingdan.png',
-			title: '我的订单',
+			name: '我的订单',
 			path: '/pages/sub1/orderList/orderList'
 		},
 		{
+			imgUrl: '/static/images/u-huiyuan.png',
+			name: '我的邀请',
+			path: '/pages/sub1/invitationList/invitationList'
+		},
+		{
+			imgUrl: '/static/images/u-huiyuan.png',
+			name: '我的收益',
+			path: '/pages/sub1/profitList/profitList'
+		},
+		{
 			imgUrl: '/static/images/u-qhmenzhen.png',
-			title: '切换门店',
+			name: '切换门店',
 			path: '/pages/sub2/switchStore/switchStore'
 		}
 	]

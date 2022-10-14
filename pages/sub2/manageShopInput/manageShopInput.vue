@@ -75,7 +75,7 @@
 					v-model="picList4"
 					mediaType="image"
 					:action="uploadimageURL4"
-					:formData="{baseDir: baseDir4}"
+					:formData="{ baseDir: baseDir4 }"
 					@uploadSuccess="uploadSuccess4"
 				/>
 			</uni-forms-item>
@@ -93,7 +93,7 @@
 					:max="selectNum3"
 					v-model="picList3"
 					mediaType="image"
-					:formData="{baseDir: baseDir3}"
+					:formData="{ baseDir: baseDir3 }"
 					:action="uploadimageURL3"
 					@uploadSuccess="uploadSuccess3"
 				/>
@@ -143,11 +143,31 @@ const rules = {
 		label: '商品标题'
 	},
 	price: {
-		rules: [{ required: true, errorMessage: '请输入商品价格' }],
+		rules: [
+			{ required: true, errorMessage: '请输入商品价格' },
+			{
+				validateFunction: function(rule, value, data, callback) {
+					if (parseFloat(value) <= 0) {
+						callback('商品价格, 需要大于零')
+					}
+					return true
+				}
+			}
+		],
 		label: '商品价格'
 	},
 	priceNormal: {
-		rules: [{ errorMessage: '请输入商品原价' }],
+		rules: [
+			{ errorMessage: '请输入商品原价' },
+			{
+				validateFunction: function(rule, value, data, callback) {
+					if (parseFloat(value) < parseFloat(data.price)) {
+						callback('商品原价，不能小于出售价')
+					}
+					return true
+				}
+			}
+		],
 		label: '商品原价'
 	},
 	avaliableCount: {
@@ -155,7 +175,21 @@ const rules = {
 		label: '商品库存'
 	},
 	sharePrice: {
-		rules: [{ errorMessage: '请输入分享佣金' }],
+		rules: [
+			{ errorMessage: '请输入分享佣金' },
+			{
+				validateFunction: function(rule, value, data, callback) {
+					if (parseFloat(value) <= 0) {
+						callback('分佣需要大于零')
+					}
+					if (parseFloat(value) > parseFloat(data.price) * 0.3) {
+						callback('分佣价格不能高于商品价格的30%')
+					}
+
+					return true
+				}
+			}
+		],
 		label: '分享佣金'
 	},
 	sharePic: {
@@ -179,7 +213,7 @@ const rules = {
 		label: '商品介绍'
 	},
 	detail: {
-		rules: [{ required: true, errorMessage: '请上传商品详情图' }],
+		rules: [{ errorMessage: '请上传商品详情图' }],
 		label: '商品详情图'
 	}
 }
@@ -189,7 +223,7 @@ const rules = {
  */
 import useSaveApi from '@/aTemp/mixins/useSaveApi.js'
 // 组合式函数引入
-const { saveClick,loading } = useSaveApi(formObj, formData, _storeproductSave)
+const { saveClick, loading } = useSaveApi(formObj, formData, _storeproductSave)
 
 /*
  * 图片选择功能
@@ -217,13 +251,13 @@ const { chooseSuccess: chooseSuccess2, picList: picList2, selectNum: selectNum2 
 	baseDir: 'shop'
 })
 
-// 商品详情图片上传 
+// 商品详情图片上传
 const {
 	uploadSuccess: uploadSuccess3,
 	picList: picList3,
 	selectNum: selectNum3,
 	uploadimageURL: uploadimageURL3,
-	baseDir:baseDir3
+	baseDir: baseDir3
 } = useHtzImageUpload({
 	url: '/enrollform/uploadimage',
 	refData: formData,
@@ -238,7 +272,7 @@ const {
 	picList: picList4,
 	selectNum: selectNum4,
 	uploadimageURL: uploadimageURL4,
-	baseDir:baseDir4
+	baseDir: baseDir4
 } = useHtzImageUpload({
 	url: '/enrollform/uploadimage',
 	refData: formData,
@@ -246,7 +280,6 @@ const {
 	selectNum: 1,
 	baseDir: 'shop'
 })
-
 </script>
 
 <style lang="scss" scoped>

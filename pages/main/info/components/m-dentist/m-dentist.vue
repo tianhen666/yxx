@@ -1,13 +1,16 @@
 <template>
 	<view class="container">
 		<slot name="title"></slot>
-		<view class="container_item" v-for="(item, index) in listData" :key="index" @tap="navigateTo">
+		<view
+			class="container_item"
+			v-for="(item, index) in listData"
+			:key="index"
+			@tap="navigateTo(`/pages/sub1/dentistInfo/dentistInfo?targetId=${item.id}`)"
+		>
 			<image class="image" :src="item.avatar" mode="aspectFill"></image>
 			<view class="right">
-				<view class="name">
-					<text>{{ item.name }}</text>
-					<text class="type">{{ item.post }}</text>
-				</view>
+				<view class="name">{{ item.name }}</view>
+				<text class="type">{{ item.post }}</text>
 				<view class="desc">{{ item.descData }}</view>
 			</view>
 		</view>
@@ -16,7 +19,6 @@
 
 <script setup>
 import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
-
 const props = defineProps({
 	// 数据列表
 	listData: {
@@ -66,17 +68,15 @@ const props = defineProps({
 				padding-bottom: 20rpx;
 			}
 			.type {
-				@include mFlex;
-				flex: none;
-				width: 66rpx;
-				height: 32rpx;
+				display: inline-block;
 				border-radius: 8rpx;
 				border: 1px solid #3f5eff;
 				font-size: 20rpx;
 				font-weight: 400;
 				color: #3f5eff;
 				line-height: 20rpx;
-				margin-left: 16rpx;
+				padding: 10rpx 20rpx;
+				margin-bottom: 20rpx;
 			}
 			.desc {
 				color: $text-color-grey;

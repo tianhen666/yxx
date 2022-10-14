@@ -51,3 +51,19 @@ export function _enrollformSave(data) {
 		data
 	})
 }
+
+// 活动支付
+export function _enrollformEnpayment(data) {
+	return http.post({
+		url: '/enrollform/enpayment',
+		data
+	})
+}
+
+// 活动支付回调
+export function _enrollformWxNotifys(data) {
+	return http.post({
+		url: '/enrollform/wxNotifys',
+		data
+	})
+}

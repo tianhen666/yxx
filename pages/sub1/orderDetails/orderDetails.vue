@@ -2,8 +2,8 @@
 	<m-page-loading v-if="loading"></m-page-loading>
 	<view class="container" v-else>
 		<!-- 背景 -->
-		<view class="pageBg uni-navbar--fixed">
-			<image class="image" src="/static/images/bg.jpg" mode="aspectFill"></image>
+		<view class="pageBg">
+			<image class="image" src="/static/images/bg.png" mode="aspectFill"></image>
 		</view>
 		<!-- #ifndef H5 -->
 		<!-- 标题栏 -->
@@ -24,13 +24,13 @@
 			<view class="box1_flex">
 				<!-- 图文信息 -->
 				<image
-					:src="orderDetail[1].productPic ? orderDetail[1].productPic.split(',')[0] : '/static/images/no_img.jpg'"
+					:src="orderDetail.productPic ? orderDetail.productPic.split(',')[0] : '/static/images/no_img.jpg'"
 					mode="aspectFill"
 					class="goods_img"
 				></image>
 				<view class="box1_flex_center">
 					<!-- 标题 -->
-					<view class="title">{{ orderDetail[1].productName }}</view>
+					<view class="title">{{ orderDetail.productName }}</view>
 					<!-- 提示 -->
 					<view class="tips">
 						<icon type="warn" size="26rpx" color="#F73639" />
@@ -41,35 +41,27 @@
 					<!-- 价格 -->
 					<view class="price">
 						<text class="price_cn">￥</text>
-						<text>{{ orderDetail[1].payPrice }}</text>
+						<text>{{ orderDetail.payPrice }}</text>
 					</view>
 					<!-- 数量 -->
-					<view class="quantity">x{{ orderDetail[1].count }}</view>
+					<view class="quantity">x{{ orderDetail.count }}</view>
 				</view>
 			</view>
 
-			<template v-if="orderDetail[1].status === 2">
+			<template v-if="orderDetail.status === 2">
 				<view class="line"></view>
 				<!-- 核销码 -->
 				<u-qrcode
 					ref="uqrcode"
 					canvasId="qrcode"
 					type="2d"
-					:value="orderDetail[1].orderNo"
+					:value="orderDetail.orderNo"
 					:options="{ margin: 10 }"
 				></u-qrcode>
 
 				<!-- 剩余使用次数 -->
 				<view class="blank20"></view>
-				<view class="text_num">
-					共
-					<text class="text_color">1</text>
-					张，剩余
-					<text class="text_color">1</text>
-					次可用
-				</view>
-				<view class="tips tips1">
-					<!-- <icon type="warn" size="26rpx" color="#F73639" /> -->
+				<view class="tips1">
 					<text class="text">请在到店使用时出示核销码</text>
 				</view>
 			</template>
@@ -79,7 +71,7 @@
 		<!-- 套餐详情 -->
 		<view class="content_text">
 			<m-title2 title="套餐详情"></m-title2>
-			<text class="text">1、成年人洗牙4次\n1、成年人洗牙4次\n1、成年人洗牙4次</text>
+			<text class="text">{{orderDetail.producttitle}}</text>
 		</view>
 		<view class="blank32"></view>
 
@@ -88,31 +80,29 @@
 			<view class="blank20"></view>
 
 			<view class="box2_item">
-				<view class="left" @tap="setClipboardData(orderDetail[1].payPrice)">订单金额</view>
-				<view class="right">￥{{ orderDetail[1].payPrice }}</view>
+				<view class="left" @tap="setClipboardData(orderDetail.payPrice)">订单金额</view>
+				<view class="right">￥{{ orderDetail.payPrice }}</view>
 			</view>
-			<view class="box2_item" @tap="setClipboardData(orderDetail[0].nickname || orderDetail[0].remarkname)">
+			<view class="box2_item" @tap="setClipboardData(orderDetail.nickname || orderDetail.remarkname)">
 				<view class="left">购买人</view>
-				<view class="right">{{ orderDetail[0].nickname || orderDetail[0].remarkname }}</view>
+				<view class="right">{{ user.nickname || user.remarkname }}</view>
 			</view>
-			<view class="box2_item" @tap="setClipboardData(orderDetail[0].mobile)">
+			<view class="box2_item" @tap="setClipboardData(user.mobile)">
 				<view class="left">手机号</view>
-				<view class="right">{{ orderDetail[0].mobile }}</view>
+				<view class="right">{{ user.mobile }}</view>
 			</view>
-			<view class="box2_item" @tap="setClipboardData(orderDetail[1].orderNo)">
+			<view class="box2_item" @tap="setClipboardData(orderDetail.orderNo)">
 				<view class="left">订单号</view>
-				<view class="right">{{ orderDetail[1].orderNo }}</view>
+				<view class="right">{{ orderDetail.orderNo }}</view>
 			</view>
 			<view class="box2_item">
 				<view class="left">下单时间</view>
-				<view class="right">{{ dayjs(orderDetail[1].createDt).format('YYYY-MM-DD HH:mm:ss') }}</view>
+				<view class="right">{{ dayjs(orderDetail.createDt).format('YYYY-MM-DD HH:mm:ss') }}</view>
 			</view>
-			<view
-				class="box2_item"
-			>
+			<view class="box2_item">
 				<view class="left">支付时间</view>
 				<view class="right">
-					{{ orderDetail[1].payDt ? dayjs(orderDetail[1].payDt).format('YYYY-MM-DD HH:mm:ss') : '未支付' }}
+					{{ orderDetail.payDt ? dayjs(orderDetail.payDt).format('YYYY-MM-DD HH:mm:ss') : '未支付' }}
 				</view>
 			</view>
 		</view>
@@ -123,17 +113,17 @@
 		<!-- 剩余支付时间 -->
 		<view
 			class="syzfsj"
-			v-if="dayjs(orderDetail[1].createDt).add(30, 'minute') - dayjs() > 0 && orderDetail[1].status === 1"
+			v-if="dayjs(orderDetail.createDt).add(30, 'minute') - dayjs() > 0 && orderDetail.status === 1"
 		>
 			<view class="left">剩余支付时间</view>
 			<view class="right">{{ `${djs}` }}</view>
 		</view>
 		<!-- 底部按钮 -->
 		<m-btn-fix-bottom
-			v-if="dayjs(orderDetail[1].createDt).add(30, 'minute') - dayjs() > 0 && orderDetail[1].status === 1"
+			v-if="dayjs(orderDetail.createDt).add(30, 'minute') - dayjs() > 0 && orderDetail.status === 1"
 			:loading="btnLoading"
 			:text="'立即支付'"
-			@btnClick="orderPayment(orderDetail[1])"
+			@btnClick="orderPayment(orderDetail)"
 		></m-btn-fix-bottom>
 	</view>
 </template>
@@ -150,23 +140,32 @@ import { onLoad, onUnload } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import uQrcode from '../components/Sansnn-uQRCode/components/u-qrcode/u-qrcode.vue'
 
+// 订单编号
 const orderNo = ref('')
+// 加载中
 const loading = ref(true)
+// 订单详情
 const orderDetail = ref({})
+// 邀请人
+const userInvite = ref({})
+// 下单用户
+const user = ref({})
 // 页面加载
-onLoad(option => {
+onLoad(options => {
 	// 在传递的参数中获取订单编号
-	orderNo.value = option.orderNo || ''
+	orderNo.value = options.orderNo || ''
 
-	// 获取订单列表
+	// 获取订单详情信息
 	_orderGetinfo({
 		orderNo: orderNo.value
 	}).then(res => {
 		loading.value = false
 		const { data, code, msg } = res
-		orderDetail.value = data
+		orderDetail.value = data.orderDetail
+		user.value = data.user
+		userInvite.value = data.userInvite
 
-		const timeAdd30 = dayjs(orderDetail.value[1]['createDt']).add(30, 'minute')
+		const timeAdd30 = dayjs(orderDetail['createDt']).add(30, 'minute')
 		djsFun(timeAdd30)
 	})
 })
@@ -241,7 +240,7 @@ const orderPayment = _debounce(
 	}
 	.right {
 		flex: none;
-		width: 170rpx;
+		width: 320rpx;
 		text-align: right;
 	}
 }
@@ -250,6 +249,8 @@ const orderPayment = _debounce(
 	margin: auto;
 }
 .box1 {
+	position: relative;
+	z-index: 2;
 	width: $main-width;
 	padding: $padding;
 	background-color: #ffffff;
@@ -272,6 +273,7 @@ const orderPayment = _debounce(
 		border-radius: 8rpx;
 		flex: none;
 		margin-right: 20rpx;
+		border: 1px solid #f0f0f0;
 	}
 	.title {
 		color: $text-color;
@@ -314,21 +316,16 @@ const orderPayment = _debounce(
 		height: 320rpx;
 		margin: auto;
 	}
-	> .text_num {
-		text-align: center;
-		font-size: 28rpx;
-		padding-bottom: 30rpx;
-		.text_color {
-			color: $sub-color;
-		}
-	}
 	> .tips1 {
 		justify-content: center;
+		text-align: center;
 	}
 }
 
 /* 订单信息 */
 .box2 {
+	position: relative;
+	z-index: 2;
 	background-color: #fff;
 	padding: 32rpx;
 	width: $main-width;
@@ -354,12 +351,15 @@ const orderPayment = _debounce(
 }
 
 .content_text {
+	position: relative;
+	z-index: 2;
 	background-color: #fff;
 	padding: 32rpx;
 	width: $main-width;
 	box-sizing: border-box;
 	margin: auto;
 	border-radius: 16rpx;
+	border: 1px solid #ddd;
 	> .text {
 		display: block;
 		border: 1px solid #f0f0f0;

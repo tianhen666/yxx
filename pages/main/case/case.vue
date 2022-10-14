@@ -1,44 +1,120 @@
 <template>
-	<!-- 标题栏 -->
-	<uni-nav-bar title="xxx门诊" statusBar fixed color="#ffffff" :border="false"></uni-nav-bar>
-	<!-- tab切换 -->
-	<uni-segmented-control :current="current" :values="items" style-type="text" @clickItem="onClickItem" />
-	<!-- 切换内容 -->
-	<view class="content">
-		<m-tab v-show="current === 0"></m-tab>
-		<view v-show="current === 1"><text class="content-text">选项卡2的内容</text></view>
-	</view>
+	<m-page-loading v-if="loading"></m-page-loading>
+	<z-paging-swiper>
+		<!-- 背景 -->
+		<view class="pageBg">
+			<image class="image" src="/static/images/bg.png" mode="aspectFill"></image>
+		</view>
+		<!-- #ifndef H5 -->
+		<!-- 标题栏 -->
+		<uni-nav-bar statusBar fixed :title="'门诊案例'" color="#ffffff" :border="false"></uni-nav-bar>
+		<view class="blank20"></view>
+		<!-- #endif -->
+
+		<view class="box scroll-view-box" v-if="tabListObj.length>0">
+			<scroll-view scroll-x="true" class="scroll-view_H" :scroll-into-view="scrollIntoView" scroll-with-animation>
+				<view
+					:id="'scrollViewItem' + index"
+					:class="{ current: tabIndex === index }"
+					class="scroll-view-item uni-bg-red"
+					v-for="(item, index) in tabListObj"
+					:key="index"
+					@tap="onClickItem(index)"
+				>
+					{{ item.name }}
+				</view>
+			</scroll-view>
+		</view>
+		<view class="blank30"></view>
+
+		<!-- 滑动切换 -->
+		<swiper class="swiper" :current="tabIndex" @transition="swiperTransition" @animationfinish="swiperAnimationfinish">
+			<swiper-item class="swiper-item" v-for="(item, index) in tabListObj" :key="index">
+				<!-- z-paging start -->
+				<swiper-list-item :currentTabIndex="tabIndex" :tabIndex="index" :tabListObj="tabListObj"></swiper-list-item>
+				<!-- z-paging end -->
+			</swiper-item>
+		</swiper>
+	</z-paging-swiper>
 </template>
 
 <script setup>
-import mTab from './components/m-tab/m-tab.vue'
-import { ref, reactive } from 'vue'
-const items = reactive(['门诊案例', '知识科普'])
-const current = ref(0)
-const onClickItem = e => {
-	if (current.value !== e.currentIndex) {
-		current.value = e.currentIndex
-	}
+import { ref } from 'vue'
+import { onLoad, onShow } from '@dcloudio/uni-app'
+import { _storecaseFlist } from '@/aTemp/apis/case.js'
+import swiperListItem from './components/swiper-list-item/swiper-list-item.vue'
+
+// 原始数据tab列表
+const tabListObj = ref([])
+// 当前选择的索引
+const tabIndex = ref(0)
+// tab滚动条位置
+const scrollIntoView = ref('')
+// 加载中
+const loading = ref(true)
+
+//swiper滑动中
+const swiperTransition = e => {}
+//swiper滑动结束
+const swiperAnimationfinish = e => {
+	tabIndex.value = e.detail.current
+	scrollIntoView.value = 'scrollViewItem' + (e.detail.current - 1 < 0 ? 0 : e.detail.current - 1)
+}
+
+onLoad(options => {
+	// console.log(options)
+	storecaseGetlist()
+})
+
+// 获取分类列表
+const storecaseGetlist = () => {
+	_storecaseFlist().then(res => {
+		const { msg, data, code } = res
+		tabListObj.value = data
+		setTimeout(() => {
+			loading.value = false
+		}, 1000)
+	})
+}
+
+// 点击切换按钮
+const onClickItem = index => {
+	tabIndex.value = index
+	scrollIntoView.value = 'scrollViewItem' + (index - 1 < 0 ? 0 : index - 1)
 }
 </script>
 
 <style lang="scss" scoped>
-.content {
-	background-color: #f5f5f5;
+.box {
+	width: $main-width;
+	margin: auto;
+	border-radius: 16rpx;
+	overflow: hidden;
+	background-color: #fff;
 }
-.content:deep(.segmented-control) {
-	overflow: visible !important;
-	height: 96rpx;
-	.segmented-control__item {
-		min-width: 120rpx;
-		flex: none !important;
+.scroll-view-box {
+	padding: 28rpx 0;
+}
+.scroll-view_H {
+	white-space: nowrap;
+	width: 100%;
+	padding: 0 30rpx;
+}
+.scroll-view-item {
+	display: inline-block;
+	margin-right: 30rpx;
+	font-size: 28rpx;
+	padding: 18rpx 24rpx;
+	border-radius: 100rpx;
+	&:last-of-type {
+		margin-left: 0;
 	}
-	.control--segmented-control__text {
-		padding: 4rpx 0 !important;
-		font-size: 26rpx !important;
-	}
-	.segmented-control__item--text {
-		font-size: 26rpx !important;
-	}
+}
+.scroll-view-item.current {
+	color: #fff;
+	background-color: $main-color;
+}
+.swiper {
+	height: 100%;
 }
 </style>

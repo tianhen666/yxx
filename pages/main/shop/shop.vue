@@ -1,56 +1,73 @@
 <template>
-	<!-- 背景 -->
-	<view class="pageBg uni-navbar--fixed"><image class="image" src="/static/images/bg.jpg" mode="aspectFill"></image></view>
-	<!-- #ifndef H5 -->
-	<!-- 标题栏 -->
-	<uni-nav-bar statusBar fixed :title="'商城'" color="#ffffff" :border="false"></uni-nav-bar>
-	<!-- #endif -->
-	<view class="blank32"></view>
+	<z-paging
+		ref="paging"
+		v-model="listData"
+		@query="queryList"
+		:loading-full-fixed="true"
+		created-reload
+		min-delay="1000"
+	>
+		<!-- 加载状态 -->
+		<template v-slot:loading>
+			<m-page-loading></m-page-loading>
+		</template>
 
-	<!-- 商品列表 -->
-	<m-shop-list :listData="listData" showBtn></m-shop-list>
-	<view class="blank32"></view>
+		<!-- 固定顶部 -->
+		<template v-slot:top>
+			<!-- 背景 -->
+			<view class="pageBg">
+				<image class="image" src="/static/images/bg.png" mode="aspectFill"></image>
+			</view>
+			<!-- #ifndef H5 -->
+			<!-- 标题栏 -->
+			<uni-nav-bar statusBar fixed :title="'商城'" color="#ffffff" :border="false"></uni-nav-bar>
+			<view class="blank20"></view>
+			<!-- #endif -->
+		</template>
+
+		<!-- 商品列表 -->
+		<m-shop-list :listData="listData" showBtn></m-shop-list>
+	</z-paging>
 </template>
 
 <script setup>
 import { _storeproductGetlist } from '@/aTemp/apis/shop.js'
 import { onLoad, onShow } from '@dcloudio/uni-app'
 import { ref } from 'vue'
+
+// 全局登录信息
 import { _useUserMain } from '@/aTemp/store/userMain.js'
-// 全局变量
 const useUserMain = _useUserMain()
 
+// 插件对象
+const paging = ref(null)
 // 数据列表
 const listData = ref([])
-// 判断是否首次加载onload
-const onLoadStatus = ref(false)
 
-// 获取数据列表
-const getListData = (data = {}) => {
-	_storeproductGetlist(data).then(res => {
-		onLoadStatus.value = true
-		const { code, data, msg } = res
-		// 将返回数据中的商品图片转化为数组
-		listData.value = data.map((item, index, arr) => {
-			item.pics = item.pics ? item.pics.split(',') : []
-			return item
-		})
-	})
-}
-
-onLoad(options => {
-	getListData({ status: 0 })
-})
-
-onShow(() => {
-	// 首次打开页面避免多次拉取数据
-	if (onLoadStatus.value) {
-		getListData({ status: 0 })
+// 后台获取数据
+const queryList = (pageNo, pageSize) => {
+	const params = {
+		pageNum: pageNo,
+		pageSize: pageSize,
+		status: 0
 	}
-})
+	_storeproductGetlist(params)
+		.then(res => {
+			const { code, data, msg } = res
+			// 将返回数据中的商品图片转化为数组
+			const resData = data.map((item, index, arr) => {
+				item.pics = item.pics ? item.pics.split(',') : []
+				return item
+			})
+			paging.value.complete(resData)
+		})
+		.catch(res => {
+			paging.value.complete(false)
+		})
+}
 </script>
 <style lang="scss" scoped>
 :global(page) {
-	background-color: #F9F9F9;
+	background-color: #f9f9f9;
 }
 </style>

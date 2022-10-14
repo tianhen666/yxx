@@ -1,61 +1,108 @@
 import {
-	onLoad
-} from '@dcloudio/uni-app'
-import {
-	ref
+	ref,
+	watch
 } from 'vue'
+import uCharts from '@/pages/sub2/components/qiun-data-charts/js_sdk/u-charts/config-ucharts.js'
+import dayjs from 'dayjs'
 
 export default function(paramsObj) {
-	//拉取图表数据
-	const getServerData = () => {
-		//模拟从服务器获取数据时的延时
-		setTimeout(() => {
-			//模拟服务器返回数据，如果数据格式和标准格式不同，需自行按下面的格式拼接
-			let res = {
-				categories: ["2016", "2017", "2018", "2019", "2020", "2021", "2022"],
-				series: [{
-						name: "目标值",
-						data: [35, 36, 31, 33, 13, 34, 22]
-					},
-					{
-						name: "完成量",
-						data: [18, 27, 21, 24, 6, 28, 50]
-					}
-				]
-			}
-			chartData.value = JSON.parse(JSON.stringify(res))
-		}, 1000)
-	}
+	let {
+		zData
+	} = paramsObj
 
-	onLoad(options => {
-		getServerData()
+	// 加载失败时设置值
+	const errorMessage = ref('')
+
+	// 柱状图数据格式
+	const chartData = ref({
+		categories: [],
+		series: []
 	})
 
-	// 图表数据
-	const chartData = ref({})
 
+	watch(zData, (newVal, oldVal) => {
+		// console.log(newVal)
+		// console.log(oldVal)
+		chartData.value = {
+			categories: [],
+			series: []
+		}
+		errorMessage.value = ""
+
+		setTimeout(() => {
+			if (newVal.length > 0) {
+				const dataObj = {
+					categories: [],
+					series: [{
+						name: '订单',
+						data: []
+					}]
+				}
+				newVal.forEach(item => {
+					dataObj.categories.unshift(item.custom)
+					dataObj.series[0].data.unshift(item.countNum)
+				})
+				chartData.value = dataObj
+
+			} else {
+				errorMessage.value = "加载失败"
+			}
+		}, 500)
+	})
 
 	// 图表配置
 	const opts = {
-		padding: [15, 0, 0, 0],
-		legend: {},
+		padding: [20, 0, 0, 0],
+		enableScroll: true,
+		dataPointShapeType: "hollow",
 		xAxis: {
-			calibration: true
+			calibration: true,
+			itemCount: 5,
+			scrollShow: true,
+			format: 'xAxisTimeCN'
 		},
 		yAxis: {
-			gridType: 'dash',
-			dashLength: 3
+			data: [{
+				calibration: true,
+				min: 0,
+				unit: "个",
+			}]
 		},
-		extra: {
-			column: {
-				type: "group",
-				width: 10,
-				barBorderRadius: [16, 16, 0, 0]
+		legend: {
+			show: false,
+		},
+		extra: {}
+	}
+
+	// 图表加载完成后触发
+	const chartsComplete = res => {
+		const {
+			id
+		} = res
+		//这里指定了changedTouches的x和y坐标，当指定index索引时，x值会被自动修正到正确位置，给0即可，主要是y的坐标值
+		uCharts.instance[id].showToolTip({
+			changedTouches: [{
+				x: 0,
+				y: 120
+			}]
+		}, {
+			index: 0,
+			formatter: (item, category, index, opts) => {
+				return dayjs(category).format('YYYY年M月D日') + " 订单" + item.data
 			}
-		}
+		})
+	}
+
+
+	//  图表加载失败后触发
+	const chartsError = (e) => {
+		console.log(e)
 	}
 	return {
 		chartData,
-		opts
+		opts,
+		errorMessage,
+		chartsComplete,
+		chartsError
 	}
 }

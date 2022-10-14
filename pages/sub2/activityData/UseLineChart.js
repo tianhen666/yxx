@@ -1,47 +1,59 @@
 import {
-	onLoad
-} from '@dcloudio/uni-app'
-import {
-	ref
+	ref,
+	watch
 } from 'vue'
 import uCharts from '@/pages/sub2/components/qiun-data-charts/js_sdk/u-charts/config-ucharts.js'
 import dayjs from 'dayjs'
 
 export default function(paramsObj) {
 	let {
-		errorMessage
+		zData
 	} = paramsObj
 
+	// 加载失败时设置值
+	const errorMessage = ref('')
 
-	//拉取图表数据
-	const getServerData = () => {
-		setTimeout(() => {
-			let res = {
-				categories: ['2022-08-01', '2022-08-02', '2022-08-02', '2022-08-03', '2022-08-04',
-					'2022-08-05', '2022-08-06'
-				],
-				series: [{
-					name: '金额',
-					data: [35.22, 8.32, 25.56, 37.56, 4.56, 20.26, 31.11],
-					format: "seriesMy"
-				}]
-			}
-			chartData.value = JSON.parse(JSON.stringify(res))
-		}, 3000)
-	}
-
-	// 数据开始加载
-	onLoad(options => {
-		getServerData()
+	// 折线图数据格式
+	const chartData = ref({
+		categories: [],
+		series: []
 	})
 
-	// 图表数据
-	const chartData = ref({})
 
+	watch(zData, (newVal, oldVal) => {
+		// console.log(newVal)
+		// console.log(oldVal)
+		
+		chartData.value = {
+			categories: [],
+			series: []
+		}
+		errorMessage.value = ""
+		
+		setTimeout(() => {
+			if (newVal.length > 0) {
+				const dataObj = {
+					categories: [],
+					series: [{
+						name: '收益',
+						data: []
+					}]
+				}
+				newVal.forEach(item => {
+					dataObj.categories.push(item.custom)
+					dataObj.series[0].data.push(item.price)
+				})
+				chartData.value = dataObj
+
+			} else {
+				errorMessage.value = "加载失败"
+			}
+		}, 500)
+	})
 
 	// 图表配置
 	const opts = {
-		padding: [10, 0, 0, 0],
+		padding: [20, 0, 0, 0],
 		enableScroll: true,
 		dataPointShapeType: "hollow",
 		xAxis: {
@@ -53,6 +65,8 @@ export default function(paramsObj) {
 		yAxis: {
 			data: [{
 				calibration: true,
+				min: 0,
+				tofix: 2,
 				unit: "元",
 			}]
 		},
@@ -66,9 +80,6 @@ export default function(paramsObj) {
 		}
 	}
 
-	// 数据加载失败提示
-	errorMessage = ref(errorMessage || '数据加载失败')
-
 	// 图表加载完成后触发
 	const chartsComplete = res => {
 		const {
@@ -77,21 +88,27 @@ export default function(paramsObj) {
 		//这里指定了changedTouches的x和y坐标，当指定index索引时，x值会被自动修正到正确位置，给0即可，主要是y的坐标值
 		uCharts.instance[id].showToolTip({
 			changedTouches: [{
-				x: 150,
-				y: 80
+				x: 0,
+				y: 120
 			}]
 		}, {
-			index: 2,
+			index: 0,
 			formatter: (item, category, index, opts) => {
 				return dayjs(category).format('YYYY年M月D日') + " 收款" + item.data
 			}
 		})
 	}
 
+
+	//  图表加载失败后触发
+	const chartsError = (e) => {
+		console.log(e)
+	}
 	return {
 		chartData,
 		opts,
 		errorMessage,
-		chartsComplete
+		chartsComplete,
+		chartsError
 	}
 }

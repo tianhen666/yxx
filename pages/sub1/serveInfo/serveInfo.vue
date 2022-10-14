@@ -1,33 +1,28 @@
 <template>
-	<view class="container">
+	<m-page-loading v-if="loading"></m-page-loading>
+	<view class="container" v-else>
 		<!-- 服务图片 -->
-		<view class="banner_img"><image src="/static/default/banner.png" mode="aspectFill" class="image"></image></view>
-
+		<view class="banner_img"><image :src="dataObj.pic" mode="aspectFill" class="image"></image></view>
+		<view class="blank20"></view>
+		
 		<!-- 介绍 -->
 		<view class="serve_text">
-			<m-title2 title="服务介绍"></m-title2>
+			<m-title2 :title="dataObj.title"></m-title2>
 
-			<view class="title">舒柔洁牙</view>
+			<view class="title">服务介绍</view>
 
 			<view class="serve_item_box">
 				<view class="serve_item">
-					<view class="left">适用症状：</view>
-					<view class="right">牙色素、牙结石、牙垢、牙斑菌、茶垢、烟垢等 牙齿问题。</view>
-				</view>
-
-				<view class="serve_item">
-					<view class="left">服务特色：</view>
-					<view class="right">
-						牙色素、牙结石、牙垢、牙斑菌、茶垢、烟垢等 牙齿问题。牙色素、牙结石、牙垢、牙斑菌、茶 垢、烟垢等牙齿问题。
-					</view>
+					<!-- <view class="left">适用症状：</view> -->
+					<view class="right">{{ dataObj.descData }}</view>
 				</view>
 			</view>
 		</view>
 		<view class="blank20"></view>
 
 		<!-- 相关商品 -->
-		<view class="related_goods">
-			<shop-list>
+		<view class="related_goods" v-if="dataObj.productList.length > 0">
+			<shop-list :listData="dataObj.productList">
 				<template #title>
 					<m-title2 title="相关商品" />
 				</template>
@@ -38,23 +33,57 @@
 		<!-- 图文详情 -->
 		<view class="serve_img">
 			<m-title1 title="图文详情"></m-title1>
-			<image class="image" src="/static/default/content.png" mode="widthFix"></image>
+			<view class="content_img" v-if="dataObj.details" @tap="previewImage(dataObj.details.split(','))">
+				<image
+					class="image"
+					v-for="(item, index) in dataObj.details.split(',')"
+					:key="index"
+					:src="item"
+					mode="widthFix"
+				></image>
+			</view>
 		</view>
 		<view class="blank40"></view>
-		
+		<view class="blank40"></view>
+
 		<!-- 底部按钮 -->
-		<m-bottom-btn></m-bottom-btn>
+		<!-- <m-bottom-btn></m-bottom-btn> -->
 	</view>
 </template>
 
 <script setup>
 import shopList from './components/shop-list/shop-list.vue'
+import { ref, watch, getCurrentInstance } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
+import { _serveGetinfo } from '@/aTemp/apis/service'
+import { previewImage } from '@/aTemp/utils/uniAppTools.js'
+const dataObj = ref({})
+const dataId = ref(0)
+const loading = ref(true)
+// 页面开始加载
+onLoad(async options => {
+	const { proxy } = getCurrentInstance()
+	// 等待onLaunch中放行后执行
+	await proxy.$onLaunched
+
+	// 赋值ID
+	dataId.value = parseInt(options.targetId) || 0
+
+	// 是否存在商品ID
+	if (dataId.value > 0) {
+		// 拉取数据
+		_serveGetinfo({ id: dataId.value }).then(res => {
+			const { data, msg, code } = res
+			// 数据赋值
+			dataObj.value = data
+
+			loading.value = false
+		})
+	}
+})
 </script>
 
 <style lang="scss" scoped>
-:global(page) {
-	background: #f5f5f5;
-}
 .container {
 	.banner_img {
 		> .image {
@@ -108,8 +137,11 @@ import shopList from './components/shop-list/shop-list.vue'
 	.serve_img {
 		padding-top: 32rpx;
 		background-color: #ffffff;
-		> .image {
+		> .content_img {
 			width: 750rpx;
+			.image {
+				width: 100%;
+			}
 		}
 	}
 }

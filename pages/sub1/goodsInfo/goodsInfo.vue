@@ -1,5 +1,6 @@
 <template>
-	<view class="container">
+	<m-page-loading v-if="loading"></m-page-loading>
+	<view class="container" v-else>
 		<!-- 轮播图片 -->
 		<m-carousel-goods :listData="dataObj.pics"></m-carousel-goods>
 
@@ -41,33 +42,83 @@
 		<view class="blank20"></view> -->
 
 		<!-- 商品详情 -->
-		<view class="goods_img" @tap="previewImage(dataObj.detail)">
+		<view class="goods_img">
 			<m-title1 title="商品详情"></m-title1>
-			<image v-for="(item, index) in dataObj.detail"  :key="index" class="image" :src="item" mode="widthFix"></image>
+			<image
+				v-for="(item, index) in dataObj.detail"
+				:key="index"
+				class="image"
+				:src="item"
+				mode="widthFix"
+				@tap="previewImage(dataObj.detail, index)"
+			></image>
 		</view>
 
 		<!-- 底部按钮 -->
-		<m-shop-btn-bottom @clickBuy="navigateTo(`/pages/sub1/confirmOrder/confirmOrder?id=${dataId}`)"></m-shop-btn-bottom>
+		<m-shop-btn-bottom
+			:dataObj="dataObj"
+			@payConfirm="navigateTo(`/pages/sub1/confirmOrder/confirmOrder?id=${dataId}`)"
+		></m-shop-btn-bottom>
 	</view>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, reactive, computed, getCurrentInstance } from 'vue'
 import { _storeproductGetinfo } from '@/aTemp/apis/shop.js'
 import { onLoad, onShow } from '@dcloudio/uni-app'
-import { navigateTo,previewImage } from '@/aTemp/utils/uniAppTools.js'
+import { navigateTo, previewImage } from '@/aTemp/utils/uniAppTools.js'
+
+// 全局登录信息
+import { _useUserMain } from '@/aTemp/store/userMain.js'
+const useUserMain = _useUserMain()
+
+// 分享 (onShareAppMessage,onShareTimeline) 不能删,必要 https://github.com/dcloudio/uni-app/issues/3097
+import useShare from '@/aTemp/mixins/useShare.js'
+const shareInfo = reactive({ title: '', path: '', imageUrl: '', query: '' })
+// 设置分享
+useShare(shareInfo)
 
 // 数据ID
 const dataId = ref(0)
 // 数据对象
 const dataObj = ref({})
+// 加载中
+const loading = ref(true)
 
-onLoad(options => {
-	dataId.value = options.id || 0
+onLoad(async options => {
+	const { proxy } = getCurrentInstance()
+	// 等待onLaunch中放行后执行
+	await proxy.$onLaunched
+
+	// 获取商品ID
+	dataId.value = parseInt(options.targetId) || 0
+
+	// 发起商品详情请求
 	_storeproductGetinfo({ id: dataId.value }).then(res => {
 		const { code, data, msg } = res
-		;(data.detail = data.detail ? data.detail.split(',') : []), (data.pics = data.pics ? data.pics.split(',') : [])
+
+		// 图片详情转列表
+		;(data.detail = data.detail ? data.detail.split(',') : []),
+			// 主图转列表
+			(data.pics = data.pics ? data.pics.split(',') : [])
+		// 商品信息赋值
 		dataObj.value = data
+		// 标识商品
+		dataObj.value['myType'] = '商品'
+
+		// 加载结束
+		loading.value = false
+
+		// 设置分享参数
+		shareInfo.title = computed(() => `${useUserMain.nickname}-邀请您参加【${dataObj.value.title}】`)
+		shareInfo.path = computed(
+			() =>
+				`/pages/sub1/goodsInfo/goodsInfo?invitationCode=${useUserMain.openId}&storeId=${
+					useUserMain.storeId
+				}&scene=2&targetId=${dataObj.value.id}`
+		)
+		shareInfo.imageUrl =
+			dataObj.value.sharePic || dataObj.value.pics[0] || `https://imgs.fenxiangzl.com/store/tooth/invitbg.png`
 	})
 })
 </script>

@@ -4,16 +4,16 @@
 			class="container_item"
 			v-for="(item, index) in props.listData"
 			:key="index"
-			@tap="navigateTo('/pages/sub2/orderDetails/orderDetails')"
+			@tap="navigateTo(`/pages/sub2/orderDetails/orderDetails?orderNo=${item.orderNo}`)"
 		>
 			<!-- 订单编号，订单状态 -->
 			<view class="container_item_box">
 				<view class="container_item_box_left">
-					<view class="order_sn">订单号：{{ item.orderSN }}</view>
+					<view class="order_sn">订单号：{{ item.orderNo }}</view>
 				</view>
 				<view class="container_item_box_right">
-					<view class="order_status style1" v-if="item.type === 0">未使用</view>
-					<view class="order_status style2" v-else-if="item.type === 1">已完成</view>
+					<view class="order_status style1" v-if="item.status === 2">未使用</view>
+					<view class="order_status style2" v-else-if="item.status === 3">已完成</view>
 				</view>
 			</view>
 			<view class="blank32"></view>
@@ -21,29 +21,37 @@
 			<!-- 图文信息 -->
 			<view class="container_item_box1">
 				<view class="container_item_box1_left">
-					<image :src="item.url" mode="aspectFill" class="goods_img"></image>
+					<image
+						:src="item.productPic.split(',')[0] || '/static/images/no_img.jpg'"
+						mode="aspectFill"
+						class="goods_img"
+					></image>
 				</view>
 				<view class="container_item_box1_right">
-					<view class="title">{{ item.title }}</view>
+					<view class="title">{{ item.productName }}</view>
 
 					<view class="container_item_box1_right_box">
 						<!-- 价格 -->
 						<view class="price">
 							<text class="text1">实际付款：</text>
 							<text class="price_cn">￥</text>
-							<text class="num">{{ parseFloat(item.price) * parseInt(item.quantity) }}</text>
+							<text class="num">{{ item.payPrice }}</text>
 						</view>
 						<!-- 数量 -->
-						<view class="quantity">x{{ item.quantity }}</view>
+						<view class="quantity">x{{ item.count }}</view>
 					</view>
 				</view>
 			</view>
 
 			<view class="blank32"></view>
 			<view class="order_btn_box">
-				<view class="time" v-if="item.type === 0">支付时间: {{ item.time }}</view>
-				<view class="time" v-if="item.type === 1">完成时间: {{ item.time }}</view>
-				<view class="item_btn style1" @tap.stop.prevent="makePhoneCall('17730225541')">联系卖家</view>
+				<view class="time" v-if="item.status === 2">
+					支付时间: {{ dayjs(item.payDt).format('YYYY-MM-DD HH:mm:ss') }}
+				</view>
+				<view class="time" v-if="item.status === 3">
+					完成时间: {{ dayjs(item.completeDt).format('YYYY-MM-DD HH:mm:ss') }}
+				</view>
+				<view class="item_btn style1" @tap.stop.prevent="makePhoneCall(item.mobile)">联系卖家</view>
 			</view>
 		</view>
 	</view>
@@ -51,7 +59,6 @@
 
 <script setup>
 import { navigateTo, makePhoneCall } from '@/aTemp/utils/uniAppTools.js'
-
 import { ref } from 'vue'
 import dayjs from 'dayjs'
 const props = defineProps({
@@ -68,7 +75,6 @@ const showTime = ref('')
 
 <style lang="scss" scoped>
 .container {
-	padding-bottom: 90rpx;
 	.container_item {
 		padding: $padding;
 		background-color: #ffffff;

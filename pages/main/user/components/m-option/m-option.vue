@@ -4,7 +4,7 @@
 			<view class="option_item" v-for="(item, index) in props.listData.sub" @tap="navigateTo(item.path)" :key="index">
 				<view class="left">
 					<image class="image" :src="item.imgUrl" mode="aspectFill"></image>
-					<text class="text">{{ item.title }}</text>
+					<text class="text">{{ item.name }}</text>
 				</view>
 				<view class="right"><uni-icons type="forward" size="15" color="#aaaaaa"></uni-icons></view>
 			</view>
@@ -16,10 +16,10 @@
 import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
 const props = defineProps({
 	listData: {
-		type: Array,
+		type: Object,
 		required: true,
 		default() {
-			return []
+			return {}
 		}
 	}
 })
@@ -38,7 +38,7 @@ const props = defineProps({
 			@include mFlex;
 			justify-content: space-between;
 			margin-bottom: 80rpx;
-			&:last-child{
+			&:last-child {
 				margin-bottom: 0;
 			}
 			.left {
@@ -52,7 +52,7 @@ const props = defineProps({
 					height: 40rpx;
 					margin-right: 20rpx;
 				}
-				>.text{
+				> .text {
 					font-size: 32rpx;
 					font-weight: 400;
 					color: #444444;

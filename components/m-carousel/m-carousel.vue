@@ -22,7 +22,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { showToastText } from '@/aTemp/utils/uniAppTools.js'
+import { showToastText, navigateTo } from '@/aTemp/utils/uniAppTools.js'
 // 数据列表
 const props = defineProps({
 	listData: {
@@ -37,27 +37,28 @@ const current = ref(0)
 
 // 点击事件
 const bannerTap = item => {
-	showToastText('点击了banner')
-	console.log(item)
+	if (item.productId) {
+		navigateTo(`/pages/sub1/goodsInfo/goodsInfo?targetId=${item.productId}`)
+	}
 }
 
 // 改变索引事件
 const change = e => {
 	current.value = e.detail.current
 }
-
 </script>
 
 <style lang="scss" scoped>
 .swiper {
 	width: $main-width;
-	height: ($main-width * 0.5);
+	height: ($main-width * 0.6);
 	margin: auto;
-	border-radius: 20rpx;
+	
 	overflow: hidden;
 	.image {
 		width: 100%;
 		height: 100%;
+		border-radius: 20rpx;
 	}
 }
 </style>

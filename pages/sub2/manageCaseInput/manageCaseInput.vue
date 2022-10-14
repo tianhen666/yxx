@@ -50,12 +50,6 @@
 			</uni-forms-item>
 			<view class="blank32 blank_bg_color"></view>
 
-			<!-- 分享图 -->
-			<uni-forms-item :label="rules.sharePic.label" label-position="top" name="sharePic">
-				<htz-image-upload :max="selectNum2" v-model="picList2" mediaType="image" @chooseSuccess="chooseSuccess2" />
-			</uni-forms-item>
-			<view class="blank32 blank_bg_color"></view>
-
 			<!-- 治疗前描述 -->
 			<uni-forms-item :label="rules.beforeDesc.label" label-position="top" name="beforeDesc">
 				<fuck-textarea :placeholder="rules.beforeDesc.rules[0].errorMessage" v-model="formData.beforeDesc" />
@@ -82,8 +76,15 @@
 			<uni-forms-item :label="rules.evaluationDesc.label" label-position="top" name="evaluationDesc">
 				<fuck-textarea :placeholder="rules.evaluationDesc.rules[0].errorMessage" v-model="formData.evaluationDesc" />
 			</uni-forms-item>
+			<view class="blank32 blank_bg_color"></view>
+			
+			<!-- 分享图 -->
+			<uni-forms-item :label="rules.sharePic.label" label-position="top" name="sharePic">
+				<htz-image-upload :max="selectNum2" v-model="picList2" mediaType="image" @chooseSuccess="chooseSuccess2" />
+			</uni-forms-item>
+			
 		</uni-forms>
-
+		
 		<!-- 保存信息 -->
 		<m-btn-fix-bottom :loading="loading" text="保存信息" @btnClick="saveClick" />
 	</view>
@@ -204,37 +205,41 @@ import useHtzImageUpload from '@/aTemp/mixins/useHtzImageUpload.js'
 // 案例封面图片上传
 const { chooseSuccess: chooseSuccess1, picList: picList1, selectNum: selectNum1 } = useHtzImageUpload({
 	ratio: 2 / 1,
-	url: '/storecase/uploadimage',
+	url: '/enrollform/uploadimage',
 	refData: formData,
 	param: 'mainPic',
-	selectNum: 1
+	selectNum: 1,
+	baseDir: 'case'
 })
 
 // 分享图片上传
 const { chooseSuccess: chooseSuccess2, picList: picList2, selectNum: selectNum2 } = useHtzImageUpload({
 	ratio: 5 / 4,
-	url: '/storecase/uploadimage',
+	url: '/enrollform/uploadimage',
 	refData: formData,
 	param: 'sharePic',
-	selectNum: 1
+	selectNum: 1,
+	baseDir: 'case'
 })
 
 // 案例治疗前图片上传
 const { chooseSuccess: chooseSuccess3, picList: picList3, selectNum: selectNum3 } = useHtzImageUpload({
 	ratio: 5 / 3,
-	url: '/storecase/uploadimage',
+	url: '/enrollform/uploadimage',
 	refData: formData,
 	param: 'beforePics',
-	selectNum: 5
+	selectNum: 5,
+	baseDir: 'case'
 })
 
 // 案例治疗后图片上传
 const { chooseSuccess: chooseSuccess4, picList: picList4, selectNum: selectNum4 } = useHtzImageUpload({
 	ratio: 5 / 3,
-	url: '/storecase/uploadimage',
+	url: '/enrollform/uploadimage',
 	refData: formData,
 	param: 'afterPics',
-	selectNum: 5
+	selectNum: 5,
+	baseDir: 'case'
 })
 </script>
 
