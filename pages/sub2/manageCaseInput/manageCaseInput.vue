@@ -73,10 +73,10 @@
 			<view class="blank32 blank_bg_color"></view>
 
 			<!-- 患者自评 -->
-			<uni-forms-item :label="rules.evaluationDesc.label" label-position="top" name="evaluationDesc">
+			<!-- <uni-forms-item :label="rules.evaluationDesc.label" label-position="top" name="evaluationDesc">
 				<fuck-textarea :placeholder="rules.evaluationDesc.rules[0].errorMessage" v-model="formData.evaluationDesc" />
 			</uni-forms-item>
-			<view class="blank32 blank_bg_color"></view>
+			<view class="blank32 blank_bg_color"></view> -->
 			
 			<!-- 分享图 -->
 			<uni-forms-item :label="rules.sharePic.label" label-position="top" name="sharePic">
@@ -183,10 +183,10 @@ const rules = {
 		rules: [{ required: true, errorMessage: '请输入治疗后描述' }],
 		label: '治疗后描述'
 	},
-	evaluationDesc: {
-		rules: [{ errorMessage: '请输入患者自评' }],
-		label: '患者自评'
-	}
+	// evaluationDesc: {
+	// 	rules: [{ errorMessage: '请输入患者自评' }],
+	// 	label: '患者自评'
+	// }
 }
 
 /*

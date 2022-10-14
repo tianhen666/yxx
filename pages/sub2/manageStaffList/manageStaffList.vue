@@ -100,12 +100,12 @@ onLoad(options => {
 	// 获取店铺信息
 	_storeGetinfo().then(res => {
 		const { code, msg, data } = res
-		shareInfo.title = `${useUserMain.nickname}-邀请您加入【${data.name}】`
+		shareInfo.title = computed(() => `${useUserMain.nickname}-邀请您加入【${data.name}】`)
 		shareInfo.path = computed(
 			() =>
-				`/pages/sub2/manageStaffListLogin/manageStaffListLogin?invitationCode=${useUserMain.openId}&storeId=${
+				`/pages/sub2/manageStaffListLogin/manageStaffListLogin?invitationCode=${useUserMain.userid}&storeId=${
 					useUserMain.storeId
-				}&scene=0&targetId=0`
+				}&Mscene=0&targetId=0`
 		)
 		shareInfo.imageUrl = `https://imgs.fenxiangzl.com/store/tooth/invitbg.png`
 	})

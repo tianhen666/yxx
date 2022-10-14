@@ -36,10 +36,14 @@ import { previewImage, navigateTo, showLoading } from '@/aTemp/utils/uniAppTools
 import { _useUserMain } from '@/aTemp/store/userMain.js'
 const useUserMain = _useUserMain()
 
-
+// 生成直接邀请码
 const wxWxqrCode = () => {
 	showLoading('加载中')
-	_wxWxqrCode({ openid: useUserMain.openId, scene: 'pages' }).then(async res => {
+	_wxWxqrCode({
+		page: 'pages/main/index/index',
+		scene: `i=${useUserMain.userid}&sd=${useUserMain.storeId}&s=0&t=0`,
+		width: 430
+	}).then(async res => {
 		const { msg, data, code } = res
 		const imgPath = await base64ToPath('data:image/png;base64,' + data)
 		uni.hideLoading()

@@ -113,9 +113,9 @@ onLoad(async options => {
 		shareInfo.title = computed(() => `${useUserMain.nickname}-邀请您参加【${dataObj.value.title}】`)
 		shareInfo.path = computed(
 			() =>
-				`/pages/sub1/goodsInfo/goodsInfo?invitationCode=${useUserMain.openId}&storeId=${
+				`/pages/sub1/goodsInfo/goodsInfo?invitationCode=${useUserMain.userid}&storeId=${
 					useUserMain.storeId
-				}&scene=2&targetId=${dataObj.value.id}`
+				}&Mscene=2&targetId=${dataObj.value.id}`
 		)
 		shareInfo.imageUrl =
 			dataObj.value.sharePic || dataObj.value.pics[0] || `https://imgs.fenxiangzl.com/store/tooth/invitbg.png`

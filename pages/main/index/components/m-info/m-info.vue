@@ -72,7 +72,7 @@ const rad = d => {
 	return (d * Math.PI) / 180.0
 }
 
-const distance = ref('')
+const distance = ref("0km")
 // 获取当前位置，计算距离
 getLocation().then(res => {
 	let distance_a = algorithm(

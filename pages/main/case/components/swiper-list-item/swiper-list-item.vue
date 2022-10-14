@@ -16,7 +16,7 @@
 				class="container_item"
 				v-for="(item, index) in dataList"
 				:key="index"
-				@click="navigateTo(`/pages/caseInfo/caseInfo?targetId=${item.id}`)"
+				@click="navigateTo(`/pages/sub1/caseInfo/caseInfo?targetId=${item.id}`)"
 			>
 				<!-- 图片 -->
 				<view class="image_wrapper"><image class="image" :src="item.mainPic" mode="aspectFill"></image></view>

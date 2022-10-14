@@ -1,8 +1,6 @@
 <template>
 	<!-- 背景 -->
-	<view class="pageBg">
-		<image class="image" src="/static/images/bg.png" mode="aspectFill"></image>
-	</view>
+	<view class="pageBg"><image class="image" src="/static/images/bg.png" mode="aspectFill"></image></view>
 	<z-paging
 		ref="paging"
 		use-page-scroll
@@ -68,10 +66,12 @@ const storeGetinfo = () => {
 	// 获取店铺信息
 	_storeGetinfo().then(res => {
 		const { code, msg, data } = res
-		shareInfo.title = `邀请您进入【${data.name}】`
+		shareInfo.title = computed(() => `${useUserMain.nickname} - 邀请您进入【${data.name}】`)
 		shareInfo.path = computed(
 			() =>
-				`/pages/main/index/index?invitationCode=${useUserMain.openId}&storeId=${useUserMain.storeId}&scene=0&targetId=0`
+				`/pages/main/index/index?invitationCode=${useUserMain.userid}&storeId=${
+					useUserMain.storeId
+				}&Mscene=0&targetId=0`
 		)
 		shareInfo.imageUrl = `https://imgs.fenxiangzl.com/store/tooth/invitbg.png`
 
@@ -82,5 +82,4 @@ const storeGetinfo = () => {
 }
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

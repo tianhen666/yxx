@@ -86,6 +86,8 @@ const onClickItem = index => {
 
 <style lang="scss" scoped>
 .box {
+	position: relative;
+	z-index: 2;
 	width: $main-width;
 	margin: auto;
 	border-radius: 16rpx;

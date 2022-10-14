@@ -114,14 +114,21 @@ const getData = () => {
 		serveListData.value = res[3].data
 
 		// 设置页面分享参数
-		shareInfo.title = storeInfo.value.name
-		shareInfo.imageUrl = storeInfo.value.sharePic
+		shareInfo.title = computed(() => `${useUserMain.nickname} - 邀请您进入【${storeInfo.value.name}】`)
+		// 分享图片
+		shareInfo.imageUrl =
+			storeInfo.value.sharePic || storeInfo.value.pics || `https://imgs.fenxiangzl.com/store/tooth/invitbg.png`
+
+		// 分享到聊天框用到
 		shareInfo.path = computed(
 			() =>
-				`/pages/main/index/index?invitationCode=${useUserMain.openId}&storeId=${useUserMain.storeId}&scene=0&targetId=0`
+				`/pages/main/index/index?invitationCode=${useUserMain.userid}&storeId=${
+					useUserMain.storeId
+				}&Mscene=0&targetId=0`
 		)
+		// 分享到朋友圈用到
 		shareInfo.query = computed(
-			() => `invitationCode=${useUserMain.openId}&storeId=${useUserMain.storeId}&scene=0&targetId=0`
+			() => `invitationCode=${useUserMain.userid}&storeId=${useUserMain.storeId}&Mscene=0&targetId=0`
 		)
 
 		// 加载完成

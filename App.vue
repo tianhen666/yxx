@@ -38,16 +38,45 @@ onLaunch(async options => {
 	init(options)
 
 	/*
-	 * 邀请进入小程序
-	 * invitationCode 邀请人code
+	 * 获取进入小程序参数
+	 * invitationCode 邀请人id
 	 * storeId 店铺ID
-	 * scene 0直接邀请 1活动 2商品 3服务 4海报 5其他
-	 * const scene = ["直接邀请","活动邀请","商品邀请","服务邀请","海报邀请","其他邀请"]
+	 * Mscene 0直接邀请 1活动 2商品 3服务 4海报 5其他
+	 * const Mscene = ["直接邀请","活动邀请","商品邀请","服务邀请","海报邀请","其他邀请"]
 	 * targetId 场景来源ID
-	 * 获取启动参数并设置店铺ID,邀请人code 并且缓存
 	 */
 	// console.log(options.query)
-	const { invitationCode, storeId, scene, targetId } = options.query
+	let { invitationCode, storeId, Mscene, targetId, scene } = options.query
+
+	/*
+	 * 扫描小程序码，进入小程序
+	 * scene 字符串参数值 i=2&sd=1&s=0&t=0  因为生成小程序码 scene长度有限制只能这样写
+	 * i 邀请人id
+	 * sd 店铺ID
+	 * s 场景值
+	 * t 场景来源ID
+	 */
+
+	// 处理二维码中的参数
+	if (scene) {
+		const codeParams = decodeURIComponent(scene)
+		const codeParamsList = codeParams.split('&')
+		const codeParamsObj = {}
+		codeParamsList.forEach(item => {
+			codeParamsObj[item.split('=')[0]] = item.split('=')[1]
+		})
+
+		// 覆盖上面几个参数值
+		invitationCode = codeParamsObj['i']
+		storeId = codeParamsObj['sd']
+		Mscene = codeParamsObj['s']
+		targetId = codeParamsObj['t']
+	}
+
+	// 打印进入小程序参数
+	console.log('邀请人ID：' + invitationCode, '店铺id：' + storeId, '场景值：' + Mscene, '目标ID：' + targetId)
+
+	// 设置缓存
 	if (storeId) {
 		useUserMain.$patch({ storeId: storeId })
 	}
@@ -59,21 +88,23 @@ onLaunch(async options => {
 	 * 直接进入小程序
 	 * 如果缓存中还是没有店铺ID,设置一个默认店铺ID
 	 */
-	const userMain = uni.getStorageSync('userMain')
-	const storageStoreId = userMain.storeId
-	if (!storageStoreId) {
+	if (!useUserMain.storeId) {
 		useUserMain.$patch({ storeId: 1 })
 	}
 
-	// 微信授权登录
-	const wxCode = await uni.login()
+	// 兼容朋友圈打开小程序
+	let wxCode = ''
+	if (options.scene !== 1154) {
+		// 微信授权登录
+		wxCode = await uni.login()
+	}
 
 	// 登录获取
 	_wxLogin({
 		code: wxCode.code,
-		storeId:useUserMain.storeId,
+		storeId: useUserMain.storeId,
 		invitationCode,
-		scene,
+		scene: Mscene,
 		targetId
 	})
 		.then(resData => {

@@ -68,7 +68,7 @@
 	<!-- 底部按钮 -->
 	<m-shop-btn-bottom @payConfirm="payConfirm" @tapCreateImg="tapCreateImg" :dataObj="dataObj"></m-shop-btn-bottom>
 
-	<!-- 海报 -->
+	<!-- 海报生成 -->
 	<w-painter
 		:palette="posterData.value"
 		@imgOK="createImgOk"
@@ -157,9 +157,9 @@ const enrollformGetinfo = () => {
 		shareInfo.title = computed(() => `${useUserMain.nickname}-邀请您参加【${dataObj.value.title}】`)
 		shareInfo.path = computed(
 			() =>
-				`/pages/sub1/activityInfo/activityInfo?invitationCode=${useUserMain.openId}&storeId=${
+				`/pages/sub1/activityInfo/activityInfo?invitationCode=${useUserMain.userid}&storeId=${
 					useUserMain.storeId
-				}&scene=1&targetId=${dataObj.value.id}`
+				}&Mscene=1&targetId=${dataObj.value.id}`
 		)
 		shareInfo.imageUrl = dataObj.value.mainPic || `https://imgs.fenxiangzl.com/store/tooth/invitbg.png`
 	})
@@ -255,7 +255,11 @@ const posterData = reactive({
 const tapCreateImg = async () => {
 	showLoading('海报数据加载中')
 
-	const wxWxqrCode = await _wxWxqrCode({ openid: useUserMain.openId, scene: 'pages' })
+	const wxWxqrCode = await _wxWxqrCode({
+		page: 'pages/sub1/activityInfo/activityInfo',
+		scene: `i=${useUserMain.userid}&sd=${useUserMain.storeId}&s=1&t=${dataObj.value.id}`,
+		width: 430
+	})
 	// console.log('data:image/png;base64,' + wxWxqrCode.data)
 
 	posterData.value = {

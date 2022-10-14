@@ -9,7 +9,7 @@
 				<view class="name">{{ item.name }}</view>
 				<view class="address">
 					{{ `${item.address}${item.addressDetail}` }}
-					<text class="btn" v-if="info.storeId != item.storeId" @tap.stop="switchStore(item)">切换门店</text>
+					<text class="btn" v-if="info.storeId != item.storeId" @tap.stop="switchStore(item)">进入门店</text>
 				</view>
 			</view>
 		</view>
@@ -112,7 +112,8 @@ const switchStore = async item => {
 		padding-left: 40rpx;
 		overflow: hidden;
 		.name {
-			font-size: 32rpx;
+			font-size: 28rpx;
+			color: #666;
 		}
 		.address {
 			padding-top: 24rpx;
@@ -121,11 +122,12 @@ const switchStore = async item => {
 			line-height: 1.8;
 			@include textOverHidden;
 			.btn {
-				background-color: $main-color;
-				color: #fff;
+				border:1px solid $main-color;
+				color: $main-color;
 				padding: 0 18rpx;
 				margin-left: 10rpx;
 				border-radius: 5rpx;
+				line-height: 1.4;
 			}
 		}
 	}

@@ -92,6 +92,21 @@ onLoad(optios => {
 			padding: $padding;
 			border-radius: 16rpx;
 			margin-top: 32rpx;
+			position: relative;
+			&:after {
+				content: '';
+				position: absolute;
+				z-index: 2;
+				top: -28rpx;
+				display: block;
+				width: 0px;
+				height: 0px;
+				border: 14rpx solid transparent;
+				border-top-color: transparent;
+				border-bottom-color: #f5f5f5f5;
+				border-left-color: transparent;
+				border-right-color: transparent;
+			}
 			.image {
 				width: 100%;
 			}

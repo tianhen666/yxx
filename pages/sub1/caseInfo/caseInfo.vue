@@ -15,7 +15,7 @@
 				<text>{{ dataObj.detail }}</text>
 			</view>
 			<view class="blank20"></view>
-			<view class="content_img"><image class="image" :src="dataObj.mainPic" mode="aspectFill"></image></view>
+			<view class="content_img"><image class="image" :src="dataObj.mainPic" mode="widthFix"></image></view>
 		</view>
 		<view class="blank30"></view>
 
@@ -117,8 +117,7 @@ const storecaseGetinfo = () => {
 	}
 	.content_img {
 		.image {
-			width: 686rpx;
-			height: 368rpx;
+			width: 100%;
 		}
 	}
 }
