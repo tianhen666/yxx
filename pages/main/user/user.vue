@@ -34,6 +34,12 @@
 		<!-- 商家端显示 -->
 		<s-user v-else></s-user>
 	</z-paging>
+	
+	<!-- 邀请门诊入驻 -->
+	<view class="inviteStore" v-if="useUserMain.storeId == 1" @tap="navigateTo('/pages/sub1/settleIn/settleIn')">
+		<text>店铺</text>
+		<text>入驻</text>
+	</view>
 </template>
 <script setup>
 import mHeader from './components/m-header/m-header.vue'
@@ -42,11 +48,11 @@ import sUser from './components/s-user.vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { reactive, computed, ref } from 'vue'
 import { _storeGetinfo } from '@/aTemp/apis/store.js'
+import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
 
 // 全局登录信息
 import { _useUserMain } from '@/aTemp/store/userMain.js'
 const useUserMain = _useUserMain()
-
 // 分享 (onShareAppMessage,onShareTimeline) 不能删,必要 https://github.com/dcloudio/uni-app/issues/3097
 import useShare from '@/aTemp/mixins/useShare.js'
 const shareInfo = reactive({ title: '', path: '', imageUrl: '', query: '' })
@@ -82,4 +88,23 @@ const storeGetinfo = () => {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.inviteStore {
+	position: fixed;
+	right: 40rpx;
+	bottom: 60rpx;
+	z-index: 10;
+	background-color: $main-color;
+	color: #fff;
+	box-sizing: content-box;
+	font-size: 24rpx;
+	line-height: 1.5em;
+	border-radius: 50%;
+	overflow: hidden;
+	width: 100rpx;
+	height: 100rpx;
+	text-align: justify;
+	@include mFlex;
+	flex-direction: column;
+}
+</style>

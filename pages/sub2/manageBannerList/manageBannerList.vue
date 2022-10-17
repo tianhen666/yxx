@@ -29,9 +29,9 @@
 		</view>
 	</view>
 
-	<!-- 添加banner -->
+	<!-- 添加轮播图 -->
 	<m-btn-fix-bottom
-		text="添加banner"
+		text="添加轮播图"
 		@btnClick="navigateTo(`/pages/sub2/manageBannerInput/manageBannerInput?prevCurrentIndex=1`)"
 	/>
 </template>

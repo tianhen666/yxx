@@ -39,7 +39,9 @@ const props = defineProps({
 	}
 })
 
-const switchStore = async item => {
+
+// 切换店铺，重新登录
+const switchStore = async infoObj => {
 	// 微信授权登录
 	const wxCode = await uni.login()
 
@@ -47,15 +49,18 @@ const switchStore = async item => {
 	_wxLogin(
 		{
 			code: wxCode.code,
-			storeId: item.storeId
+			storeId: infoObj.storeId
 		},
-		{ storeId: item.storeId }
+		{ storeId: infoObj.storeId }
 	)
 		.then(resData => {
 			const { code, data, msg } = resData
 			const { openid, unionid, token, mobile, userid, power, avatar, nickname, remarkname } = data
 			// 清理缓存
 			// uni.clearStorageSync()
+
+			// 设置店铺ID
+			useUserMain.$patch({ storeId: infoObj.storeId })
 
 			// 获取到数据后赋值给全局变量
 			useUserMain.$patch({
@@ -71,7 +76,7 @@ const switchStore = async item => {
 			})
 
 			// 跳转到首页
-			reLaunch(`/pages/main/index/index?storeId=${item.storeId}`)
+			reLaunch(`/pages/main/index/index?storeId=${infoObj.storeId}`)
 		})
 		.catch(err => {})
 }
@@ -122,7 +127,7 @@ const switchStore = async item => {
 			line-height: 1.8;
 			@include textOverHidden;
 			.btn {
-				border:1px solid $main-color;
+				border: 1px solid $main-color;
 				color: $main-color;
 				padding: 0 18rpx;
 				margin-left: 10rpx;

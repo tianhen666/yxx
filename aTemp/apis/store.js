@@ -4,10 +4,18 @@ import http from '@/aTemp/request';
  * 店铺相关接口
  */
 
-// 保存店铺信息
+// 更新店铺信息
 export function _storeSave(data) {
 	return http.post({
 		url: '/store/save',
+		data
+	})
+}
+
+// 新建入驻店铺信息
+export function _storeSaveStore(data) {
+	return http.post({
+		url: '/store/saveStore',
 		data
 	})
 }

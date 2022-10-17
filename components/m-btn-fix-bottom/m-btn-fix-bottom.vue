@@ -48,6 +48,9 @@ const btnClick = () => {
 			line-height: 92rpx;
 			color: #ffffff;
 			background-color: $main-color;
+			&:after{
+				border: none;
+			}
 		}
 	}
 }

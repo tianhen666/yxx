@@ -56,8 +56,6 @@ onLaunch(async options => {
 	 * s 场景值
 	 * t 场景来源ID
 	 */
-
-	// 处理二维码中的参数
 	if (scene) {
 		const codeParams = decodeURIComponent(scene)
 		const codeParamsList = codeParams.split('&')
@@ -100,13 +98,18 @@ onLaunch(async options => {
 	}
 
 	// 登录获取
-	_wxLogin({
-		code: wxCode.code,
-		storeId: useUserMain.storeId,
-		invitationCode,
-		scene: Mscene,
-		targetId
-	})
+	_wxLogin(
+		{
+			code: wxCode.code,
+			storeId: useUserMain.storeId,
+			invitationCode: invitationCode || 0,
+			scene: Mscene,
+			targetId
+		},
+		{
+			storeId: useUserMain.storeId
+		}
+	)
 		.then(resData => {
 			const { code, data, msg } = resData
 			const { openid, unionid, token, mobile, userid, power, avatar, nickname, remarkname } = data
