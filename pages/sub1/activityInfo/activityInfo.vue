@@ -28,7 +28,7 @@
 					<view class="num">已有{{ (dataObj.count || 0) + 50 }}人参与活动</view>
 					<view class="img_wrapper">
 						<template v-for="(item, index) in dataObj.activityListObj" :key="index">
-							<view class="image_box" :style="{ zIndex: index + 1, left: index * 40 + 'rpx' }" v-if="item">
+							<view class="image_box" :style="{ zIndex: index + 1, left: index * 40 + 'rpx' }" v-if="index<10">
 								<image
 									class="image"
 									:src="item.avatar || '/static/images/default_avatar.png'"
@@ -200,7 +200,7 @@ const payConfirm = _debounce(
 							paySign: payInfo.sign
 						})
 						.then(val => {
-							showToastText('已参加~')
+							showToastText('参与成功~')
 							// 设置活动已参与
 							dataObj.value['myJionCount'] = (dataObj.value['myJionCount'] || 0) + 1
 
@@ -402,6 +402,7 @@ const imgErr = e => {
 		@include singleLineTextOverHidden;
 		overflow: hidden;
 		font-size: 36rpx;
+		font-weight: 600;
 		padding: 48rpx 0;
 	}
 

@@ -26,7 +26,8 @@
 		</template>
 
 		<!-- 商品列表 -->
-		<m-shop-list :listData="listData" showBtn></m-shop-list>
+		<!-- <m-shop-list :listData="listData" showBtn></m-shop-list> -->
+		<m-shop-list-1 :listData="listData"></m-shop-list-1>
 	</z-paging>
 </template>
 
@@ -34,7 +35,7 @@
 import { _storeproductGetlist } from '@/aTemp/apis/shop.js'
 import { onLoad, onShow } from '@dcloudio/uni-app'
 import { ref } from 'vue'
-
+import mShopList1 from './components/m-shop-list-1/m-shop-list-1.vue'
 // 全局登录信息
 import { _useUserMain } from '@/aTemp/store/userMain.js'
 const useUserMain = _useUserMain()

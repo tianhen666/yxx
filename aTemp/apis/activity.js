@@ -61,9 +61,9 @@ export function _enrollformEnpayment(data) {
 }
 
 // 活动支付回调
-export function _enrollformWxNotifys(data) {
+export function _enrollformWxNotifys(params) {
 	return http.post({
-		url: '/enrollform/wxNotifys',
-		data
+		url: '/enrollform/enrollformWxNotifys',
+		params,
 	})
 }

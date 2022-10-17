@@ -98,6 +98,9 @@ const queryList = (pageNo, pageSize) => {
 		border-bottom: 1px solid #eee;
 		padding-bottom: 32rpx;
 		margin-left: 32rpx;
+		:last-of-type{
+			border: none;
+		}
 		> .left {
 			.name {
 				color: #333333;

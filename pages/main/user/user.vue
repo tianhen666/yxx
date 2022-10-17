@@ -32,11 +32,11 @@
 		<p-user v-if="useUserMain.power === -1"></p-user>
 
 		<!-- 商家端显示 -->
-		<s-user v-else></s-user>
+		<s-user v-if="useUserMain.power != -1"></s-user>
 	</z-paging>
 	
 	<!-- 邀请门诊入驻 -->
-	<view class="inviteStore" v-if="useUserMain.storeId == 1" @tap="navigateTo('/pages/sub1/settleIn/settleIn')">
+	<view class="inviteStore" v-if="useUserMain.storeId == 1&&useUserMain.power != -1" @tap="navigateTo('/pages/sub1/settleIn/settleIn')">
 		<text>店铺</text>
 		<text>入驻</text>
 	</view>

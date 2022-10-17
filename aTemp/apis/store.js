@@ -63,10 +63,10 @@ export function _wxpayPayment(data) {
 }
 
 // 商品支付成功回调，并且分账
-export function _wxpayWxNotifys(data) {
+export function _wxpayWxNotifys(params) {
 	return http.post({
 		url: '/wxpay/wxNotifys',
-		data
+		params
 	})
 }
 

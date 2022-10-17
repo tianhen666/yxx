@@ -130,7 +130,7 @@ onLaunch(async options => {
 			})
 
 			// 路由拦截
-			router(options)
+			// router(options)
 
 			// 放行同步方法
 			proxy.$isResolve()
@@ -139,7 +139,7 @@ onLaunch(async options => {
 		})
 		.catch(err => {
 			// 路由拦截
-			router(options)
+			// router(options)
 
 			// 放行同步方法
 			proxy.$isResolve()
@@ -149,11 +149,12 @@ onLaunch(async options => {
 })
 
 const onLaunched = ref(false)
-// 冷启动拦截
+
 onShow(options => {
 	if (onLaunched.value) {
 		console.log('onShow', options)
-		router(options)
+		// 冷启动拦截
+		// router(options)
 	}
 })
 </script>

@@ -163,8 +163,8 @@ const props = defineProps({
 			overflow: hidden;
 			.title {
 				padding: 20rpx 0;
-				font-size: 28rpx;
-				font-weight: 500;
+				font-size: 32rpx;
+				font-weight: 600;
 				color: $text-color;
 				@include singleLineTextOverHidden;
 				text-align: justify;
@@ -197,9 +197,10 @@ const props = defineProps({
 					.price {
 						color: $sub-color;
 						font-size: 36rpx;
-						font-weight: 400;
+						font-weight: 600;
 						&_cn {
 							font-size: 24rpx;
+							font-weight: normal;
 						}
 					}
 					.originalPrice {
