@@ -64,10 +64,7 @@
 				</view>
 				<view class="doctorproject_content">
 					<view class="textarea" style="width: 100%;flex: none;margin-top: 30rpx;">
-						<fuck-textarea
-							v-model="formData.remark"
-							:placeholder="rules.remark.rules[0].errorMessage"
-						></fuck-textarea>
+						<fuck-textarea v-model="formData.remark" :placeholder="rules.remark.rules[0].errorMessage"></fuck-textarea>
 					</view>
 				</view>
 			</view>
@@ -79,7 +76,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, reactive,getCurrentInstance  } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { _outpatientAppointmentMenuSave } from '@/aTemp/apis/yuyue'
 import dayjs from 'dayjs'
@@ -89,6 +86,12 @@ dayjs.locale('zh-cn')
 // 全局登录信息
 import { _useUserMain } from '@/aTemp/store/userMain.js'
 const useUserMain = _useUserMain()
+
+// 分享 (onShareAppMessage,onShare111Timeline) 不能删,必要 https://github.com/dcloudio/uni-app/issues/3097
+import useShare from '@/aTemp/mixins/useShare.js'
+const shareInfo = reactive({ title: '', path: '', imageUrl: '', query: '' })
+// 设置分享
+useShare(shareInfo)
 
 // 表单校验
 const rules = {
@@ -148,7 +151,22 @@ const formData = ref({})
 const formObj = ref(null)
 
 // 页面加载
-onLoad(optios => {
+onLoad(async optios => {
+	// 等待onLaunch中放行后执行
+	const { proxy } = getCurrentInstance()
+	await proxy.$onLaunched
+
+	// 设置页面分享参数
+	shareInfo.title = computed(() => `${useUserMain.nickname} - 邀请您，填写预约信息`)
+	// 分享图片
+	shareInfo.imageUrl = `https://imgs.fenxiangzl.com/store/tooth/invitbg.png`
+
+	// 分享到聊天框用到
+	shareInfo.path = computed(
+		() =>
+			`/pages/main/index/index?invitationCode=${useUserMain.userid}&storeId=${useUserMain.storeId}&Mscene=7&targetId=0`
+	)
+
 	// 设置填表人
 	formData.value.userid = computed(() => useUserMain.userid)
 })

@@ -1,7 +1,7 @@
 <template>
 	<view class="container">
 		<view class="blank20 blank_bg_color"></view>
-		<uni-forms :rules="rules" ref="formObj" v-model="formData" label-width="140rpx">
+		<uni-forms :rules="rules" ref="formObj" v-model="formData" label-width="240rpx">
 			<!-- 头像 -->
 			<uni-forms-item :label="rules.avatar.label" name="avatar">
 				<button
@@ -13,7 +13,7 @@
 					<image :src="formData.avatar || '/static/images/default_avatar.png'" class="image" mode="aspectFill"></image>
 				</button>
 			</uni-forms-item>
-			<view class="tips">点击图片，可以更换头像</view>
+			<view class="tips">点击图片，上传微信头像</view>
 
 			<!-- 昵称 -->
 			<uni-forms-item :label="rules.nickname.label" name="nickname">
@@ -25,8 +25,9 @@
 					v-model="formData.nickname"
 				></uni-easyinput>
 			</uni-forms-item>
+			<view class="tips">昵称限制2-32个字符，一个汉字2个字符</view>
+			
 		</uni-forms>
-		<view class="tips">昵称限制2-32个字符，一个汉字2个字符</view>
 
 		<!-- 保存 -->
 		<m-btn-fix-bottom :loading="loading" text="保存信息" @btnClick="saveClick" />
@@ -34,13 +35,14 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import config from '@/global-config.js'
-import { uploadFile } from '@/aTemp/utils/uniAppTools.js'
 import { _userUpdate } from '@/aTemp/apis/user.js'
-import { showToastText,navigateBack } from '@/aTemp/utils/uniAppTools'
+import { showToastText,navigateBack,uploadFile } from '@/aTemp/utils/uniAppTools'
 import { _debounce } from '@/aTemp/utils/tools.js'
+
+
 // 全局登录信息
 import { _useUserMain } from '@/aTemp/store/userMain.js'
 const useUserMain = _useUserMain()
@@ -48,12 +50,12 @@ const useUserMain = _useUserMain()
 // 表单校验
 const rules = {
 	avatar: {
-		rules: [{ required: true, errorMessage: '请上传头像' }],
-		label: '头像'
+		rules: [{ required: true, errorMessage: '请上传微信头像' }],
+		label: '微信头像'
 	},
 	nickname: {
-		rules: [{ required: true, errorMessage: '请输入昵称' }],
-		label: '昵称'
+		rules: [{ required: true, errorMessage: '请输入微信昵称' }],
+		label: '微信昵称'
 	}
 }
 
@@ -76,6 +78,8 @@ const onChooseAvatar = async e => {
 	const { code, data, msg } = JSON.parse(resUploadFile)
 	formData.value.avatar = data
 }
+
+
 /*
  * 保存
  */
@@ -92,6 +96,8 @@ const saveClick = _debounce(
 					showToastText('提交成功~')
 					// 返回上一级
 					navigateBack()
+				}).catch(err=>{
+					loading.value = false
 				})
 			})
 			.catch(err => {

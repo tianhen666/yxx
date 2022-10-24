@@ -26,7 +26,7 @@
 				<view class="box1_item_right">
 					<button
 						class="box1_item_right_btn"
-						v-if="item.power !== 1 && useUserMain.power === 1"
+						v-if="item.power !== 1 && (useUserMain.power === 1 || useUserMain.power === 2)"
 						@tap="popupTap(item, index)"
 					>
 						员工设置
@@ -87,7 +87,7 @@ import { showToastText, showModal } from '@/aTemp/utils/uniAppTools.js'
 import { _useUserMain } from '@/aTemp/store/userMain.js'
 const useUserMain = _useUserMain()
 
-// 分享 (onShareAppMessage,onShareTimeline) 不能删,必要 https://github.com/dcloudio/uni-app/issues/3097
+// 分享 (onShareAppMessage,onShare1111111Timeline) 不能删,必要 https://github.com/dcloudio/uni-app/issues/3097
 import useShare from '@/aTemp/mixins/useShare.js'
 const shareInfo = reactive({ title: '', path: '', imageUrl: '', query: '' })
 // 设置分享
@@ -95,17 +95,15 @@ useShare(shareInfo)
 
 //  设置分享参数
 onLoad(options => {
-	wx.hideShareMenu()
-
 	// 获取店铺信息
 	_storeGetinfo().then(res => {
 		const { code, msg, data } = res
 		shareInfo.title = computed(() => `${useUserMain.nickname}-邀请您加入【${data.name}】`)
 		shareInfo.path = computed(
 			() =>
-				`/pages/sub2/manageStaffListLogin/manageStaffListLogin?invitationCode=${useUserMain.userid}&storeId=${
+				`/pages/main/index/index?invitationCode=${useUserMain.userid}&storeId=${
 					useUserMain.storeId
-				}&Mscene=0&targetId=0`
+				}&Mscene=5&targetId=0`
 		)
 		shareInfo.imageUrl = `https://imgs.fenxiangzl.com/store/tooth/invitbg.png`
 	})
@@ -157,8 +155,6 @@ const currentListDataIndex = ref('')
 const formObj = ref(null)
 // 加载中1
 const loading1 = ref(false)
-// 加载中2
-const loading2 = ref(false)
 
 // 弹出弹框
 const popupTap = (item, index) => {
@@ -174,6 +170,8 @@ const popupClose = () => {
 	// getUserList()
 }
 
+// 加载中2
+const loading2 = ref(false)
 // 移除员工
 const deleteClick = () => {
 	showModal('确定移除吗？').then(res => {
@@ -187,7 +185,7 @@ const deleteClick = () => {
 				loading2.value = false
 
 				// 移除列表中的元素
-				delete listData.value[currentListDataIndex.value]
+				listData.value.splice(currentListDataIndex.value, 1)
 			})
 		}
 	})

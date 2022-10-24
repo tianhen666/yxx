@@ -10,7 +10,7 @@
 		<!-- 名称 -->
 		<view class="name_box" @tap="navigateTo('/pages/sub2/manageUserInfo/manageUserInfo')">
 			<view class="name">{{ useUserMain.nickname || '微信用户' }}</view>
-			<view class="userId">ID：{{ useUserMain.userid || 0 }}</view>
+			<view class="userId">{{ useUserMain.mobile || '------------' }}</view>
 		</view>
 		<!-- 邀请码 -->
 		<view class="invitation" @tap="wxWxqrCode">
@@ -47,7 +47,17 @@ const wxWxqrCode = () => {
 		const { msg, data, code } = res
 		const imgPath = await base64ToPath('data:image/png;base64,' + data)
 		uni.hideLoading()
-		previewImage([imgPath])
+		// 分享图片
+		uni
+			.showShareImageMenu({
+				path: imgPath
+			})
+			.then(res => {
+				console.log(res)
+			})
+			.catch(err => {
+				console.log(err)
+			})
 	})
 }
 </script>

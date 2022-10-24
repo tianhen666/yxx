@@ -4,7 +4,7 @@
 		<!-- 服务图片 -->
 		<view class="banner_img"><image :src="dataObj.pic" mode="aspectFill" class="image"></image></view>
 		<view class="blank20"></view>
-		
+
 		<!-- 介绍 -->
 		<view class="serve_text">
 			<m-title2 :title="dataObj.title"></m-title2>
@@ -14,14 +14,14 @@
 			<view class="serve_item_box">
 				<view class="serve_item">
 					<!-- <view class="left">适用症状：</view> -->
-					<view class="right">{{ dataObj.descData }}</view>
+					<text class="right">{{ dataObj.descData }}</text>
 				</view>
 			</view>
 		</view>
 		<view class="blank20"></view>
 
 		<!-- 相关商品 -->
-		<view class="related_goods" v-if="dataObj.productList.length > 0">
+		<view class="related_goods" v-if="dataObj.productList && dataObj.productList?.length > 0">
 			<shop-list :listData="dataObj.productList">
 				<template #title>
 					<m-title2 title="相关商品" />
@@ -40,6 +40,7 @@
 					:key="index"
 					:src="item"
 					mode="widthFix"
+					lazy-load
 				></image>
 			</view>
 		</view>
@@ -60,6 +61,7 @@ import { previewImage } from '@/aTemp/utils/uniAppTools.js'
 const dataObj = ref({})
 const dataId = ref(0)
 const loading = ref(true)
+
 // 页面开始加载
 onLoad(async options => {
 	const { proxy } = getCurrentInstance()
@@ -97,7 +99,7 @@ onLoad(async options => {
 		.title {
 			background-color: #{$main-color}66;
 			border-radius: 16rpx 16rpx 0 0;
-			font-size: 28rpx;
+			font-size: 26rpx;
 			color: $text-color;
 			height: 80rpx;
 			line-height: 80rpx;
@@ -113,7 +115,7 @@ onLoad(async options => {
 				@include mFlex;
 				justify-content: left;
 				align-items: flex-start;
-				font-size: 24rpx;
+				font-size: 26rpx;
 				margin-bottom: 24rpx;
 				line-height: 1.6;
 				&:last-child {

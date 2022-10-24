@@ -116,6 +116,11 @@ const module2 = {
 			imgUrl: '/static/images/u-huiyuan.png',
 			name: '会员管理',
 			path: '/pages/sub2/manageMemberList/manageMemberList'
+		},
+		{
+			imgUrl: '/static/images/u-huiyuan.png',
+			name: '预约列表',
+			path: '/pages/sub1/yuyueList/yuyueList'
 		}
 	]
 }

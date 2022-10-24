@@ -49,9 +49,14 @@
 <script setup>
 import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
-import { navigateBack, redirectTo, showToastText } from '@/aTemp/utils/uniAppTools.js'
+import { navigateBack, redirectTo, showToastText, navigateTo } from '@/aTemp/utils/uniAppTools.js'
 import { _storeVipOrderPayment, _storeVipOrderOrderlist, _storeVipOrderWxNotifys } from '@/aTemp/apis/store.js'
 import { _debounce } from '@/aTemp/utils/tools.js'
+
+// 全局登录信息
+import { _useUserMain } from '@/aTemp/store/userMain.js'
+const useUserMain = _useUserMain()
+
 const pageLoading = ref(true)
 const vipListData = ref([])
 
@@ -73,6 +78,13 @@ const current = ref(0)
 const btnLoading = ref(false)
 const storeVipOrderPayment = _debounce(
 	() => {
+		// 判断是否授权登录
+		if (!useUserMain.isLogin) {
+			navigateTo('/pages/main/login/login')
+			btnLoading.value = false
+			return
+		}
+
 		_storeVipOrderPayment({ type: vipListData.value[current.value].id })
 			.then(res => {
 				btnLoading.value = false
@@ -81,13 +93,10 @@ const storeVipOrderPayment = _debounce(
 
 				// 唤醒支付所需要的参数
 				const resDataObj = JSON.parse(data)
-				console.log(resDataObj)
+				// console.log(resDataObj)
 
-				// 内部订单编号
+				// 订单编号
 				const orderNumExternal = resDataObj.orderNumExternal
-
-				// 移领订单编号
-				const orderNum = resDataObj.orderNum || resDataObj.orderNumParent
 
 				// 支付信息
 				const payInfo = JSON.parse(resDataObj.pay_info)
@@ -98,7 +107,6 @@ const storeVipOrderPayment = _debounce(
 					showToastText(resDataObj.result_msg)
 					return
 				}
-
 
 				// 唤醒支付
 				uni
@@ -113,18 +121,16 @@ const storeVipOrderPayment = _debounce(
 						showToastText('支付成功~')
 
 						// 支付成功回调，并且分账 status: 2 //待使用
-						const myParameter = { orderNumExternal: orderNumExternal, status: 2, orderNum: orderNum }
+						const myParameter = { orderNumExternal: orderNumExternal, status: 2 }
 						_storeVipOrderWxNotifys(myParameter).then(resData => {
-							console.log('resData')
+							// console.log('resData')
 						})
-						// 去订单列表页
+
+						// 个人中心页面
 						redirectTo('/pages/main/user/user')
 					})
 					.catch(err => {
 						showToastText('取消支付~')
-
-						// 去订单列表页
-						redirectTo('/pages/main/user/user')
 					})
 			})
 			.catch(err => {
@@ -146,6 +152,8 @@ const storeVipOrderPayment = _debounce(
 	box-sizing: border-box;
 	margin: auto;
 	margin-top: 30rpx;
+	position: relative;
+	z-index: 2;
 	.wrapper {
 		@include mFlex;
 		justify-content: space-between;

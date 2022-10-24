@@ -74,7 +74,7 @@
 		<view class="blank32"></view>
 
 		<!-- 分佣信息 -->
-		<view class="box3 box">
+		<view class="box3 box" v-if="userInvite">
 			<m-title2 title="分佣信息"></m-title2>
 			<view class="box3_item">
 				<view class="box3_item_left">邀请人</view>
@@ -97,7 +97,7 @@
 		</view>
 
 		<!-- 联系客户拨打电话 -->
-		<m-btn-fix-bottom text="联系客户" @btnClick="makePhoneCall(userInvite.mobile)"></m-btn-fix-bottom>
+		<m-btn-fix-bottom text="联系客户" @btnClick="makePhoneCall(user.mobile)"></m-btn-fix-bottom>
 	</view>
 </template>
 

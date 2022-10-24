@@ -95,12 +95,26 @@ export function _storeVipOrderWxNotifys(data) {
 }
 
 
-
-
-// 店铺数据统计
+// 店铺收益数据统计
 export function _storeproductStatistics(params) {
 	return http.post({
 		url: '/storeproduct/statistics',
+		params
+	})
+}
+
+// 活动收益数据统计
+export function _storeproductActivitystatistics(params) {
+	return http.post({
+		url: '/storeproduct/activitystatistics',
+		params
+	})
+}
+
+// 活动收益详情
+export function _storeproductParticulars(params) {
+	return http.post({
+		url: '/storeproduct/particulars',
 		params
 	})
 }

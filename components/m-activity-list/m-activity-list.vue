@@ -11,9 +11,9 @@
 				<image class="image" :src="item.mainPic" mode="aspectFill"></image>
 				<!-- 活动类型 -->
 				<view class="type">
-					<image class="image" :src="`/static/images/type${index%2 + 1}.png`" mode="aspectFill"></image>
+					<image class="image" :src="`/static/images/type${(index % 2) + 1}.png`" mode="aspectFill"></image>
 					<text class="text">
-						{{ item.type === 0 ? '免费引流' : item.type === 1 ? '爆款活动' : item.type === 2 ? '限量秒杀' : '' }}
+						{{ item.type === 0 ? '免费活动' : item.type === 1 ? '爆款活动' : item.type === 2 ? '限量秒杀' : '' }}
 					</text>
 				</view>
 			</view>
@@ -42,11 +42,11 @@
 				<!-- 参与 -->
 				<view class="add_wrapper">
 					<view class="left">
-						<view class="img_wrapper">
+						<view class="img_wrapper" v-if="item.infoList.length > 0">
 							<template v-for="(subItem, subIndex) in item.infoList" :key="subIndex">
 								<view
 									class="image_box"
-									:style="{ zIndex: subIndex + 1, left: subIndex * 40 + 'rpx' }"
+									:style="{ zIndex: subIndex + 1}"
 									v-if="subItem && subIndex < 5"
 								>
 									<image
@@ -57,11 +57,11 @@
 								</view>
 							</template>
 						</view>
-						<view class="text">已有{{ (item.infocount || 0) + 50 }}人参与</view>
+						<view class="text">已有{{ (item.infocount || 0) + (item.views || 0) }}人参与</view>
 					</view>
-					<view class="jion" :class="`style${index%2 + 1}`">
+					<view class="jion" :class="`style${(index % 2) + 1}`">
 						<text>参与活动</text>
-						<image class="image" :src="`/static/images/right${index + 1}.png`" mode="aspectFill"></image>
+						<image class="image" :src="`/static/images/right${(index % 2) + 1}.png`" mode="aspectFill"></image>
 					</view>
 				</view>
 			</view>
@@ -162,9 +162,9 @@ const props = defineProps({
 			border-radius: 0 0 8rpx 8rpx;
 			overflow: hidden;
 			.title {
-				padding: 20rpx 0;
-				font-size: 32rpx;
-				font-weight: 600;
+				padding: 40rpx 0 30rpx;
+				font-size: 38rpx;
+				font-weight: 500;
 				color: $text-color;
 				@include singleLineTextOverHidden;
 				text-align: justify;
@@ -229,16 +229,19 @@ const props = defineProps({
 						position: relative;
 						overflow: hidden;
 						height: 54rpx;
-						width: 216rpx;
+						display: flex;
 						> .image_box {
-							position: absolute;
-							top: 0;
+							position: relative;
 							border-radius: 50%;
 							width: 54rpx;
 							height: 54rpx;
 							padding: 2rpx;
 							background-color: #efefef;
 							overflow: hidden;
+							margin-left: -20rpx;
+							&:first-of-type{
+								margin-left: 0;
+							}
 							> .image {
 								width: 100%;
 								height: 100%;
@@ -253,7 +256,7 @@ const props = defineProps({
 						color: $text-color-grey;
 						font-size: 24rpx;
 						color: #cdcdcd;
-						margin-left: 10rpx;
+						margin-left: 20rpx;
 					}
 				}
 				> .jion {

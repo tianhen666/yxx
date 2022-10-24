@@ -5,7 +5,7 @@
 			<image class="logo" :src="info.icon" mode="aspectFill"></image>
 			<view class="text_wrapper">
 				<view class="name">{{ info.name }}</view>
-				<view class="address">{{ info.descData }}</view>
+				<view class="address">{{ info.address }}{{ info.addressDetail }}</view>
 
 				<!-- 营业时间 -->
 				<view class="text_warpper_box1">
@@ -123,7 +123,7 @@ const daohang = () => {
 			font-size: 32rpx;
 		}
 		.address {
-			font-size: 24rpx;
+			font-size: 26rpx;
 			text-align: justify;
 			line-height: 34rpx;
 			min-height: 68rpx;

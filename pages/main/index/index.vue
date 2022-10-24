@@ -49,10 +49,10 @@
 					</template>
 				</m-title2>
 				<m-fuwu :info="storeInfo"></m-fuwu>
-				<view class="blank20"></view>
+				<view class="blank40"></view>
 				<!-- m-fuwu end -->
 
-				<m-serve-list2 :listData="serveListData" v-if="serveListData.length > 0"></m-serve-list2>
+				<m-serve-list2 more :listData="serveListData" v-if="serveListData.length > 0"></m-serve-list2>
 			</view>
 			<view class="blank40"></view>
 		</view>
@@ -73,6 +73,7 @@ import { _bannerList } from '@/aTemp/apis/banner'
 import { _storeGetinfo } from '@/aTemp/apis/store.js'
 import { _enrollformGetlist } from '@/aTemp/apis/activity.js'
 import { _serveGetlist } from '@/aTemp/apis/service.js'
+import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
 
 // 全局登录信息
 import { _useUserMain } from '@/aTemp/store/userMain.js'
@@ -111,7 +112,7 @@ const getData = () => {
 		bannerListData.value = res[0].data
 		storeInfo.value = res[1].data
 		activityListData.value = res[2].data.slice(0, 3)
-		serveListData.value = res[3].data
+		serveListData.value = res[3].data.slice(0, 6)
 
 		// 设置页面分享参数
 		shareInfo.title = computed(() => `${useUserMain.nickname} - 邀请您进入【${storeInfo.value.name}】`)
@@ -144,9 +145,66 @@ onLoad(async options => {
 	const { proxy } = getCurrentInstance()
 	await proxy.$onLaunched
 
+	let { invitationCode, storeId, Mscene, targetId, scene } = options
+	// 解析二维码中参数
+	if (scene) {
+		const codeParams = decodeURIComponent(scene)
+		const codeParamsList = codeParams.split('&')
+		const codeParamsObj = {}
+		codeParamsList.forEach(item => {
+			codeParamsObj[item.split('=')[0]] = item.split('=')[1]
+		})
+
+		// 覆盖上面几个参数值
+		invitationCode = codeParamsObj['i']
+		storeId = codeParamsObj['sd']
+		Mscene = codeParamsObj['s']
+		targetId = codeParamsObj['t']
+	}
+	console.log(
+		'首页---' + '邀请人ID：' + invitationCode,
+		'店铺id：' + storeId,
+		'场景值：' + Mscene,
+		'目标ID：' + targetId
+	)
 	// 开始加载
 	loading.value = true
 	proxy.$refs.paging.reload()
+
+	/*
+	 * 获取进入小程序参数
+	 * invitationCode 邀请人id
+	 * storeId 店铺ID
+	 * Mscene 0直接邀请 1活动 2商品 3服务 4海报 5员工邀请 6店铺入驻邀请 7预约分享
+	 * const Mscene = ["直接邀请","活动邀请","商品邀请","服务邀请","海报邀请","员工邀请","店铺入驻邀请","预约分享"]
+	 * targetId 场景来源ID
+	 */
+
+	Mscene = parseInt(Mscene)
+	const parmsStr = `invitationCode=${invitationCode}&storeId=${storeId}&Mscene=${Mscene}&targetId=${targetId}`
+	if (Mscene === 0) {
+		// 跳转到目标--首页--页面
+	} else if (Mscene === 1) {
+		// 跳转到目标--活动--页面
+		navigateTo(`/pages/sub1/activityInfo/activityInfo?${parmsStr}`)
+	} else if (Mscene === 2) {
+		// 跳转到目标--商品--页面
+		navigateTo(`/pages/sub1/goodsInfo/goodsInfo?${parmsStr}`)
+	} else if (Mscene === 3) {
+		// 跳转到目标--服务--页面
+		navigateTo(`/pages/sub1/serveInfo/serveInfo?${parmsStr}`)
+	} else if (Mscene === 4) {
+		// 跳转到目标--服务--页面
+	} else if (Mscene === 5) {
+		// 跳转到目标--员工邀请--页面
+		navigateTo(`/pages/sub2/manageStaffListLogin/manageStaffListLogin?${parmsStr}`)
+	} else if (Mscene === 6) {
+		// 跳转到目标--店铺入驻--页面
+		navigateTo(`/pages/sub1/settleIn/settleIn?${parmsStr}`)
+	} else if (Mscene === 7) {
+		// 跳转到目标--预约分享--页面
+		navigateTo(`/pages/sub1/yuyue/yuyue?${parmsStr}`)
+	}
 })
 </script>
 <style lang="scss" scoped>

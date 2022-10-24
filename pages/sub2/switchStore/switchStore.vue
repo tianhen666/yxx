@@ -18,8 +18,8 @@
 
 				<!-- 按钮 -->
 				<view class="box2_btn">
-					<button class="box2_btn_item style1">删除</button>
-					<button class="box2_btn_item style2">进入门诊</button>
+					<!-- <button class="box2_btn_item style1">删除</button> -->
+					<button class="box2_btn_item style2" @tap="switchStore(item)">进入门诊</button>
 				</view>
 			</view>
 		</view>
@@ -33,9 +33,15 @@
 import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { _storeGetinfolist } from '@/aTemp/apis/store.js'
+import { _wxLogin } from '@/aTemp/apis/login.js'
+import { reLaunch } from '@/aTemp/utils/uniAppTools.js'
+
+// 全局登录信息
+import { _useUserMain } from '@/aTemp/store/userMain.js'
+const useUserMain = _useUserMain()
+
 // 搜索文字
 const searchText = ref('')
-
 // 数据列表
 const dataList = ref([])
 
@@ -54,6 +60,50 @@ const storeGetinfolist = () => {
 	_storeGetinfolist({ searchText: searchText.value }).then(res => {
 		dataList.value = res.data
 	})
+}
+
+// 切换店铺，重新登录
+const switchStore = async infoObj => {
+	// 微信授权登录
+	const wxCode = await uni.login()
+
+	// 登录获取
+	_wxLogin(
+		{
+			code: wxCode.code,
+			storeId: infoObj.storeId,
+			invitationCode: 0
+		},
+		{ storeId: infoObj.storeId }
+	)
+		.then(resData => {
+			const { code, data, msg } = resData
+			const { openid, unionid, token, mobile, userid, power, avatar, nickname, remarkname } = data
+			// 清理缓存
+			// uni.clearStorageSync()
+
+			// 设置店铺ID
+			useUserMain.$patch({ storeId: infoObj.storeId })
+
+			// 获取到数据后赋值给全局变量
+			useUserMain.$patch({
+				openId: openid,
+				unionId: unionid,
+				token: token,
+				mobile: mobile,
+				userid: userid,
+				power: power,
+				avatar: avatar,
+				nickname: nickname,
+				remarkname: remarkname
+			})
+
+			// 跳转到首页
+			reLaunch(`/pages/main/index/index?storeId=${infoObj.storeId}`)
+		})
+		.catch(err => {
+			console.log(err)
+		})
 }
 </script>
 

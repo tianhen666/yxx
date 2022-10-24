@@ -70,16 +70,16 @@ const shareInfo = reactive({ title: '', path: '', imageUrl: '', query: '' })
 // 设置分享
 useShare(shareInfo)
 // 设置页面分享参数
-shareInfo.title = computed(()=>`${useUserMain.nickname}-邀请开通入驻牙小新`)
+shareInfo.title = computed(() => `${useUserMain.nickname}-邀请您开通入驻牙小新`)
 // 分享图片
 shareInfo.imageUrl = `https://imgs.fenxiangzl.com/store/tooth/vipshare.png`
 
 // 分享到聊天框
 shareInfo.path = computed(
 	() =>
-		`/pages/sub1/settleIn/settleIn?invitationCode=${useUserMain.userid}&storeId=${
+		`/pages/main/index/index?invitationCode=${useUserMain.userid}&storeId=${
 			useUserMain.storeId
-		}&Mscene=0&targetId=0`
+		}&Mscene=6&targetId=0`
 )
 
 // 表单数据
@@ -156,15 +156,16 @@ const btnClick = _debounce(
 				// 保存信息接口
 				_storeSaveStore(formData.value).then(res => {
 					loading.value = false
-					
+
 					// 切换店铺
 					switchStore(res.data)
-					
+
 					showToastText('店铺创建成功~')
+				}).catch(err=>{
+					showToastText()
 				})
 			})
 			.catch(err => {
-				console.log(err)
 				loading.value = false
 				showToastText(err[0].errorMessage)
 				console.log('表单错误信息：', err)
@@ -173,7 +174,6 @@ const btnClick = _debounce(
 	1000,
 	loading
 )
-
 
 // 切换店铺，重新登录
 const switchStore = async infoObj => {
@@ -184,9 +184,12 @@ const switchStore = async infoObj => {
 	_wxLogin(
 		{
 			code: wxCode.code,
-			storeId: infoObj.storeId
+			storeId: infoObj.storeId,
+			invitationCode: useUserMain.userid || 0,
+			scene: 0,
+			targetId: 0
 		},
-		{ storeId: infoObj.storeId }
+		{ code: wxCode.code, storeId: infoObj.storeId, invitationCode: useUserMain.userid || 0, scene: 0, targetId: 0 }
 	)
 		.then(resData => {
 			const { code, data, msg } = resData

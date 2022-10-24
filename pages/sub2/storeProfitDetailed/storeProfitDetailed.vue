@@ -41,8 +41,6 @@ import { _enrollformEarningsport } from '@/aTemp/apis/store.js'
 import dayjs from 'dayjs'
 // 数据列表
 const dataList = ref([])
-// 当前选择的索引
-const tabIndex = ref(0)
 // 插件对象
 const paging = ref(null)
 
@@ -106,15 +104,16 @@ const queryList = (pageNo, pageSize) => {
 				color: #333333;
 				font-size: 30rpx;
 				.text2 {
+					display: block;
 					font-size: 26rpx;
 					color: #aaa;
-					padding-left: 20rpx;
+					padding-top: 20rpx;
 				}
 			}
 			.source {
 				color: #aaa;
 				font-size: 26rpx;
-				margin-top: 32rpx;
+				margin-top: 10rpx;
 				.text2 {
 				}
 			}

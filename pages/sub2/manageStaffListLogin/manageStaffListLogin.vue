@@ -5,7 +5,8 @@
 		<view class="box box1">
 			<view class="text1">邀请您加入</view>
 			<view class="text2">{{ storeInfo.name }}</view>
-			<button class="btn" @tap="jionStore">进入门诊</button>
+			<button class="btn" v-if="!useUserMain.isLogin" @tap="navigateTo('/pages/main/login/login')">进入门诊</button>
+			<button class="btn" v-else @tap="jionStore">进入门诊</button>
 		</view>
 	</view>
 </template>
@@ -15,7 +16,7 @@ import { ref, getCurrentInstance } from 'vue'
 import { _userChangeUserId } from '@/aTemp/apis/user.js'
 import { _storeGetinfo } from '@/aTemp/apis/store.js'
 import { onLoad } from '@dcloudio/uni-app'
-import { showToastText, redirectTo } from '@/aTemp/utils/uniAppTools.js'
+import { showToastText, redirectTo,navigateTo } from '@/aTemp/utils/uniAppTools.js'
 
 // 全局登录信息
 import { _useUserMain } from '@/aTemp/store/userMain.js'
@@ -35,9 +36,9 @@ onLoad(async options => {
 	_storeGetinfo().then(res => {
 		const { data, msg, code } = res
 		storeInfo.value = data
-		setTimeout(()=>{
+		setTimeout(() => {
 			loading.value = false
-		},1000)
+		}, 1000)
 	})
 })
 

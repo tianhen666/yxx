@@ -49,7 +49,8 @@ const switchStore = async infoObj => {
 	_wxLogin(
 		{
 			code: wxCode.code,
-			storeId: infoObj.storeId
+			storeId: infoObj.storeId,
+			invitationCode: 0
 		},
 		{ storeId: infoObj.storeId }
 	)

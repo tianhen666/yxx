@@ -67,7 +67,7 @@ export default function(paramsObj) {
 				chartData.value = dataObj
 
 			} else {
-				errorMessage.value = "加载失败"
+				errorMessage.value = "暂无数据"
 			}
 		}, 500)
 

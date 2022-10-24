@@ -75,6 +75,11 @@ textarea {
 
 /* uni组件样式覆盖 */
 
+/* 下拉组件 */
+.uni-select__input-box {
+	overflow: hidden;
+}
+
 /* 页面标题组件 */
 .uni-status-bar {
 	height: 44px !important;

@@ -77,6 +77,11 @@ import { _wxpayPayment, _wxpayWxNotifys } from '@/aTemp/apis/store.js'
 import { onLoad, onShow } from '@dcloudio/uni-app'
 import { navigateTo, showToastText, redirectTo } from '@/aTemp/utils/uniAppTools.js'
 import { _debounce } from '@/aTemp/utils/tools.js'
+
+// 全局登录信息
+import { _useUserMain } from '@/aTemp/store/userMain.js'
+const useUserMain = _useUserMain()
+
 // 骨架屏
 import lsSkeleton from '@/components/ls-skeleton/ls-skeleton.nvue'
 const skeleton = [64, 'title', 'news', 64, 'title', 'line-lg*3']
@@ -107,6 +112,14 @@ onLoad(options => {
 const btnLoading = ref(false)
 const confirm = _debounce(
 	() => {
+		
+		// 判断是否授权登录
+		if(!useUserMain.isLogin){
+			navigateTo("/pages/main/login/login")
+			btnLoading.value = false
+			return
+		}
+		
 		_wxpayPayment({ count: quantity.value, productId: dataId.value, enrollId: 0 })
 			.then(res => {
 				btnLoading.value = false

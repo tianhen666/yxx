@@ -14,7 +14,7 @@
 				</view>
 
 				<!-- 拨打电话 -->
-				<view class="container_item_box_right">
+				<view class="container_item_box_right" v-if="!activityShow">
 					<view class="copy_mobile" @tap.stop.prevent="setClipboardData(item.mobile)">复制号码</view>
 					<view class="call" @tap.stop.prevent="makePhoneCall(item.mobile)">
 						<image class="image" src="/static/images/phone.png" mode="heightFix"></image>
@@ -25,14 +25,14 @@
 
 			<!-- 活动数据分析页面显示 -->
 			<view class="container_item_box2" v-if="activityShow">
-				<view class="Invited item">邀请人：{{ item.InvitedName }}</view>
+				<view class="Invited item">邀请人：{{ item.ynickname }}</view>
 				<view class="views item">浏览次数：{{ item.views }}</view>
-				<view class="join item" v-if="item.join">已参与</view>
+				<view class="join item" v-if="item.participate === 1">已参与</view>
 				<view class="unJoin item" v-else>未参与</view>
 			</view>
 
 			<!-- 会员管理页面显示 -->
-			<view class="container_item_box2" v-else>
+			<view class="container_item_box2" v-if="!activityShow">
 				<view class="source item">来源：{{ scene[item.scene] || '无' }}</view>
 				<view class="Invited item">邀请人：{{ item.yname || item.rname || '无' }}</view>
 				<view class="Invited item" v-if="item.ytime">{{ dayjs(item.ytime).format('YYYY年M月D日') }}</view>

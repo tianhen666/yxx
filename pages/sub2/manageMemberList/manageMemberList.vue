@@ -174,6 +174,8 @@ watch(scene, (newVal, oldVal) => {
 	userListData.value.length = 0
 	userDataStatistics()
 })
+
+// 0直接邀请 1活动 2商品 3服务 4海报 5员工邀请 6店铺入驻邀请 7预约分享
 const dataTree = [
 	{
 		text: '直接邀请',
@@ -184,11 +186,11 @@ const dataTree = [
 		value: '1'
 	},
 	{
-		text: '服务邀请',
+		text: '商品邀请',
 		value: '2'
 	},
 	{
-		text: '商品邀请',
+		text: '服务邀请',
 		value: '3'
 	},
 	{
@@ -196,8 +198,16 @@ const dataTree = [
 		value: '4'
 	},
 	{
-		text: '其他邀请',
+		text: '员工邀请',
 		value: '5'
+	},
+	{
+		text: '入驻邀请',
+		value: '6'
+	},
+	{
+		text: '预约邀请',
+		value: '7'
 	}
 ]
 
@@ -285,7 +295,7 @@ const searchFun = e => {
 
 .box {
 	position: relative;
-	z-index: 2;
+	z-index: 4;
 	width: $main-width;
 	padding: $padding;
 	margin: auto;
@@ -297,7 +307,7 @@ const searchFun = e => {
 
 .box1 {
 	position: relative;
-	z-index: 2;
+	z-index: 4;
 	width: $main-width;
 	@include mFlex;
 	justify-content: space-between;

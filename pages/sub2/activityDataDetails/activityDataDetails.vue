@@ -2,9 +2,9 @@
 	<view class="container">
 		<view class="blank40"></view>
 		<!-- 相关活动 -->
-		<view class="container_activity box">
-			<image class="container_activity_image" src="/static/default/tup4.jpg" mode="aspectFill"></image>
-			<view class="container_activity_title">{{ '题活动标题活动标题活动标题活动标题活动标题活动标题活动标题' }}</view>
+		<view class="container_activity box" v-if="dataObj">
+			<image class="container_activity_image" :src="dataObj.mainPic" mode="aspectFill"></image>
+			<view class="container_activity_title">{{ dataObj.title }}</view>
 		</view>
 		<view class="blank40"></view>
 
@@ -19,6 +19,7 @@
 						:localdata="categoryOption1"
 						placeholder="选择类别"
 						emptyText="暂无活动"
+						@change="selectChange"
 					></uni-data-select>
 				</view>
 
@@ -32,7 +33,7 @@
 			<view class="blank32"></view>
 
 			<!-- 用户列表 -->
-			<m-user-list activityShow></m-user-list>
+			<m-user-list activityShow :listData="listData"></m-user-list>
 		</view>
 
 		<view class="blank40"></view>
@@ -43,23 +44,75 @@
 <script setup>
 import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
+import { _enrollformGetinfo } from '@/aTemp/apis/activity.js'
+import { _storeproductParticulars } from '@/aTemp/apis/store.js'
+
 // 活动数据列表
 const categoryOption1 = ref([
 	{
-		value: 1,
+		value: -1,
 		text: '全部'
 	},
 	{
-		value: 2,
+		value: 1,
 		text: '已参与活动'
 	},
 	{
-		value: 3,
+		value: 0,
 		text: '未参与活动'
 	}
 ])
+// 是否参加状态
+const mStatus = ref(-1)
+
 // 当前活动ID
-const mStatus = ref(1)
+const dataId = ref(1)
+// 加载中
+const loading = ref(false)
+// 活动详情
+const dataObj = ref('')
+// 活动数据列表
+const listData = ref([])
+
+// 页面开始加载
+onLoad(async options => {
+	let { targetId } = options
+	dataId.value = parseInt(targetId) || 0
+	// 获取活动详情
+	enrollformGetinfo()
+
+	// 获取活动数据详情
+	storeproductParticulars()
+})
+
+// 获取活动详情
+const enrollformGetinfo = () => {
+	// 加载中
+	loading.value = true
+	_enrollformGetinfo({ id: dataId.value }).then(res => {
+		const { data, code, msg } = res
+		// 活动详情
+		dataObj.value = data.getinfo
+		// 数据加载结束
+		loading.value = false
+	})
+}
+
+// 活动数据详情
+const storeproductParticulars = () => {
+	// dataId.value
+	_storeproductParticulars({ productid: 3038, participate: mStatus.value }).then(res => {
+		const { data, code, msg } = res
+		// 活动参与人数列表
+		listData.value = data
+	})
+}
+
+// 类别切换
+const selectChange = e => {
+	mStatus.value = e
+	storeproductParticulars()
+}
 </script>
 
 <style lang="scss" scoped>

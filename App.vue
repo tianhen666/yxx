@@ -41,8 +41,8 @@ onLaunch(async options => {
 	 * 获取进入小程序参数
 	 * invitationCode 邀请人id
 	 * storeId 店铺ID
-	 * Mscene 0直接邀请 1活动 2商品 3服务 4海报 5其他
-	 * const Mscene = ["直接邀请","活动邀请","商品邀请","服务邀请","海报邀请","其他邀请"]
+	 * Mscene 0直接邀请 1活动 2商品 3服务 4海报 5员工邀请 6店铺入驻邀请 7预约分享
+	 * const Mscene = ["直接邀请","活动邀请","商品邀请","服务邀请","海报邀请","员工邀请","店铺入驻邀请","预约分享"]
 	 * targetId 场景来源ID
 	 */
 	// console.log(options.query)
@@ -87,7 +87,7 @@ onLaunch(async options => {
 	 * 如果缓存中还是没有店铺ID,设置一个默认店铺ID
 	 */
 	if (!useUserMain.storeId) {
-		useUserMain.$patch({ storeId: 1 })
+		useUserMain.$patch({ storeId: 2 })
 	}
 
 	// 兼容朋友圈打开小程序
@@ -134,7 +134,7 @@ onLaunch(async options => {
 
 			// 放行同步方法
 			proxy.$isResolve()
-
+			// 设置onLaunch加载完成
 			onLaunched.value = true
 		})
 		.catch(err => {
@@ -143,18 +143,23 @@ onLaunch(async options => {
 
 			// 放行同步方法
 			proxy.$isResolve()
-
+			// 设置onLaunch加载完成
 			onLaunched.value = true
 		})
 })
 
+// onLaunch中方法是否加载完成
 const onLaunched = ref(false)
-
 onShow(options => {
+	const accountInfo = uni.getAccountInfoSync();
+	console.log(accountInfo.miniProgram.appId) // 小程序 appId
 	if (onLaunched.value) {
-		console.log('onShow', options)
+		// console.log('onShow', options)
 		// 冷启动拦截
 		// router(options)
+		
+		// 初始化,检查是否更新
+		init(options)
 	}
 })
 </script>

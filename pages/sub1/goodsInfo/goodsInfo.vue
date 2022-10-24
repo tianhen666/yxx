@@ -57,16 +57,37 @@
 		<!-- 底部按钮 -->
 		<m-shop-btn-bottom
 			:dataObj="dataObj"
+			@tapCreateImg="tapCreateImg"
 			@payConfirm="navigateTo(`/pages/sub1/confirmOrder/confirmOrder?id=${dataId}`)"
 		></m-shop-btn-bottom>
 	</view>
+
+	<!-- 海报生成 -->
+	<w-painter
+		:palette="posterData.value"
+		@imgOK="createImgOk"
+		@imgErr="imgErr"
+		:use2D="true"
+		:dirty="false"
+		:LRU="false"
+		:refresh="refresh"
+		customStyle="left: -9999px; top: -9999rpx;position: absolute;"
+	></w-painter>
 </template>
 
 <script setup>
 import { ref, reactive, computed, getCurrentInstance } from 'vue'
 import { _storeproductGetinfo } from '@/aTemp/apis/shop.js'
 import { onLoad, onShow } from '@dcloudio/uni-app'
-import { navigateTo, previewImage } from '@/aTemp/utils/uniAppTools.js'
+import {
+	navigateTo,
+	previewImage,
+	saveImageToPhotosAlbum,
+	showLoading,
+	showToastText,
+	getImageInfo
+} from '@/aTemp/utils/uniAppTools.js'
+import { _wxWxqrCode } from '@/aTemp/apis/login.js'
 
 // 全局登录信息
 import { _useUserMain } from '@/aTemp/store/userMain.js'
@@ -81,7 +102,7 @@ useShare(shareInfo)
 // 数据ID
 const dataId = ref(0)
 // 数据对象
-const dataObj = ref({})
+const dataObj = ref({ myType: '商品' })
 // 加载中
 const loading = ref(true)
 
@@ -90,8 +111,31 @@ onLoad(async options => {
 	// 等待onLaunch中放行后执行
 	await proxy.$onLaunched
 
+	let { invitationCode, storeId, Mscene, targetId, scene } = options
+	// 解析二维码中参数
+	if (scene) {
+		const codeParams = decodeURIComponent(scene)
+		const codeParamsList = codeParams.split('&')
+		const codeParamsObj = {}
+		codeParamsList.forEach(item => {
+			codeParamsObj[item.split('=')[0]] = item.split('=')[1]
+		})
+
+		// 覆盖上面几个参数值
+		invitationCode = codeParamsObj['i']
+		storeId = codeParamsObj['sd']
+		Mscene = codeParamsObj['s']
+		targetId = codeParamsObj['t']
+	}
+	console.log(
+		'商品页面---' + '邀请人ID：' + invitationCode,
+		'店铺id：' + storeId,
+		'场景值：' + Mscene,
+		'目标ID：' + targetId
+	)
+
 	// 获取商品ID
-	dataId.value = parseInt(options.targetId) || 0
+	dataId.value = parseInt(targetId) || 0
 
 	// 发起商品详情请求
 	_storeproductGetinfo({ id: dataId.value }).then(res => {
@@ -110,10 +154,10 @@ onLoad(async options => {
 		loading.value = false
 
 		// 设置分享参数
-		shareInfo.title = computed(() => `${useUserMain.nickname}-邀请您参加【${dataObj.value.title}】`)
+		shareInfo.title = computed(() => `${useUserMain.nickname}-给您分享了【${dataObj.value.title}】`)
 		shareInfo.path = computed(
 			() =>
-				`/pages/sub1/goodsInfo/goodsInfo?invitationCode=${useUserMain.userid}&storeId=${
+				`/pages/main/index/index?invitationCode=${useUserMain.userid}&storeId=${
 					useUserMain.storeId
 				}&Mscene=2&targetId=${dataObj.value.id}`
 		)
@@ -121,6 +165,158 @@ onLoad(async options => {
 			dataObj.value.sharePic || dataObj.value.pics[0] || `https://imgs.fenxiangzl.com/store/tooth/invitbg.png`
 	})
 })
+
+// 解决使用原生微信小程序组件,传入object不能及时更新问题
+const refresh = ref('')
+// 海报数据
+const posterData = reactive({
+	value: {}
+})
+
+// 生成海报函数
+const tapCreateImg = async () => {
+	showLoading('海报数据加载中')
+
+	// 获取小程序码
+	const wxWxqrCode = await _wxWxqrCode({
+		page: 'pages/main/index/index',
+		scene: `i=${useUserMain.userid}&sd=${useUserMain.storeId}&s=2&t=${dataObj.value.id}`,
+		width: 430
+	})
+	// console.log('data:image/png;base64,' + wxWxqrCode.data)
+
+	// 如果有海报
+	if (dataObj.value.postPic) {
+		// 获取海报图片尺寸
+		const resImgInfo = await getImageInfo(dataObj.value.postPic)
+		console.log(resImgInfo)
+		//  海报宽度为500px高度，自动
+		posterData.value = {
+			width: '500px',
+			height: resImgInfo.height / (resImgInfo.width / 500) + 'px',
+			background: resImgInfo.path,
+			views: [
+				{
+					id: '1',
+					type: 'image',
+					url: 'data:image/png;base64,' + wxWxqrCode.data,
+					css: {
+						right: '13px',
+						bottom: '13px',
+						width: '106px',
+						height: '106px'
+					}
+				}
+			]
+		}
+	} else {
+		posterData.value = {
+			width: '750px',
+			height: '1078px',
+			background: '#FFF',
+			views: [
+				{
+					id: '1_1',
+					type: 'image',
+					url: useUserMain.avatar || '/static/images/default_avatar.png',
+					css: {
+						top: '30px',
+						left: '30px',
+						width: '60px',
+						height: '60px',
+						borderRadius: '50%'
+					}
+				},
+				{
+					id: '1_2',
+					type: 'inlineText',
+					textList: [
+						{
+							text: useUserMain.nickname,
+							css: { fontSize: '28px', color: '#333' }
+						},
+						{
+							text: '  为您推荐',
+							css: { fontSize: '28px', color: '#999' }
+						}
+					],
+					css: {
+						width: '610px',
+						top: '45px',
+						left: '110px'
+					}
+				},
+				{
+					id: '2',
+					type: 'image',
+					url: dataObj.value.pics[0],
+					css: {
+						top: '120px',
+						left: '30px',
+						width: '690px',
+						height: '690px'
+					}
+				},
+				{
+					id: '3',
+					type: 'text',
+					text: dataObj.value.title,
+					css: { top: '848px', left: '30px', fontSize: '32px', color: '#333' }
+				},
+				{
+					id: '4',
+					type: 'text',
+					text: dataObj.value.price ? '￥' + dataObj.value.price : '免费活动',
+					css: { top: '978px', left: '30px', fontSize: '38px', color: '#f73639' }
+				},
+				{
+					id: '5',
+					type: 'image',
+					url: 'data:image/png;base64,' + wxWxqrCode.data,
+					css: {
+						top: '848px',
+						right: '30px',
+						width: '160px',
+						height: '160px'
+					}
+				},
+				{
+					id: '6',
+					type: 'text',
+					text: '长按识别',
+					css: { top: '1018px', right: '58px', fontSize: '26px', color: '#999' }
+				}
+			]
+		}
+	}
+
+	refresh.value = Date.now()
+}
+
+// 图片生成完成
+const createImgOk = e => {
+	uni.hideLoading()
+	if (refresh.value) {
+		saveImageToPhotosAlbum(e.detail.path).then(() => {
+			// 分享图片
+			uni
+				.showShareImageMenu({
+					path: e.detail.path
+				})
+				.then(res => {
+					console.log(res)
+				}).catch(err=>{
+					console.log(err)
+				})
+		})
+	}
+	console.log(e.detail.path)
+}
+// 图片生成失败
+const imgErr = e => {
+	uni.hideLoading()
+	showToastText('海报加载失败~')
+}
 </script>
 
 <style lang="scss" scoped>

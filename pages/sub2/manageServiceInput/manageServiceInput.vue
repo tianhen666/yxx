@@ -9,15 +9,15 @@
 			<view class="blank32 blank_bg_color"></view>
 
 			<!-- 服务名称 -->
-			<uni-forms-item :label="rules.title.label" name="title">
+			<uni-forms-item :label="rules.title.label" name="title" label-position="top">
 				<uni-easyinput v-model="formData.title" :placeholder="rules.title.rules[0].errorMessage" />
 			</uni-forms-item>
-			
+
 			<!-- 服务介绍 -->
 			<uni-forms-item :label="rules.descData.label" label-position="top" name="descData">
-				<fuck-textarea :placeholder="rules.descData.rules[0].errorMessage" v-model="formData.descData" />
+				<fuck-textarea height="200px" :placeholder="rules.descData.rules[0].errorMessage" v-model="formData.descData" />
 			</uni-forms-item>
-			
+
 			<!-- 服务详情图 -->
 			<uni-forms-item :label="rules.details.label" label-position="top" name="details">
 				<htz-image-upload
@@ -28,6 +28,23 @@
 					:formData="{ baseDir: baseDir3 }"
 					@uploadSuccess="uploadSuccess3"
 				/>
+			</uni-forms-item>
+
+			<!-- 首页背景图 -->
+			<uni-forms-item :label="rules.background.label" label-position="top" name="background">
+				<htz-image-upload
+					:max="selectNum4"
+					v-model="picList4"
+					mediaType="image"
+					:action="uploadimageURL4"
+					:formData="{ baseDir: baseDir4 }"
+					@uploadSuccess="uploadSuccess4"
+				/>
+			</uni-forms-item>
+
+			<!-- 首页特点 -->
+			<uni-forms-item :label="rules.peculiarity.label" name="peculiarity" label-position="top">
+				<uni-easyinput v-model="formData.peculiarity" :placeholder="rules.peculiarity.rules[0].errorMessage" />
 			</uni-forms-item>
 			<view class="blank32 blank_bg_color"></view>
 
@@ -43,12 +60,11 @@
 				<htz-image-upload :max="selectNum2" v-model="picList2" mediaType="image" @chooseSuccess="chooseSuccess2" />
 			</uni-forms-item>
 			<view class="blank32 blank_bg_color"></view>
-			
+
 			<!-- 排序 -->
 			<uni-forms-item :label="rules.weight.label" name="weight">
 				<uni-number-box :min="1" :max="255" v-model="formData.weight" />
 			</uni-forms-item>
-			
 		</uni-forms>
 
 		<!-- 保存信息 -->
@@ -128,7 +144,7 @@ const rules = {
 		label: '服务描述'
 	},
 	details: {
-		rules: [{ required: true, errorMessage: '请输入服务详情' }],
+		rules: [{ required: true, errorMessage: '请上传服务详情图' }],
 		label: '服务详情图'
 	},
 	weight: {
@@ -142,6 +158,14 @@ const rules = {
 	productId: {
 		rules: [{ errorMessage: '请选择管理商品' }],
 		label: '相关商品'
+	},
+	background: {
+		rules: [{ required: true, errorMessage: '请上传首页背景图' }],
+		label: '首页背景图'
+	},
+	peculiarity: {
+		rules: [{ required: true, errorMessage: '请输入首页特点' }, { maxLength: 10, errorMessage: '长度不能超过10' }],
+		label: '首页特点'
 	}
 }
 
@@ -159,7 +183,7 @@ const { saveClick, loading } = useSaveApi(formObj, formData, _serveSave)
 import useHtzImageUpload from '@/aTemp/mixins/useHtzImageUpload.js'
 
 // 主图片上传
-const { chooseSuccess: chooseSuccess1, picList: picList1, selectNum: selectNum1} = useHtzImageUpload({
+const { chooseSuccess: chooseSuccess1, picList: picList1, selectNum: selectNum1 } = useHtzImageUpload({
 	ratio: 2 / 1,
 	url: '/enrollform/uploadimage',
 	refData: formData,
@@ -190,6 +214,21 @@ const {
 	refData: formData,
 	param: 'details',
 	selectNum: 5,
+	baseDir: 'service'
+})
+
+// 首页背景图上传
+const {
+	uploadSuccess: uploadSuccess4,
+	picList: picList4,
+	selectNum: selectNum4,
+	uploadimageURL: uploadimageURL4,
+	baseDir: baseDir4
+} = useHtzImageUpload({
+	url: '/enrollform/uploadimage',
+	refData: formData,
+	param: 'background',
+	selectNum: 1,
 	baseDir: 'service'
 })
 </script>

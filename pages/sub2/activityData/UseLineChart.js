@@ -21,7 +21,7 @@ export default function(paramsObj) {
 
 
 	watch(zData, (newVal, oldVal) => {
-		// console.log(newVal)
+		console.log(newVal)
 		// console.log(oldVal)
 		
 		chartData.value = {
@@ -40,13 +40,13 @@ export default function(paramsObj) {
 					}]
 				}
 				newVal.forEach(item => {
-					dataObj.categories.push(item.custom)
-					dataObj.series[0].data.push(item.price)
+					dataObj.categories.push(item.datecount)
+					dataObj.series[0].data.push(item.datecountPrice)
 				})
 				chartData.value = dataObj
 
 			} else {
-				errorMessage.value = "加载失败"
+				errorMessage.value = "暂无数据"
 			}
 		}, 500)
 	})

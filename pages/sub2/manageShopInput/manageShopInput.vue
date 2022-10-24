@@ -179,8 +179,8 @@ const rules = {
 			{ errorMessage: '请输入分享佣金' },
 			{
 				validateFunction: function(rule, value, data, callback) {
-					if (parseFloat(value) <= 0) {
-						callback('分佣需要大于零')
+					if (parseFloat(value) < 0) {
+						callback('分佣不能小于零')
 					}
 					if (parseFloat(value) > parseFloat(data.price) * 0.3) {
 						callback('分佣价格不能高于商品价格的30%')

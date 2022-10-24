@@ -3,14 +3,27 @@
 		<view class="btn_fix">
 			<view class="btn_container">
 				<view class="left">
-					<button class="btn" open-type="share">
+					<button class="btn" v-if="!useUserMain.isLogin" @tap="navigateTo('/pages/main/login/login')">
 						<view class="text">分享{{ dataObj.myType === '活动' ? '活动' : '商品' }}</view>
-						<view class="price" v-if="dataObj.showShare === 0">赚￥{{ dataObj.sharePrice }}</view>
+						<view class="price" v-if="dataObj.showShare === 0 && dataObj.sharePrice > 0">
+							赚￥{{ dataObj.sharePrice }}
+						</view>
+					</button>
+
+					<button class="btn" open-type="share" v-else>
+						<view class="text">分享{{ dataObj.myType === '活动' ? '活动' : '商品' }}</view>
+						<view class="price" v-if="dataObj.showShare === 0 && dataObj.sharePrice > 0">
+							赚￥{{ dataObj.sharePrice }}
+						</view>
 					</button>
 				</view>
 				<view class="center" @tap="tapCreateImg">
-					<view class="text">分享海报</view>
-					<view class="price" v-if="dataObj.showShare === 0">赚￥{{ dataObj.sharePrice }}</view>
+					<button class="btn">
+						<view class="text">分享海报</view>
+						<view class="price" v-if="dataObj.showShare === 0 && dataObj.sharePrice > 0">
+							赚￥{{ dataObj.sharePrice }}
+						</view>
+					</button>
 				</view>
 				<view class="right">
 					<button class="right_btn" @tap="payConfirm">
@@ -27,6 +40,13 @@
 </template>
 
 <script setup>
+import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
+
+// 全局登录信息
+import { _useUserMain } from '@/aTemp/store/userMain.js'
+const useUserMain = _useUserMain()
+
+
 const emits = defineEmits(['payConfirm', 'tapCreateImg'])
 const props = defineProps({
 	dataObj: {
@@ -94,6 +114,18 @@ const tapCreateImg = () => {
 				flex: none;
 				color: $main-color;
 				font-size: 32rpx;
+				.btn {
+					padding: 10rpx;
+					font-weight: bold;
+					font-size: 32rpx;
+					border-radius: 0;
+					color: $main-color;
+					background-color: transparent;
+					line-height: 1;
+					&:after {
+						border: none;
+					}
+				}
 				.text {
 					font-size: 32rpx;
 					font-weight: bold;

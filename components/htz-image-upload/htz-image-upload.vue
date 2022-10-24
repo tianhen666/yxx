@@ -466,7 +466,7 @@ export default {
 							src: item,
 							quality: this.quality,
 							success: res => {
-								//console.log('compressImage', res.tempFilePath)
+								console.log('compressImage', res.tempFilePath)
 								results.push(res.tempFilePath)
 								resolve(res.tempFilePath)
 							},

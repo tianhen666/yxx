@@ -44,12 +44,12 @@
 						<text>元</text>
 					</view>
 				</view>
-				<!-- 浏览人数 -->
+				<!-- 浏览次数 -->
 				<view class="box2_total_item border">
-					<text class="text">浏览人数</text>
+					<text class="text">浏览次数</text>
 					<view class="num">
 						{{ totleData.eicount || 0 }}
-						<text>人</text>
+						<text>次</text>
 					</view>
 				</view>
 				<!-- 参与人数 -->
@@ -75,6 +75,7 @@
 					:errorReload="false"
 					:errorMessage="errorMessage1"
 					@complete="chartsComplete1"
+					@error="chartsError1"
 				/>
 			</view>
 		</view>
@@ -83,7 +84,11 @@
 		<!-- 数据分析 -->
 		<view class="box3 box">
 			<!-- 标题 -->
-			<m-title2 title="数据分析" moreText="查看详情" path="/pages/sub2/activityDataDetails/activityDataDetails" />
+			<m-title2
+				title="数据分析"
+				moreText="查看详情"
+				:path="`/pages/sub2/activityDataDetails/activityDataDetails?targetId=${productid}`"
+			/>
 
 			<view class="time">
 				{{
@@ -112,7 +117,11 @@
 		<!-- 邀请排行榜 -->
 		<view class="box3 box">
 			<!-- 标题 -->
-			<m-title2 title="邀请排行榜" moreText="查看详情" path="/pages/sub2/activityDataDetails/activityDataDetails" />
+			<m-title2
+				title="邀请排行榜"
+				moreText="查看详情"
+				:path="`/pages/sub2/activityDataDetails/activityDataDetails?targetId=${productid}`"
+			/>
 
 			<view class="time">
 				{{
@@ -124,7 +133,7 @@
 			<view class="blank32"></view>
 
 			<!-- 排行榜数据 -->
-			<m-ranking-list></m-ranking-list>
+			<m-ranking-list :listData="yaoqingpaihang"></m-ranking-list>
 		</view>
 		<view class="blank40"></view>
 		<view class="blank40"></view>
@@ -132,18 +141,29 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import qiunDataCharts from '@/pages/sub2/components/qiun-data-charts/components/qiun-data-charts/qiun-data-charts.vue'
 import dayjs from 'dayjs'
 import { _enrollformGetlist } from '@/aTemp/apis/activity.js'
-import { _storeproductStatistics } from '@/aTemp/apis/store.js'
+import { _storeproductActivitystatistics } from '@/aTemp/apis/store.js'
 
 // 活动数据列表
 const categoryOption1 = ref([])
-// 当前活动ID
+// 当前活动索引
 const activityId = ref(0)
+// 当前活动id
+const productid = computed(() => {
+	let productid = 0
 
+	try {
+		productid = categoryOption1.value[activityId.value].id
+	} catch (e) {
+		//TODO handle the exception
+	}
+
+	return productid
+})
 // 每页数量
 // const pageSize = ref(6)
 // 有多少页面
@@ -157,6 +177,12 @@ const totleData = ref({})
 const zLineData = ref([])
 // 漏斗数据
 const zLouDouData = ref([])
+
+const yaoqingpaihang = ref([])
+
+onLoad(options => {
+	getListData()
+})
 
 // 获取活动列表
 const getListData = data => {
@@ -172,24 +198,30 @@ const getListData = data => {
 			}
 		})
 		// 获取数据统计
-		storeproductStatistics()
+		storeproductActivitystatistics()
 	})
 }
 
 // 获取统计数据
-const storeproductStatistics = () => {
+const storeproductActivitystatistics = () => {
 	pageLoadStatus.value = 'loading'
-	_storeproductStatistics({ productid: categoryOption1.value[activityId.value].id })
+
+	_storeproductActivitystatistics({ productid: productid.value })
 		.then(res => {
 			const { code, msg, data } = res
 
 			totleData.value = {
-				eicount: data[1].activitystatistics[0].eicount,
-				spocoalesce: data[1].activitystatistics[0].spocoalesce,
-				stcount: data[1].activitystatistics[0].stcount
+				eicount: data[0].activityStatistics[0].eicount,
+				spocoalesce: data[0].activityStatistics[0].spocoalesce,
+				stcount: data[0].activityStatistics[0].stcount
 			}
-			zLineData.value = data[1].activityNum || []
-			zLouDouData.value = data[1].activityenrollinfoNum[0] || {}
+			// 折线图
+			zLineData.value = data[0].activityCount || []
+			// 漏斗图
+			zLouDouData.value = data[0].activityEnrollInfoNum[0] || {}
+			// 邀请排行
+			yaoqingpaihang.value = data[0].activityNum || {}
+
 			pageLoadStatus.value = 'noMore'
 		})
 		.catch(err => {
@@ -199,16 +231,12 @@ const storeproductStatistics = () => {
 		})
 }
 
-onLoad(options => {
-	getListData()
-})
-
 // 监听选择活动的变化,重新获取数据
 watch(activityId, (newVal, oldVal) => {
 	if (newVal >= 0) {
 		zLineData.value.length = 0
 		zLouDouData.value.length = 0
-		storeproductStatistics()
+		storeproductActivitystatistics()
 	}
 })
 
@@ -234,11 +262,13 @@ const {
 	chartData: chartData2,
 	opts: opts2,
 	errorMessage: errorMessage2,
-	chartsComplete: chartsComplete2
+	chartsComplete: chartsComplete2,
+	chartsError: chartsError2
 } = UseFunnelChart({ zData: zLouDouData })
 </script>
 
 <style lang="scss" scoped>
+
 .container {
 	.charts-box {
 		height: 480rpx;

@@ -25,10 +25,10 @@
 			<!-- 参与人 -->
 			<view class="join">
 				<view class="join_left">
-					<view class="num">已有{{ (dataObj.count || 0) + 50 }}人参与活动</view>
+					<view class="num">已有{{ (dataObj.count || 0) + (dataObj.views || 0) }}人参与活动</view>
 					<view class="img_wrapper">
 						<template v-for="(item, index) in dataObj.activityListObj" :key="index">
-							<view class="image_box" :style="{ zIndex: index + 1, left: index * 40 + 'rpx' }" v-if="index<10">
+							<view class="image_box" :style="{ zIndex: index + 1, left: index * 40 + 'rpx' }" v-if="index < 10">
 								<image
 									class="image"
 									:src="item.avatar || '/static/images/default_avatar.png'"
@@ -93,7 +93,8 @@ import {
 	previewImage,
 	saveImageToPhotosAlbum,
 	showLoading,
-	showToastText
+	showToastText,
+	getImageInfo
 } from '@/aTemp/utils/uniAppTools.js'
 import dayjs from 'dayjs'
 
@@ -112,7 +113,7 @@ const loading = ref(true)
 // 数据ID
 const dataId = ref(0)
 // 数据对象
-const dataObj = ref({})
+const dataObj = ref({ myType: '活动' })
 
 // 页面开始加载
 onLoad(async options => {
@@ -120,9 +121,30 @@ onLoad(async options => {
 	// 等待onLaunch中放行后执行
 	await proxy.$onLaunched
 
-	// console.log(options)
+	let { invitationCode, storeId, Mscene, targetId, scene } = options
+	// 解析二维码中参数
+	if (scene) {
+		const codeParams = decodeURIComponent(scene)
+		const codeParamsList = codeParams.split('&')
+		const codeParamsObj = {}
+		codeParamsList.forEach(item => {
+			codeParamsObj[item.split('=')[0]] = item.split('=')[1]
+		})
 
-	dataId.value = parseInt(options.targetId) || 0
+		// 覆盖上面几个参数值
+		invitationCode = codeParamsObj['i']
+		storeId = codeParamsObj['sd']
+		Mscene = codeParamsObj['s']
+		targetId = codeParamsObj['t']
+	}
+	console.log(
+		'活动页面---' + '邀请人ID：' + invitationCode,
+		'店铺id：' + storeId,
+		'场景值：' + Mscene,
+		'目标ID：' + targetId
+	)
+
+	dataId.value = parseInt(targetId) || 0
 
 	// 获取活动详情
 	enrollformGetinfo()
@@ -157,7 +179,7 @@ const enrollformGetinfo = () => {
 		shareInfo.title = computed(() => `${useUserMain.nickname}-邀请您参加【${dataObj.value.title}】`)
 		shareInfo.path = computed(
 			() =>
-				`/pages/sub1/activityInfo/activityInfo?invitationCode=${useUserMain.userid}&storeId=${
+				`/pages/main/index/index?invitationCode=${useUserMain.userid}&storeId=${
 					useUserMain.storeId
 				}&Mscene=1&targetId=${dataObj.value.id}`
 		)
@@ -169,6 +191,13 @@ const enrollformGetinfo = () => {
 const btnLoading = ref(false)
 const payConfirm = _debounce(
 	() => {
+		// 判断是否授权登录
+		if (!useUserMain.isLogin) {
+			navigateTo('/pages/main/login/login')
+			btnLoading.value = false
+			return
+		}
+
 		_enrollformEnpayment({ id: dataId.value })
 			.then(res => {
 				btnLoading.value = false
@@ -178,6 +207,7 @@ const payConfirm = _debounce(
 				try {
 					const resDataObj = JSON.parse(data)
 					// console.log(resDataObj)
+
 					// 订单编号
 					const orderNumExternal = resDataObj.orderNumExternal
 					// 支付信息
@@ -217,7 +247,7 @@ const payConfirm = _debounce(
 					showToastText(data)
 
 					// 设置活动已参与
-					// dataObj.value['myJionCount'] = (dataObj.value['myJionCount'] || 0) + 1
+					dataObj.value['myJionCount'] = (dataObj.value['myJionCount'] || 0) + 1
 				}
 			})
 			.catch(err => {
@@ -251,104 +281,147 @@ const refresh = ref('')
 const posterData = reactive({
 	value: {}
 })
-
+// 生成海报函数
 const tapCreateImg = async () => {
+	// 判断是否授权登录
+	if (!useUserMain.isLogin) {
+		navigateTo('/pages/main/login/login')
+		return
+	}
+
 	showLoading('海报数据加载中')
 
+	// 获取小程序码
 	const wxWxqrCode = await _wxWxqrCode({
-		page: 'pages/sub1/activityInfo/activityInfo',
+		page: 'pages/main/index/index',
 		scene: `i=${useUserMain.userid}&sd=${useUserMain.storeId}&s=1&t=${dataObj.value.id}`,
 		width: 430
 	})
 	// console.log('data:image/png;base64,' + wxWxqrCode.data)
 
-	posterData.value = {
-		width: '750px',
-		height: '940px',
-		background: '#FFF',
-		views: [
-			{
-				id: '1_1',
-				type: 'image',
-				url: useUserMain.avatar || '/static/images/default_avatar.png',
-				css: {
-					top: '30px',
-					left: '30px',
-					width: '60px',
-					height: '60px',
-					borderRadius: '50%'
-				}
-			},
-			{
-				id: '1_2',
-				type: 'inlineText',
-				textList: [
-					{
-						text: useUserMain.nickname,
-						css: { fontSize: '28px', color: '#333' }
-					},
-					{
-						text: '  为您推荐',
-						css: { fontSize: '28px', color: '#999' }
+	// 如果有海报
+	if (dataObj.value.postPic) {
+		// 获取海报图片尺寸
+		const resImgInfo = await getImageInfo(dataObj.value.postPic)
+		// console.log(resImgInfo)
+
+		//  海报宽度为500px高度，自动
+		posterData.value = {
+			width: '500px',
+			height: resImgInfo.height / (resImgInfo.width / 500) + 'px',
+			background: resImgInfo.path,
+			views: [
+				{
+					id: '1',
+					type: 'image',
+					url: 'data:image/png;base64,' + wxWxqrCode.data,
+					css: {
+						right: '13px',
+						bottom: '13px',
+						width: '106px',
+						height: '106px'
 					}
-				],
-				css: {
-					width: '610px',
-					top: '45px',
-					left: '110px'
 				}
-			},
-			{
-				id: '2',
-				type: 'image',
-				url: dataObj.value.mainPic,
-				css: {
-					top: '120px',
-					left: '30px',
-					width: '690px',
-					height: '552px'
+			]
+		}
+	} else {
+		posterData.value = {
+			width: '750px',
+			height: '940px',
+			background: '#FFF',
+			views: [
+				{
+					id: '1_1',
+					type: 'image',
+					url: useUserMain.avatar || '/static/images/default_avatar.png',
+					css: {
+						top: '30px',
+						left: '30px',
+						width: '60px',
+						height: '60px',
+						borderRadius: '50%'
+					}
+				},
+				{
+					id: '1_2',
+					type: 'inlineText',
+					textList: [
+						{
+							text: useUserMain.nickname,
+							css: { fontSize: '28px', color: '#333' }
+						},
+						{
+							text: '  为您推荐',
+							css: { fontSize: '28px', color: '#999' }
+						}
+					],
+					css: {
+						width: '610px',
+						top: '45px',
+						left: '110px'
+					}
+				},
+				{
+					id: '2',
+					type: 'image',
+					url: dataObj.value.mainPic,
+					css: {
+						top: '120px',
+						left: '30px',
+						width: '690px',
+						height: '552px'
+					}
+				},
+				{
+					id: '3',
+					type: 'text',
+					text: dataObj.value.title,
+					css: { top: '710px', left: '30px', fontSize: '32px', color: '#333' }
+				},
+				{
+					id: '4',
+					type: 'text',
+					text: dataObj.value.price ? '￥' + dataObj.value.price : '免费活动',
+					css: { top: '840px', left: '30px', fontSize: '38px', color: '#f73639' }
+				},
+				{
+					id: '5',
+					type: 'image',
+					url: 'data:image/png;base64,' + wxWxqrCode.data,
+					css: {
+						top: '710px',
+						right: '30px',
+						width: '160px',
+						height: '160px'
+					}
+				},
+				{
+					id: '6',
+					type: 'text',
+					text: '长按识别',
+					css: { top: '880px', right: '58px', fontSize: '26px', color: '#999' }
 				}
-			},
-			{
-				id: '3',
-				type: 'text',
-				text: dataObj.value.title,
-				css: { top: '710px', left: '30px', fontSize: '32px', color: '#333' }
-			},
-			{
-				id: '4',
-				type: 'text',
-				text: dataObj.value.price ? '￥' + dataObj.value.price : '免费活动',
-				css: { top: '840px', left: '30px', fontSize: '38px', color: '#f73639' }
-			},
-			{
-				id: '5',
-				type: 'image',
-				url: 'data:image/png;base64,' + wxWxqrCode.data,
-				css: {
-					top: '710px',
-					right: '30px',
-					width: '160px',
-					height: '160px'
-				}
-			},
-			{
-				id: '6',
-				type: 'text',
-				text: '长按识别',
-				css: { top: '880px', right: '58px', fontSize: '26px', color: '#999' }
-			}
-		]
+			]
+		}
 	}
+
 	refresh.value = Date.now()
 }
-
 // 图片生成完成
 const createImgOk = e => {
 	uni.hideLoading()
 	if (refresh.value) {
-		saveImageToPhotosAlbum(e.detail.path).then(() => {
-			previewImage([e.detail.path])
+		saveImageToPhotosAlbum(e.detail.path).then(res => {
+			// 分享图片
+			uni
+				.showShareImageMenu({
+					path: e.detail.path
+				})
+				.then(res => {
+					console.log(res)
+				}).catch(err=>{
+					console.log(err)
+				})
 		})
 	}
 	console.log(e.detail.path)

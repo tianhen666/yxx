@@ -81,7 +81,12 @@
 				"path": "goodsInfo/goodsInfo",
 				"style": {
 					"navigationBarTitleText": "商品详情",
-					"enablePullDownRefresh": false
+					"enablePullDownRefresh": false,
+					"usingComponents": {
+						// #ifdef APP-PLUS || H5 || MP-WEIXIN || MP-QQ
+						"w-painter": "/wxcomponents/painter/painter"
+						// #endif
+					}
 				}
 			}, {
 				"path": "commentList/commentList",
@@ -159,16 +164,21 @@
 					"navigationBarTitleText": "快速预约",
 					"enablePullDownRefresh": false
 				}
-			}    ,{
-                    "path" : "settleIn/settleIn",
-                    "style" :                                                                                    
-                {
-                    "navigationBarTitleText": "门店入驻",
-                    "enablePullDownRefresh": false
-                }
-                
-                }
-            ]
+			}, {
+				"path": "settleIn/settleIn",
+				"style": {
+					"navigationBarTitleText": "门店入驻",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "yuyueList/yuyueList",
+				"style": {
+					"navigationBarTitleText": "预约列表",
+					"enablePullDownRefresh": false
+				}
+
+			}]
 		},
 		{
 			"root": "pages/sub2",

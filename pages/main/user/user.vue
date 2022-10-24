@@ -34,9 +34,13 @@
 		<!-- 商家端显示 -->
 		<s-user v-if="useUserMain.power != -1"></s-user>
 	</z-paging>
-	
+
 	<!-- 邀请门诊入驻 -->
-	<view class="inviteStore" v-if="useUserMain.storeId == 1&&useUserMain.power != -1" @tap="navigateTo('/pages/sub1/settleIn/settleIn')">
+	<view
+		class="inviteStore"
+		v-if="useUserMain.storeId == 1 && useUserMain.power != -1"
+		@tap="navigateTo('/pages/sub1/settleIn/settleIn')"
+	>
 		<text>店铺</text>
 		<text>入驻</text>
 	</view>
@@ -53,7 +57,7 @@ import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
 // 全局登录信息
 import { _useUserMain } from '@/aTemp/store/userMain.js'
 const useUserMain = _useUserMain()
-// 分享 (onShareAppMessage,onShareTimeline) 不能删,必要 https://github.com/dcloudio/uni-app/issues/3097
+// 分享 (onShareAppMessage,onShareT1111111imeline) 不能删,必要 https://github.com/dcloudio/uni-app/issues/3097
 import useShare from '@/aTemp/mixins/useShare.js'
 const shareInfo = reactive({ title: '', path: '', imageUrl: '', query: '' })
 // 设置分享
@@ -64,9 +68,7 @@ const paging = ref(null)
 const loading = ref(true)
 
 //  设置分享参数
-onLoad(options => {
-	wx.hideShareMenu()
-})
+onLoad(options => {})
 
 const storeGetinfo = () => {
 	// 获取店铺信息

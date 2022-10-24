@@ -6,7 +6,7 @@
 
 			<!-- 地址 -->
 			<view class="address">
-				<view class="address_box" @tap="setClipboardData(`${info.address}${info.addressDetail}`)">
+				<view class="address_box" @tap="daohang()">
 					<image class="image" src="/static/images/daohang2.png" mode="aspectFill"></image>
 					{{ `${info.address}${info.addressDetail}` }}
 				</view>
@@ -22,7 +22,7 @@
 </template>
 
 <script setup>
-import { makePhoneCall, setClipboardData, navigateTo } from '@/aTemp/utils/uniAppTools.js'
+import { makePhoneCall, openLocation, navigateTo } from '@/aTemp/utils/uniAppTools.js'
 
 const props = defineProps({
 	// 当前店铺信息
@@ -32,6 +32,13 @@ const props = defineProps({
 		default: () => {}
 	}
 })
+
+// 打开内置地图
+const daohang = () => {
+	openLocation(props.info.lat, props.info.lng,props.info.addressDetail,props.info.address).then(res => {
+		console.log(res)
+	})
+}
 </script>
 <style lang="scss" scoped>
 .container {

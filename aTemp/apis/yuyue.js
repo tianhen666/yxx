@@ -11,3 +11,12 @@ export function _outpatientAppointmentMenuSave(data) {
 		data
 	})
 }
+
+
+// 预约列表
+export function _outpatientAppointmentMenuList(data) {
+	return http.get({
+		url: '/outpatient-appointment/menuList',
+		data
+	})
+}

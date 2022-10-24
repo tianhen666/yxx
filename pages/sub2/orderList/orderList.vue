@@ -80,6 +80,12 @@ const queryList = (pageNo, pageSize) => {
 	}
 	_orderAllOrderStore(params)
 		.then(res => {
+			if (tabIndex.value === 0) {
+				tabList.value[tabIndex.value] = '未使用 ' + res.data.total
+			} else if (tabIndex.value === 1) {
+				tabList.value[tabIndex.value] = '已完成 ' + res.data.total
+			}
+
 			pagingObj.value.complete(res.data.records)
 		})
 		.catch(res => {

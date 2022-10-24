@@ -109,6 +109,22 @@
 					style="transform:scale(0.8)"
 					@change="formData.showShare = Math.abs(parseInt(formData.showShare) - 1)"
 				/>
+				<view class="tips">
+					<text>开启选项，前端显示分佣金额\n关闭选项，前端不显示分佣金额</text>
+				</view>
+			</uni-forms-item>
+			
+			<!-- 分佣方式 -->
+			<uni-forms-item v-if="formData.type === 1 || formData.type === 2" :label="rules.sharePriceType.label" name="sharePriceType">
+				<switch
+					color="#4b8eff"
+					:checked="parseInt(formData.sharePriceType) === 0"
+					style="transform:scale(0.8)"
+					@change="formData.sharePriceType = Math.abs(parseInt(formData.sharePriceType) - 1)"
+				/>
+				<view class="tips">
+					<text>开启选项，分佣给第一邀请人\n关闭选项，分佣给最新邀请人</text>
+				</view>
 			</uni-forms-item>
 
 			<!-- 最低拼团人数 -->
@@ -124,6 +140,9 @@
 					style="transform:scale(0.8)"
 					@change="formData.limitCount = parseInt(formData.limitCount) > 0 ? 0 : 1"
 				/>
+				<view class="tips">
+					<text>开启选项，输入限购数量\n关闭选项，不限购</text>
+				</view>
 			</uni-forms-item>
 
 			<!-- 限购数量 -->
@@ -133,6 +152,11 @@
 				v-if="parseInt(formData.limitCount) > 0 && formData.type !== 0"
 			>
 				<uni-number-box :min="1" :max="255" v-model="formData.limitCount" />
+			</uni-forms-item>
+
+			<!-- 虚拟人数 -->
+			<uni-forms-item :label="rules.views.label" name="views">
+				<uni-number-box :min="0" :max="255" v-model="formData.views" />
 			</uni-forms-item>
 			<view class="blank32 blank_bg_color"></view>
 
@@ -198,7 +222,7 @@ const formData = ref({
 	endDt: dayjs(Date.now() + 30 * 24 * 60 * 60 * 1000).format('YYYY-MM-DD HH:mm:ss'), //活动结束默认值
 	quantity: 1000, // 活动数量默认
 	limitCount: 1, //默认限购1
-	price: 100, // 价格
+	price: 0, // 价格
 	showShare: 1, //是否显示分佣
 	least: 2, //最低拼团人数
 	sort: 1 //排序
@@ -244,6 +268,10 @@ onLoad(optios => {
 
 // 表单校验
 const rules = {
+	views: {
+		rules: [{ errorMessage: '请输入虚拟人数' }],
+		label: '虚拟人数'
+	},
 	mainPic: {
 		rules: [{ required: true, errorMessage: '请上活动封面图' }],
 		label: '活动封面图'
@@ -298,11 +326,11 @@ const rules = {
 	},
 	sharePrice: {
 		rules: [
-			{ required: true, errorMessage: '请输入分佣金额' },
+			{ errorMessage: '请输入分佣金额' },
 			{
 				validateFunction: function(rule, value, data, callback) {
-					if (parseFloat(value) <= 0) {
-						callback('分佣需要大于零')
+					if (parseFloat(value) < 0) {
+						callback('分佣金额不能小于0')
 					}
 					if (parseFloat(value) > parseFloat(data.price) * 0.3) {
 						callback('分佣价格不能高于活动价格的30%')
@@ -345,6 +373,10 @@ const rules = {
 	details: {
 		rules: [{ errorMessage: '请上传活动详情图' }],
 		label: '活动详情图'
+	},
+	sharePriceType: {
+		rules: [{ required: true, errorMessage: '请选择分佣方式' }],
+		label: '分佣方式'
 	}
 }
 
@@ -466,4 +498,10 @@ const {
 		font-size: 26rpx;
 	}
 }
+.tips{
+		color:#999;
+		font-size: 26rpx;
+		padding-top: 20rpx;
+		line-height: 1.6;
+	}
 </style>
