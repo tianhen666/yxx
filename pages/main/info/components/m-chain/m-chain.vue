@@ -9,7 +9,9 @@
 				<view class="name">{{ item.name }}</view>
 				<view class="address">
 					{{ `${item.address}${item.addressDetail}` }}
-					<text class="btn" v-if="info.storeId != item.storeId" @tap.stop="switchStore(item)">进入门店</text>
+				</view>
+				<view class="btn_box">
+					<button class="btn" @tap.stop="switchStore(item)">进入门店</button>
 				</view>
 			</view>
 		</view>
@@ -19,6 +21,7 @@
 <script setup>
 import { reLaunch } from '@/aTemp/utils/uniAppTools.js'
 import { _wxLogin } from '@/aTemp/apis/login.js'
+import { _userChangeUserId } from '@/aTemp/apis/user.js'
 
 // 全局登录信息
 import { _useUserMain } from '@/aTemp/store/userMain.js'
@@ -39,51 +42,13 @@ const props = defineProps({
 	}
 })
 
-
-// 切换店铺，重新登录
+// 切换店铺
 const switchStore = async infoObj => {
-	// 微信授权登录
-	const wxCode = await uni.login()
-	
-	// 获取AppID 最低基础库版本2.2.2
-	const accountInfo = uni.getAccountInfoSync()
-	const appId = accountInfo.miniProgram.appId
-	console.log(appId)
-	
-	// 登录获取
-	_wxLogin(
-		{
-			code: wxCode.code,
-			storeId: infoObj.storeId,
-			invitationCode: 0,
-			appId: appId
-		},
-		{ storeId: infoObj.storeId }
-	)
-		.then(resData => {
-			const { code, data, msg } = resData
-			const { openid, unionid, token, mobile, power, avatar, nickname, remarkname, user } = data
-			// 清理缓存
-			// uni.clearStorageSync()
-
-			// 设置店铺ID
+	_userChangeUserId({ userid: infoObj.storeId })
+		.then(res => {
+			const { data, msg, code } = res
+			// 设置缓存和全局中的店铺id
 			useUserMain.$patch({ storeId: infoObj.storeId })
-
-			// 获取到数据后赋值给全局变量
-			useUserMain.$patch({
-				openId: openid,
-				unionId: unionid,
-				token: token,
-				mobile: mobile,
-				power: power,
-				avatar: avatar,
-				nickname: nickname,
-				remarkname: remarkname,
-				userid: user.id,
-				storeId: user.storeId
-			})
-
-			// 跳转到首页
 			reLaunch(`/pages/main/index/index?storeId=${infoObj.storeId}`)
 		})
 		.catch(err => {
@@ -116,7 +81,7 @@ const switchStore = async infoObj => {
 		flex: none;
 		.image {
 			width: 200rpx;
-			height: 200rpx * 0.25 * 3;
+			height: 200rpx * 0.2 * 4;
 			border: 1px solid $uni-border-1;
 			border-radius: 10rpx;
 			overflow: hidden;
@@ -124,7 +89,7 @@ const switchStore = async infoObj => {
 	}
 	&_right {
 		flex: auto;
-		padding-left: 40rpx;
+		padding-left: 30rpx;
 		overflow: hidden;
 		.name {
 			font-size: 28rpx;
@@ -134,15 +99,22 @@ const switchStore = async infoObj => {
 			padding-top: 24rpx;
 			color: #999999;
 			font-size: 26rpx;
-			line-height: 1.8;
+			line-height: 1.6;
 			@include textOverHidden;
+		}
+		.btn_box{
+			text-align: right;
 			.btn {
-				border: 1px solid $main-color;
-				color: $main-color;
-				padding: 0 18rpx;
-				margin-left: 10rpx;
-				border-radius: 5rpx;
-				line-height: 1.4;
+				display: inline-block;
+				text-align: center;
+				font-size: 26rpx;
+				background-color: $main-color;
+				color: #fff;
+				line-height: 1;
+				padding: 8rpx 18rpx;
+				border-radius: 16rpx;
+				margin-top: 15rpx;
+				
 			}
 		}
 	}

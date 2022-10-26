@@ -36,7 +36,7 @@ export function _userUpdate(data) {
 	})
 }
 
-// 添加用户所属门诊
+// 修改用户所属门诊
 export function _userChangeUserId(data) {
 	return http.post({
 		url: '/user/changeUserId',

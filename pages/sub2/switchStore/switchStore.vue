@@ -9,7 +9,9 @@
 			<!-- 门诊列表 -->
 			<view class="box2_item">
 				<view class="box2_item_box">
-					<view class="box2_item_box_left"><image class="image" :src="item.icon" mode="aspectFill"></image></view>
+					<view class="box2_item_box_left">
+						<image class="image" :src="item.pics || '/static/images/no_img.jpg'" mode="aspectFill"></image>
+					</view>
 					<view class="box2_item_box_right">
 						<view class="name">{{ item.name }}</view>
 						<view class="address">{{ `${item.address}${item.addressDetail}` }}</view>
@@ -35,7 +37,7 @@ import { onLoad } from '@dcloudio/uni-app'
 import { _storeGetinfolist } from '@/aTemp/apis/store.js'
 import { _wxLogin } from '@/aTemp/apis/login.js'
 import { reLaunch } from '@/aTemp/utils/uniAppTools.js'
-
+import { _userChangeUserId } from '@/aTemp/apis/user.js'
 // 全局登录信息
 import { _useUserMain } from '@/aTemp/store/userMain.js'
 const useUserMain = _useUserMain()
@@ -62,50 +64,13 @@ const storeGetinfolist = () => {
 	})
 }
 
-// 切换店铺，重新登录
+// 切换店铺
 const switchStore = async infoObj => {
-	// 微信授权登录
-	const wxCode = await uni.login()
-	
-	// 获取AppID 最低基础库版本2.2.2
-	const accountInfo = uni.getAccountInfoSync()
-	const appId = accountInfo.miniProgram.appId
-	console.log(appId)
-	
-	// 登录获取
-	_wxLogin(
-		{
-			code: wxCode.code,
-			storeId: infoObj.storeId,
-			invitationCode: 0,
-			appId: appId
-		},
-		{ storeId: infoObj.storeId }
-	)
-		.then(resData => {
-			const { code, data, msg } = resData
-			const { openid, unionid, token, mobile, power, avatar, nickname, remarkname, user } = data
-			// 清理缓存
-			// uni.clearStorageSync()
-
-			// 设置店铺ID
+	_userChangeUserId({ userid: infoObj.storeId })
+		.then(res => {
+			const { data, msg, code } = res
+			// 设置缓存和全局中的店铺id
 			useUserMain.$patch({ storeId: infoObj.storeId })
-
-			// 获取到数据后赋值给全局变量
-			useUserMain.$patch({
-				openId: openid,
-				unionId: unionid,
-				token: token,
-				mobile: mobile,
-				power: power,
-				avatar: avatar,
-				nickname: nickname,
-				remarkname: remarkname,
-				userid: user.id,
-				storeId: user.storeId
-			})
-
-			// 跳转到首页
 			reLaunch(`/pages/main/index/index?storeId=${infoObj.storeId}`)
 		})
 		.catch(err => {
@@ -145,8 +110,8 @@ const switchStore = async infoObj => {
 				&_left {
 					flex: none;
 					.image {
-						width: 140rpx;
-						height: 140rpx;
+						width: 180rpx;
+						height: 180rpx * 0.2 * 4;
 						border: 1px solid $uni-border-1;
 						border-radius: 10rpx;
 						overflow: hidden;
@@ -154,10 +119,11 @@ const switchStore = async infoObj => {
 				}
 				&_right {
 					flex: auto;
-					padding-left: 40rpx;
+					padding-left: 30rpx;
 					overflow: hidden;
 					.name {
 						font-size: 32rpx;
+						margin-top: 10rpx;
 					}
 					.address {
 						padding-top: 24rpx;

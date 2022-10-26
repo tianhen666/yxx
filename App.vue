@@ -74,12 +74,9 @@ onLaunch(async options => {
 	// 打印进入小程序参数
 	console.log('邀请人ID：' + invitationCode, '店铺id：' + storeId, '场景值：' + Mscene, '目标ID：' + targetId)
 
-	// 设置缓存
+	// 设置店铺缓存
 	if (storeId) {
 		useUserMain.$patch({ storeId: storeId })
-	}
-	if (invitationCode) {
-		useUserMain.$patch({ invitationCode: invitationCode })
 	}
 
 	// 兼容朋友圈打开小程序

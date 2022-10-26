@@ -150,6 +150,7 @@ const storeproductEnable = (item, index) => {
 		padding: $padding;
 		border-radius: 16rpx;
 		overflow: hidden;
+		margin-bottom: 30rpx;
 		&_wrapper {
 			@include mFlex;
 			align-items: stretch;

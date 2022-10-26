@@ -167,6 +167,12 @@ onLoad(async options => {
 		'场景值：' + Mscene,
 		'目标ID：' + targetId
 	)
+	
+	// 设置店铺缓存
+	if (storeId) {
+		useUserMain.$patch({ storeId: storeId })
+	}
+	
 	// 开始加载
 	loading.value = true
 	proxy.$refs.paging.reload()

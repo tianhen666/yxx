@@ -247,9 +247,9 @@ const { chooseSuccess: chooseSuccess4, picList: picList4, selectNum: selectNum4 
 	baseDir: 'store'
 })
 
-// 店内环境图上传
+// 门头照
 const { chooseSuccess: chooseSuccess5, picList: picList5, selectNum: selectNum5 } = useHtzImageUpload({
-	ratio: 4 / 3,
+	ratio: 5 / 4,
 	url: '/upload-flv/uploadimage',
 	refData: formData,
 	param: 'pics',

@@ -1,6 +1,8 @@
 <template>
 	<view class="container">
 		<view class="box_type">
+			<view class="img_box"><image class="image" :src="info.pics || '/static/images/no_img.jpg'" mode="aspectFill"></image></view>
+
 			<!-- 门诊名称 -->
 			<view class="title">{{ info.name }}</view>
 
@@ -35,7 +37,7 @@ const props = defineProps({
 
 // 打开内置地图
 const daohang = () => {
-	openLocation(props.info.lat, props.info.lng,props.info.addressDetail,props.info.address).then(res => {
+	openLocation(props.info.lat, props.info.lng, props.info.addressDetail, props.info.address).then(res => {
 		console.log(res)
 	})
 }
@@ -51,12 +53,25 @@ const daohang = () => {
 	padding: $padding;
 	border-radius: 16rpx;
 	.box_type {
+		>.img_box{
+			width: 100%;
+			padding-top: 80%;
+			position: relative;
+			.image{
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+			}
+		}
 		> .title {
 			font-size: 32rpx;
 			font-weight: 600;
 			color: #333333;
 			line-height: 32rpx;
-			padding-bottom: 30rpx;
+			padding: 30rpx 0;
+			
 		}
 		> .address {
 			padding: 20rpx;
@@ -84,10 +99,8 @@ const daohang = () => {
 				border-right-color: transparent;
 			}
 			.address_box {
-				margin-bottom: 30rpx;
-				&:last-child {
-					margin-bottom: 0;
-				}
+				text-indent:-26rpx;
+				padding-left: 26rpx;
 				.image {
 					vertical-align: middle;
 					width: 22rpx;
