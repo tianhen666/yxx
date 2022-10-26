@@ -234,7 +234,7 @@ import useHtzImageUpload from '@/aTemp/mixins/useHtzImageUpload.js'
 // 商品图片上传 裁剪
 const { chooseSuccess: chooseSuccess1, picList: picList1, selectNum: selectNum1 } = useHtzImageUpload({
 	ratio: 1 / 1,
-	url: '/enrollform/uploadimage',
+	url: '/upload-flv/uploadimage',
 	refData: formData,
 	param: 'pics',
 	selectNum: 5,
@@ -244,7 +244,7 @@ const { chooseSuccess: chooseSuccess1, picList: picList1, selectNum: selectNum1 
 // 分享图片上传 裁剪
 const { chooseSuccess: chooseSuccess2, picList: picList2, selectNum: selectNum2 } = useHtzImageUpload({
 	ratio: 5 / 4,
-	url: '/enrollform/uploadimage',
+	url: '/upload-flv/uploadimage',
 	refData: formData,
 	param: 'sharePic',
 	selectNum: 1,
@@ -259,7 +259,7 @@ const {
 	uploadimageURL: uploadimageURL3,
 	baseDir: baseDir3
 } = useHtzImageUpload({
-	url: '/enrollform/uploadimage',
+	url: '/upload-flv/uploadimage',
 	refData: formData,
 	param: 'detail',
 	selectNum: 5,
@@ -274,7 +274,7 @@ const {
 	uploadimageURL: uploadimageURL4,
 	baseDir: baseDir4
 } = useHtzImageUpload({
-	url: '/enrollform/uploadimage',
+	url: '/upload-flv/uploadimage',
 	refData: formData,
 	param: 'postPic',
 	selectNum: 1,

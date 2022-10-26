@@ -210,7 +210,7 @@ import useHtzImageUpload from '@/aTemp/mixins/useHtzImageUpload.js'
 // 门诊标识上传
 const { chooseSuccess: chooseSuccess1, picList: picList1, selectNum: selectNum1 } = useHtzImageUpload({
 	ratio: 1 / 1,
-	url: '/enrollform/uploadimage',
+	url: '/upload-flv/uploadimage',
 	refData: formData,
 	param: 'icon',
 	selectNum: 1,
@@ -220,7 +220,7 @@ const { chooseSuccess: chooseSuccess1, picList: picList1, selectNum: selectNum1 
 // 客服微信图片上传
 const { chooseSuccess: chooseSuccess2, picList: picList2, selectNum: selectNum2 } = useHtzImageUpload({
 	ratio: 1 / 1,
-	url: '/enrollform/uploadimage',
+	url: '/upload-flv/uploadimage',
 	refData: formData,
 	param: 'customer',
 	selectNum: 1,
@@ -230,7 +230,7 @@ const { chooseSuccess: chooseSuccess2, picList: picList2, selectNum: selectNum2 
 // 客服微信图片上传
 const { chooseSuccess: chooseSuccess3, picList: picList3, selectNum: selectNum3 } = useHtzImageUpload({
 	ratio: 5 / 4,
-	url: '/enrollform/uploadimage',
+	url: '/upload-flv/uploadimage',
 	refData: formData,
 	param: 'sharePic',
 	selectNum: 1,
@@ -240,7 +240,7 @@ const { chooseSuccess: chooseSuccess3, picList: picList3, selectNum: selectNum3 
 // 店内环境图上传
 const { chooseSuccess: chooseSuccess4, picList: picList4, selectNum: selectNum4 } = useHtzImageUpload({
 	ratio: 5 / 3,
-	url: '/enrollform/uploadimage',
+	url: '/upload-flv/uploadimage',
 	refData: formData,
 	param: 'innerPics',
 	selectNum: 8,
@@ -250,7 +250,7 @@ const { chooseSuccess: chooseSuccess4, picList: picList4, selectNum: selectNum4 
 // 店内环境图上传
 const { chooseSuccess: chooseSuccess5, picList: picList5, selectNum: selectNum5 } = useHtzImageUpload({
 	ratio: 4 / 3,
-	url: '/enrollform/uploadimage',
+	url: '/upload-flv/uploadimage',
 	refData: formData,
 	param: 'pics',
 	selectNum: 1,

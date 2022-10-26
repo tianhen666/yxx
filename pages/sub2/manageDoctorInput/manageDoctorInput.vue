@@ -118,7 +118,7 @@ import useHtzImageUpload from '@/aTemp/mixins/useHtzImageUpload.js'
 // 医生图片上传
 const { chooseSuccess: chooseSuccess1, picList: picList1, selectNum: selectNum1 } = useHtzImageUpload({
 	ratio: 3 / 4,
-	url: '/enrollform/uploadimage',
+	url: '/upload-flv/uploadimage',
 	refData: formData,
 	param: 'avatar',
 	selectNum: 1,
@@ -133,7 +133,7 @@ const {
 	uploadimageURL: uploadimageURL2,
 	baseDir: baseDir2
 } = useHtzImageUpload({
-	url: '/enrollform/uploadimage',
+	url: '/upload-flv/uploadimage',
 	refData: formData,
 	param: 'detail',
 	selectNum: 4,

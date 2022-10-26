@@ -140,7 +140,7 @@ const rules = {
 const optionPower = [
 	{ value: 1, text: '创建者', disable: true },
 	{ value: 2, text: '管理员' },
-	{ value: 3, text: '订单核销' },
+	{ value: 3, text: '商品管理' },
 	{ value: 4, text: '活动管理' },
 	{ value: 0, text: '无权限' }
 ]

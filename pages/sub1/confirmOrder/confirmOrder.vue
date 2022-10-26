@@ -112,60 +112,66 @@ onLoad(options => {
 const btnLoading = ref(false)
 const confirm = _debounce(
 	() => {
-		
 		// 判断是否授权登录
-		if(!useUserMain.isLogin){
-			navigateTo("/pages/main/login/login")
+		if (!useUserMain.isLogin) {
+			navigateTo('/pages/main/login/login')
 			btnLoading.value = false
 			return
 		}
-		
+
 		_wxpayPayment({ count: quantity.value, productId: dataId.value, enrollId: 0 })
 			.then(res => {
 				btnLoading.value = false
 				const { data, code, msg } = res
-				const resDataObj = JSON.parse(data)
-				// console.log(resDataObj)
-				
-				// 订单编号
-				const orderNumExternal = resDataObj.orderNumExternal
 
-				// 支付信息
-				const payInfo = JSON.parse(resDataObj.pay_info)
-				// console.log(payInfo)
-				
-				// 错误提示
-				if (!payInfo) {
-					showToastText(resDataObj.result_msg)
-					return
-				}
-				
+				try {
+					const resDataObj = JSON.parse(data)
+					// console.log(resDataObj)
 
-				// 唤醒支付
-				uni
-					.requestPayment({
-						timeStamp: payInfo.timeStamp,
-						nonceStr: payInfo.nonceStr,
-						package: payInfo.package,
-						signType: payInfo.signType,
-						paySign: payInfo.sign
-					})
-					.then(val => {
-						showToastText('支付成功~')
+					// 订单编号
+					const orderNumExternal = resDataObj.orderNumExternal
 
-						// 支付成功回调，并且分账 status: 2 //待使用
-						const myParameter = { orderNumExternal: orderNumExternal, status: 2 }
-						_wxpayWxNotifys(myParameter).then(resData => {
-							console.log('resData')
+					// 支付信息
+					const payInfo = JSON.parse(resDataObj.pay_info)
+					// console.log(payInfo)
+
+					// 唤醒支付
+					uni
+						.requestPayment({
+							timeStamp: payInfo.timeStamp,
+							nonceStr: payInfo.nonceStr,
+							package: payInfo.package,
+							signType: payInfo.signType,
+							paySign: payInfo.sign
 						})
-						// 去订单列表页
-						redirectTo('/pages/sub1/orderList/orderList?current=2')
-					})
-					.catch(err => {
-						// 去订单列表页
-						redirectTo('/pages/sub1/orderList/orderList?current=1')
-						showToastText('取消支付~')
-					})
+						.then(val => {
+							showToastText('支付成功~')
+
+							// 支付成功回调，并且分账 status: 2 //待使用
+							const myParameter = { orderNumExternal: orderNumExternal, status: 2 }
+							_wxpayWxNotifys(myParameter).then(resData => {
+								console.log('resData')
+							})
+							// 去订单列表页
+							redirectTo('/pages/sub1/orderList/orderList?current=2')
+						})
+						.catch(err => {
+							// 去订单列表页
+							redirectTo('/pages/sub1/orderList/orderList?current=1')
+							showToastText('取消支付~')
+						})
+				} catch (e) {
+					// 错误信息
+					console.log(err)
+
+					try {
+						// 支付返回信息
+						const resDataObj = JSON.parse(data)
+						showToastText(resDataObj.result_msg || '支付失败')
+					} catch (e) {
+						showToastText(data || '支付失败')
+					}
+				}
 			})
 			.catch(err => {
 				btnLoading.value = false

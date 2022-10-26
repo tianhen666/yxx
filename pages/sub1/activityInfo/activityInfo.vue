@@ -202,9 +202,9 @@ const payConfirm = _debounce(
 			.then(res => {
 				btnLoading.value = false
 				const { data, code, msg } = res
-
 				// 判断是否需要支付
 				try {
+					// 支付返回信息
 					const resDataObj = JSON.parse(data)
 					// console.log(resDataObj)
 
@@ -213,12 +213,6 @@ const payConfirm = _debounce(
 					// 支付信息
 					const payInfo = JSON.parse(resDataObj.pay_info)
 					// console.log(payInfo)
-
-					// 错误提示
-					if (!payInfo) {
-						showToastText(resDataObj.result_msg)
-						return
-					}
 
 					// 唤醒支付
 					uni
@@ -244,10 +238,22 @@ const payConfirm = _debounce(
 							showToastText('取消支付~')
 						})
 				} catch (err) {
-					showToastText(data)
+					// 错误信息
+					console.log(err)
 
-					// 设置活动已参与
-					dataObj.value['myJionCount'] = (dataObj.value['myJionCount'] || 0) + 1
+					try {
+						// 支付返回信息
+						const resDataObj = JSON.parse(data)
+						showToastText(resDataObj.result_msg || '支付失败')
+					} catch (e) {
+						if (data === '参与成功') {
+							showToastText(data)
+							// 设置活动已参与
+							dataObj.value['myJionCount'] = (dataObj.value['myJionCount'] || 0) + 1
+						} else {
+							showToastText(data || '支付失败')
+						}
+					}
 				}
 			})
 			.catch(err => {
@@ -419,7 +425,8 @@ const createImgOk = e => {
 				})
 				.then(res => {
 					console.log(res)
-				}).catch(err=>{
+				})
+				.catch(err => {
 					console.log(err)
 				})
 		})

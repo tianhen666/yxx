@@ -99,7 +99,7 @@ onLoad(options => {})
 // 获取头像
 const onChooseAvatar = async e => {
 	const avatarUrl = e.detail.avatarUrl
-	const resUploadFile = await uploadFile(avatarUrl, config.BASE_URL + '/enrollform/uploadimage', { baseDir: 'avatar' })
+	const resUploadFile = await uploadFile(avatarUrl, config.BASE_URL + '/upload-flv/uploadimage', { baseDir: 'avatar' })
 	const { code, data, msg } = JSON.parse(resUploadFile)
 	formData.value.avatar = data
 }

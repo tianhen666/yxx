@@ -37,6 +37,32 @@
 					@clear="MchooseLocation"
 				/>
 			</uni-forms-item>
+
+			<!-- 是否有独立小程序 -->
+			<uni-forms-item :label="'是否有独立小程序'" label-width="320rpx">
+				<switch
+					color="#4b8eff"
+					:checked="formData.independent"
+					style="transform:scale(0.8)"
+					@change="formData.independent = !formData.independent"
+				/>
+			</uni-forms-item>
+
+			<!-- 小程appid -->
+			<uni-forms-item :label="rules.appid.label" label-position="top" name="appid" v-if="formData.independent">
+				<uni-easyinput v-model="formData.appid" :placeholder="rules.appid.rules[0].errorMessage" />
+			</uni-forms-item>
+
+			<!-- 小程序秘钥secret -->
+			<uni-forms-item
+				:label="rules.secret.label"
+				label-position="top"
+				name="secret"
+				label-width="420rpx"
+				v-if="formData.independent"
+			>
+				<uni-easyinput v-model="formData.secret" :placeholder="rules.secret.rules[0].errorMessage" />
+			</uni-forms-item>
 		</uni-forms>
 
 		<!-- 协议 -->
@@ -50,6 +76,8 @@
 
 		<!-- 提交按钮 -->
 		<button :loading="loading" class="btn" @tap="btnClick">确认入驻</button>
+
+		<view class="blank40"></view>
 	</view>
 </template>
 
@@ -58,7 +86,6 @@ import { ref, reactive, computed } from 'vue'
 import { navigateTo, showToastText, chooseLocation, reLaunch } from '@/aTemp/utils/uniAppTools.js'
 import { _debounce } from '@/aTemp/utils/tools.js'
 import { _storeSaveStore } from '@/aTemp/apis/store.js'
-import { _wxLogin } from '@/aTemp/apis/login.js'
 
 // 全局登录信息
 import { _useUserMain } from '@/aTemp/store/userMain.js'
@@ -77,9 +104,7 @@ shareInfo.imageUrl = `https://imgs.fenxiangzl.com/store/tooth/vipshare.png`
 // 分享到聊天框
 shareInfo.path = computed(
 	() =>
-		`/pages/main/index/index?invitationCode=${useUserMain.userid}&storeId=${
-			useUserMain.storeId
-		}&Mscene=6&targetId=0`
+		`/pages/main/index/index?invitationCode=${useUserMain.userid}&storeId=${useUserMain.storeId}&Mscene=6&targetId=0`
 )
 
 // 表单数据
@@ -96,7 +121,7 @@ const rules = {
 	name: {
 		rules: [
 			{ required: true, errorMessage: '请输入门诊名称' },
-			{ pattern: RegExp(/^[\u4e00-\u9fa5]{2,10}$/), errorMessage: '请输入2-10字的中文' }
+			{ pattern: RegExp(/^[\u4e00-\u9fa5(，。《》（）【】{}！,.\-!)]{2,16}$/), errorMessage: '请输入2-10字的中文' }
 		],
 		label: '门诊名称'
 	},
@@ -118,11 +143,25 @@ const rules = {
 	addressDetail: {
 		rules: [{ required: true, errorMessage: '请输入详情地址' }],
 		label: '详情地址'
+	},
+	appid: {
+		rules: [
+			{ required: true, errorMessage: '请输入小程序AppId' },
+			{ pattern: RegExp(/^[a-z\d]{18}$/), errorMessage: '请输入正确的小程序AppId' }
+		],
+		label: '小程序AppId'
+	},
+	secret: {
+		rules: [
+			{ required: true, errorMessage: '请输入小程序秘钥secret' },
+			{ pattern: RegExp(/^[a-z\d]{32}$/), errorMessage: '请输入正确的小程序秘钥secret' }
+		],
+		label: '小程序秘钥secret'
 	}
 }
 
 /*
- * 选择地址
+ * 选择门诊地址
  *
  */
 const MchooseLocation = () => {
@@ -150,20 +189,20 @@ const btnClick = _debounce(
 					return
 				}
 
-				// 设置拥有者信息
-				formData.value.userId = computed(() => useUserMain.userid)
-
+				return
 				// 保存信息接口
-				_storeSaveStore(formData.value).then(res => {
-					loading.value = false
-
-					// 切换店铺
-					switchStore(res.data)
-
-					showToastText('店铺创建成功~')
-				}).catch(err=>{
-					showToastText()
-				})
+				_storeSaveStore(formData.value)
+					.then(res => {
+						loading.value = false
+						showToastText('店铺创建成功,请联系客服')
+						setTimeout(() => {
+							reLaunch('/pages/main/index/index')
+						}, 1000)
+					})
+					.catch(err => {
+						console.log()
+						showToastText(err.msg || '店铺入驻失败，请联系管理员')
+					})
 			})
 			.catch(err => {
 				loading.value = false
@@ -174,50 +213,6 @@ const btnClick = _debounce(
 	1000,
 	loading
 )
-
-// 切换店铺，重新登录
-const switchStore = async infoObj => {
-	// 微信授权登录
-	const wxCode = await uni.login()
-
-	// 登录获取
-	_wxLogin(
-		{
-			code: wxCode.code,
-			storeId: infoObj.storeId,
-			invitationCode: useUserMain.userid || 0,
-			scene: 0,
-			targetId: 0
-		},
-		{ code: wxCode.code, storeId: infoObj.storeId, invitationCode: useUserMain.userid || 0, scene: 0, targetId: 0 }
-	)
-		.then(resData => {
-			const { code, data, msg } = resData
-			const { openid, unionid, token, mobile, userid, power, avatar, nickname, remarkname } = data
-			// 清理缓存
-			// uni.clearStorageSync()
-
-			// 设置店铺ID
-			useUserMain.$patch({ storeId: infoObj.storeId })
-
-			// 获取到数据后赋值给全局变量
-			useUserMain.$patch({
-				openId: openid,
-				unionId: unionid,
-				token: token,
-				mobile: mobile,
-				userid: userid,
-				power: power,
-				avatar: avatar,
-				nickname: nickname,
-				remarkname: remarkname
-			})
-
-			// 跳转到首页
-			reLaunch(`/pages/main/index/index?storeId=${infoObj.storeId}`)
-		})
-		.catch(err => {})
-}
 </script>
 
 <style scoped lang="scss">

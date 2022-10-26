@@ -12,11 +12,11 @@
 </template>
 
 <script setup>
-import { ref, getCurrentInstance } from 'vue'
-import { _userChangeUserId } from '@/aTemp/apis/user.js'
+import { ref } from 'vue'
+import { _userPower } from '@/aTemp/apis/user.js'
 import { _storeGetinfo } from '@/aTemp/apis/store.js'
 import { onLoad } from '@dcloudio/uni-app'
-import { showToastText, redirectTo,navigateTo } from '@/aTemp/utils/uniAppTools.js'
+import { showToastText, redirectTo, navigateTo } from '@/aTemp/utils/uniAppTools.js'
 
 // 全局登录信息
 import { _useUserMain } from '@/aTemp/store/userMain.js'
@@ -29,10 +29,6 @@ const loading = ref(true)
 onLoad(async options => {
 	// console.log(options)
 
-	// 等待onLaunch中放行后执行
-	const { proxy } = getCurrentInstance()
-	await proxy.$onLaunched
-
 	_storeGetinfo().then(res => {
 		const { data, msg, code } = res
 		storeInfo.value = data
@@ -44,8 +40,9 @@ onLoad(async options => {
 
 // 进入门诊
 const jionStore = () => {
-	_userChangeUserId({
-		userid: useUserMain.userid
+	_userPower({
+		power: 0,
+		userId: useUserMain.userid
 	}).then(res => {
 		const { data, msg, code } = res
 		showToastText('加入成功,正在跳转...')

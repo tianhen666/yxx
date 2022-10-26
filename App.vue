@@ -82,37 +82,35 @@ onLaunch(async options => {
 		useUserMain.$patch({ invitationCode: invitationCode })
 	}
 
-	/*
-	 * 直接进入小程序
-	 * 如果缓存中还是没有店铺ID,设置一个默认店铺ID
-	 */
-	if (!useUserMain.storeId) {
-		useUserMain.$patch({ storeId: 2 })
-	}
-
 	// 兼容朋友圈打开小程序
+	// 获取登录的code
 	let wxCode = ''
 	if (options.scene !== 1154) {
-		// 微信授权登录
 		wxCode = await uni.login()
 	}
 
+	// 获取AppID 最低基础库版本2.2.2
+	const accountInfo = uni.getAccountInfoSync()
+	const appId = accountInfo.miniProgram.appId
+	console.log(appId)
+	
 	// 登录获取
 	_wxLogin(
 		{
 			code: wxCode.code,
-			storeId: useUserMain.storeId,
+			storeId: useUserMain.storeId || 0,
 			invitationCode: invitationCode || 0,
 			scene: Mscene,
-			targetId
+			targetId,
+			appId: appId
 		},
 		{
-			storeId: useUserMain.storeId
+			storeId: useUserMain.storeId || 0
 		}
 	)
 		.then(resData => {
 			const { code, data, msg } = resData
-			const { openid, unionid, token, mobile, userid, power, avatar, nickname, remarkname } = data
+			const { openid, unionid, token, mobile, power, avatar, nickname, remarkname, user } = data
 			// 清理缓存
 			// uni.clearStorageSync()
 
@@ -122,11 +120,12 @@ onLaunch(async options => {
 				unionId: unionid,
 				token: token,
 				mobile: mobile,
-				userid: userid,
 				power: power,
 				avatar: avatar,
 				nickname: nickname,
-				remarkname: remarkname
+				remarkname: remarkname,
+				userid: user.id,
+				storeId: user.storeId
 			})
 
 			// 路由拦截
@@ -140,24 +139,24 @@ onLaunch(async options => {
 		.catch(err => {
 			// 路由拦截
 			// router(options)
-
+			
 			// 放行同步方法
-			proxy.$isResolve()
+			// proxy.$isResolve()
 			// 设置onLaunch加载完成
-			onLaunched.value = true
+			// onLaunched.value = true
 		})
 })
 
 // onLaunch中方法是否加载完成
 const onLaunched = ref(false)
 onShow(options => {
-	const accountInfo = uni.getAccountInfoSync();
-	console.log(accountInfo.miniProgram.appId) // 小程序 appId
+	// const accountInfo = uni.getAccountInfoSync();
+	// console.log(accountInfo.miniProgram.appId) // 小程序 appId
 	if (onLaunched.value) {
 		// console.log('onShow', options)
 		// 冷启动拦截
 		// router(options)
-		
+
 		// 初始化,检查是否更新
 		init(options)
 	}

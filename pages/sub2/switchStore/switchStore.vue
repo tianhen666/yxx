@@ -66,19 +66,25 @@ const storeGetinfolist = () => {
 const switchStore = async infoObj => {
 	// 微信授权登录
 	const wxCode = await uni.login()
-
+	
+	// 获取AppID 最低基础库版本2.2.2
+	const accountInfo = uni.getAccountInfoSync()
+	const appId = accountInfo.miniProgram.appId
+	console.log(appId)
+	
 	// 登录获取
 	_wxLogin(
 		{
 			code: wxCode.code,
 			storeId: infoObj.storeId,
-			invitationCode: 0
+			invitationCode: 0,
+			appId: appId
 		},
 		{ storeId: infoObj.storeId }
 	)
 		.then(resData => {
 			const { code, data, msg } = resData
-			const { openid, unionid, token, mobile, userid, power, avatar, nickname, remarkname } = data
+			const { openid, unionid, token, mobile, power, avatar, nickname, remarkname, user } = data
 			// 清理缓存
 			// uni.clearStorageSync()
 
@@ -91,11 +97,12 @@ const switchStore = async infoObj => {
 				unionId: unionid,
 				token: token,
 				mobile: mobile,
-				userid: userid,
 				power: power,
 				avatar: avatar,
 				nickname: nickname,
-				remarkname: remarkname
+				remarkname: remarkname,
+				userid: user.id,
+				storeId: user.storeId
 			})
 
 			// 跳转到首页
