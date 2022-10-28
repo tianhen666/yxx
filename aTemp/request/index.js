@@ -39,10 +39,10 @@ instance.interceptors.request.use(
 		} = userMain
 
 		/* 
-		 * 设置默认请求参数,url,body中,排除 "/wx/login"
+		 * 设置默认请求参数,url,body中,排除 "/wx/login" "/user/changeUserId"
 		 */
 		// console.log(config)
-		if (storeId && config.url != "/wx/login") {
+		if (storeId && config.url != "/wx/login" && config.url != "/user/changeUserId") {
 			config.data.storeId = parseInt(storeId)
 			config.params.storeId = parseInt(storeId)
 		}

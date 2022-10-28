@@ -7,12 +7,8 @@
 			</view>
 			<view class="box2_item_box_right">
 				<view class="name">{{ item.name }}</view>
-				<view class="address">
-					{{ `${item.address}${item.addressDetail}` }}
-				</view>
-				<view class="btn_box">
-					<button class="btn" @tap.stop="switchStore(item)">进入门店</button>
-				</view>
+				<view class="address">{{ `${item.address}${item.addressDetail}` }}</view>
+				<view class="btn_box"><button class="btn" @tap.stop="reLaunch(`/pages/main/index/index?storeId=${item.storeId}`)">进入门店</button></view>
 			</view>
 		</view>
 	</view>
@@ -20,12 +16,6 @@
 
 <script setup>
 import { reLaunch } from '@/aTemp/utils/uniAppTools.js'
-import { _wxLogin } from '@/aTemp/apis/login.js'
-import { _userChangeUserId } from '@/aTemp/apis/user.js'
-
-// 全局登录信息
-import { _useUserMain } from '@/aTemp/store/userMain.js'
-const useUserMain = _useUserMain()
 
 const props = defineProps({
 	// 当前店铺信息
@@ -42,19 +32,6 @@ const props = defineProps({
 	}
 })
 
-// 切换店铺
-const switchStore = async infoObj => {
-	_userChangeUserId({ userid: infoObj.storeId })
-		.then(res => {
-			const { data, msg, code } = res
-			// 设置缓存和全局中的店铺id
-			useUserMain.$patch({ storeId: infoObj.storeId })
-			reLaunch(`/pages/main/index/index?storeId=${infoObj.storeId}`)
-		})
-		.catch(err => {
-			console.log(err)
-		})
-}
 </script>
 
 <style lang="scss" scoped>
@@ -102,7 +79,7 @@ const switchStore = async infoObj => {
 			line-height: 1.6;
 			@include textOverHidden;
 		}
-		.btn_box{
+		.btn_box {
 			text-align: right;
 			.btn {
 				display: inline-block;
@@ -114,7 +91,6 @@ const switchStore = async infoObj => {
 				padding: 8rpx 18rpx;
 				border-radius: 16rpx;
 				margin-top: 15rpx;
-				
 			}
 		}
 	}

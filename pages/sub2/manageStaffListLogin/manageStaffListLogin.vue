@@ -13,7 +13,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { _userPower } from '@/aTemp/apis/user.js'
+import { _userChangeUserStoreId } from '@/aTemp/apis/user.js'
 import { _storeGetinfo } from '@/aTemp/apis/store.js'
 import { onLoad } from '@dcloudio/uni-app'
 import { showToastText, redirectTo, navigateTo } from '@/aTemp/utils/uniAppTools.js'
@@ -40,15 +40,13 @@ onLoad(async options => {
 
 // 进入门诊
 const jionStore = () => {
-	_userPower({
-		power: 0,
-		userId: useUserMain.userid
+	_userChangeUserStoreId({
+		userid: useUserMain.userid
 	}).then(res => {
 		const { data, msg, code } = res
 		showToastText('加入成功,正在跳转...')
-
 		// 修改用户权限
-		useUserMain.$patch({ power: 0 })
+		useUserMain.$patch({ power: data.power })
 
 		setTimeout(() => {
 			redirectTo('/pages/main/index/index')

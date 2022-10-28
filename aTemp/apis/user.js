@@ -28,6 +28,14 @@ export function _userPower(data) {
 	})
 }
 
+// 邀请员工加入
+export function _userChangeUserStoreId(data) {
+	return http.post({
+		url: '/user/changeUserStoreId',
+		data
+	})
+}
+
 // 修改员工信息,用户信息
 export function _userUpdate(data) {
 	return http.post({
@@ -37,10 +45,11 @@ export function _userUpdate(data) {
 }
 
 // 修改用户所属门诊
-export function _userChangeUserId(data) {
+export function _userChangeUserId(data,params) {
 	return http.post({
 		url: '/user/changeUserId',
-		data
+		data,
+		params
 	})
 }
 

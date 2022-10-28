@@ -48,6 +48,16 @@
 		<m-poster-list :listData="item?.children[0]?.posterImgList"></m-poster-list>
 	</view>
 
+	<!-- 添加海报 -->
+	<view
+		class="addPoster"
+		v-if="(useUserMain.storeId == 1 || useUserMain.storeId == 11) && useUserMain.power != -1"
+		@tap="navigateTo('/pages/sub3/addPoster/addPoster')"
+	>
+		<text>添加</text>
+		<text>海报</text>
+	</view>
+
 	<view class="blank30"></view>
 	<view class="blank30"></view>
 </template>
@@ -61,8 +71,14 @@ import { mPosterList } from '../components/m-poster-list/m-poster-list.vue'
 
 import { _posterGetPostAll } from '@/aTemp/apis/poster.js'
 
+// 全局登录信息
+import { _useUserMain } from '@/aTemp/store/userMain.js'
+const useUserMain = _useUserMain()
+
+// 海报数据列表
 const posterList = ref([])
 onLoad(options => {
+	console.log(useUserMain)
 	_posterGetPostAll().then(res => {
 		const { code, data, msg } = res
 		posterList.value = data
@@ -71,6 +87,25 @@ onLoad(options => {
 </script>
 
 <style lang="scss">
+.addPoster {
+	position: fixed;
+	right: 40rpx;
+	bottom: 60rpx;
+	z-index: 10;
+	background-color: $main-color;
+	color: #fff;
+	box-sizing: content-box;
+	font-size: 24rpx;
+	line-height: 1.5em;
+	border-radius: 50%;
+	overflow: hidden;
+	width: 100rpx;
+	height: 100rpx;
+	text-align: justify;
+	@include mFlex;
+	flex-direction: column;
+}
+
 :deep(.uni-searchbar) {
 	padding: 0 !important;
 }

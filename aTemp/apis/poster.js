@@ -37,6 +37,14 @@ export function _posterGetPostercontent(data) {
 	})
 }
 
+// 新增海报
+export function _posterSavePostLog(data) {
+	return http.post({
+		url: '/poster/savePostLog',
+		data
+	})
+}
+
 // 修改海报内容
 export function _posterRenewalPosterImg(data) {
 	return http.post({
@@ -45,7 +53,7 @@ export function _posterRenewalPosterImg(data) {
 	})
 }
 
-// 修改海报内容
+// 添加草稿箱
 export function _posterDrafts(data) {
 	return http.post({
 		url: '/poster/drafts',

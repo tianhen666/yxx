@@ -5,6 +5,7 @@ import { init } from '@/aTemp/index.js'
 import router from '@/aTemp/router/index.js'
 import { showToastText } from '@/aTemp/utils/uniAppTools.js'
 import { getCurrentInstance, ref } from 'vue'
+import { _userChangeUserId } from '@/aTemp/apis/user.js'
 // 全局登录信息
 import { _useUserMain } from '@/aTemp/store/userMain.js'
 const useUserMain = _useUserMain()
@@ -29,8 +30,6 @@ if (old) {
 
 // 小程序启动时执行
 onLaunch(async options => {
-	console.log('onLaunch', options)
-
 	// 获取vue3全局对象
 	const { proxy } = getCurrentInstance()
 
@@ -74,89 +73,63 @@ onLaunch(async options => {
 	// 打印进入小程序参数
 	console.log('邀请人ID：' + invitationCode, '店铺id：' + storeId, '场景值：' + Mscene, '目标ID：' + targetId)
 
-	// 设置店铺缓存
-	if (storeId) {
-		useUserMain.$patch({ storeId: storeId })
-	}
-
 	// 兼容朋友圈打开小程序
-	// 获取登录的code
-	let wxCode = ''
-	if (options.scene !== 1154) {
+	if (options.scene == 1154) {
+		useUserMain.$patch({ storeId: storeId })
+	} else if (options.scene == 1155 && options.path != 'pages/main/index/index') {
+		// 从朋友圈进入小程序
+
+		// 获取登录的code
+		let wxCode = ''
 		wxCode = await uni.login()
+
+		// 获取AppID 最低基础库版本2.2.2
+		const accountInfo = uni.getAccountInfoSync()
+		const appId = accountInfo.miniProgram.appId
+		console.log(appId)
+
+		// 调用登录接口
+		const resData = await _wxLogin(
+			{
+				code: wxCode.code,
+				storeId: storeId || 0,
+				invitationCode: invitationCode || 0,
+				scene: Mscene,
+				targetId,
+				appId: appId
+			},
+			{
+				storeId: storeId || 0
+			}
+		)
+		const { code, data, msg } = resData
+		const { power, token, user } = data
+
+		// 获取到数据后赋值给全局变量
+		useUserMain.$patch({
+			openId: user.openid,
+			unionId: user.unionid,
+			token: token,
+			mobile: user.mobile,
+			power: power,
+			avatar: user.avatar,
+			nickname: user.nickname,
+			remarkname: user.remarkname,
+			userid: user.id,
+			storeId: user.storeId
+		})
 	}
 
-	// 获取AppID 最低基础库版本2.2.2
-	const accountInfo = uni.getAccountInfoSync()
-	const appId = accountInfo.miniProgram.appId
-	console.log(appId)
-	
-	// 登录获取
-	_wxLogin(
-		{
-			code: wxCode.code,
-			storeId: useUserMain.storeId || 0,
-			invitationCode: invitationCode || 0,
-			scene: Mscene,
-			targetId,
-			appId: appId
-		},
-		{
-			storeId: useUserMain.storeId || 0
-		}
-	)
-		.then(resData => {
-			const { code, data, msg } = resData
-			const { openid, unionid, token, mobile, power, avatar, nickname, remarkname, user } = data
-			// 清理缓存
-			// uni.clearStorageSync()
+	// 路由拦截
+	// router(options)
 
-			// 获取到数据后赋值给全局变量
-			useUserMain.$patch({
-				openId: openid,
-				unionId: unionid,
-				token: token,
-				mobile: mobile,
-				power: power,
-				avatar: avatar,
-				nickname: nickname,
-				remarkname: remarkname,
-				userid: user.id,
-				storeId: user.storeId
-			})
-
-			// 路由拦截
-			// router(options)
-
-			// 放行同步方法
-			proxy.$isResolve()
-			// 设置onLaunch加载完成
-			onLaunched.value = true
-		})
-		.catch(err => {
-			// 路由拦截
-			// router(options)
-			
-			// 放行同步方法
-			// proxy.$isResolve()
-			// 设置onLaunch加载完成
-			// onLaunched.value = true
-		})
+	// 放行同步方法
+	proxy.$isResolve()
 })
 
-// onLaunch中方法是否加载完成
-const onLaunched = ref(false)
 onShow(options => {
-	// const accountInfo = uni.getAccountInfoSync();
-	// console.log(accountInfo.miniProgram.appId) // 小程序 appId
-	if (onLaunched.value) {
-		// console.log('onShow', options)
-		// 冷启动拦截
-		// router(options)
-
-		// 初始化,检查是否更新
-		init(options)
-	}
+	// 初始化,检查是否更新
+	init(options)
 })
 </script>
 

@@ -35,7 +35,6 @@
 import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { _storeGetinfolist } from '@/aTemp/apis/store.js'
-import { _wxLogin } from '@/aTemp/apis/login.js'
 import { reLaunch } from '@/aTemp/utils/uniAppTools.js'
 import { _userChangeUserId } from '@/aTemp/apis/user.js'
 // 全局登录信息
@@ -66,12 +65,12 @@ const storeGetinfolist = () => {
 
 // 切换店铺
 const switchStore = async infoObj => {
-	_userChangeUserId({ userid: infoObj.storeId })
+	_userChangeUserId({ storeId: infoObj.storeId, userid: useUserMain.userid }, { storeId: infoObj.storeId })
 		.then(res => {
 			const { data, msg, code } = res
 			// 设置缓存和全局中的店铺id
-			useUserMain.$patch({ storeId: infoObj.storeId })
-			reLaunch(`/pages/main/index/index?storeId=${infoObj.storeId}`)
+			useUserMain.$patch({ storeId: data.storeId })
+			reLaunch(`/pages/main/index/index?storeId=${data.storeId}`)
 		})
 		.catch(err => {
 			console.log(err)

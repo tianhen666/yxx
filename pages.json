@@ -405,6 +405,17 @@
 					"enablePullDownRefresh": false
 				}
 
+			}, {
+				"path": "addPoster/addPoster",
+				"style": {
+					"navigationBarTitleText": "添加海报",
+					"enablePullDownRefresh": false,
+					"usingComponents": {
+						// #ifdef APP-PLUS || H5 || MP-WEIXIN || MP-QQ
+						"w-painter": "/wxcomponents/painter/painter"
+						// #endif
+					}
+				}
 			}]
 		}
 	],

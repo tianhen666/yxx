@@ -28,7 +28,11 @@
 					<view class="num">已有{{ (dataObj.count || 0) + (dataObj.views || 0) }}人参与活动</view>
 					<view class="img_wrapper">
 						<template v-for="(item, index) in dataObj.activityListObj" :key="index">
-							<view class="image_box" :style="{ zIndex: index + 1, left: index * 40 + 'rpx' }" v-if="index < 10">
+							<view
+								class="image_box"
+								:style="{ zIndex: index + 1, left: index * 40 + 'rpx' }"
+								v-if="item && index < 10"
+							>
 								<image
 									class="image"
 									:src="item.avatar || '/static/images/default_avatar.png'"
@@ -184,6 +188,10 @@ const enrollformGetinfo = () => {
 				}&Mscene=1&targetId=${dataObj.value.id}`
 		)
 		shareInfo.imageUrl = dataObj.value.mainPic || `https://imgs.fenxiangzl.com/store/tooth/invitbg.png`
+		// 分享到朋友圈用到
+		shareInfo.query = computed(
+			() => `invitationCode=${useUserMain.userid}&storeId=${useUserMain.storeId}&Mscene=1&targetId=${dataObj.value.id}`
+		)
 	})
 }
 

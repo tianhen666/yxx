@@ -25,6 +25,7 @@ provide('refresh', refresh)
 // 海报ID
 const posterId = ref(0)
 provide('posterId', posterId)
+
 // 海报图片数据
 const posterData = reactive({ value: {} })
 provide('posterData', posterData)

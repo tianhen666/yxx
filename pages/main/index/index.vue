@@ -74,6 +74,7 @@ import { _storeGetinfo } from '@/aTemp/apis/store.js'
 import { _enrollformGetlist } from '@/aTemp/apis/activity.js'
 import { _serveGetlist } from '@/aTemp/apis/service.js'
 import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
+import { _wxLogin } from '@/aTemp/apis/login.js'
 
 // 全局登录信息
 import { _useUserMain } from '@/aTemp/store/userMain.js'
@@ -139,7 +140,7 @@ const getData = () => {
 }
 
 onLoad(async options => {
-	// console.log(options)
+	console.log(options)
 
 	// 等待onLaunch中放行后执行
 	const { proxy } = getCurrentInstance()
@@ -167,12 +168,51 @@ onLoad(async options => {
 		'场景值：' + Mscene,
 		'目标ID：' + targetId
 	)
-	
-	// 设置店铺缓存
-	if (storeId) {
-		useUserMain.$patch({ storeId: storeId })
+
+	try {
+		// 获取登录的code
+		let wxCode = ''
+		wxCode = await uni.login()
+
+		// 获取AppID 最低基础库版本2.2.2
+		const accountInfo = uni.getAccountInfoSync()
+		const appId = accountInfo.miniProgram.appId
+		console.log(appId)
+
+		// 调用登录接口
+		const resData = await _wxLogin(
+			{
+				code: wxCode.code,
+				storeId: storeId || 0,
+				invitationCode: invitationCode || 0,
+				scene: Mscene,
+				targetId,
+				appId: appId
+			},
+			{
+				storeId: storeId || 0
+			}
+		)
+		const { code, data, msg } = resData
+		const { power, token, user } = data
+
+		// 获取到数据后赋值给全局变量
+		useUserMain.$patch({
+			openId: user.openid,
+			unionId: user.unionid,
+			token: token,
+			mobile: user.mobile,
+			power: power,
+			avatar: user.avatar,
+			nickname: user.nickname,
+			remarkname: user.remarkname,
+			userid: user.id,
+			storeId: user.storeId
+		})
+	} catch (e) {
+		console.log('登录请求出错', e)
 	}
-	
+
 	// 开始加载
 	loading.value = true
 	proxy.$refs.paging.reload()

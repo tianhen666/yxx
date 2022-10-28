@@ -74,7 +74,9 @@ const addImg = async () => {
 	const getImgInfo = await getImageInfo(imgList[0])
 	const { height: imgHeight, width: imgWidth, path: imgPath } = getImgInfo
 
-	const resUploadFile = await uploadFile(imgPath, config.BASE_URL + '/poster/uploadimage')
+	const resUploadFile = await uploadFile(imgPath, config.BASE_URL + '/upload-flv/uploadimage', {
+		baseDir: 'poster_view'
+	})
 	const { code, data, msg } = JSON.parse(resUploadFile)
 
 	const newViewObj = {
@@ -102,8 +104,12 @@ const addImg = async () => {
 // 修改背景
 const addBg = async () => {
 	const imgList = await chooseImage(1)
-	const resUploadFile = await uploadFile(imgList[0], config.BASE_URL + '/poster/uploadimage')
+	const getImgInfo = await getImageInfo(imgList[0])
+	const { height: imgHeight, width: imgWidth, path: imgPath } = getImgInfo
+	const resUploadFile = await uploadFile(imgPath, config.BASE_URL + '/upload-flv/uploadimage', { baseDir: 'poster_bg' })
 	const { code, data, msg } = JSON.parse(resUploadFile)
+	posterData.value.width = '310px'
+	posterData.value.height = imgHeight / (imgWidth / 310) + 'px'
 	posterData.value.background = data
 	typeAddPopup.value.close()
 }

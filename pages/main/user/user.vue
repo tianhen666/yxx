@@ -57,6 +57,7 @@ import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
 // 全局登录信息
 import { _useUserMain } from '@/aTemp/store/userMain.js'
 const useUserMain = _useUserMain()
+
 // 分享 (onShareAppMessage,onShareT1111111imeline) 不能删,必要 https://github.com/dcloudio/uni-app/issues/3097
 import useShare from '@/aTemp/mixins/useShare.js'
 const shareInfo = reactive({ title: '', path: '', imageUrl: '', query: '' })
