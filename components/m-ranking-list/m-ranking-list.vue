@@ -14,11 +14,11 @@
 				</view>
 				<view class="container_item_right_box">
 					<view class="container_item_right_box_item">
-						邀请
+						共邀请
 						<text>{{ item.activityCount }}人</text>
 					</view>
 					<view class="container_item_right_box_item">
-						授权
+						登录
 						<text>{{ item.empower }}人</text>
 					</view>
 					<view class="container_item_right_box_item">

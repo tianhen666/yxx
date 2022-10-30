@@ -118,26 +118,20 @@ const movableViewIndex = inject('movableViewIndex')
 // 接收海报数据
 const posterData = inject('posterData')
 
-// 兼容小程序插件数据不更新bug
-const refresh = inject('refresh')
-
-
 // 海报其他属性
 const posterOtherData = inject('posterOtherData')
 // 当前暂存的ID
 const posterStagingId = ref(0)
 
-
 // 是否添加海报
-const posterAdd = inject('posterAdd')
+const posterAdd = inject('posterAdd', false)
 // 选择分类弹窗
-const popupCategory = inject('popupCategory')
+const popupCategory = inject('popupCategory', null)
+// 分类
+const secondLevelClass = inject('secondLevelClass', null)
 // 海报名称
-const posterName = inject('posterName')
-// 海报分类
-const secondLevelClass = inject('secondLevelClass')
-// 生成的海报图片路径
-const createImgPath = inject('createImgPath')
+const posterName = inject('posterName', null)
+
 /*
  * 保存海报
  */
@@ -155,20 +149,24 @@ const posterSavePostLog = () => {
 		showToastText('海报名称不能为空')
 		return
 	}
-	// showLoading('海报上传中')
-	refresh.value = Date.now()
-	
-	console.log(posterData.value)
+	showLoading('海报上传中')
+
+	// 插件会监听此对象变化重新生成
+	posterData.value = JSON.parse(JSON.stringify(posterData.value))
+
+	console.log('海报最终数据', posterData.value)
 }
 
 /*
  * 生成海报
  */
-// console.log(refresh)
 const createPosterImg = async () => {
 	showLoading('海报生成中')
-	refresh.value = Date.now()
 
+	// 插件会监听此对象变化重新生成
+	posterData.value = JSON.parse(JSON.stringify(posterData.value))
+
+	// 暂存编辑后的海报
 	const posterRenewalPosterImgResponse = await posterRenewalPosterImg()
 	const { code, msg, data } = posterRenewalPosterImgResponse
 	posterStagingId.value = data
@@ -176,6 +174,7 @@ const createPosterImg = async () => {
 
 // 暂存海报
 const stagingPosterImg = async () => {
+	// 暂存编辑后的海报
 	const posterRenewalPosterImgResponse = await posterRenewalPosterImg()
 	const { code, msg, data } = posterRenewalPosterImgResponse
 	posterStagingId.value = data
@@ -184,9 +183,17 @@ const stagingPosterImg = async () => {
 
 // 暂存海报请求
 const posterRenewalPosterImg = () => {
+	const m_posterData = JSON.parse(JSON.stringify(posterData.value))
+
+	// 删除固定的元素code
+	m_posterData.views.splice(posterData.value.code, 1)
+	
+	console.log(JSON.stringify(m_posterData))
+	
+	
 	return _posterRenewalPosterImg({
 		openid: uni.getStorageSync('UserMain').openId,
-		posterImg: JSON.stringify(posterData),
+		posterImg: JSON.stringify(m_posterData),
 		posterName: posterOtherData.value.postercampaign,
 		posterUrl: posterOtherData.value.posterurl,
 		posterid: posterOtherData.value.id,
@@ -230,7 +237,7 @@ const recovery = () => {
  */
 
 const copywriting = () => {
-	showToastText('功能后续更新中...')
+	showToastText('功能陆续更新中...')
 }
 
 /*

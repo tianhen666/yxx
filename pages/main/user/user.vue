@@ -50,7 +50,7 @@ import mHeader from './components/m-header/m-header.vue'
 import pUser from './components/p-user.vue'
 import sUser from './components/s-user.vue'
 import { onLoad } from '@dcloudio/uni-app'
-import { reactive, computed, ref } from 'vue'
+import { reactive, computed, ref, provide } from 'vue'
 import { _storeGetinfo } from '@/aTemp/apis/store.js'
 import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
 
@@ -66,15 +66,24 @@ useShare(shareInfo)
 
 // z-ping插件对象
 const paging = ref(null)
+
+// 加载中
 const loading = ref(true)
 
-//  设置分享参数
+// 店铺数据
+const storeInfo = ref({})
+provide('storeInfo', storeInfo)
+
 onLoad(options => {})
 
 const storeGetinfo = () => {
 	// 获取店铺信息
 	_storeGetinfo().then(res => {
 		const { code, msg, data } = res
+		// 设置用户信息
+		storeInfo.value = data
+
+		// 设置分享参数
 		shareInfo.title = computed(() => `${useUserMain.nickname} - 邀请您进入【${data.name}】`)
 		shareInfo.path = computed(
 			() =>

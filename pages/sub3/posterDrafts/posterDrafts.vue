@@ -7,7 +7,7 @@
 				class="list_item"
 				v-for="(item, index) in posterList"
 				:key="index"
-				@tap="navigateTo(`/pages/sub3/posterInfo/posterInfo?id=${item.id}`)"
+				@tap="navigateTo(`/pages/sub3/posterInfo/posterInfo?id=${item.id}&drafts=true`)"
 			>
 				<image class="image" :src="item.posterUrl" mode="aspectFill"></image>
 			</view>
@@ -51,7 +51,7 @@ const posterDrafts = async () => {
 		pageSize: pageSize.value,
 		pageNum: pageNum.value
 	})
-	console.log(posterListResponse.data.poster)
+	
 	// 暂时延时一下
 	setTimeout(() => {
 		posterList.value.push(...posterListResponse.data.poster)

@@ -80,7 +80,6 @@
 		:use2D="true"
 		:dirty="false"
 		:LRU="false"
-		:refresh="refresh"
 		customStyle="left: -9999px; top: -9999rpx;position: absolute;"
 	></w-painter>
 </template>
@@ -289,8 +288,6 @@ onUnload(() => {
 	clearInterval(djsIndex)
 })
 
-// 解决使用原生微信小程序组件,传入object不能及时更新问题
-const refresh = ref('')
 // 海报数据
 const posterData = reactive({
 	value: {}
@@ -312,7 +309,7 @@ const tapCreateImg = async () => {
 		width: 430
 	})
 	// console.log('data:image/png;base64,' + wxWxqrCode.data)
-
+	
 	// 如果有海报
 	if (dataObj.value.postPic) {
 		// 获取海报图片尺寸
@@ -418,8 +415,6 @@ const tapCreateImg = async () => {
 			]
 		}
 	}
-
-	refresh.value = Date.now()
 }
 // 图片生成完成
 const createImgOk = e => {

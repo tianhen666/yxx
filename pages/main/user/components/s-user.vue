@@ -19,10 +19,15 @@
 	<view class="box">
 		<m-title2 :title="module4.title"></m-title2>
 		<view class="yxzs">
-			<view class="yxzs_item" v-for="(item, index) in module4.sub" :key="index" @tap="navigateTo(item.path)">
-				<image class="image" :src="item.imgUrl" mode="aspectFill"></image>
-				<text class="text">{{ item.name }}</text>
-			</view>
+			<template v-for="(item, index) in module4.sub" :key="index">
+				<view
+					class="yxzs_item"
+					@tap="index == 0 || index == 2 || index == 3 ? showToastText('功能陆续更新中...') : navigateTo(item.path)"
+				>
+					<image class="image" :src="item.imgUrl" mode="aspectFill"></image>
+					<text class="text">{{ item.name }}</text>
+				</view>
+			</template>
 		</view>
 	</view>
 	<view class="blank30"></view>
@@ -210,8 +215,8 @@ const module3Fun = listIndex => {
 				// console.log('条码内容：' + res.result)
 				// 调用订单核销接口
 				orderVerificationSheet(res.result)
-				
-			}).catch(err=>{
+			})
+			.catch(err => {
 				// console.log(err)
 			})
 	}

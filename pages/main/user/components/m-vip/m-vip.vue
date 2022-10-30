@@ -3,7 +3,9 @@
 		<!-- vip续费 -->
 		<view class="vip" @tap="navigateTo('/pages/sub1/vip/vip')">
 			<image class="image" src="/static/images/vip.png" mode="aspectFill"></image>
-			<view class="time_text">您的会员将在2023-07-14到期</view>
+			<view class="time_text">
+				{{ `您的会员将在${dayjs(storeInfo.expireDt).format('YYYY年MM月DD日')}到期` }}
+			</view>
 			<view class="btn">立即续费</view>
 		</view>
 	</view>
@@ -11,12 +13,16 @@
 
 <script setup>
 import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
+import dayjs from 'dayjs'
+import { inject } from 'vue'
+
+const storeInfo = inject('storeInfo')
 </script>
 
 <style lang="scss" scoped>
 .container {
 	position: relative;
-	z-index: 1;
+	z-index: 2;
 	color: #ffffff;
 	width: $main-width;
 	@include mFlex;

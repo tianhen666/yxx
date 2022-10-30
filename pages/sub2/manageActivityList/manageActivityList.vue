@@ -7,7 +7,6 @@
 	<pinapp-empty-page v-if="listData.length === 0" />
 	<view class="tab_content" v-else>
 		<view v-for="(item, index) in listData" :key="index" class="tab_content_item">
-			
 			<!-- 图片 -->
 			<view class="image_box">
 				<image class="image" :src="item.mainPic" mode="scaleToFill" @tap="previewImage([item.mainPic])"></image>
@@ -30,7 +29,8 @@
 				<view class="sales">已参与 {{ item.infocount || 0 }}</view>
 
 				<view class="btn">
-					<view class="btn_item style2" @tap="enrollformDisable(item, index)" v-if="item.status === 0">下架</view>
+					<view class="btn_item style1" @tap="wxWxqrCode(item, index)" v-if="item.status === 0">活动码</view>
+					<view class="btn_item style2" @tap="enrollformDisable(item, index)" v-if="item.status === 0">下架后编辑</view>
 					<view
 						v-if="item.status === 1"
 						class="btn_item style1"
@@ -60,8 +60,17 @@
 import { ref, reactive, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { _enrollformGetlist, _enrollformDelete, _enrollformEnable, _enrollformDisable } from '@/aTemp/apis/activity.js'
-import { showModal, previewImage, navigateTo } from '@/aTemp/utils/uniAppTools.js'
+import { showModal, previewImage, navigateTo, showLoading, showToastText } from '@/aTemp/utils/uniAppTools.js'
 import dayjs from 'dayjs'
+
+import { _wxWxqrCode } from '@/aTemp/apis/login.js'
+// base64转图片路径
+import { base64ToPath } from 'image-tools'
+
+// 全局登录信息
+import { _useUserMain } from '@/aTemp/store/userMain.js'
+const useUserMain = _useUserMain()
+
 // 数据列表
 const listData = ref([])
 // tab选项
@@ -146,6 +155,37 @@ const enrollformEnable = (item, index) => {
 			})
 		}
 	})
+}
+
+// 生成直接邀请码
+const wxWxqrCode = item => {
+	showLoading('加载中')
+	_wxWxqrCode({
+		page: 'pages/main/index/index',
+		scene: `i=${useUserMain.userid}&sd=${useUserMain.storeId}&s=1&t=${item.id}`,
+		width: 430
+	})
+		.then(async res => {
+			const { msg, data, code } = res
+			const imgPath = await base64ToPath('data:image/png;base64,' + data)
+			console.log('邀请码', imgPath)
+			img.value = imgPath
+			uni.hideLoading()
+			// 分享图片
+			uni
+				.showShareImageMenu({
+					path: imgPath
+				})
+				.then(res => {
+					console.log(res)
+				})
+				.catch(err => {
+					console.log(err)
+				})
+		})
+		.catch(err => {
+			showToastText('生成失败')
+		})
 }
 </script>
 

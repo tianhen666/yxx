@@ -78,7 +78,6 @@ const useUserMain = _useUserMain()
 // 海报数据列表
 const posterList = ref([])
 onLoad(options => {
-	console.log(useUserMain)
 	_posterGetPostAll().then(res => {
 		const { code, data, msg } = res
 		posterList.value = data

@@ -73,6 +73,7 @@ const tapCreateImg = () => {
 	padding-bottom: 40rpx;
 	.btn_fix {
 		position: fixed;
+		z-index:88;
 		bottom: 0;
 		width: 100%;
 		height: 160rpx;

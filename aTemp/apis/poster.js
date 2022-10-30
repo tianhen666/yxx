@@ -45,7 +45,7 @@ export function _posterSavePostLog(data) {
 	})
 }
 
-// 修改海报内容
+// 添加到门诊草稿箱
 export function _posterRenewalPosterImg(data) {
 	return http.post({
 		url: '/poster/renewalPosterImg',
@@ -53,10 +53,18 @@ export function _posterRenewalPosterImg(data) {
 	})
 }
 
-// 添加草稿箱
+// 查询草稿箱列表
 export function _posterDrafts(data) {
 	return http.post({
 		url: '/poster/drafts',
+		data
+	})
+}
+
+// 获取门诊草稿箱海报
+export function _posterDraftsOne(data) {
+	return http.post({
+		url: '/poster/draftsOne',
 		data
 	})
 }

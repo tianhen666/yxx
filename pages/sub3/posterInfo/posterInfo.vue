@@ -6,7 +6,6 @@
 		:use2D="true"
 		:dirty="false"
 		:LRU="false"
-		:refresh="refresh"
 		customStyle="left: -9999px; top: -9999rpx;position: absolute;"
 	></w-painter>
 	<m-poster-diy></m-poster-diy>
@@ -17,11 +16,13 @@ import { onLoad } from '@dcloudio/uni-app'
 import { ref, provide, reactive } from 'vue'
 import mPosterDiy from '@/pages/sub3/components/m-poster-diy/m-poster-diy.vue'
 import { showLoading, saveImageToPhotosAlbum, previewImage, showToastText } from '@/aTemp/utils/uniAppTools.js'
+import { _wxWxqrCode } from '@/aTemp/apis/login.js'
+import { _posterGetPostercontent, _posterDraftsOne } from '@/aTemp/apis/poster.js'
 
-import { _posterGetPostercontent } from '@/aTemp/apis/poster.js'
-// 解决使用原生微信小程序组件,传入object不能及时更新问题
-const refresh = ref('')
-provide('refresh', refresh)
+// 全局登录信息
+import { _useUserMain } from '@/aTemp/store/userMain.js'
+const useUserMain = _useUserMain()
+
 // 海报ID
 const posterId = ref(0)
 provide('posterId', posterId)
@@ -34,41 +35,75 @@ provide('posterData', posterData)
 const posterOtherData = reactive({ value: {} })
 provide('posterOtherData', posterOtherData)
 
-onLoad(options => {
-	// console.log(options)
+// 是否门诊草稿箱
+const drafts = ref('')
 
+onLoad(options => {
+	console.log(options)
+	drafts.value = options.drafts
 	posterId.value = parseInt(options.id) || 0
 	posterGetPostercontent()
 })
 
 // 获取海报数据
-const posterGetPostercontent = () => {
+const posterGetPostercontent = async () => {
 	showLoading('海报数据加载中')
-	_posterGetPostercontent({
-		id: posterId.value
-	}).then(res => {
-		const { code, data, msg } = res
-		// console.log(data)
-		// console.log(data.posterimg)
-		posterOtherData.value = data
-		posterData.value = JSON.parse(data.posterimg)
 
-		if (!data?.posterimg) {
-			uni.hideLoading()
-			showToastText('海报加载失败~')
-		}
+	// 获取邀请码
+	const wxWxqrCode = await _wxWxqrCode({
+		page: 'pages/main/index/index',
+		scene: `i=${useUserMain.userid}&sd=${useUserMain.storeId}&s=0&t=0`,
+		width: 430
 	})
+
+	let res = {}
+	if (drafts.value == 'true') {
+		res = await _posterDraftsOne({
+			id: posterId.value
+		})
+	} else {
+		res = await _posterGetPostercontent({
+			id: posterId.value
+		})
+	}
+
+	const { code, data, msg } = res
+	// console.log(data)
+	posterOtherData.value = data
+	posterData.value = JSON.parse(data.posterImg)
+
+	// 添加二维码
+	posterData.value.views.push({
+		css: {
+			top: parseInt(posterData.value.height) - 100 + 'px',
+			left: parseInt(posterData.value.width) - 100 + 'px',
+			width: '80px',
+			height: '80px'
+		},
+		id: 'code',
+		type: 'image',
+		url: 'data:image/png;base64,' + wxWxqrCode.data
+	})
+	posterData.value.code = posterData.value.views.length - 1
+
+	uni.hideLoading()
 }
 
+// 海报是否初始化完成
+const firstComplete = ref(false)
 // 图片生成完成
 const createImgOk = e => {
-	uni.hideLoading()
-	if (refresh.value) {
+	console.log(e.detail.path)
+
+	if (firstComplete.value) {
+		uni.hideLoading()
 		saveImageToPhotosAlbum(e.detail.path).then(() => {
 			previewImage([e.detail.path])
 		})
+	} else {
+		uni.hideLoading()
+		firstComplete.value = true
 	}
-	console.log(e.detail.path)
 }
 // 图片生成失败
 const imgErr = e => {

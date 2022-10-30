@@ -3,7 +3,10 @@
 		<view class="blank40"></view>
 		<!-- 相关活动 -->
 		<view class="container_activity box" v-if="dataObj">
-			<image class="container_activity_image" :src="dataObj.mainPic" mode="aspectFill"></image>
+			<view class="container_activity_image">
+				<image class="image" :src="dataObj.mainPic" mode="aspectFill"></image>
+			</view>
+			
 			<view class="container_activity_title">{{ dataObj.title }}</view>
 		</view>
 		<view class="blank40"></view>
@@ -29,7 +32,7 @@
 			<view class="blank32"></view>
 
 			<!-- 时间 -->
-			<view class="time">(统计时间：2022年8月23--2022年8月30)</view>
+			<view class="time">{{`(统计时间：${dayjs(dataObj.startDt).format('YYYY年MM月DD日')}--${dayjs(dataObj.endDt).format('YYYY年MM月DD日')})`}}</view>
 			<view class="blank32"></view>
 
 			<!-- 用户列表 -->
@@ -46,6 +49,7 @@ import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { _enrollformGetinfo } from '@/aTemp/apis/activity.js'
 import { _storeproductParticulars } from '@/aTemp/apis/store.js'
+import dayjs from 'dayjs'
 
 // 活动数据列表
 const categoryOption1 = ref([
@@ -153,7 +157,16 @@ const selectChange = e => {
 		padding: 0;
 		&_image {
 			width: 100%;
-			height: $main-width * 0.5;
+			padding-top: 80%;
+			height: 0;
+			position: relative;
+			.image{
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+			}
 		}
 		&_title {
 			margin: $padding;

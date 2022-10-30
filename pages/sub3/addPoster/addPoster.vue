@@ -1,11 +1,7 @@
 <template>
-	<view class="">
-		{{posterData.value}}
-		{{refresh}}
-	</view>
 	<!-- 海报编辑器 -->
 	<m-poster-diy></m-poster-diy>
-	
+
 	<uni-popup ref="popupCategory" type="top">
 		<view class="popup_box">
 			<!-- 海报名称 -->
@@ -35,7 +31,7 @@
 			<button class="btn" @tap.stop="popupCategory.close()">确定</button>
 		</view>
 	</uni-popup>
-	
+
 	<!-- 海报生成插件 -->
 	<w-painter
 		:palette="posterData.value"
@@ -44,7 +40,6 @@
 		:use2D="true"
 		:dirty="false"
 		:LRU="false"
-		:refresh="refresh"
 		customStyle="left: -9999px; top: -9999rpx;position: absolute;"
 	></w-painter>
 </template>
@@ -54,24 +49,12 @@ import mPosterDiy from '@/pages/sub3/components/m-poster-diy/m-poster-diy.vue'
 import { _posterGetIdPostAll } from '@/aTemp/apis/poster.js'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { ref, provide, reactive } from 'vue'
-import { uploadFile } from '@/aTemp/utils/uniAppTools.js'
+import { uploadFile, showToastText } from '@/aTemp/utils/uniAppTools.js'
 import { _posterSavePostLog } from '@/aTemp/apis/poster.js'
 // 全局基础配置
 import config from '@/global-config.js'
 
-// 刷新
-const refresh = ref('')
-provide('refresh', refresh)
-
-// 海报图片数据
-const posterData = reactive({
-	value: {
-		width: '310px',
-		height: '534px',
-		background: '#eeeeee',
-		views: []
-	}
-})
+const posterData = reactive({ value: { width: '310px', height: '534px', background: '#ccc', views: [] } })
 provide('posterData', posterData)
 
 // 海报其他数据(全部属性)
@@ -82,23 +65,23 @@ provide('posterOtherData', posterOtherData)
 const popupCategory = ref(null)
 provide('popupCategory', popupCategory)
 
-// 添加海报
+// 判断是否添加上传海报
 const posterAdd = ref(true)
 provide('posterAdd', posterAdd)
 
 // 海报名称
-const posterName = ref('测试海报')
+const posterName = ref('')
 provide('posterName', posterName)
 
 // 海报一级分类列表
 const firstLevelClassList = ref([])
 // 选中的一级分类
-const firstLevelClass = ref(1)
+const firstLevelClass = ref('')
 
 // 海报二级分类列表
 const secondLevelClassList = ref([])
 // 选中的二级分类
-const secondLevelClass = ref(5)
+const secondLevelClass = ref('')
 provide('secondLevelClass', secondLevelClass)
 
 // 节点未加载完成
@@ -109,7 +92,7 @@ onLoad(options => {
 
 // 节点加载完成
 onReady(e => {
-	// popupCategory.value.open()
+	popupCategory.value.open()
 })
 
 // 获取分类列表
@@ -132,42 +115,49 @@ const firstLevelClassChange = e => {
 	}
 }
 
+// 海报生成并且上传成功过的图片路径
 const createImgPath = ref('')
 provide('createImgPath', createImgPath)
-
-const mPosterId = ref('')
+// 当前的海报ID
+const mPosterId = ref(0)
+// 海报是否初始化完成
+const firstComplete = ref(false)
 // 图片生成完成
 const createImgOk = async e => {
+	// 插件生成的海报内容
+	console.log('海报生成的信息', e)
+
 	// 初始化不上传封面图
-	if (refresh.value) {
+	if (firstComplete.value) {
 		const resUploadFile = await uploadFile(e.detail.path, config.BASE_URL + '/upload-flv/uploadimage', {
 			baseDir: 'poster_coverImg'
 		})
 		const { code, data, msg } = JSON.parse(resUploadFile)
 		createImgPath.value = data
 
-		// 打印生成并且上传的封面图
+		// 打印生成并且上传的封面图路径
 		console.log(data)
-
+		console.log(posterData.value)
 		_posterSavePostLog({
 			id: mPosterId.value,
 			posterId: secondLevelClass.value,
 			postercampaign: posterName.value,
-			posterimg: JSON.stringify(posterData.value),
+			posterImg: JSON.stringify(posterData.value),
 			posterurl: createImgPath.value
 		})
 			.then(res => {
 				const { code, msg, data } = res
 				mPosterId.value = data.id
 				uni.hideLoading()
+				showToastText('海报添加成功~')
 			})
 			.catch(err => {
 				uni.hideLoading()
-				console.log('海报保存失败')
+				console.log(err, '海报保存失败')
 			})
 	} else {
-		// 插件生成的海报内容
-		console.log('海报生成的信息', e)
+		uni.hideLoading()
+		firstComplete.value = true
 	}
 }
 
