@@ -90,7 +90,8 @@ import { onLoad, onUnload } from '@dcloudio/uni-app'
 import { _enrollformGetinfo, _enrollformEnpayment, _enrollformWxNotifys } from '@/aTemp/apis/activity.js'
 import { _debounce, _countDown } from '@/aTemp/utils/tools.js'
 import { _wxWxqrCode } from '@/aTemp/apis/login.js'
-
+// base64转图片路径
+import { base64ToPath } from 'image-tools'
 import {
 	navigateTo,
 	previewImage,
@@ -309,7 +310,8 @@ const tapCreateImg = async () => {
 		width: 430
 	})
 	// console.log('data:image/png;base64,' + wxWxqrCode.data)
-	
+	const imgPath = await base64ToPath('data:image/png;base64,' + wxWxqrCode.data)
+
 	// 如果有海报
 	if (dataObj.value.postPic) {
 		// 获取海报图片尺寸
@@ -325,7 +327,7 @@ const tapCreateImg = async () => {
 				{
 					id: '1',
 					type: 'image',
-					url: 'data:image/png;base64,' + wxWxqrCode.data,
+					url: imgPath,
 					css: {
 						right: '13px',
 						bottom: '13px',
@@ -398,7 +400,7 @@ const tapCreateImg = async () => {
 				{
 					id: '5',
 					type: 'image',
-					url: 'data:image/png;base64,' + wxWxqrCode.data,
+					url: imgPath,
 					css: {
 						top: '710px',
 						right: '30px',
@@ -419,21 +421,21 @@ const tapCreateImg = async () => {
 // 图片生成完成
 const createImgOk = e => {
 	uni.hideLoading()
-	if (refresh.value) {
-		saveImageToPhotosAlbum(e.detail.path).then(res => {
-			// 分享图片
-			uni
-				.showShareImageMenu({
-					path: e.detail.path
-				})
-				.then(res => {
-					console.log(res)
-				})
-				.catch(err => {
-					console.log(err)
-				})
-		})
-	}
+
+	saveImageToPhotosAlbum(e.detail.path).then(res => {
+		// 分享图片
+		uni
+			.showShareImageMenu({
+				path: e.detail.path
+			})
+			.then(res => {
+				console.log(res)
+			})
+			.catch(err => {
+				console.log(err)
+			})
+	})
+
 	console.log(e.detail.path)
 }
 // 图片生成失败

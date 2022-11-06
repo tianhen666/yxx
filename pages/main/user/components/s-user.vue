@@ -36,6 +36,16 @@
 	<m-option :listData="module5"></m-option>
 	<view class="blank40"></view>
 
+	<!-- 邀请门诊入驻 -->
+	<view
+		class="inviteStore"
+		v-if="useUserMain.storeId == 1 || useUserMain.storeId == 11"
+		@tap="navigateTo('/pages/sub1/settleIn/settleIn')"
+	>
+		<text>店铺</text>
+		<text>入驻</text>
+	</view>
+
 	<!-- 弹出框 -->
 	<uni-popup ref="popup" type="center" :safe-area="false">
 		<view class="popup_box">
@@ -59,6 +69,10 @@ import mVip from './m-vip/m-vip.vue'
 import { showToastText, navigateTo } from '@/aTemp/utils/uniAppTools.js'
 import { _debounce } from '@/aTemp/utils/tools.js'
 import { ref } from 'vue'
+
+// 全局登录信息
+import { _useUserMain } from '@/aTemp/store/userMain.js'
+const useUserMain = _useUserMain()
 
 // 订单核销
 import { _orderVerificationSheet } from '@/aTemp/apis/order.js'
@@ -281,6 +295,25 @@ const module5 = {
 </script>
 
 <style lang="scss" scoped>
+.inviteStore {
+	position: fixed;
+	right: 40rpx;
+	bottom: 60rpx;
+	z-index: 10;
+	background-color: $main-color;
+	color: #fff;
+	box-sizing: content-box;
+	font-size: 24rpx;
+	line-height: 1.5em;
+	border-radius: 50%;
+	overflow: hidden;
+	width: 100rpx;
+	height: 100rpx;
+	text-align: justify;
+	@include mFlex;
+	flex-direction: column;
+}
+
 .box {
 	width: $main-width;
 	margin: auto;

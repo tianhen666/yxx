@@ -35,15 +35,7 @@
 		<s-user v-if="useUserMain.power != -1"></s-user>
 	</z-paging>
 
-	<!-- 邀请门诊入驻 -->
-	<view
-		class="inviteStore"
-		v-if="useUserMain.storeId == 1 && useUserMain.power != -1"
-		@tap="navigateTo('/pages/sub1/settleIn/settleIn')"
-	>
-		<text>店铺</text>
-		<text>入驻</text>
-	</view>
+
 </template>
 <script setup>
 import mHeader from './components/m-header/m-header.vue'
@@ -101,22 +93,4 @@ const storeGetinfo = () => {
 </script>
 
 <style lang="scss" scoped>
-.inviteStore {
-	position: fixed;
-	right: 40rpx;
-	bottom: 60rpx;
-	z-index: 10;
-	background-color: $main-color;
-	color: #fff;
-	box-sizing: content-box;
-	font-size: 24rpx;
-	line-height: 1.5em;
-	border-radius: 50%;
-	overflow: hidden;
-	width: 100rpx;
-	height: 100rpx;
-	text-align: justify;
-	@include mFlex;
-	flex-direction: column;
-}
 </style>

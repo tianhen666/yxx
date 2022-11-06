@@ -138,6 +138,8 @@ const createImgOk = async e => {
 		// 打印生成并且上传的封面图路径
 		console.log(data)
 		console.log(posterData.value)
+		
+		// 上传海报数据
 		_posterSavePostLog({
 			id: mPosterId.value,
 			posterId: secondLevelClass.value,

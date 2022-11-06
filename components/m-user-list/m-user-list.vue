@@ -1,6 +1,6 @@
 <template>
 	<view class="container">
-		<view class="container_item" v-for="(item, index) in listData" :key="index" @tap="popupTap(item)">
+		<view class="container_item" v-for="(item, index) in listData" :key="index" @tap="!activityShow && popupTap(item)">
 			<view class="container_item_box">
 				<!-- 头像 -->
 				<view class="container_item_box_left">
@@ -14,7 +14,7 @@
 				</view>
 
 				<!-- 拨打电话 -->
-				<view class="container_item_box_right" v-if="!activityShow">
+				<view class="container_item_box_right">
 					<view class="copy_mobile" @tap.stop.prevent="setClipboardData(item.mobile)">复制号码</view>
 					<view class="call" @tap.stop.prevent="makePhoneCall(item.mobile)">
 						<image class="image" src="/static/images/phone.png" mode="heightFix"></image>
@@ -25,7 +25,7 @@
 
 			<!-- 活动数据分析页面显示 -->
 			<view class="container_item_box2" v-if="activityShow">
-				<view class="Invited item">邀请人：{{ item.ynickname }}</view>
+				<view class="Invited item">邀请人：{{ item.ynickname||"微信用户" }}</view>
 				<view class="views item">浏览次数：{{ item.views }}</view>
 				<view class="join item" v-if="item.participate === 1">已参与</view>
 				<view class="unJoin item" v-else>未参与</view>

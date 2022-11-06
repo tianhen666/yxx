@@ -121,7 +121,7 @@ const rules = {
 	name: {
 		rules: [
 			{ required: true, errorMessage: '请输入门诊名称' },
-			{ pattern: RegExp(/^[\u4e00-\u9fa5(，。《》（）【】{}！,.\-!)]{2,16}$/), errorMessage: '请输入2-10字的中文' }
+			{ pattern: RegExp(/^[\u4e00-\u9fa5(，。《》（）【】{}！,.\-!)]{2,16}$/), errorMessage: '请输入2-16字的中文' }
 		],
 		label: '门诊名称'
 	},
@@ -188,8 +188,6 @@ const btnClick = _debounce(
 					loading.value = false
 					return
 				}
-
-				return
 				// 保存信息接口
 				_storeSaveStore(formData.value)
 					.then(res => {

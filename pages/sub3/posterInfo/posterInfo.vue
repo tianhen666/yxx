@@ -18,6 +18,8 @@ import mPosterDiy from '@/pages/sub3/components/m-poster-diy/m-poster-diy.vue'
 import { showLoading, saveImageToPhotosAlbum, previewImage, showToastText } from '@/aTemp/utils/uniAppTools.js'
 import { _wxWxqrCode } from '@/aTemp/apis/login.js'
 import { _posterGetPostercontent, _posterDraftsOne } from '@/aTemp/apis/poster.js'
+// base64转图片路径
+import { base64ToPath } from 'image-tools'
 
 // 全局登录信息
 import { _useUserMain } from '@/aTemp/store/userMain.js'
@@ -55,6 +57,7 @@ const posterGetPostercontent = async () => {
 		scene: `i=${useUserMain.userid}&sd=${useUserMain.storeId}&s=0&t=0`,
 		width: 430
 	})
+	const imgPath = await base64ToPath('data:image/png;base64,' + wxWxqrCode.data)
 
 	let res = {}
 	if (drafts.value == 'true') {
@@ -82,7 +85,7 @@ const posterGetPostercontent = async () => {
 		},
 		id: 'code',
 		type: 'image',
-		url: 'data:image/png;base64,' + wxWxqrCode.data
+		url: imgPath
 	})
 	posterData.value.code = posterData.value.views.length - 1
 

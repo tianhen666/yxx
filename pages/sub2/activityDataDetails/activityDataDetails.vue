@@ -70,7 +70,7 @@ const categoryOption1 = ref([
 const mStatus = ref(-1)
 
 // 当前活动ID
-const dataId = ref(1)
+const dataId = ref(0)
 // 加载中
 const loading = ref(false)
 // 活动详情
@@ -105,7 +105,7 @@ const enrollformGetinfo = () => {
 // 活动数据详情
 const storeproductParticulars = () => {
 	// dataId.value
-	_storeproductParticulars({ productid: 3038, participate: mStatus.value }).then(res => {
+	_storeproductParticulars({ productid: dataId.value, participate: mStatus.value }).then(res => {
 		const { data, code, msg } = res
 		// 活动参与人数列表
 		listData.value = data

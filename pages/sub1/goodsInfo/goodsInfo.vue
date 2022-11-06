@@ -70,7 +70,6 @@
 		:use2D="true"
 		:dirty="false"
 		:LRU="false"
-		:refresh="refresh"
 		customStyle="left: -9999px; top: -9999rpx;position: absolute;"
 	></w-painter>
 </template>
@@ -79,6 +78,8 @@
 import { ref, reactive, computed, getCurrentInstance } from 'vue'
 import { _storeproductGetinfo } from '@/aTemp/apis/shop.js'
 import { onLoad, onShow } from '@dcloudio/uni-app'
+// base64转图片路径
+import { base64ToPath } from 'image-tools'
 import {
 	navigateTo,
 	previewImage,
@@ -166,8 +167,6 @@ onLoad(async options => {
 	})
 })
 
-// 解决使用原生微信小程序组件,传入object不能及时更新问题
-const refresh = ref('')
 // 海报数据
 const posterData = reactive({
 	value: {}
@@ -184,6 +183,7 @@ const tapCreateImg = async () => {
 		width: 430
 	})
 	// console.log('data:image/png;base64,' + wxWxqrCode.data)
+	const imgPath = await base64ToPath('data:image/png;base64,' + wxWxqrCode.data)
 
 	// 如果有海报
 	if (dataObj.value.postPic) {
@@ -199,7 +199,7 @@ const tapCreateImg = async () => {
 				{
 					id: '1',
 					type: 'image',
-					url: 'data:image/png;base64,' + wxWxqrCode.data,
+					url: imgPath,
 					css: {
 						right: '13px',
 						bottom: '13px',
@@ -272,7 +272,7 @@ const tapCreateImg = async () => {
 				{
 					id: '5',
 					type: 'image',
-					url: 'data:image/png;base64,' + wxWxqrCode.data,
+					url: imgPath,
 					css: {
 						top: '848px',
 						right: '30px',
@@ -289,27 +289,25 @@ const tapCreateImg = async () => {
 			]
 		}
 	}
-
-	refresh.value = Date.now()
 }
 
 // 图片生成完成
 const createImgOk = e => {
 	uni.hideLoading()
-	if (refresh.value) {
-		saveImageToPhotosAlbum(e.detail.path).then(() => {
-			// 分享图片
-			uni
-				.showShareImageMenu({
-					path: e.detail.path
-				})
-				.then(res => {
-					console.log(res)
-				}).catch(err=>{
-					console.log(err)
-				})
-		})
-	}
+	saveImageToPhotosAlbum(e.detail.path).then(() => {
+		// 分享图片
+		uni
+			.showShareImageMenu({
+				path: e.detail.path
+			})
+			.then(res => {
+				console.log(res)
+			})
+			.catch(err => {
+				console.log(err)
+			})
+	})
+
 	console.log(e.detail.path)
 }
 // 图片生成失败
