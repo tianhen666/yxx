@@ -1,902 +1,1027 @@
 <template>
-	<view class="bt-container">
-		<view class="iconfont icon-reset" @click.stop="resetImage"></view>
-		<view @touchend="onTouchEnd" @touchstart="onTouchStart" class="mainContent">
-			<template v-if="imageInfo">
-				<image :src="showImagePath" mode="aspectFit" data-type="image" @touchmove.stop.prevent="onImageMove"
-					:style="[imageStyle]" class="image"></image>
-				<view class="cropper" :style="{
-						width: cropperPosition.width + 'px',
-						height: cropperPosition.height + 'px',
-						left: cropperPosition.left - 1 + 'px',
-						top: cropperPosition.top - 1 + 'px',
-						transition,
-					}">
+	<view class="bt-container" :style="[containerStyle]">
+		<!-- #ifdef APP-VUE || MP-WEIXIN || MP-QQ || H5 -->
+		<view class="mainContent" data-type="image" @touchstart="wxsModule.touchStart" @touchmove="wxsModule.touchMove" @touchend="wxsModule.touchEnd">
+		<!-- #endif -->
+		<!-- #ifndef APP-VUE || MP-WEIXIN || MP-QQ || H5 -->
+		<view class="mainContent" data-type="image" @touchstart="touchStart" @touchmove="touchMove" @touchend="touchEnd">
+		<!-- #endif -->
+			<template v-if="imageRect && cropperRect">
+				<!-- #ifdef APP-VUE || MP-WEIXIN || MP-QQ || H5 -->
+				<image mode="aspectFit" :src="imageSrc" class="image" :change:imageRect="wxsModule.changeImageRect" :imageRect="imageRect" :class="{ anim }">
+				<!-- #endif -->
+				<!-- #ifndef APP-VUE || MP-WEIXIN || MP-QQ || H5 -->
+				<image mode="aspectFit" :src="imageSrc" class="image" :style="[imageStyle]" :class="{ anim }">
+				<!-- #endif -->
+				</image>
+				<!-- #ifdef APP-VUE || MP-WEIXIN || MP-QQ || H5 -->
+				<view class="cropper" :class="{ anim }" :change:cropperRect="wxsModule.changeCropper" :cropperRect="cropperRect" :change:ratio="wxsModule.changeRatio" :ratio="ratio" >
+				<!-- #endif -->
+				<!-- #ifndef APP-VUE || MP-WEIXIN || MP-QQ || H5 -->
+				<view class="cropper" :class="{ anim }"  :style="[cropperStyle]">
+				<!-- #endif -->
+					<image class="mask" :src="mask"></image>
 					<template v-if="showGrid">
 						<view class="line row row1"></view>
 						<view class="line row row2"></view>
 						<view class="line col col1"></view>
 						<view class="line col col2"></view>
 					</template>
+					<!-- #ifdef APP-VUE || MP-WEIXIN || MP-QQ || H5  -->
+					<view class="controller vertical left" @touchstart="wxsModule.touchStart" data-type="controller" />
+					<view class="controller vertical right" @touchstart="wxsModule.touchStart" data-type="controller" />
+					<view class="controller horizon top" @touchstart="wxsModule.touchStart" data-type="controller" />
+					<view class="controller horizon bottom" @touchstart="wxsModule.touchStart" data-type="controller" />
+					<view class="controller left top" @touchstart="wxsModule.touchStart" data-type="controller" />
+					<view class="controller left bottom" @touchstart="wxsModule.touchStart" data-type="controller" />
+					<view class="controller right top" @touchstart="wxsModule.touchStart" data-type="controller" />
+					<view class="controller right bottom" @touchstart="wxsModule.touchStart" data-type="controller" />
+					<!-- #endif -->
+					<!-- #ifndef APP-VUE || MP-WEIXIN || MP-QQ || H5  -->
+					<view class="controller vertical left" @touchstart.stop="touchStart(-1, 0, $event)" />
+					<view class="controller vertical right" @touchstart.stop="touchStart(1, 0, $event)" />
+					<view class="controller horizon top" @touchstart.stop="touchStart(0, -1, $event)" />
+					<view class="controller horizon bottom" @touchstart.stop="touchStart(0, 1, $event)" />
+					<view class="controller left top" @touchstart.stop="touchStart(-1, -1, $event)" />
+					<view class="controller left bottom" @touchstart.stop="touchStart(-1, 1, $event)" />
+					<view class="controller right top" @touchstart.stop="touchStart(1, -1, $event)" />
+					<view class="controller right bottom" @touchstart.stop="touchStart(1, 1, $event)" />
+					<!-- #endif -->
 				</view>
-				<view @touchmove.stop.prevent="onHandleResize(-1, 0, $event)" class="controller vertical"
-					:style="[controllerPosition.left]" />
-				<view @touchmove.stop.prevent="onHandleResize(1, 0, $event)" class="controller vertical"
-					:style="[controllerPosition.right]" />
-				<view @touchmove.stop.prevent="onHandleResize(0, -1, $event)" class="controller horizon"
-					:style="[controllerPosition.top]" />
-				<view @touchmove.stop.prevent="onHandleResize(0, 1, $event)" class="controller horizon"
-					:style="[controllerPosition.bottom]" />
-				<template v-if="ratio==0">
-					<view @touchmove.stop.prevent="onHandleResize(-1, -1, $event)" class="controller controller_dot"
-						:style="[controllerPosition.leftTop]" />
-					<view @touchmove.stop.prevent="onHandleResize(1, -1, $event)" class="controller controller_dot"
-						:style="[controllerPosition.rightTop]" />
-					<view @touchmove.stop.prevent="onHandleResize(-1, 1, $event)" class="controller controller_dot"
-						:style="[controllerPosition.leftBottom]" />
-					<view @touchmove.stop.prevent="onHandleResize(1, 1, $event)" class="controller controller_dot"
-						:style="[controllerPosition.rightBottom]" />
-				</template>
 			</template>
 		</view>
-		<view class="slot">
-			<slot />
-		</view>
-		<!-- #ifdef MP-WEIXIN -->
-		<canvas v-if="showCanvas" type="2d" class="bt-canvas" :style="{
-			width:dSize.width+'px',
-			height:dSize.height+'px'
-		}"></canvas>
-		<!-- #endif -->
-		<!-- #ifndef MP-WEIXIN -->
-		<canvas v-if="showCanvas" canvas-id="bt-canvas" class="bt-canvas" :style="{
-			width:dSize.width+'px',
-			height:dSize.height+'px'
-		}"></canvas>
-		<!-- #endif -->
+			<canvas v-if="type2d" type="2d" class="bt-canvas" :width="target.width" :height="target.height"></canvas>
+			<canvas
+				v-else
+				:canvas-id="canvasId"
+				class="bt-canvas"
+				:style="{
+					width: target.width + 'px',
+					height: target.height + 'px'
+				}"
+				:width="target.width * pixel"
+				:height="target.height * pixel"
+			></canvas>
 	</view>
 </template>
 
 <script>
-	/**
-	 * better-cropper 图片裁切插件
-	 */
-	import calcImageSize from "./utils/calcImageSize.js"
-	import calcImagePosition from "./utils/calcImagePosition.js"
-	import calcCropper from "./utils/calcCropper.js"
-	import calcRightAndBottom from "./utils/calcRightAndBottom.js"
-	import calcPointDistance from "./utils/calcPointDistance.js"
-	import {
-		getTouchPoints,
-		sleep,
-		debounce,
-		log
-	} from "./utils/tools.js"
-
-	var startOffsetX = 0,
-		startOffsetY = 0,
-		startTouchsDistance = 0,
-		startChangeLeft = 0,
-		startChangeTop = 0,
-		startChangeWidth = 0,
-		startChangeHeight = 0,
-		initScale = 1,
-		startTouches = [],
-		timer = null;
-	export default {
-		name: "bt-cropper",
-		props: {
-			// 图片路径，支持网络路径和本地路径
-			imageSrc: {
-				type: String,
-				default: "",
-				required: true
-				// validator(value) {
-				// 	if (/^(http:|https:|)\/\//.test(value)) {
-				// 		return true
-				// 	} else {
-				// 		console.warn("图片url似乎不合法")
-				// 		return false
-				// 	}
-				// }
-			},
-			// 输出图片的格式，默认jpg
-			fileType: {
-				type: String,
-				default: "jpg"
-			},
-			// 生成的图片的宽度
-			dWidth: {
-				type: Number,
-				default: 0
-			},
-			// 裁切比例，0表示自由
-			ratio: {
-				type: Number,
-				default: 0,
-				validator(value) {
-					if (typeof value === 'number') {
-						if (value < 0) {
-							log('裁剪框比例值必须大于零', 'error')
-							return false
-						}
-					} else {
-						log('裁剪框比例值必须是数字', 'error')
-						return false
+// #ifndef APP-VUE || MP-WEIXIN || MP-QQ || H5
+import touches from './js/touchs.js';
+// #endif
+import { parseUnit,sleep } from './utils/tools.js';
+/**
+ * better-cropper 图片裁切插件
+ */
+export default {
+	name: 'bt-cropper',
+	props: {
+		// 图片路径，支持网络路径和本地路径
+		imageSrc: {
+			type: String,
+			default: '',
+			required: true
+		},
+		mask: {
+			type: String,
+			default: ''
+		},
+		// 手动指定容器的大小
+		containerSize: {
+			type: Object,
+			default: null
+		},
+		// 输出图片的格式，默认jpg
+		fileType: {
+			type: String,
+			default: 'png'
+		},
+		// 生成的图片的宽度,不传或者传0表示按照原始分辨率裁切
+		dWidth: Number,
+		maxWidth: {
+			type: Number,
+			default: 2000
+		},
+		// 裁切比例，0表示自由
+		ratio: {
+			type: Number,
+			default: 0,
+			validator(value) {
+				if (typeof value === 'number') {
+					if (value < 0) {
+						return false;
 					}
-					return true
+				} else {
+					return false;
 				}
-			},
-			// 是否展示网格
-			showGrid: {
-				type: Boolean,
-				default: false
-			},
-			// 图片质量，0-1 越大质量越好
-			quality: {
-				type: Number,
-				default: 1
-			},
-			// 初始的图片位置
-			initPosition: {
-				type: Object,
-				default () {
-					return null
-				}
-			},
-			// 是否压缩图片
-			// 注意：这里的压缩指的是用户移动图片展示的那个图片的压缩，
-			// 输出图片的质量并不会受到影响，
-			// 也就是说，最终输出图片的质量会比裁切时看起来更好
-			compress: {
-				type: Boolean,
-				default: false
-			},
-			// 是否开启操作结束后自动放大
-			autoZoom:{
-				type:Boolean,
-				default:true
+				return true;
 			}
 		},
-		data() {
-			return {
-				imageUrl: "",
-				imageInfo: null,
-				containerRect: "",
-				offsetX: 0,
-				offsetY: 0,
-				changeWidth: 0,
-				changeHeight: 0,
-				windowWidth: 375,
-				dpr: 2,
-				forceChangeWidth: 0,
-				forceChangeHeight: 0,
-				animate: false,
-				imgScale: 1,
-				imgTranslateX: 0,
-				imgTranslateY: 0,
-				// 这个变量不要删掉，不然会造成性能严重下降，这是uni-app框架的Bug
-				showCanvas: false,
-				cropperPosition: {
-					left: 0,
-					top: 0,
-					width: 0,
-					height: 0
-				},
-				// 图片在视图上的位置
-				imageBoundingRect: {
-					left: 0,
-					top: 0,
-					width: 0,
-					height: 0,
+		// 是否展示网格
+		showGrid: {
+			type: Boolean,
+			default: false
+		},
+		// 图片质量，0-1 越大质量越好
+		quality: {
+			type: Number,
+			default: 1
+		},
+		canvas2d: {
+			type: Boolean,
+			default: false
+		},
+		// 初始的图片位置
+		initPosition: {
+			type: Object,
+			default() {
+				return null;
+			}
+		},
+		// 是否开启操作结束后自动放大
+		autoZoom: {
+			type: Boolean,
+			default: true
+		}
+	},
+	// #ifndef APP-VUE || MP-WEIXIN || MP-QQ || H5
+	mixins: [touches],
+	// #endif
+	data() {
+		return {
+			canvasId: 'bt-cropper',
+			containerRect: null,
+			imageInfo: null,
+			operationHistory: [],
+			operationIndex: 0,
+			anim: false,
+			timer: null,
+			// 是否使用2D canvas
+			type2d: false,
+			pixel: 1,
+			imageRect: null,
+			cropperRect: null,
+			target:{
+				width:0,
+				height:0
+			}
+		};
+	},
+	watch: {
+		imageSrc: {
+			handler(src) {
+				if (typeof src === 'string' && src !== '') {
+					this.imageInit(src);
+				} else {
+					this.imageInfo = null;
 				}
+			},
+			immediate: true
+		},
+		ratio() {
+			if (this.ratio != 0) {
+				this.startAnim();
+				this.init();
+			}
+		}
+	},
+	computed: {
+		containerStyle() {
+			if (this.containerSize && this.containerRect) {
+				return {
+					width: this.containerRect.width + 'px',
+					height: this.containerRect.height + 'px'
+				};
+			}
+			return {};
+		}
+	},
+	methods: {
+		startAnim() {
+			this.stopAnim();
+			this.anim = true;
+			this.timer = setTimeout(() => {
+				this.anim = false;
+			}, 200);
+		},
+		stopAnim() {
+			this.anim = false;
+			clearTimeout(this.timer);
+		},
+		imageInit(src) {
+			uni.showLoading({
+				title: '载入中...'
+			});
+			uni.getImageInfo({
+				src,
+				success: res => {
+					this.imageInfo = res;
+					this.$nextTick(() => {
+						this.getContainer().then(rect => {
+							this.containerRect = rect;
+							this.init();
+						});
+					});
+				},
+				fail: (err) => {
+					this.$emit('loadFail',err);
+					uni.showToast({
+						title: '图片下载失败!',
+						icon: 'none'
+					});
+				},
+				complete(res) {
+					uni.hideLoading();
+				}
+			});
+		},
+		initCropper() {
+			const imageRate = this.imageInfo.width / this.imageInfo.height;
+			const containerRate = this.containerRect.width / this.containerRect.height;
+			const imageRect = {};
+			let cropperRate = this.ratio;
+			if (cropperRate == 0) {
+				if (this.cropperRect) {
+					cropperRate = this.cropperRect.width / this.cropperRect.height;
+				} else {
+					cropperRate = 1;
+				}
+			}
+			const cropperRect = {};
+			if (containerRate > cropperRate) {
+				cropperRect.height = this.containerRect.height * 0.85;
+				cropperRect.width = cropperRect.height * cropperRate;
+			} else {
+				cropperRect.width = this.containerRect.width * 0.85;
+				cropperRect.height = cropperRect.width / cropperRate;
+			}
+			if (cropperRate > imageRate) {
+				imageRect.width = cropperRect.width;
+				imageRect.height = imageRect.width / imageRate;
+			} else {
+				imageRect.height = cropperRect.height;
+				imageRect.width = imageRect.height * imageRate;
+			}
+			imageRect.left = (this.containerRect.width - imageRect.width) / 2;
+			imageRect.top = (this.containerRect.height - imageRect.height) / 2;
+			cropperRect.left = imageRect.left + (imageRect.width - cropperRect.width) / 2;
+			cropperRect.top = imageRect.top + (imageRect.height - cropperRect.height) / 2;
+			return {
+				imageRect,
+				cropperRect
 			};
 		},
-		watch: {
-			imageSrc: {
-				handler(imageSrc) {
-					this.imageUrl = imageSrc
-					this.imageInfo = null;
-					if(!imageSrc){
-						return
-					}
-					this.getImageInfo(imageSrc).then(imageInfo => {
-						this.imageInfo = imageInfo;
-						return this.getContainerRect()
-					}).then(rect => {
-						this.containerRect = rect;
-						this.imageBoundingRect = this.getImageInitRect()
-						this.resetImage()
-						if (this.ratio == 0) {
-							this.cropperPosition = this.getCropperInitPosition()
-						}
-						return this.imageBoundingRect;
-					}).then((imageBoundingRect) => {
-						if (this.initPosition) {
-							const {left,top,width,height} = this.initPosition
-							const ratio = this.imageBoundingRect.width / this.imageInfo.width
-							if(left!==undefined){
-								const imgTranslateX = this.cropperPosition.left - imageBoundingRect.left - left * ratio
-								this.cropperPosition.left -= imgTranslateX
-							}
-							if(top!==undefined){
-								const imgTranslateY = this.cropperPosition.top - imageBoundingRect.top - top * ratio
-								this.cropperPosition.top -= imgTranslateY
-							}
-							!!width && (this.cropperPosition.width = this.initPosition.width * ratio);
-							!!height && (this.cropperPosition.height = this.initPosition.height * ratio);
-						}
-						this.$emit('load')
-					}).catch(err=>{
-						console.error('失败信息',err)
-						this.$emit('loadFail',err)
-					})
-				},
-				immediate: true
-			},
-			ratio: {
-				handler(ratio) {
-					this.resetCropper()
-					this.applyAnim()
-				},
-				immediate: false
-			},
+		init() {
+			const {imageRect,cropperRect} = this.initCropper()
+			if(this.initPosition){
+				const scale = this.imageInfo.width/imageRect.width;
+				const {left,top,width,height} = this.initPosition;
+				if(left!==undefined&&top!==undefined&&width!==undefined&&height!==undefined){
+					cropperRect.width = width/scale;
+					cropperRect.height = height/scale;
+					cropperRect.left = left/scale;
+					cropperRect.top = top/scale;
+					this.$nextTick(this.zoomToFill);
+				}
+			}
+			this.imageRect = imageRect
+			this.cropperRect = cropperRect
+			this.operationHistory = [{imageRect,cropperRect}];
+			this.operationIndex = 0;
+			this.setTarget();
+			// #ifdef MP-WEIXIN
+			const systemInfo = uni.getSystemInfoSync();
+			if (this.canvas2d === false || systemInfo.platform === 'windows' || systemInfo.platform === 'mac') {
+				this.type2d = false;
+			} else {
+				this.type2d = true;
+				this.pixel = systemInfo.pixelRatio;
+			}
+			// #endif
+			//非微信小程序端强制关闭canvas2d模式
+			// #ifndef MP-WEIXIN
+			this.type2d = false;
+			// #endif
+			// #ifdef  MP-TOUTIAO || MP-LARK || MP-ALIPAY
+			this.type2d = this.canvas2d;
+			// #endif
 		},
-		computed: {
-			showImagePath() {
-				if (this.imageInfo && this.imageInfo.compressPath) {
-					return this.imageInfo.compressPath
-				} else {
-					return this.imageInfo?.path || ""
+		// 设置目标图像的大小
+		setTarget(){
+			const ratio = this.cropperRect.width / this.cropperRect.height;
+			if (!!this.dWidth) {
+				this.target = {
+					width: this.dWidth,
+					height: this.dWidth / (ratio || 1)
 				}
-			},
-			// 生成图片的大小
-			dSize() {
-				if (this.dWidth > 0) {
-					return {
-						width: this.dWidth,
-						height: this.dWidth * (this.cropperPosition.height / this.cropperPosition.width)
-					}
-				} else {
-					// 原像素比例裁剪
-					let scale = 1
-					if (this.imageInfo) {
-						scale = this.imgScale * this.imageBoundingRect.width / this.imageInfo.width
-					}
-					return {
-						width: this.cropperPosition.width / scale,
-						height: this.cropperPosition.height / scale
-					}
+			} else {
+				const width = Math.min(this.maxWidth, this.cropperRect.width * (this.imageInfo.width / this.imageRect.width));
+				this.target = {
+					width,
+					height: width / (ratio || 1)
 				}
-			},
-			imageStyle() {
-				let style = {
-					left: this.imageBoundingRect.left + 'px',
-					top: this.imageBoundingRect.top + 'px',
-					width: this.imageBoundingRect.width + 'px',
-					height: this.imageBoundingRect.height + 'px',
-					transition: this.transition,
-					transform: `matrix(${this.imgScale}, 0, 0, ${this.imgScale}, ${this.imgTranslateX}, ${this.imgTranslateY}) translateZ(0px)`,
-				}
-				return style
-			},
-			transition() {
-				return this.animate ? '0.2s' : 'none'
-			},
-			// 四个控制点的位置
-			controllerPosition() {
-				const up40 = uni.upx2px(40),
-					up30 = uni.upx2px(30),
-					up20 = uni.upx2px(20);
-				const transition = this.transition
-				return {
-					left: {
-						left: this.cropperPosition.left - up30 + 'px',
-						top: this.cropperPosition.top + (this.cropperPosition.height) / 2 - up40 + 'px',
-						transition
-					},
-					right: {
-						left: this.cropperPosition.left + this.cropperPosition.width - up20 + 'px',
-						top: this.cropperPosition.top + (this.cropperPosition.height) / 2 - up40 + 'px',
-						transition
-					},
-					top: {
-						left: this.cropperPosition.left + this.cropperPosition.width / 2 - up40 + 'px',
-						top: this.cropperPosition.top - up30 + 'px',
-						transition
-					},
-					bottom: {
-						left: this.cropperPosition.left + this.cropperPosition.width / 2 - up40 + 'px',
-						top: this.cropperPosition.top + this.cropperPosition.height - up20 + 'px',
-						transition
-					},
-					leftTop: {
-						left: this.cropperPosition.left - up40 + 'px',
-						top: this.cropperPosition.top - up40 + 'px',
-						transition
-					},
-					rightTop: {
-						left: this.cropperPosition.left + this.cropperPosition.width - up40 + 'px',
-						top: this.cropperPosition.top - up40 + 'px',
-						transition
-					},
-					leftBottom: {
-						left: this.cropperPosition.left - up40 + 'px',
-						top: this.cropperPosition.top + this.cropperPosition.height - up40 + 'px',
-						transition
-					},
-					rightBottom: {
-						left: this.cropperPosition.left + this.cropperPosition.width - up40 + 'px',
-						top: this.cropperPosition.top + this.cropperPosition.height - up40 + 'px',
-						transition
-					}
-				}
-			},
+			}
 		},
-		methods: {
-			// 开启动画
-			applyAnim() {
-				this.animate = true
-				clearTimeout(timer)
-				timer = setTimeout(() => {
-					this.animate = false
-				}, 200)
-			},
-			async getContainerRect() {
-				const systemInfo = uni.getSystemInfoSync()
-				this.windowWidth = systemInfo.windowWidth
-				this.dpr = systemInfo.pixelRatio
+		addHistory({imageRect,cropperRect}){
+			if(this.operationIndex!==this.operationHistory.length-1){
+				this.operationHistory = this.operationHistory.slice(0,this.operationIndex)
+			}
+			this.operationHistory.push({
+				imageRect,
+				cropperRect
+			});
+			if (this.operationHistory.length > 10) {
+				this.operationHistory.shift();
+			}
+			this.operationIndex = this.operationHistory.length - 1;
+		},
+		updateData(data) {
+			this.imageRect = data.imageRect
+			this.cropperRect = data.cropperRect
+			this.addHistory(data);
+			this.setTarget();
+			if (this.autoZoom) {
+				this.timer = setTimeout(() => {
+					this.zoomToFill();
+				}, 600);
+			}
+			const {imageRect,cropperRect} = data
+			const scale = imageRect.width/this.imageInfo.width
+			this.$emit('change', {
+				left: (cropperRect.left - imageRect.left) /scale,
+				top: (cropperRect.top - imageRect.top) / scale,
+				width: cropperRect.width / scale,
+				height: cropperRect.height / scale
+			});
+		},
+		getContainer() {
+			if (this.containerSize !== null && typeof this.containerSize == 'object') {
+				const { width, height } = this.containerSize;
+				return Promise.resolve({
+					width: parseUnit(width),
+					height: parseUnit(height)
+				});
+			} else {
 				return new Promise(resolve => {
-					uni.createSelectorQuery().in(this).select(".mainContent").boundingClientRect((rect) => {
-						resolve(rect)
-					}).exec()
-				})
-			},
-			async getImageInfo(imageSrc) {
-				uni.showLoading({
-					title: "获取图片信息"
-				})
-				return uni.getImageInfo({
-					src: imageSrc
-				}).then((res) => {
-					let imageInfo = null;
-					// #ifdef VUE2
-					const err = res[0];
-					imageInfo = res[1];
-					if (err) {
-						throw new Error(err)
-					}
-					// #endif
-					// #ifdef VUE3
-					imageInfo = res
-					// #endif
-					uni.hideLoading()
-					return imageInfo;
-				}).then(imageInfo => {
-					const maxSize = 2000 * 2000
-					const imageSize = imageInfo.width * imageInfo.height
-					// uni.canIUse('compressImage.success.tempFilePath')
-					// #ifndef H5
-					// 是否压缩图片
-					if (maxSize < imageSize && this.compress) {
-						const quality = maxSize / imageSize * 100
-						return uni.compressImage({
-							src: imageInfo.path,
-							quality
-						}).then(([err, {
-							tempFilePath
-						}]) => {
-							if (!err) {
-								imageInfo.compressPath = tempFilePath
-							}
-							return imageInfo
-						})
-					}
-					// #endif
-					return imageInfo;
-				}).then(imageInfo => {
-					return imageInfo;
-				}).catch(err => {
-					uni.hideLoading()
-					uni.showToast({
-						title: "图片加载失败",
-						icon: "none"
-					})
-					throw Error(err)
-				})
-			},
-			getImageInitRect() {
-				return calcImageSize(this.imageInfo, this.containerRect)
-			},
-			resetImage() {
-				this.imgTranslateX = 0
-				this.imgTranslateY = 0
-				this.imgScale = 1
-				this.resetCropper()
-			},
-			// 获取裁剪框初始位置
-			getCropperInitPosition() {
-				return calcCropper(this.imageBoundingRect, {
-					width: this.ratio || 1,
-					height: 1
-				})
-			},
-			/**
-			 * @deprecated 本方法已弃用，请用resetCropper代替
-			 */
-			resetRatio(){
-				log('本方法(resetRatio)已弃用,未来将删除,请用resetCropper代替','warn')
-				return this.resetCropper()
-			},
-			// 重置裁剪框
-			resetCropper() {
-				if (this.imageInfo && this.ratio !== 0) {
-					this.cropperPosition = this.getCropperInitPosition()
-					this.checkImagePosition()
-				}
-			},
-			onTouchStart(ev) {
-				this.animate = false
-				if (timer) {
-					clearTimeout(timer)
-				}
-				startTouches = Array.from(ev.touches)
-				if (ev.target.dataset.type === 'image') {
-					startOffsetX = this.imgTranslateX;
-					startOffsetY = this.imgTranslateY;
-					if (ev.touches.length == 2) {
-						initScale = this.imgScale
-						startTouchsDistance = calcPointDistance(...getTouchPoints(startTouches))
-					}
-				} else {
-					startChangeLeft = this.cropperPosition.left
-					startChangeTop = this.cropperPosition.top
-					startChangeWidth = this.cropperPosition.width;
-					startChangeHeight = this.cropperPosition.height;
-				}
-			},
-			onTouchEnd() {
-				startTouches = []
-				this.checkImagePosition()
-				if(this.autoZoom){
-					clearTimeout(timer)
-					timer = setTimeout(this.zoom,1000)
-				}
-				this.reportChange()
-			},
-			getImagePosition() {
-				return calcImagePosition(this.imageBoundingRect, {
-					imgTranslateX: this.imgTranslateX,
-					imgTranslateY: this.imgTranslateY,
-					imgScale: this.imgScale
-				})
-			},
-			getCropperPosition() {
-				return calcRightAndBottom(this.cropperPosition)
-			},
-			// 检查图片位置
-			checkImagePosition() {
-				const imagePosition = this.getImagePosition()
-				const cropperPosition = this.getCropperPosition()
-				// 如果裁剪框大于图像大小，就放大到裁剪框大小
-				const widthScale = cropperPosition.width / imagePosition.width
-				const heightScale = cropperPosition.height / imagePosition.height
-				const scale = Math.max(widthScale, heightScale)
-				if (scale > 1) {
-					this.imageZoom({
-						left: cropperPosition.left + cropperPosition.width / 2,
-						top: cropperPosition.top + cropperPosition.height / 2
-					}, scale)
-					this.applyAnim()
-				}
-				// 判断是否超出边界
-				if (imagePosition.left > cropperPosition.left) {
-					this.imgTranslateX = this.imgTranslateX - (imagePosition.left - cropperPosition.left)
-				} else if (imagePosition.right < cropperPosition.right) {
-					this.imgTranslateX = this.imgTranslateX + (cropperPosition.right - imagePosition.right)
-				}
-				if (imagePosition.top > cropperPosition.top) {
-					this.imgTranslateY = this.imgTranslateY - (imagePosition.top - cropperPosition.top)
-				} else if (imagePosition.bottom < cropperPosition.bottom) {
-					this.imgTranslateY = this.imgTranslateY + (cropperPosition.bottom - imagePosition.bottom)
-				}
-			},
-			zoom(){
-				// 容器比例
-				const containerRatio = this.containerRect.width / this.containerRect.height
-				// 移动后的裁剪框比例
-				const cropperRatio = this.cropperPosition.width / this.cropperPosition.height
-				// 放大比例
-				let scale = 1
-				if (cropperRatio > containerRatio) {
-					scale = this.containerRect.width / this.cropperPosition.width
-				} else {
-					scale = this.containerRect.height / this.cropperPosition.height
-				}
-				// 放大裁剪框
-				this.cropperPosition.width *= scale
-				this.cropperPosition.height *= scale
-				// // 移动图像
-				this.imageZoom({
-					left: this.cropperPosition.left,
-					top: this.cropperPosition.top
-				}, scale)
-				// 将裁剪框上下居中
-				const cropperTop = (this.containerRect.height - this.cropperPosition.height) / 2
-				// 需要上下移动的距离
-				const moveTop = cropperTop - this.cropperPosition.top
-				// 将裁剪框左右居中
-				const cropperLeft = (this.containerRect.width - this.cropperPosition.width) / 2
-				// 需要左右移动的距离
-				const moveLeft = (cropperLeft - this.cropperPosition.left)
-				this.cropperPosition.left = cropperLeft
-				this.cropperPosition.top = cropperTop
-
-				// 移动图像使之与裁剪框对齐
-				this.imgTranslateX += moveLeft
-				this.imgTranslateY += moveTop
-				this.checkImagePosition()
-				this.applyAnim()
-			},
-			// 发送change事件
-			reportChange() {
-				const imagePosition = this.getImagePosition()
-				const cropperPosition = this.getCropperPosition()
-				const scale = this.imageBoundingRect.width/this.imageInfo.width * this.imgScale
-				this.$emit('change', {
-					left: (cropperPosition.left - imagePosition.left) / scale,
-					top: (cropperPosition.top - imagePosition.top) / scale,
-					width: cropperPosition.width / scale,
-					height: cropperPosition.height / scale
-				})
-			},
-			imageZoom(center = {
-				left: 0,
-				top: 0
-			}, scale = 1) {
-				const imagePosition = this.getImagePosition()
-				this.imgScale = this.imgScale * scale
-				const offsetLeftPercent = (center.left - imagePosition.left) / imagePosition.width
-				this.imgTranslateX = this.imgTranslateX + imagePosition.width * (scale - 1) / 2 * (1 - offsetLeftPercent *
-					2)
-				const offsetTopPercent = (center.top - imagePosition.top) / imagePosition.height
-				this.imgTranslateY = this.imgTranslateY + imagePosition.height * (scale - 1) / 2 * (1 - offsetTopPercent *
-					2)
-			},
-			onImageMove(ev) {
-				if (ev.touches.length == 2 && startTouches.length == 2) {
-					const points = getTouchPoints(ev.touches)
-					const imgScale = initScale * calcPointDistance(...points) / startTouchsDistance
-					this.imageZoom({
-						left: this.cropperPosition.left + this.cropperPosition.width / 2,
-						top: this.cropperPosition.top + this.cropperPosition.height / 2
-					}, imgScale / this.imgScale)
-				} else if (ev.touches.length == 1 && startTouches.length == 1) {
-					const [startClientX, startClientY] = getTouchPoints(startTouches)[0]
-					const [clientX, clientY] = getTouchPoints(ev.touches)[0]
-					this.imgTranslateX = startOffsetX + clientX - startClientX
-					this.imgTranslateY = startOffsetY + clientY - startClientY
-				}
-			},
-			// 调整裁剪框大小
-			onHandleResize(pX, pY, ev) {
-				const [startClientX, startClientY] = getTouchPoints(startTouches)[0]
-				const [clientX, clientY] = getTouchPoints(ev.touches)[0]
-				const cropperBoundingRect = this.getCropperPosition()
-				const imageBoundingRect = this.getImagePosition()
-				const changeX = clientX - startClientX
-				const changeY = clientY - startClientY
-				const minSize = {
-					width: uni.upx2px(100),
-					height: uni.upx2px(100)
-				}
-				const imageRemainHeight = imageBoundingRect.bottom - cropperBoundingRect.top
-				const cropperRemainHeight = this.containerRect.bottom - cropperBoundingRect.top
-				const maxHeight = Math.min(imageRemainHeight, cropperRemainHeight)
-				const imageRemainWidth = imageBoundingRect.right - cropperBoundingRect.left
-				const cropperRemainWidth = this.containerRect.right - cropperBoundingRect.left
-				const maxWidth = Math.min(imageRemainWidth, cropperRemainWidth)
-				let width = 0
-				switch (pX) {
-					case 1:
-						width = startChangeWidth + changeX
-						if (width < maxWidth) {
-							if (width > minSize.width) {
-								this.cropperPosition.width = width
-							}
-						}
-						break;
-					case -1:
-						const left = startChangeLeft + changeX
-						const minLeft = Math.min(imageBoundingRect.left, cropperBoundingRect.left)
-						width = startChangeWidth - changeX
-						if (left > minLeft) {
-							if (width > minSize.width) {
-								this.cropperPosition.left = left
-								this.cropperPosition.width = width
-							}
-						}
-						break;
-					case 0:
-						if (this.ratio != 0)
-							this.cropperPosition.width = this.cropperPosition.height * this.ratio
-						break
-				}
-				switch (pY) {
-					case 1:
-						const height = startChangeHeight + changeY
-						if (height < maxHeight && height > minSize.height) {
-							this.cropperPosition.height = height
-						}
-						break;
-					case -1:
-						const top = startChangeTop + changeY
-						const minTop = Math.min(imageBoundingRect.top, cropperBoundingRect.top)
-						if (top > minTop) {
-							const height = startChangeHeight - changeY
-							if (height > minSize.height) {
-								this.cropperPosition.top = top
-								this.cropperPosition.height = height
-							}
-						}
-						break;
-					case 0:
-						if (this.ratio != 0)
-							this.cropperPosition.height = this.cropperPosition.width / this.ratio;
-						break;
-				}
-			},
-			// 开始裁剪
-			async crop(images = null) {
-				// 批量裁剪，暂时还没实现
-				// if (Array.isArray(images) && images.length) {
-				// 	for (item in images) {
-				// 	}
-				// 	return;
-				// }
-				if (!this.imageInfo) {
-					uni.showToast({
-						title: "图片尚未载入完成"
-					})
-					return [new Error("图片尚未载入完成"), null]
-				}
-				this.showCanvas = true
-				this.$emit('cropStart')
-				return new Promise(resolve => {
-					this.$nextTick(() => {
-						this.onCrop().then(res => {
-							resolve(res)
-						})
-					})
-				})
-			},
-			// 开始裁切
-			async onCrop() {
-				let canvas, image, ctx, err, res;
-				// 新版canvas
-				// #ifdef MP-WEIXIN
-				canvas = await new Promise((resolve) => {
-					uni
-						.createSelectorQuery().in(this)
-						.select(".bt-canvas")
-						.node((res) => {
-							resolve(res.node);
+					const query = uni.createSelectorQuery().in(this);
+					query
+						.select('.mainContent')
+						.boundingClientRect(rect => {
+							resolve(rect);
 						})
 						.exec();
 				});
-				log("在小程序模拟器上可能会裁剪失败，真机无此问题，放心使用", "warn")
-				image = canvas.createImage();
-				image.src = this.imageInfo.path;
-				await new Promise((resolve) => (image.onload = resolve));
-				canvas.width = this.dSize.width;
-				canvas.height = this.dSize.height;
-				ctx = canvas.getContext("2d");
-				// #endif
-				// #ifndef MP-WEIXIN
-				image = this.imageInfo.path
-				ctx = uni.createCanvasContext("bt-canvas", this)
-				// #endif
-				const imagePosition = this.getImagePosition()
-				const cropperPosition = this.getCropperPosition()
-				const scale = imagePosition.width / this.imageInfo.width
-				const offsetLeft = (cropperPosition.left - imagePosition.left) / scale
-				const offsetTop = (cropperPosition.top - imagePosition.top) / scale
-				const cropperWidth = cropperPosition.width / scale
-				const cropperHeight = cropperPosition.height / scale
-				// console.log('offsetLeft', offsetLeft, 'offsetTop', offsetTop, this.imageInfo)
-				ctx.drawImage(
-					image,
-					offsetLeft,
-					offsetTop,
-					cropperWidth,
-					cropperHeight,
-					0,
-					0,
-					this.dSize.width,
-					this.dSize.height
-				);
-				// #ifndef MP-WEIXIN
-				await new Promise((resolve) => ctx.draw(true, resolve));
-				// #endif
-				// 等待一段时间，不然ios会裁剪失败
-				await sleep(200);
-				// 在vue3里面，只能写成这种回调形式，否则报错
-				[err, res] = await new Promise(resolve => {
-					uni.canvasToTempFilePath({
-						// #ifdef MP-WEIXIN
-						canvas,
-						// #endif
-						// #ifndef MP-WEIXIN
-						canvasId: "bt-canvas",
-						// #endif
-						fileType: this.fileType,
-						destWidth: this.dSize.width,
-						destHeight: this.dSize.height,
-						quality: this.quality,
-						success(res) {
-							console.log("裁剪成功")
-							resolve([null, res])
-						},
-						fail(err) {
-							console.log("裁剪失败", err)
-							resolve([err, null])
-						},
-						complete: () => {
-							this.showCanvas = false
-						}
-					});
-				})
-				this.$emit('cropEnd', [err, res])
-				return [err, res]
-			},
+			}
 		},
-	};
+		zoomToFill() {
+			this.startAnim();
+			const beforeCropper = {
+				...this.cropperRect
+			};
+			const operation = {
+				imageRect:this.imageRect,
+				cropperRect:this.cropperRect
+			};
+			this.cropperRect = this.initCropper().cropperRect;
+			const scale = this.cropperRect.width / beforeCropper.width;
+			const ox = beforeCropper.left - this.imageRect.left;
+			const oy = beforeCropper.top - this.imageRect.top;
+			this.imageRect = {
+				width: this.imageRect.width * scale,
+				height: this.imageRect.height * scale,
+				left: this.imageRect.left + (this.cropperRect.left - beforeCropper.left) - (scale - 1) * ox,
+				top: this.imageRect.top + (this.cropperRect.top - beforeCropper.top) - (scale - 1) * oy
+			};
+		},
+		onTouchStart() {
+			this.stopAnim();
+		},
+		// 撤销
+		undo() {
+			if (this.operationIndex > 0) {
+				this.operationIndex--;
+				this.imageRect = this.operationHistory[this.operationIndex].imageRect;
+				this.cropperRect = this.operationHistory[this.operationIndex].cropperRect;
+				return true;
+			}
+			return false;
+		},
+		// 重做
+		resume() {
+			if (this.operationIndex < this.operationHistory.length - 1) {
+				this.operationIndex++;
+				this.imageRect = this.operationHistory[this.operationIndex].imageRect;
+				this.cropperRect = this.operationHistory[this.operationIndex].cropperRect;
+				return true;
+			}
+			return false;
+		},
+		async drawImage(ctx,image,x,y,w,h){
+			if (this.type2d) {
+				await new Promise(resolve => (image.onload = resolve));
+				ctx.drawImage(image, x * this.pixel, y * this.pixel, w * this.pixel, h * this.pixel);
+			} else {
+				const path = await new Promise((resolve)=>{
+					uni.getImageInfo({
+						src:image,
+						success({path}){
+							resolve(path)
+						}
+					})
+				})
+				ctx.drawImage(path, x * this.pixel, y * this.pixel, w * this.pixel, h * this.pixel);
+				await new Promise((resolve) => ctx.draw(false,resolve));
+			}
+		},
+		async crop() {
+			let ctx;
+			let canvas;
+			this.$emit('cropStart')
+			this.setTarget()
+			if (this.type2d) {
+				const query = uni.createSelectorQuery().in(this);
+				canvas = await new Promise(resolve =>
+					query
+						.select('.bt-canvas')
+						.node(({ node }) => resolve(node))
+						.exec()
+				);
+				canvas.width = this.target.width * this.pixel;
+				canvas.height = this.target.height * this.pixel;
+				ctx = canvas.getContext('2d');
+				// #ifdef MP-TOUTIAO
+				if(this.type2d){
+					console.warn("请注意：目前头条系小程序暂时无法使用2d canvas保存图片，建议换成V1版本")
+				}
+				// #endif
+			} else {
+				ctx = uni.createCanvasContext(this.canvasId,this);
+			}
+			const scale = this.cropperRect.width / this.target.width;
+			const dx = (this.cropperRect.left - this.imageRect.left) / scale;
+			const dy = (this.cropperRect.top - this.imageRect.top) / scale;
+			let image;
+			if(this.type2d){
+				image = canvas.createImage()
+				image.src = this.imageSrc;
+			}else{
+				image = this.imageSrc;
+			}
+			await this.drawImage(ctx,image, -dx, -dy, this.imageRect.width / scale, this.imageRect.height / scale);
+			if (this.mask !== '') {
+				let imageData;
+				if (this.type2d) {
+					imageData = ctx.getImageData(0, 0, this.target.width, this.target.height);
+				} else {
+					imageData = await new Promise(resolve => {
+						uni.canvasGetImageData({
+							canvasId: this.canvasId,
+							x: 0,
+							y: 0,
+							width: this.target.width,
+							height: this.target.height,
+							success(res) {
+								resolve(res);
+							}
+						},this);
+					});
+				}
+				ctx.clearRect(0, 0, this.target.width, this.target.height);
+				if(this.type2d){
+					image.src = this.mask;
+				}else{
+					image = this.mask;
+				}
+				await this.drawImage(ctx,image, 0, 0, this.target.width, this.target.height);
+				let maskData;
+				if (this.type2d) {
+					maskData = ctx.getImageData(0, 0, this.target.width, this.target.height);
+				} else {
+					maskData = await new Promise((resolve,reject) => {
+						uni.canvasGetImageData({
+							canvasId: this.canvasId,
+							x: 0,
+							y: 0,
+							width: this.target.width,
+							height: this.target.height,
+							success(res) {
+								resolve(res);
+							}
+						},this);
+					});
+				}
+				ctx.clearRect(0, 0, this.target.width, this.target.height);
+				for (let index = 3; index < maskData.data.length; index += 4) {
+					const alpha = maskData.data[index];
+					if (alpha !== 0) {
+						imageData.data[index] = 0;
+					}
+				}
+				if (this.type2d) {
+					ctx.putImageData(imageData, 0, 0);
+				} else {
+					await new Promise(resolve => {
+						uni.canvasPutImageData({
+							canvasId: this.canvasId,
+							x: 0,
+							y: 0,
+							width: imageData.width,
+							height: imageData.height,
+							data: imageData.data,
+							complete: res => {
+								resolve(res);
+							}
+						},this);
+					});
+				}
+			}
+			return new Promise(resolve => {
+				const params = {};
+				if (this.type2d) {
+					params.canvas = canvas;
+				} else {
+					params.canvasId = this.canvasId;
+				}
+				
+				uni.canvasToTempFilePath({
+					...params,
+					destWidth: this.target.width,
+					destHeight: this.target.height,
+					quality: Number(this.quality) || 1,
+					fileType: this.fileType,
+					success: ({ tempFilePath }) => {
+						// #ifdef H5
+						var arr = tempFilePath.split(',');
+						var mime = arr[0].match(/:(.*?);/)[1];
+						var bstr = atob(arr[1]);
+						var n = bstr.length;
+						var u8arr = new Uint8Array(n);
+						for (var i = 0; i < n; i++) {
+							u8arr[i] = bstr.charCodeAt(i);
+						}
+						var url = URL || webkitURL;
+						resolve(
+							url.createObjectURL(
+								new Blob([u8arr], {
+									type: mime
+								})
+							)
+						);
+						// #endif
+						resolve(tempFilePath);
+					},
+					fail(err) {
+						console.log(err);
+						resolve('tempFilePath');
+					}
+				},this);
+			});
+		}
+	}
+};
 </script>
+<!-- #ifdef APP-VUE || MP-WEIXIN || MP-QQ || H5 -->
+<script module="wxsModule" lang="wxs">
+var startTouchs = [];
+var startDistance = 0;
+var touchCenter = [];
+var ratio = 0;
+var imageInstance = null;
+var cropperInstance = null;
+var touchType = "";
+var touchInstance = null;
+var cropperRect = null;
+var imageRect = null;
+// 操作时改变的对象
+var changes = {
+	imageRect: null,
+	cropperRect: null
+}
 
+function updateImageStyle() {
+	var imageRect = changes.imageRect
+	imageInstance.setStyle({
+		left: imageRect.left + 'px',
+		top: imageRect.top + 'px',
+		width: imageRect.width + 'px',
+		height: imageRect.height + 'px'
+	})
+}
+
+function updateCopperStyle() {
+	var cropperRect = changes.cropperRect
+	cropperInstance.setStyle({
+		left: cropperRect.left + "px",
+		top: cropperRect.top + "px",
+		width: cropperRect.width + "px",
+		height: cropperRect.height + "px"
+	})
+}
+
+function imageScale(scaleRate) {
+	var cw = imageRect.width * (scaleRate - 1)
+	var ch = imageRect.height * (scaleRate - 1)
+	changes.imageRect = {
+		width: imageRect.width + cw,
+		height: imageRect.height + ch,
+		left: imageRect.left - cw * (touchCenter[0]),
+		top: imageRect.top - ch * (touchCenter[1])
+	}
+}
+module.exports = {
+	touchStart: function (ev, oi) {
+		// #ifdef APP-PLUS || H5
+		ev.preventDefault();
+		ev.stopPropagation();
+		// #endif
+		touchInstance = ev.instance;
+		var dataSet = ev.instance.getDataset()
+		touchType = dataSet.type;
+		startTouchs = ev.touches;
+		oi.callMethod('onTouchStart')
+		if (startTouchs.length == 2) {
+			touchType = "image"
+			var x1 = startTouchs[0].clientX
+			var y1 = startTouchs[0].clientY
+			var x2 = startTouchs[1].clientX
+			var y2 = startTouchs[1].clientY
+			var distance = Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)
+			startDistance = Math.sqrt(distance)
+			var leftPercent = ((x1 + x2) / 2 - imageRect.left) / imageRect.width
+			var topPercent = ((y1 + y2) / 2 - imageRect.top) / imageRect.height
+			touchCenter = [leftPercent, topPercent]
+		}
+		return false;
+	},
+	touchMove: function (ev, io) {
+		if (touchType == "") return false
+		// #ifdef APP-PLUS || H5
+		ev.preventDefault();
+		ev.stopPropagation();
+		// #endif
+		var touches = ev.touches;
+		var changeX1 = touches[0].clientX - startTouchs[0].clientX;
+		var changeY1 = touches[0].clientY - startTouchs[0].clientY;
+		if (startTouchs.length == 1) {
+			if (touchType === 'image') {
+				changes.imageRect.left = imageRect.left + changeX1;
+				changes.imageRect.top = imageRect.top + changeY1;
+				updateImageStyle()
+			} else if (touchType === 'controller') {
+				var directionX = 0;
+				if (touchInstance.hasClass('left')) {
+					directionX = -1;
+				}
+				if (touchInstance.hasClass('right')) {
+					directionX = 1;
+				}
+				var directionY = 0;
+				if (touchInstance.hasClass('top')) {
+					directionY = -1
+				}
+				if (touchInstance.hasClass('bottom')) {
+					directionY = 1
+				}
+				var changeX = changeX1 * directionX;
+				var changeY = changeY1 * directionY;
+				// 比例缩放控制
+				if (ratio !== 0) {
+					if (directionX * directionY !== 0) {
+						if (changeX / ratio > changeY) {
+							changeY = changeX / ratio
+							changeX = changeY * ratio
+						} else {
+							changeX = changeY * ratio
+							changeY = changeX / ratio
+						}
+					} else {
+						if (directionX == 0) {
+							changeX = changeY * ratio
+						} else {
+							changeY = changeX / ratio
+						}
+					}
+				}
+
+				var width = cropperRect.width + changeX
+				var height = cropperRect.height + changeY
+				var imageRight = imageRect.left + imageRect.width
+				var imageBottom = imageRect.top + imageRect.height
+				if (directionX != -1) {
+					if (cropperRect.left + width > imageRight) {
+						width = imageRight - cropperRect.left
+						if (ratio !== 0) {
+							height = width / ratio
+						}
+					}
+				} else {
+					var cLeft = cropperRect.left - changeX
+					if (cLeft < imageRect.left) {
+						width = cropperRect.left + cropperRect.width - imageRect.left
+						if (ratio !== 0) {
+							height = width / ratio
+						}
+					}
+				}
+				// 判断是否触底
+				if (directionY != -1) {
+					if (cropperRect.top + height > imageBottom) {
+						height = imageBottom - cropperRect.top
+						if (ratio !== 0) {
+							width = height * ratio
+						}
+					}
+				} else {
+					var cTop = cropperRect.top - changeY
+					if (cTop < imageRect.top) {
+						height = cropperRect.top + cropperRect.height - imageRect.top
+						if (ratio !== 0) {
+							width = height * ratio
+						}
+					}
+				}
+				if (directionX == -1) {
+					changes.cropperRect.left = cropperRect.left + cropperRect.width - width
+				}
+				if (directionY == -1) {
+					changes.cropperRect.top = cropperRect.top + cropperRect.height - height
+				}
+				// 边界控制
+				changes.cropperRect.width = width
+				changes.cropperRect.height = height
+				updateCopperStyle()
+			}
+		} else if (touches.length == 2 && startTouchs.length == 2) {
+			var changeX2 = touches[0].clientX - touches[1].clientX;
+			var changeY2 = touches[0].clientY - touches[1].clientY;
+			var distance = Math.pow(changeX2, 2) + Math.pow(changeY2, 2)
+			distance = Math.sqrt(distance)
+			// 放大比例
+			var scaleRate = distance / startDistance
+			imageScale(scaleRate)
+			updateImageStyle()
+		}
+		return false;
+	},
+	touchEnd: function (ev, oi) {
+		if (touchType === "image") {
+			var cropperLeft = cropperRect.left
+			var cropperRight = cropperRect.left + cropperRect.width
+			var cropperTop = cropperRect.top
+			var cropperBottom = cropperTop + cropperRect.height
+			var rate = changes.imageRect.width / changes.imageRect.height
+			var cropperRate = cropperRect.width / cropperRect.height
+			if (changes.imageRect.width < cropperRect.width || changes.imageRect.height < cropperRect.height) {
+				var scale = 1
+				if (rate < cropperRate) {
+					scale = cropperRect.width / changes.imageRect.width
+				} else {
+					scale = cropperRect.height / changes.imageRect.height
+				}
+				imageRect.width = changes.imageRect.width
+				imageRect.height = changes.imageRect.height
+				imageScale(scale)
+			}
+			// 边界控制start
+			if (cropperLeft < changes.imageRect.left) {
+				changes.imageRect.left = cropperLeft
+			}
+			if (cropperRight > changes.imageRect.left + changes.imageRect.width) {
+				changes.imageRect.left = cropperRight - changes.imageRect.width
+			}
+			if (cropperTop < changes.imageRect.top) {
+				changes.imageRect.top = cropperTop
+			}
+			if (cropperBottom > changes.imageRect.top + changes.imageRect.height) {
+				changes.imageRect.top = cropperBottom - changes.imageRect.height
+			}
+			// 边界控制end
+			updateImageStyle()
+		}
+		oi.callMethod('updateData', {
+			cropperRect: changes.cropperRect,
+			imageRect: changes.imageRect,
+		})
+		touchType = ""
+		startTouchs = []
+		return false;
+	},
+	// 将逻辑层的图像变换同步过来
+	// 裁剪比例变化
+	changeRatio: function (value) {
+		ratio = value
+	},
+	changeImageRect: function (value, oldValue, oi) {
+		if (value) {
+			imageRect = value;
+			changes.imageRect = {
+				left: value.left,
+				top: value.top,
+				width: value.width,
+				height: value.height
+			};
+			// #ifndef MP-WEIXIN || MP-QQ
+			setTimeout(function() {
+				imageInstance = oi.selectComponent('.mainContent > .image')
+				updateImageStyle();
+			});
+			// #endif
+			// #ifdef MP-WEIXIN || MP-QQ
+			imageInstance = oi.selectComponent('.mainContent > .image')
+			updateImageStyle();
+			// #endif
+		}
+	},
+	changeCropper: function (value, oldValue, oi) {
+		if (value) {
+			cropperRect = value
+			changes.cropperRect = {
+				left: value.left,
+				top: value.top,
+				width: value.width,
+				height: value.height
+			}
+			// #ifdef H5 || APP-VUE
+			setTimeout(function() {
+			// #endif
+				cropperInstance = oi.selectComponent('.mainContent > .cropper')
+				updateCopperStyle()
+			// #ifdef H5 || APP-VUE
+			});
+			// #endif
+		}
+	}
+}
+</script>
+<!-- #endif -->
 <style lang="scss" scoped>
-	@import "./iconfont.css";
+.bt-container {
+	// display: flex;
+	// flex-direction: column;
+	// justify-content: space-between;
+	height: 100%;
+	box-sizing: border-box;
+	// background-color: #0e1319;
+	position: relative;
+	overflow: hidden;
 
-	.bt-container {
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
+	.bt-canvas {
+		position: fixed;
+		left: 100%;
+		top: 0;
+	}
+
+	.mainContent {
+		// flex: 1;
+		// flex-shrink:0;
+		// margin: 60rpx;
+		width: 100%;
 		height: 100%;
-		box-sizing: border-box;
-		background-color: #0e1319;
-		padding-top: 30rpx;
 		position: relative;
-		overflow: hidden;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		// touch-action: none;
 
-		.iconfont {
+		.image {
 			position: absolute;
-			z-index: 999;
-			top: 40rpx;
-			font-size: 30rpx;
+			// will-change: transform;
+			// transform-origin: center center;
+			width: 85%;
+			height: 85%;
+			will-change: left, top, width, height;
+		}
+
+		.controller {
+			position: absolute;
+			z-index: 99;
 			padding: 10rpx;
-			background-color: rgba(255, 255, 255, 0.2);
-			border-radius: 50%;
-			color: #FFFFFF;
+			$offset: -20rpx;
 
-			&.active {
-				color: #007AFF;
-			}
-		}
-
-		.icon-move {
-			right: 100rpx;
-		}
-
-		.icon-reset {
-			right: 40rpx;
-		}
-
-		.bt-canvas {
-			position: absolute;
-			left: 100%;
-			top: 0;
-			width: 300px;
-			height: 300px;
-		}
-
-		.mainContent {
-			flex: 1;
-			margin: 60rpx;
-			position: relative;
-
-			.image {
-				position: absolute;
-				will-change: transform;
-				transform-origin: center center;
+			&::after {
+				display: block;
+				content: '';
+				filter: drop-shadow(0 0px 10rpx rgba(0, 0, 0, 0.3));
 			}
 
-			.controller {
-				position: absolute;
-				z-index: 99;
-				padding: 20rpx;
+			&.vertical {
+				top: calc(50% - 30rpx);
+			}
+
+			&.horizon {
+				left: calc(50% - 30rpx);
+			}
+
+			&.left {
+				&::after {
+					height: 40rpx;
+					border-left: 10rpx solid #fff;
+				}
+
+				left: $offset;
+			}
+
+			&.right {
+				&::after {
+					height: 40rpx;
+					border-right: 10rpx solid #fff;
+				}
+
+				right: $offset;
+			}
+
+			&.top {
+				top: $offset;
 
 				&::after {
-					display: block;
-					content: '';
-					box-shadow: 0 0 10rpx #333;
-					background-color: #E4E7ED;
-				}
-
-				&.controller_dot {
-					&::after {
-						width: 40rpx;
-						height: 40rpx;
-						border-radius: 99px;
-					}
-				}
-
-				&.vertical {
-					&::after {
-						width: 10rpx;
-						height: 40rpx;
-					}
-				}
-
-				&.horizon {
-					&::after {
-						width: 40rpx;
-						height: 10rpx;
-					}
+					width: 40rpx;
+					border-top: 10rpx solid #fff;
 				}
 			}
 
-			.cropper {
+			&.bottom {
+				bottom: $offset;
+
+				&::after {
+					width: 40rpx;
+					border-bottom: 10rpx solid #fff;
+				}
+			}
+
+			&.left.bottom,
+			&.right.bottom,
+			&.left.top,
+			&.left.bottom {
+				&::after {
+					width: 30rpx;
+					height: 30rpx;
+					background-color: transparent;
+				}
+			}
+		}
+
+		.cropper {
+			position: absolute;
+			border: 1px solid #eee;
+			box-sizing: content-box;
+			// transform-origin: center center;
+			outline: 999px solid rgba(0, 0, 0, 0.5);
+			will-change: left, top, width, height;
+
+			// display: contain;
+			// pointer-events: none;
+			.mask {
 				position: absolute;
-				border: 1px solid #eee;
-				box-sizing: content-box;
-				transform-origin: center center;
-				outline: 999px solid rgba(0, 0, 0, 0.5);
-				will-change: transform;
-				display: contain;
-				pointer-events: none;
+				left: 0;
+				top: 0;
+				width: 100%;
+				height: 100%;
+				opacity: 0.5;
+			}
 
-				.line {
-					position: absolute;
-					// background-color: #eee;
-				}
+			.line {
+				position: absolute;
+				// background-color: #eee;
+			}
 
-				.row {
-					width: 100%;
-					height: 0px;
-					left: 0;
-					border-top: 1px dashed #007AFF;
-				}
+			.row {
+				width: 100%;
+				height: 0px;
+				left: 0;
+				border-top: 1px dashed #007aff;
+			}
 
-				.col {
-					height: 100%;
-					width: 0px;
-					border-left: 1px dashed #007AFF;
-				}
+			.col {
+				height: 100%;
+				width: 0px;
+				border-left: 1px dashed #007aff;
+			}
 
-				.row1 {
-					top: 33%;
-				}
+			.row1 {
+				top: 33%;
+			}
 
-				.row2 {
-					top: 66%;
-				}
+			.row2 {
+				top: 66%;
+			}
 
-				.col1 {
-					left: 33%;
-				}
+			.col1 {
+				left: 33%;
+			}
 
-				.col2 {
-					left: 66%;
-				}
-
-
-
+			.col2 {
+				left: 66%;
 			}
 		}
-
-		.slot {
-			position: relative;
-			padding-top: 20rpx;
-		}
-
 	}
+
+	// .slot {
+	// 	position: relative;
+	// 	padding-top: 20rpx;
+	// }
+}
+
+.anim {
+	transition: 0.2s;
+}
 </style>

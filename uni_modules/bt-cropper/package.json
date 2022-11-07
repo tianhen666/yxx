@@ -1,7 +1,7 @@
 {
 	"id": "bt-cropper",
 	"displayName": "bt-cropper图片裁剪插件",
-	"version": "2.0.3",
+	"version": "3.0.1",
 	"description": "一款好用的图片裁剪插件",
 	"keywords": [
         "图片",
@@ -14,12 +14,8 @@
 	"engines": {
 		"HBuilderX": "^3.2.1"
 	},
-	"dcloudext": {
-		"category": [
-			"前端组件",
-			"通用组件"
-		],
-		"sale": {
+    "dcloudext": {
+        "sale": {
 			"regular": {
 				"price": "0.00"
 			},
@@ -35,7 +31,8 @@
 			"data": "插件不采集任何数据",
 			"permissions": "无"
 		},
-		"npmurl": ""
+        "npmurl": "",
+        "type": "component-vue"
 	},
 	"uni_modules": {
 		"dependencies": [],
@@ -61,18 +58,18 @@
 					"QQ浏览器(Android)": "y"
 				},
 				"H5-pc": {
-					"Chrome": "y",
+					"Chrome": "n",
 					"IE": "n",
-					"Edge": "y",
-					"Firefox": "y",
-					"Safari": "y"
+					"Edge": "n",
+					"Firefox": "n",
+					"Safari": "n"
 				},
 				"小程序": {
 					"微信": "y",
-					"阿里": "y",
+					"阿里": "u",
 					"百度": "u",
-					"字节跳动": "u",
-					"QQ": "u"
+					"字节跳动": "y",
+					"QQ": "y"
 				},
 				"快应用": {
 					"华为": "n",

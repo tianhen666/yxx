@@ -199,7 +199,7 @@ const MchooseLocation = () => {
  * 组合式函数引入
  */
 import useSaveApi from '@/aTemp/mixins/useSaveApi.js'
-const { saveClick, btnLoading } = useSaveApi(formObj, formData, _storeSave)
+const { saveClick, loading:btnLoading } = useSaveApi(formObj, formData, _storeSave)
 
 /*
  * 图片选择功能
@@ -218,24 +218,24 @@ const { chooseSuccess: chooseSuccess1, picList: picList1, selectNum: selectNum1 
 })
 
 // 客服微信图片上传
-const { chooseSuccess: chooseSuccess2, picList: picList2, selectNum: selectNum2 } = useHtzImageUpload({
-	ratio: 1 / 1,
-	url: '/upload-flv/uploadimage',
-	refData: formData,
-	param: 'customer',
-	selectNum: 1,
-	baseDir: 'store_kfwx'
-})
-
-// 客服微信图片上传
-// const { chooseSuccess: chooseSuccess3, picList: picList3, selectNum: selectNum3 } = useHtzImageUpload({
-// 	ratio: 5 / 4,
+// const { chooseSuccess: chooseSuccess2, picList: picList2, selectNum: selectNum2 } = useHtzImageUpload({
+// 	ratio: 1 / 1,
 // 	url: '/upload-flv/uploadimage',
 // 	refData: formData,
-// 	param: 'sharePic',
+// 	param: 'customer',
 // 	selectNum: 1,
-// 	baseDir: 'store'
+// 	baseDir: 'store_kfwx'
 // })
+
+// 店铺分享图
+const { chooseSuccess: chooseSuccess3, picList: picList3, selectNum: selectNum3 } = useHtzImageUpload({
+	ratio: 5 / 4,
+	url: '/upload-flv/uploadimage',
+	refData: formData,
+	param: 'sharePic',
+	selectNum: 1,
+	baseDir: 'store'
+})
 
 // 店内环境图上传
 const { chooseSuccess: chooseSuccess4, picList: picList4, selectNum: selectNum4 } = useHtzImageUpload({

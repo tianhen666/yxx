@@ -140,7 +140,7 @@ const getData = () => {
 }
 
 onLoad(async options => {
-	console.log('index',options)
+	// console.log('index',options)
 
 	// 等待onLaunch中放行后执行
 	const { proxy } = getCurrentInstance()
@@ -176,7 +176,10 @@ onLoad(async options => {
 
 		// 获取AppID 最低基础库版本2.2.2
 		const accountInfo = uni.getAccountInfoSync()
-		const appId = accountInfo.miniProgram.appId
+		const extConfig = uni.getExtConfigSync ? uni.getExtConfigSync() : {}
+		// console.log(accountInfo)
+		// console.log(extConfig)
+		const appId = extConfig.appId || accountInfo.miniProgram.appId
 		console.log(appId)
 
 		// 调用登录接口

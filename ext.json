@@ -1,5 +1,7 @@
 {
 	"extEnable": true,
 	"extAppid": "wxdbebb4ec45d2784e",
-	"ext": {}
+	"ext": {
+		"appId": "wxdbebb4ec45d2784e"
+	}
 }
