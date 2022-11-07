@@ -40,7 +40,7 @@
 			<view class="doctorproject">
 				<view class="doctorproject_title">
 					{{ rules.doctorproject.label }}
-					<text>(非必须)</text>
+					<text>(非必填)</text>
 				</view>
 				<view class="doctorproject_content">
 					<template v-for="(item, index) in doctorproject" :key="index">
@@ -56,11 +56,11 @@
 				</view>
 			</view>
 
-			<!-- 已购项目 -->
+			<!-- 备注 -->
 			<view class="doctorproject">
 				<view class="doctorproject_title">
 					{{ rules.remark.label }}
-					<text>(非必须)</text>
+					<text>(非必填)</text>
 				</view>
 				<view class="doctorproject_content">
 					<view class="textarea" style="width: 100%;flex: none;margin-top: 30rpx;">
@@ -73,10 +73,11 @@
 		<!-- 保存 -->
 		<m-btn-fix-bottom :loading="btnLoading" text="立即提交" @btnClick="saveClick" />
 	</view>
+	
 </template>
 
 <script setup>
-import { ref, computed, reactive,getCurrentInstance  } from 'vue'
+import { ref, computed, reactive, getCurrentInstance } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { _outpatientAppointmentMenuSave } from '@/aTemp/apis/yuyue'
 import dayjs from 'dayjs'
@@ -115,8 +116,8 @@ const rules = {
 		label: '就诊项目'
 	},
 	remark: {
-		rules: [{ errorMessage: '预约已购项目' }],
-		label: '已购项目'
+		rules: [{ errorMessage: '请输入备注' }],
+		label: '备注'
 	}
 }
 
@@ -150,6 +151,7 @@ const formData = ref({})
 // 获取表单对象
 const formObj = ref(null)
 
+
 // 页面加载
 onLoad(async optios => {
 	// 等待onLaunch中放行后执行
@@ -169,6 +171,23 @@ onLoad(async optios => {
 
 	// 设置填表人
 	formData.value.userid = computed(() => useUserMain.userid)
+
+	// 判断24小时内是否提交过表单
+	const yuyue = uni.getStorageSync('yuyue')
+	if (Date.now() - (yuyue || 0) <= 24 * 60 * 60 * 1000) {
+		uni.showModal({
+			title: '提示',
+			content: '已经预约成功！',
+			showCancel:false,
+			success: function (res) {
+				if (res.confirm) {
+					navigateBack()
+				} else if (res.cancel) {
+					console.log('用户点击取消');
+				}
+			}
+		});
+	}
 })
 
 // 选择时间
@@ -203,11 +222,34 @@ const bindPickerChange = e => {
 }
 
 /*
- * 保存banenr信息功能
- * 组合式函数引入
+ * 请求后端保存接口
  */
-import useSaveApi from '@/aTemp/mixins/useSaveApi.js'
-const { saveClick, loading: btnLoading } = useSaveApi(formObj, formData, _outpatientAppointmentMenuSave)
+import { _debounce } from '@/aTemp/utils/tools.js'
+import { navigateBack, showToastText } from '@/aTemp/utils/uniAppTools'
+const btnLoading = ref(false)
+const saveClick = _debounce(
+	() => {
+		formObj.value
+			.validate()
+			.then(formRes => {
+				// 保存信息接口
+				_outpatientAppointmentMenuSave(formData.value).then(res => {
+					btnLoading.value = false
+					// 返回上一级并且重载noload
+					navigateBack()
+					showToastText('提交成功~')
+					uni.setStorageSync('yuyue', Date.now() + 24 * 60 * 60 * 1000)
+				})
+			})
+			.catch(err => {
+				btnLoading.value = false
+				console.log('表单错误信息：', err)
+				showToastText(err[0].errorMessage)
+			})
+	},
+	1000,
+	btnLoading
+)
 </script>
 
 <style lang="scss" scoped>

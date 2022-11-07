@@ -140,7 +140,7 @@ const getData = () => {
 }
 
 onLoad(async options => {
-	console.log(options)
+	console.log('index',options)
 
 	// 等待onLaunch中放行后执行
 	const { proxy } = getCurrentInstance()

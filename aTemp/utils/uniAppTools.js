@@ -290,9 +290,26 @@ export function getLocation() {
 			// 拒绝授权
 			// console.log(err)
 			showModal('检测到，您没有打开获取位置授权，是否打开设置？').then(e => {
-				console.log(e)
+				// console.log(e)
 				if (e.confirm) {
-					uni.openSetting()
+					uni.openSetting().then(res2 => {
+						// console.log(res2)
+						if (res2.authSetting['scope.userLocation']) {
+							uni.getLocation({
+								type: 'gcj02',
+								success: function(res) {
+									resolve(res)
+								}
+							})
+						} else {
+							reject(res2)
+						}
+					}).catch(err2 => {
+						// console.log(err2)
+						reject(err2)
+					})
+				} else {
+					reject(e)
 				}
 			})
 		})

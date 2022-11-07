@@ -33,9 +33,9 @@
 			</uni-forms-item>
 
 			<!-- 客服微信 -->
-			<uni-forms-item :label="rules.customer.label" label-position="top" name="customer">
+			<!-- <uni-forms-item :label="rules.customer.label" label-position="top" name="customer">
 				<htz-image-upload :max="selectNum2" v-model="picList2" mediaType="image" @chooseSuccess="chooseSuccess2" />
-			</uni-forms-item>
+			</uni-forms-item> -->
 
 			<!-- 所在区域 -->
 			<uni-forms-item :label="rules.address.label" name="address">
@@ -228,14 +228,14 @@ const { chooseSuccess: chooseSuccess2, picList: picList2, selectNum: selectNum2 
 })
 
 // 客服微信图片上传
-const { chooseSuccess: chooseSuccess3, picList: picList3, selectNum: selectNum3 } = useHtzImageUpload({
-	ratio: 5 / 4,
-	url: '/upload-flv/uploadimage',
-	refData: formData,
-	param: 'sharePic',
-	selectNum: 1,
-	baseDir: 'store'
-})
+// const { chooseSuccess: chooseSuccess3, picList: picList3, selectNum: selectNum3 } = useHtzImageUpload({
+// 	ratio: 5 / 4,
+// 	url: '/upload-flv/uploadimage',
+// 	refData: formData,
+// 	param: 'sharePic',
+// 	selectNum: 1,
+// 	baseDir: 'store'
+// })
 
 // 店内环境图上传
 const { chooseSuccess: chooseSuccess4, picList: picList4, selectNum: selectNum4 } = useHtzImageUpload({

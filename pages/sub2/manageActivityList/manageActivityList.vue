@@ -169,7 +169,6 @@ const wxWxqrCode = item => {
 			const { msg, data, code } = res
 			const imgPath = await base64ToPath('data:image/png;base64,' + data)
 			console.log('邀请码', imgPath)
-			img.value = imgPath
 			uni.hideLoading()
 			// 分享图片
 			uni
@@ -184,6 +183,7 @@ const wxWxqrCode = item => {
 				})
 		})
 		.catch(err => {
+			console.log(err)
 			showToastText('生成失败')
 		})
 }

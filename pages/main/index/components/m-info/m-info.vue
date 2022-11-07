@@ -32,16 +32,16 @@
 				></image>
 			</view>
 			<!-- 预约服务 -->
-			<view class="addWx" @tap="navigateTo('/pages/sub1/yuyue/yuyue')">
+			<button class="addWx" @tap="navigateTo('/pages/sub1/yuyue/yuyue')">
 				<image class="image" src="/static/images/shijian.png" mode="aspectFill"></image>
 				<text>预约服务</text>
-			</view>
+			</button>
 		</view>
 	</view>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { makePhoneCall, navigateTo, openLocation, getLocation } from '@/aTemp/utils/uniAppTools.js'
 const props = defineProps({
 	info: {
@@ -72,20 +72,24 @@ const rad = d => {
 	return (d * Math.PI) / 180.0
 }
 
-const distance = ref("0km")
-// 获取当前位置，计算距离
-getLocation().then(res => {
-	let distance_a = algorithm(
-		[res.latitude, res.longitude],
-		[props.info.lat, props.info.lng]
-	)
+const distance = ref('计算中...')
 
-	distance.value = Math.floor((distance_a / 1000) * 100) / 100 + 'km'
-})
+watch(
+	() => props.info,
+	(newValue, oldValue) => {
+		// 获取当前位置，计算距离
+		getLocation().then(res => {
+			let distance_a = algorithm([res.latitude, res.longitude], [props.info.lat, props.info.lng])
+			distance.value = Math.floor((distance_a / 1000) * 100) / 100 + 'km'
+		}).catch(()=>{
+			distance.value='计算失败'
+		})
+	}
+)
 
 // 打开内置地图
 const daohang = () => {
-	openLocation(props.info.lat, props.info.lng,props.info.addressDetail,props.info.address).then(res => {
+	openLocation(props.info.lat, props.info.lng, props.info.addressDetail, props.info.address).then(res => {
 		console.log(res)
 	})
 }
@@ -173,6 +177,7 @@ const daohang = () => {
 		background-color: $main-color;
 		color: $text-color-inverse;
 		font-size: 32rpx;
+		margin: 0;
 		> .image {
 			width: 32rpx;
 			height: 32rpx;

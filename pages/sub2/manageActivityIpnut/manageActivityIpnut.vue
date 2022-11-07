@@ -225,7 +225,8 @@ const formData = ref({
 	price: 0, // 价格
 	showShare: 1, //是否显示分佣
 	least: 2, //最低拼团人数
-	sort: 1 //排序
+	sort: 1 ,//排序
+	sharePriceType:0 // 0分佣给第一个邀请人，1分佣给最新邀请人
 })
 // 获取表单对象
 const formObj = ref(null)
