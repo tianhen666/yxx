@@ -48,7 +48,6 @@
 			</template>
 		</view>
 
-		<!-- <view v-if="listData.length % 2 === 1"></view> -->
 	</view>
 </template>
 
@@ -108,7 +107,7 @@ const props = defineProps({
 				@include textOverHidden(3);
 				color: #aaa;
 				font-size: 26rpx;
-				padding: 20rpx 0 30rpx;
+				margin: 20rpx 0 30rpx;
 				line-height: 1.6;
 			}
 			.bottom_box {

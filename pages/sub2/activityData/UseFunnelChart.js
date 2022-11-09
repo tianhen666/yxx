@@ -99,7 +99,9 @@ export default function(paramsObj) {
 			// show: false,
 		},
 		extra: {
-			funnel: {}
+			funnel: {
+				type: "triangle"
+			}
 		}
 	}
 

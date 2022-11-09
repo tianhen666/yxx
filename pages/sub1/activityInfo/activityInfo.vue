@@ -115,7 +115,7 @@ useShare(shareInfo)
 // 加载中
 const loading = ref(true)
 // 数据ID
-const dataId = ref(0)
+const dataId = ref('')
 // 数据对象
 const dataObj = ref({ myType: '活动' })
 
@@ -148,7 +148,7 @@ onLoad(async options => {
 		'目标ID：' + targetId
 	)
 
-	dataId.value = parseInt(targetId) || 0
+	dataId.value = parseInt(targetId) || ''
 
 	// 获取活动详情
 	enrollformGetinfo()

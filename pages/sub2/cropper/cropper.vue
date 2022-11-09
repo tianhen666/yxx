@@ -3,8 +3,8 @@
 		<bt-cropper
 			ref="cropper"
 			showGrid
-			:quality="0.8"
-			:dWidth="750"
+			:quality="1"
+			:dWidth="0"
 			:fileType="imgFormat"
 			:ratio="ratio"
 			:imageSrc="imageSrcs[imageSrcIndex]"

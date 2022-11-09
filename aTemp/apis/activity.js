@@ -67,3 +67,12 @@ export function _enrollformWxNotifys(params) {
 		params,
 	})
 }
+
+// 获取个人邀请统计
+export function _storeproductActivityPopup(params) {
+	return http.post({
+		url: '/storeproduct/activityPopup',
+		params,
+	})
+}
+

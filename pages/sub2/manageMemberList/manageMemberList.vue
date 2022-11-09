@@ -134,7 +134,7 @@ const userDataStatistics = () => {
 		invitationsNumber.value[2] = resultMonthNewly.data
 
 		// 邀请人列表赋值
-		categoryOption1.value = distinctness.data
+		categoryOption1.value = distinctness.data.map(item=>({text:item.remarkname||item.nickname,value:item.id}))
 
 		// 暂时延时一下
 		setTimeout(() => {

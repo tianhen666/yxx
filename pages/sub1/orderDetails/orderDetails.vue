@@ -2,9 +2,7 @@
 	<m-page-loading v-if="loading"></m-page-loading>
 	<view class="container" v-else>
 		<!-- 背景 -->
-		<view class="pageBg">
-			<image class="image" src="/static/images/bg.png" mode="aspectFill"></image>
-		</view>
+		<view class="pageBg"><image class="image" src="/static/images/bg.png" mode="aspectFill"></image></view>
 		<!-- #ifndef H5 -->
 		<!-- 标题栏 -->
 		<uni-nav-bar
@@ -61,9 +59,7 @@
 
 				<!-- 剩余使用次数 -->
 				<view class="blank20"></view>
-				<view class="tips1">
-					<text class="text">请在到店使用时出示核销码</text>
-				</view>
+				<view class="tips1"><text class="text">请在到店使用时出示核销码</text></view>
 			</template>
 		</view>
 		<view class="blank32"></view>
@@ -71,7 +67,7 @@
 		<!-- 套餐详情 -->
 		<view class="content_text">
 			<m-title2 title="套餐详情"></m-title2>
-			<text class="text">{{orderDetail.producttitle}}</text>
+			<text class="text">{{ orderDetail.producttitle }}</text>
 		</view>
 		<view class="blank32"></view>
 
@@ -111,10 +107,7 @@
 		<view class="blank40"></view>
 
 		<!-- 剩余支付时间 -->
-		<view
-			class="syzfsj"
-			v-if="dayjs(orderDetail.createDt).add(30, 'minute') - dayjs() > 0 && orderDetail.status === 1"
-		>
+		<view class="syzfsj" v-if="dayjs(orderDetail.createDt).add(30, 'minute') - dayjs() > 0 && orderDetail.status === 1">
 			<view class="left">剩余支付时间</view>
 			<view class="right">{{ `${djs}` }}</view>
 		</view>
@@ -191,35 +184,40 @@ const orderPayment = _debounce(
 	item => {
 		const orderNo = item.orderNo
 
-		_orderPayment({ orderNo: orderNo }).then(res => {
-			btnLoading.value = false
-			// 获取唤醒支付必要条件
-			const { data } = res
-			const payInfo = JSON.parse(data)
-			// 唤醒支付
-			uni
-				.requestPayment({
-					timeStamp: payInfo.timeStamp,
-					nonceStr: payInfo.nonceStr,
-					package: payInfo.package,
-					signType: payInfo.signType,
-					paySign: payInfo.sign
-				})
-				.then(val => {
-					showToastText('支付成功~')
-
-					// 支付成功回调，并且分账 status: 2 //2表示已经支付完成，待使用
-					const myParameter = { orderNumExternal: orderNo, status: 2 }
-					_wxpayWxNotifys(myParameter).then(resData => {
-						// 修改订单状态
-						item.status = 2
+		_orderPayment({ orderNo: orderNo })
+			.then(res => {
+				btnLoading.value = false
+				// 获取唤醒支付必要条件
+				const { data } = res
+				const payInfo = JSON.parse(data)
+				// 唤醒支付
+				uni
+					.requestPayment({
+						timeStamp: payInfo.timeStamp,
+						nonceStr: payInfo.nonceStr,
+						package: payInfo.package,
+						signType: payInfo.signType,
+						paySign: payInfo.sign
 					})
-				})
-				.catch(err => {
-					btnLoading.value = false
-					showToastText('取消支付~')
-				})
-		})
+					.then(val => {
+						showToastText('支付成功~')
+
+						// 支付成功回调，并且分账 status: 2 //2表示已经支付完成，待使用
+						const myParameter = { orderNumExternal: orderNo, status: 2 }
+						_wxpayWxNotifys(myParameter).then(resData => {
+							// 修改订单状态
+							item.status = 2
+						})
+					})
+					.catch(err => {
+						btnLoading.value = false
+						showToastText('取消支付~')
+					})
+			})
+			.catch(err => {
+				console.log(err)
+				showToastText('支付失败')
+			})
 	},
 	1000,
 	btnLoading

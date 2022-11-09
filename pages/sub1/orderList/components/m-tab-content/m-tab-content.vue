@@ -139,6 +139,7 @@ const orderPayment = _debounce(item => {
 				})
 		})
 		.catch(err => {
+			console.log(err)
 			showToastText('支付失败')
 		})
 }, 1000)

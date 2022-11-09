@@ -1,4 +1,6 @@
 <template>
+	<!-- 禁止页面滚动 -->
+	<page-meta :page-style="'overflow:'+(popupStatus?'hidden':'visible')"></page-meta>
 	<view class="container">
 		<view class="blank40"></view>
 
@@ -133,11 +135,19 @@
 			<view class="blank32"></view>
 
 			<!-- 排行榜数据 -->
-			<m-ranking-list :listData="yaoqingpaihang"></m-ranking-list>
+			<m-ranking-list :listData="yaoqingpaihang" @popFun="storeproductActivityPopup"></m-ranking-list>
 		</view>
 		<view class="blank40"></view>
 		<view class="blank40"></view>
 	</view>
+
+	<!-- 普通弹窗 -->
+	<uni-popup ref="popupRef" type="center" @change='popupRefChange'>
+		<view class="popup-content">
+			<m-user-list activityShow :listData="popupRefListData"></m-user-list>
+		</view>
+	</uni-popup>
+	
 </template>
 
 <script setup>
@@ -145,7 +155,7 @@ import { ref, watch, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import qiunDataCharts from '@/pages/sub2/components/qiun-data-charts/components/qiun-data-charts/qiun-data-charts.vue'
 import dayjs from 'dayjs'
-import { _enrollformGetlist } from '@/aTemp/apis/activity.js'
+import { _enrollformGetlist, _storeproductActivityPopup } from '@/aTemp/apis/activity.js'
 import { _storeproductActivitystatistics } from '@/aTemp/apis/store.js'
 
 // 活动数据列表
@@ -153,17 +163,9 @@ const categoryOption1 = ref([])
 // 当前活动索引
 const activityId = ref(0)
 // 当前活动id
-const productid = computed(() => {
-	let productid = 0
-
-	try {
-		productid = categoryOption1.value[activityId.value].id
-	} catch (e) {
-		//TODO handle the exception
-	}
-
-	return productid
-})
+const productid = computed(() =>
+	categoryOption1.value[activityId.value] ? categoryOption1.value[activityId.value].id : ''
+)
 // 每页数量
 // const pageSize = ref(6)
 // 有多少页面
@@ -265,10 +267,33 @@ const {
 	chartsComplete: chartsComplete2,
 	chartsError: chartsError2
 } = UseFunnelChart({ zData: zLouDouData })
+
+/**
+ * 获取排行榜详情数据
+ * */
+ const popupRef = ref(null)
+ const popupRefListData = ref([])
+ const popupStatus = ref(false)
+const storeproductActivityPopup = userId => {
+	_storeproductActivityPopup({productid:productid.value,userId:userId}).then(res=>{
+		popupRefListData.value = res.data
+		popupRef.value.open()
+	})
+}
+const popupRefChange = (e)=>{
+	popupStatus.value = e.show
+}
 </script>
 
 <style lang="scss" scoped>
-
+	.popup-content{
+		background-color: #fff;
+		overflow-y: auto;
+		width: 710rpx;
+		max-height: 1000rpx;
+		padding: $padding;
+		border-radius: 16rpx;
+	}
 .container {
 	.charts-box {
 		height: 480rpx;

@@ -1,13 +1,13 @@
 <template>
 	<view class="container">
-		<view class="container_item" v-for="(item, index) in listData" :key="index">
+		<view class="container_item" v-for="(item, index) in listData" :key="index" @tap.stop="popFun(item.id)">
 			<view class="container_item_left">
 				<image class="image" :src="item.avatar || '/static/images/default_avatar.png'" mode="aspectFill"></image>
 				<view class="index" :class="'style' + (index + 1)" v-if="index < 10">{{ index + 1 }}</view>
 			</view>
 			<view class="container_item_right">
 				<view class="container_item_right_title">
-					{{ item.nickname }}
+					{{ item.remarkname || item.nickname }}
 					<!-- <text class="style1" v-if="item.type === 1">店内人员</text>
 					<text class="style2" v-else-if="item.type === 2">分销员</text>
 					<text class="style3" v-else>用户</text> -->
@@ -39,6 +39,11 @@ const props = defineProps({
 		default: () => []
 	}
 })
+const emit = defineEmits(['popFun'])
+
+const popFun = userId => {
+	emit('popFun', userId)
+}
 </script>
 
 <style lang="scss" scoped>

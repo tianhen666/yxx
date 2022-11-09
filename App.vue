@@ -121,13 +121,19 @@ onLaunch(async options => {
 			userid: user.id,
 			storeId: user.storeId
 		})
+
+		// 路由拦截
+		// router(options)
+
+		// 放行同步方法
+		proxy.$isResolve()
+	} else {
+		// 路由拦截
+		// router(options)
+
+		// 放行同步方法
+		proxy.$isResolve()
 	}
-
-	// 路由拦截
-	// router(options)
-
-	// 放行同步方法
-	proxy.$isResolve()
 })
 
 onShow(options => {

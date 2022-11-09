@@ -58,7 +58,7 @@
             "urlCheck" : true,
             "es6" : true,
             "postcss" : true,
-            "minified" : false,
+            "minified" : true,
             "bigPackageSizeSupport" : true
         },
         "usingComponents" : true,

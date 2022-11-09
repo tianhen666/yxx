@@ -86,6 +86,7 @@ import { ref, reactive, computed } from 'vue'
 import { navigateTo, showToastText, chooseLocation, reLaunch } from '@/aTemp/utils/uniAppTools.js'
 import { _debounce } from '@/aTemp/utils/tools.js'
 import { _storeSaveStore } from '@/aTemp/apis/store.js'
+import dayjs from 'dayjs'
 
 // 全局登录信息
 import { _useUserMain } from '@/aTemp/store/userMain.js'
@@ -188,6 +189,12 @@ const btnClick = _debounce(
 					loading.value = false
 					return
 				}
+				
+				// 添加到期时间
+				formData.value.expireDt = dayjs()
+					.add(1, 'year')
+					.format('YYYY-MM-DD HH:mm:ss')
+					
 				// 保存信息接口
 				_storeSaveStore(formData.value)
 					.then(res => {

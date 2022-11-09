@@ -79,6 +79,12 @@ textarea {
 .uni-select__input-box {
 	overflow: hidden;
 }
+.uni-select__selector-item text{
+	height: auto;
+	overflow: hidden; /*超出隐藏*/
+	text-overflow: ellipsis; /*隐藏后添加省略号*/
+	white-space: nowrap; /*强制不换行*/
+}
 
 /* 页面标题组件 */
 .uni-status-bar {

@@ -22,10 +22,9 @@
 				</view>
 			</view>
 			<view class="blank32"></view>
-
 			<!-- 活动数据分析页面显示 -->
 			<view class="container_item_box2" v-if="activityShow">
-				<view class="Invited item">邀请人：{{ item.ynickname||"微信用户" }}</view>
+				<view class="Invited item">邀请人：{{ item.yremarkname || item.ynickname || '微信用户' }}</view>
 				<view class="views item">浏览次数：{{ item.views }}</view>
 				<view class="join item" v-if="item.participate === 1">已参与</view>
 				<view class="unJoin item" v-else>未参与</view>
@@ -33,11 +32,11 @@
 
 			<!-- 会员管理页面显示 -->
 			<view class="container_item_box2" v-if="!activityShow">
-				<view class="source item">来源：{{ scene[item.scene] || '无' }}</view>
-				<view class="Invited item">邀请人：{{ item.yname || item.rname || '无' }}</view>
+				<view class="source item">来源：{{ dataTree[item.scene]?.text || '无' }}</view>
+				<view class="Invited item">邀请人：{{ item.rname || item.yname || '无' }}</view>
 				<view class="Invited item" v-if="item.ytime">{{ dayjs(item.ytime).format('YYYY年M月D日') }}</view>
 			</view>
-			<view class="blank32"></view>
+			<view class="blank32" v-if="!activityShow"></view>
 			<view v-if="!activityShow" class="container_item_box3">
 				{{ jsonToObj(item['userremark']).remarks || '点击添加备注信息' }}
 			</view>
@@ -52,7 +51,7 @@
 	</view>
 
 	<!-- 弹出框 -->
-	<uni-popup ref="popup" type="bottom" :safe-area="false">
+	<uni-popup ref="popup" type="bottom" :safe-area="false" v-if="!activityShow">
 		<view class="popup_box">
 			<image class="close" @tap="popup.close" src="/static/images/close.png"></image>
 			<uni-forms :rules="rules" ref="formObj" v-model="formData" label-width="220rpx" label-position="top">
@@ -95,7 +94,41 @@ import dayjs from 'dayjs'
 import { _debounce } from '@/aTemp/utils/tools.js'
 import { makePhoneCall, setClipboardData } from '@/aTemp/utils/uniAppTools.js'
 import { _userUpdate } from '@/aTemp/apis/user.js'
-const scene = ['直接邀请', '活动邀请', '商品邀请', '服务邀请', '海报邀请', '其他邀请']
+// 0直接邀请 1活动 2商品 3服务 4海报 5员工邀请 6店铺入驻邀请 7预约分享
+const dataTree = [
+	{
+		text: '直接邀请',
+		value: '0'
+	},
+	{
+		text: '活动邀请',
+		value: '1'
+	},
+	{
+		text: '商品邀请',
+		value: '2'
+	},
+	{
+		text: '服务邀请',
+		value: '3'
+	},
+	{
+		text: '海报邀请',
+		value: '4'
+	},
+	{
+		text: '员工邀请',
+		value: '5'
+	},
+	{
+		text: '入驻邀请',
+		value: '6'
+	},
+	{
+		text: '预约邀请',
+		value: '7'
+	}
+]
 const props = defineProps({
 	activityShow: {
 		type: Boolean,
@@ -241,10 +274,12 @@ const saveClick = _debounce(
 <style scoped lang="scss">
 .container {
 	background-color: #fff;
+	overflow: hidden;
 	.container_item {
 		margin-bottom: 32rpx;
+		padding-bottom: 32rpx;
 		border-bottom: 1px solid $uni-border-2;
-		&:last-child {
+		&:last-of-type {
 			margin-bottom: 0;
 			padding-bottom: 0;
 			border: none;
@@ -339,14 +374,13 @@ const saveClick = _debounce(
 		}
 
 		&_box3 {
-			padding-bottom: 32rpx;
 			font-size: 26rpx;
 			color: $main-color;
 			@include singleLineTextOverHidden;
 		}
 
 		&_box4 {
-			padding-bottom: 32rpx;
+			padding-top: 24rpx;
 			@include mFlex;
 			justify-content: flex-start;
 			> .item {
