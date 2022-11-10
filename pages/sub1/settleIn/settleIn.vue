@@ -189,11 +189,10 @@ const btnClick = _debounce(
 					loading.value = false
 					return
 				}
-				
 				// 添加到期时间
 				formData.value.expireDt = dayjs()
 					.add(1, 'year')
-					.format('YYYY-MM-DD HH:mm:ss')
+					.format('YYYY-MM-DD[T]HH:mm:ss')
 					
 				// 保存信息接口
 				_storeSaveStore(formData.value)
@@ -205,8 +204,8 @@ const btnClick = _debounce(
 						}, 1000)
 					})
 					.catch(err => {
-						console.log()
 						showToastText(err.msg || '店铺入驻失败，请联系管理员')
+						loading.value = false
 					})
 			})
 			.catch(err => {

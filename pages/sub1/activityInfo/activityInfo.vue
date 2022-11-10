@@ -1,4 +1,8 @@
 <template>
+	<!-- 提示登录组件 -->
+	<m-authorized-login ref="mLogin"></m-authorized-login>
+
+	<!-- 加载中 -->
 	<m-page-loading v-if="loading"></m-page-loading>
 
 	<view class="container" v-else>
@@ -70,7 +74,12 @@
 	</view>
 	<view class="blank24"></view>
 	<!-- 底部按钮 -->
-	<m-shop-btn-bottom @payConfirm="payConfirm" @tapCreateImg="tapCreateImg" :dataObj="dataObj"></m-shop-btn-bottom>
+	<m-shop-btn-bottom
+		@payConfirm="payConfirm"
+		@tapCreateImg="tapCreateImg"
+		@tapShare="tapShare"
+		:dataObj="dataObj"
+	></m-shop-btn-bottom>
 
 	<!-- 海报生成 -->
 	<w-painter
@@ -119,6 +128,8 @@ const dataId = ref('')
 // 数据对象
 const dataObj = ref({ myType: '活动' })
 
+// 登录弹出对象
+const mLogin = ref(null)
 // 页面开始加载
 onLoad(async options => {
 	const { proxy } = getCurrentInstance()
@@ -150,10 +161,9 @@ onLoad(async options => {
 
 	dataId.value = parseInt(targetId) || ''
 
-	// 获取活动详情
 	enrollformGetinfo()
 })
-
+// 获取活动详情
 const enrollformGetinfo = () => {
 	// 加载中
 	loading.value = true
@@ -180,7 +190,7 @@ const enrollformGetinfo = () => {
 		loading.value = false
 
 		// 设置分享参数
-		shareInfo.title = computed(() => `${useUserMain.nickname}-邀请您参加【${dataObj.value.title}】`)
+		shareInfo.title = computed(() => `${useUserMain.nickname || ''} 邀请您参加【${dataObj.value.title}】`)
 		shareInfo.path = computed(
 			() =>
 				`/pages/main/index/index?invitationCode=${useUserMain.userid}&storeId=${
@@ -201,7 +211,7 @@ const payConfirm = _debounce(
 	() => {
 		// 判断是否授权登录
 		if (!useUserMain.isLogin) {
-			navigateTo('/pages/main/login/login')
+			mLogin.value.popupfun()
 			btnLoading.value = false
 			return
 		}
@@ -252,20 +262,21 @@ const payConfirm = _debounce(
 					try {
 						// 支付返回信息
 						const resDataObj = JSON.parse(data)
-						showToastText(resDataObj.result_msg || '支付失败')
+						showToastText(resDataObj.result_msg || '参加失败')
 					} catch (e) {
 						if (data === '参与成功') {
 							showToastText(data)
 							// 设置活动已参与
 							dataObj.value['myJionCount'] = (dataObj.value['myJionCount'] || 0) + 1
 						} else {
-							showToastText(data || '支付失败')
+							showToastText(data || '参加失败')
 						}
 					}
 				}
 			})
 			.catch(err => {
 				btnLoading.value = false
+				showToastText(err.msg||'参加失败')
 				console.log(err)
 			})
 	},
@@ -297,7 +308,7 @@ const posterData = reactive({
 const tapCreateImg = async () => {
 	// 判断是否授权登录
 	if (!useUserMain.isLogin) {
-		navigateTo('/pages/main/login/login')
+		mLogin.value.popupfun()
 		return
 	}
 
@@ -442,6 +453,15 @@ const createImgOk = e => {
 const imgErr = e => {
 	uni.hideLoading()
 	showToastText('海报加载失败~')
+}
+
+// 没有登录禁止分享
+const tapShare = () => {
+	// 判断是否授权登录
+	if (!useUserMain.isLogin) {
+		mLogin.value.popupfun()
+		return
+	}
 }
 </script>
 

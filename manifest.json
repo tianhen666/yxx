@@ -80,8 +80,6 @@
             "startLocationUpdateBackground"
         ]
     },
-    // "lazyCodeLoading": "requiredComponents",
-    // "mergeVirtualHostAttributes": true
     "mp-alipay" : {
         "usingComponents" : true
     },

@@ -3,7 +3,7 @@
 		<view class="btn_fix">
 			<view class="btn_container">
 				<view class="left">
-					<button class="btn" v-if="!useUserMain.isLogin" @tap="navigateTo('/pages/main/login/login')">
+					<button class="btn" v-if="!useUserMain.isLogin" @tap="tapShare">
 						<view class="text">分享{{ dataObj.myType === '活动' ? '活动' : '商品' }}</view>
 						<view class="price" v-if="dataObj.showShare === 0 && dataObj.sharePrice > 0">
 							赚￥{{ dataObj.sharePrice }}
@@ -40,14 +40,12 @@
 </template>
 
 <script setup>
-import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
 
 // 全局登录信息
 import { _useUserMain } from '@/aTemp/store/userMain.js'
 const useUserMain = _useUserMain()
 
-
-const emits = defineEmits(['payConfirm', 'tapCreateImg'])
+const emits = defineEmits(['payConfirm', 'tapCreateImg', 'tapShare'])
 const props = defineProps({
 	dataObj: {
 		required: true,
@@ -64,6 +62,9 @@ const payConfirm = () => {
 const tapCreateImg = () => {
 	emits('tapCreateImg')
 }
+const tapShare = () => {
+	emits('tapShare')
+}
 </script>
 
 <style lang="scss" scoped>
@@ -73,7 +74,7 @@ const tapCreateImg = () => {
 	padding-bottom: 40rpx;
 	.btn_fix {
 		position: fixed;
-		z-index:88;
+		z-index: 88;
 		bottom: 0;
 		width: 100%;
 		height: 160rpx;

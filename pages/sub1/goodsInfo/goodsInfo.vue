@@ -1,4 +1,6 @@
 <template>
+	<!-- 提示登录组件 -->
+	<m-authorized-login ref="mLogin"></m-authorized-login>
 	<m-page-loading v-if="loading"></m-page-loading>
 	<view class="container" v-else>
 		<!-- 轮播图片 -->
@@ -58,7 +60,8 @@
 		<m-shop-btn-bottom
 			:dataObj="dataObj"
 			@tapCreateImg="tapCreateImg"
-			@payConfirm="navigateTo(`/pages/sub1/confirmOrder/confirmOrder?id=${dataId}`)"
+			@tapShare="tapShare"
+			@payConfirm="goPayPage"
 		></m-shop-btn-bottom>
 	</view>
 
@@ -99,6 +102,9 @@ import useShare from '@/aTemp/mixins/useShare.js'
 const shareInfo = reactive({ title: '', path: '', imageUrl: '', query: '' })
 // 设置分享
 useShare(shareInfo)
+
+// 登录弹出对象
+const mLogin = ref(null)
 
 // 数据ID
 const dataId = ref(0)
@@ -167,6 +173,19 @@ onLoad(async options => {
 	})
 })
 
+/**
+ * 去支付页面
+ *
+ * */
+const goPayPage = () => {
+	// 判断是否授权登录
+	if (!useUserMain.isLogin) {
+		mLogin.value.popupfun()
+		return
+	}
+	navigateTo(`/pages/sub1/confirmOrder/confirmOrder?id=${dataId.value}`)
+}
+
 // 海报数据
 const posterData = reactive({
 	value: {}
@@ -174,6 +193,12 @@ const posterData = reactive({
 
 // 生成海报函数
 const tapCreateImg = async () => {
+	// 判断是否授权登录
+	if (!useUserMain.isLogin) {
+		mLogin.value.popupfun()
+		return
+	}
+
 	showLoading('海报数据加载中')
 
 	// 获取小程序码
@@ -314,6 +339,15 @@ const createImgOk = e => {
 const imgErr = e => {
 	uni.hideLoading()
 	showToastText('海报加载失败~')
+}
+
+// 没有登录禁止分享
+const tapShare = () => {
+	// 判断是否授权登录
+	if (!useUserMain.isLogin) {
+		mLogin.value.popupfun()
+		return
+	}
 }
 </script>
 

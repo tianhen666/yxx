@@ -171,9 +171,6 @@ const saveClick = _debounce(
 		text-align: right;
 	}
 }
-:deep(.fix .fix_warpper) {
-	position: relative !important;
-}
 
 .avatar {
 	font-size: 0;

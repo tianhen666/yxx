@@ -1,7 +1,7 @@
 <template>
 	<view class="container">
 		<view class="blank20 blank_bg_color"></view>
-		<uni-forms :rules="rules" ref="formObj" v-model="formData" label-width="240rpx">
+		<uni-forms :rules="rules" ref="formObj" v-model="formData" err-show-type="toast" label-width="240rpx">
 			<!-- 头像 -->
 			<uni-forms-item :label="rules.avatar.label" name="avatar">
 				<button
@@ -23,10 +23,19 @@
 					:clearable="false"
 					trim
 					v-model="formData.nickname"
+					@blur="getnickname"
 				></uni-easyinput>
 			</uni-forms-item>
 			<view class="tips">昵称限制2-32个字符，一个汉字2个字符</view>
-			
+
+			<!-- 手机号 -->
+			<uni-forms-item :label="rules.mobile.label" name="mobile">
+				<view class="m-forms-item-box">
+					<text>{{ formData.mobile }}</text>
+					<button open-type="getPhoneNumber" @getphonenumber="getphonenumber" class="btn">授权手机号</button>
+				</view>
+			</uni-forms-item>
+			<view class="tips">点击右侧按钮授权手机号</view>
 		</uni-forms>
 
 		<!-- 保存 -->
@@ -35,13 +44,17 @@
 </template>
 
 <script setup>
+import { getCurrentInstance } from 'vue'
 import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import config from '@/global-config.js'
 import { _userUpdate } from '@/aTemp/apis/user.js'
-import { showToastText,navigateBack,uploadFile } from '@/aTemp/utils/uniAppTools'
+import { showToastText, navigateBack, uploadFile, showLoading } from '@/aTemp/utils/uniAppTools'
 import { _debounce } from '@/aTemp/utils/tools.js'
+import { _wxMobile } from '@/aTemp/apis/login.js'
 
+// 页面对象实例
+const instance = getCurrentInstance()
 
 // 全局登录信息
 import { _useUserMain } from '@/aTemp/store/userMain.js'
@@ -56,6 +69,10 @@ const rules = {
 	nickname: {
 		rules: [{ required: true, errorMessage: '请输入微信昵称' }],
 		label: '微信昵称'
+	},
+	mobile: {
+		rules: [{ required: true, errorMessage: '请输入手机号' }],
+		label: '手机号'
 	}
 }
 
@@ -63,6 +80,7 @@ const rules = {
 const formData = ref({
 	avatar: useUserMain.avatar,
 	nickname: useUserMain.nickname,
+	mobile: useUserMain.mobile,
 	id: useUserMain.userid
 })
 // 获取表单对象
@@ -79,7 +97,10 @@ const onChooseAvatar = async e => {
 	formData.value.avatar = data
 }
 
-
+// 名称输入框失去焦点重新设置需要提交的名称
+const getnickname = e => {
+	formData.value.nickname = e.detail.value
+}
 /*
  * 保存
  */
@@ -90,15 +111,17 @@ const saveClick = _debounce(
 			.validate()
 			.then(formRes => {
 				// 保存信息接口
-				_userUpdate(formData.value).then(res => {
-					loading.value = false
-					useUserMain.$patch({ avatar: formData.value.avatar, nickname: formData.value.nickname })
-					showToastText('提交成功~')
-					// 返回上一级
-					navigateBack()
-				}).catch(err=>{
-					loading.value = false
-				})
+				_userUpdate(formData.value)
+					.then(res => {
+						loading.value = false
+						useUserMain.$patch({ avatar: formData.value.avatar, nickname: formData.value.nickname })
+						showToastText('提交成功~')
+						// 返回上一级
+						navigateBack()
+					})
+					.catch(err => {
+						loading.value = false
+					})
 			})
 			.catch(err => {
 				loading.value = false
@@ -109,6 +132,27 @@ const saveClick = _debounce(
 	1000,
 	loading
 )
+
+// 获取手机号事件
+const getphonenumber = val => {
+	// 加载中
+	showLoading()
+	// 获取code
+	const { code } = val.detail
+
+	if (code) {
+		_wxMobile({ code: code }).then(res => {
+			const { msg, data, code } = res
+			if (data) {
+				useUserMain.$patch({ mobile: data })
+				formData.value.mobile = data
+			}
+			uni.hideLoading()
+		})
+	} else {
+		showToastText('已拒绝获取手机号')
+	}
+}
 </script>
 
 <style lang="scss" scoped>
@@ -127,9 +171,6 @@ const saveClick = _debounce(
 	.uni-easyinput__content {
 		text-align: right;
 	}
-}
-:deep(.fix .fix_warpper) {
-	position: relative !important;
 }
 .avatar {
 	font-size: 0;
@@ -155,5 +196,16 @@ const saveClick = _debounce(
 }
 .container {
 	width: 750rpx;
+}
+.m-forms-item-box {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	.btn {
+		background-color: $main-color;
+		color: #fff;
+		font-size: 24rpx;
+		margin: 0;
+	}
 }
 </style>

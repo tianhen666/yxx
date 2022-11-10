@@ -1,4 +1,6 @@
 <template>
+	<!-- 提示登录组件 -->
+	<m-authorized-login ref="mLogin"></m-authorized-login>
 	<!-- 背景 -->
 	<view class="pageBg"><image class="image" src="/static/images/bg.png" mode="aspectFill"></image></view>
 	<z-paging

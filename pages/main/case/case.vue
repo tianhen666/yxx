@@ -1,17 +1,17 @@
 <template>
+	<!-- 提示登录组件 -->
+	<m-authorized-login ref="mLogin"></m-authorized-login>
 	<m-page-loading v-if="loading"></m-page-loading>
 	<z-paging-swiper>
 		<!-- 背景 -->
-		<view class="pageBg">
-			<image class="image" src="/static/images/bg.png" mode="aspectFill"></image>
-		</view>
+		<view class="pageBg"><image class="image" src="/static/images/bg.png" mode="aspectFill"></image></view>
 		<!-- #ifndef H5 -->
 		<!-- 标题栏 -->
 		<uni-nav-bar statusBar fixed :title="'门诊案例'" color="#ffffff" :border="false"></uni-nav-bar>
 		<view class="blank20"></view>
 		<!-- #endif -->
 
-		<view class="box scroll-view-box" v-if="tabListObj.length>0">
+		<view class="box scroll-view-box" v-if="tabListObj.length > 0">
 			<scroll-view scroll-x="true" class="scroll-view_H" :scroll-into-view="scrollIntoView" scroll-with-animation>
 				<view
 					:id="'scrollViewItem' + index"

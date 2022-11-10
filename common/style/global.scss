@@ -79,7 +79,7 @@ textarea {
 .uni-select__input-box {
 	overflow: hidden;
 }
-.uni-select__selector-item text{
+.uni-select__selector-item text {
 	height: auto;
 	overflow: hidden; /*超出隐藏*/
 	text-overflow: ellipsis; /*隐藏后添加省略号*/
@@ -152,4 +152,23 @@ radio.myradio.checked .uni-radio-input {
 	background-color: #4b8eff !important;
 	border-color: #4b8eff !important;
 	color: #ffffff !important;
+}
+
+/*登录组件*/
+.login-container {
+	.uni-forms-item {
+		border-bottom: 1px solid #ededed;
+		margin: 0 0;
+		padding: 0;
+		background-color: #fff;
+		height: 100rpx;
+		.uni-forms-item__label {
+			font-size: 28rpx !important;
+		}
+		.uni-forms-item__error {
+		}
+		.uni-easyinput__content {
+			text-align: right;
+		}
+	}
 }

@@ -1,4 +1,6 @@
 <template>
+	<!-- 提示登录组件 -->
+	<m-authorized-login ref="mLogin"></m-authorized-login>
 	<z-paging
 		ref="paging"
 		v-model="listData"
@@ -15,9 +17,7 @@
 		<!-- 固定顶部 -->
 		<template v-slot:top>
 			<!-- 背景 -->
-			<view class="pageBg">
-				<image class="image" src="/static/images/bg.png" mode="aspectFill"></image>
-			</view>
+			<view class="pageBg"><image class="image" src="/static/images/bg.png" mode="aspectFill"></image></view>
 			<!-- #ifndef H5 -->
 			<!-- 标题栏 -->
 			<uni-nav-bar statusBar fixed :title="'商城'" color="#ffffff" :border="false"></uni-nav-bar>

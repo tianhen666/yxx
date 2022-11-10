@@ -1,4 +1,6 @@
 <template>
+	<!-- 提示登录组件 -->
+	<m-authorized-login ref="mLogin"></m-authorized-login>
 	<!-- 背景 -->
 	<view class="pageBg"><image class="image" src="/static/images/bg.png" mode="aspectFill"></image></view>
 	<z-paging
@@ -34,8 +36,6 @@
 		<!-- 商家端显示 -->
 		<s-user v-if="useUserMain.power != -1"></s-user>
 	</z-paging>
-
-
 </template>
 <script setup>
 import mHeader from './components/m-header/m-header.vue'
@@ -92,5 +92,4 @@ const storeGetinfo = () => {
 }
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>
