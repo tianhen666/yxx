@@ -364,6 +364,24 @@
                 }
                 
                 }
+                ,{
+                    "path" : "addActivityTemplate/addActivityTemplate",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "添加活动模板",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
+                ,{
+                    "path" : "activityTemplateDetails/activityTemplateDetails",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "模板详情",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
             ]
 		},
 		{

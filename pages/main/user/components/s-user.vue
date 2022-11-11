@@ -22,7 +22,7 @@
 			<template v-for="(item, index) in module4.sub" :key="index">
 				<view
 					class="yxzs_item"
-					@tap="index == 0 || index == 2 || index == 3 ? showToastText('功能陆续更新中...') : navigateTo(item.path)"
+					@tap="index == 2 || index == 3 ? showToastText('功能陆续更新中...') : navigateTo(item.path)"
 				>
 					<image class="image" :src="item.imgUrl" mode="aspectFill"></image>
 					<text class="text">{{ item.name }}</text>
@@ -170,7 +170,7 @@ const module4 = {
 		{
 			imgUrl: '/static/images/u-huodongmuban.png',
 			name: '活动模板',
-			path: '/pages/sub2/activityTemplate/posterList'
+			path: '/pages/sub2/activityTemplate/activityTemplate'
 		},
 		{
 			imgUrl: '/static/images/u-jingmeihaibao.png',

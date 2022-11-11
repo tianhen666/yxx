@@ -76,3 +76,55 @@ export function _storeproductActivityPopup(params) {
 	})
 }
 
+
+
+
+// 获取活动模板详情
+export function _enrollFormTemplateGetinfo(params) {
+	return http.get({
+		url: '/enrollFormTemplate/getinfo',
+		params,
+	})
+}
+
+// 获取活动模板列表
+export function _enrollFormTemplateGetlist(params) {
+	return http.get({
+		url: '/enrollFormTemplate/getlist',
+		params,
+	})
+}
+
+// 添加、修改活动模板
+export function _enrollFormTemplateSave(data, params) {
+	return http.post({
+		url: '/enrollFormTemplate/save',
+		data,
+		params,
+	})
+}
+// 删除活动模板
+export function _enrollFormTemplateDeleteEnrollFormTemplate(params) {
+	return http.get({
+		url: 'enrollFormTemplate/deleteEnrollFormTemplate',
+		params,
+	})
+}
+
+// 使用活动模板
+export function _enrollFormTemplateSaveEnrollForm(data,params) {
+	return http.post({
+		url: '/enrollFormTemplate/saveEnrollForm',
+		data,
+		params,
+	})
+}
+
+
+// 获取模板分类
+export function _enrollFormTemplateGetTemplateTypeList(params) {
+	return http.get({
+		url: '/enrollFormTemplate/getTemplateTypeList',
+		params,
+	})
+}
