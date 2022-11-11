@@ -170,7 +170,7 @@ const module4 = {
 		{
 			imgUrl: '/static/images/u-huodongmuban.png',
 			name: '活动模板',
-			path: ''
+			path: '/pages/sub2/activityTemplate/posterList'
 		},
 		{
 			imgUrl: '/static/images/u-jingmeihaibao.png',

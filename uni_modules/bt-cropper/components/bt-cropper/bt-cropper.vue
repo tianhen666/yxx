@@ -272,6 +272,9 @@ export default {
 			};
 		},
 		init() {
+			if(!this.imageInfo){
+				return
+			}
 			const {imageRect,cropperRect} = this.initCropper()
 			if(this.initPosition){
 				const scale = this.imageInfo.width/imageRect.width;
@@ -446,6 +449,10 @@ export default {
 						.node(({ node }) => resolve(node))
 						.exec()
 				);
+				console.log(this.imageInfo)
+				console.log(this.pixel)
+				console.log(this.target)
+				debugger
 				canvas.width = this.target.width * this.pixel;
 				canvas.height = this.target.height * this.pixel;
 				ctx = canvas.getContext('2d');

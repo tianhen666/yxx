@@ -355,7 +355,16 @@
 					"enablePullDownRefresh": false
 				}
 
-			}]
+			}    ,{
+                    "path" : "activityTemplate/activityTemplate",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "活动模板",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
+            ]
 		},
 		{
 			"root": "pages/sub3",
