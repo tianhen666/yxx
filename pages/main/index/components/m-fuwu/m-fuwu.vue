@@ -12,15 +12,15 @@
 				<view class="sub_title">牙齿管理专家</view>
 			</view>
 			<view class="box_fuwu_right_item2">
-				<view class="box_fuwu_right_item2_left" @tap="showToastText('开发中~')">
+				<view class="box_fuwu_right_item2_left" @tap="switchTab('/pages/main/news/news')">
 					<image class="image" src="/static/images/fuwu3.png" mode="aspectFill"></image>
 					<view class="title" style="color:#D56464;">口腔知识</view>
 					<view class="sub_title" style="color:#D5646488;">关爱口腔健康</view>
 				</view>
-				<view class="box_fuwu_right_item2_right" @tap="switchTab('/pages/main/case/case')">
+				<view class="box_fuwu_right_item2_right" @tap="switchTab('/pages/main/info/info')">
 					<image class="image" src="/static/images/fuwu4.png" mode="aspectFill"></image>
-					<view class="title" style="color:#CB9B57;">门诊案例</view>
-					<view class="sub_title" style="color:#CB9B5788;">真实案例</view>
+					<view class="title" style="color:#CB9B57;">门诊信息</view>
+					<view class="sub_title" style="color:#CB9B5788;">详细门诊信息</view>
 				</view>
 			</view>
 		</view>

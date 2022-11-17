@@ -10,6 +10,7 @@
 			<image class="image" :src="item.banner" mode="scaleToFill" @tap="previewImage([item.banner])"></image>
 			<view class="right">
 				<view class="text1">序号：{{ item.sort || 1 }}</view>
+				<view class="text1">{{ item.exhibition == 0 ? '首页banner' : '商城banner' }}</view>
 				<view class="btn">
 					<view
 						class="btn_item style1"
@@ -62,7 +63,7 @@ onLoad(option => {
 	// 设置tab索引
 	currentIndex.value = parseInt(option.currentIndex) || 0
 	// 拉取banner列表
-	bannerList({ sfuse: currentIndex.value })
+	bannerList({ sfuse: currentIndex.value, exhibition: -1 })
 })
 
 // tab切换
@@ -70,7 +71,7 @@ const onClickItem = e => {
 	if (currentIndex.value !== e.currentIndex) {
 		currentIndex.value = e.currentIndex
 		// 切换后重新获取banner数据
-		bannerList({ sfuse: currentIndex.value })
+		bannerList({ sfuse: currentIndex.value, exhibition: -1 })
 	}
 }
 
@@ -132,10 +133,11 @@ const bannerEnable = (item, index) => {
 			overflow: hidden;
 			> .text1 {
 				color: $text-color-grey;
-				font-size: 28rpx;
+				font-size: 26rpx;
+				margin-top: 10rpx;
 			}
 			> .btn {
-				margin-top: 40rpx;
+				margin-top: 25rpx;
 				.btn_item {
 					padding: 16rpx 30rpx;
 					display: inline-block;

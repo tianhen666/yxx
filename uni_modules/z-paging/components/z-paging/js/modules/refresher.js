@@ -3,7 +3,7 @@ import u from '.././z-paging-utils'
 import c from '.././z-paging-constant'
 import Enum from '.././z-paging-enum'
 
-const ZPRefresher = {
+export default {
 	props: {
 		//下拉刷新的主题样式，支持black，white，默认black
 		refresherThemeStyle: {
@@ -181,6 +181,11 @@ const ZPRefresher = {
 			type: String,
 			default: u.gc('refresherUpdateTimeKey', 'default')
 		},
+		//下拉刷新时下拉到“松手立即刷新”状态时是否使手机短振动，默认为否（h5无效）
+		refresherVibrate: {
+			type: Boolean,
+			default: u.gc('refresherVibrate', false)
+		},
 	},
 	data() {
 		return {
@@ -211,6 +216,8 @@ const ZPRefresher = {
 			pullDownTimeStamp: 0,
 			moveDis: 0,
 			oldMoveDis: 0,
+			currentDis: 0,
+			oldCurrentMoveDis: 0,
 			oldRefresherTouchmoveY: 0,
 			oldTouchDirection: ''
 		}
@@ -224,13 +231,11 @@ const ZPRefresher = {
 			},
 			immediate: true
 		},
-		refresherStatus(newVal, oldVal) {
+		refresherStatus(newVal) {
 			newVal === Enum.Refresher.Loading && this._cleanRefresherEndTimeout();
+			this.refresherVibrate && newVal === Enum.Refresher.ReleaseToRefresh && this._doVibrateShort();
 			this.$emit('refresherStatusChange', newVal);
 			this.$emit('update:refresherStatus', newVal);
-		},
-		moveDis(newVal, oldVal){
-			this.oldMoveDis = oldVal;
 		}
 	},
 	computed: {
@@ -319,7 +324,7 @@ const ZPRefresher = {
 			this.refresherStatusChangedFunc = func;
 		},
 		//自定义下拉刷新被触发
-		_onRefresh(fromScrollView=false,isUserPullDown=true) {
+		_onRefresh(fromScrollView = false,isUserPullDown = true) {
 			if (fromScrollView && !(this.finalRefresherEnabled && !this.useCustomRefresher)) return;
 			this.$emit('onRefresh');
 			this.$emit('Refresh');
@@ -339,11 +344,7 @@ const ZPRefresher = {
 			this._startLoading(true);
 			this.refresherTriggered = true;
 			if(this.reloadWhenRefresh && isUserPullDown){
-				if (this.useChatRecordMode) {
-					this._onLoadingMore('click')
-				} else {
-					this._reload(false, false, isUserPullDown);
-				}
+				this.useChatRecordMode ? this._onLoadingMore('click') : this._reload(false, false, isUserPullDown);
 			}
 		},
 		//自定义下拉刷新被复位
@@ -429,7 +430,6 @@ const ZPRefresher = {
 			this.refresherReachMaxAngle = true;
 			this.isTouchmovingTimeout && clearTimeout(this.isTouchmovingTimeout);
 			this.isTouchmoving = true;
-			//this.refresherTransition = '';
 			this.isTouchEnded = false;
 			this.refresherStatus = moveDis >= this.finalRefresherThreshold ? Enum.Refresher.ReleaseToRefresh : this.refresherStatus = Enum.Refresher.Default;
 			// #ifndef APP-VUE || MP-WEIXIN || MP-QQ  || H5
@@ -461,8 +461,9 @@ const ZPRefresher = {
 			this.refresherReachMaxAngle = true;
 			this.isTouchEnded = true;
 			if (moveDis >= this.finalRefresherThreshold && this.refresherStatus === Enum.Refresher.ReleaseToRefresh) {
-				// #ifndef APP-VUE || MP-WEIXIN || MP-QQ  || H5
+				// #ifndef APP-VUE || MP-WEIXIN || MP-QQ || H5
 				this.refresherTransform = `translateY(${this.finalRefresherThreshold}px)`;
+				this.refresherTransition = 'transform .1s linear';
 				// #endif
 				this.moveDis = this.finalRefresherThreshold;
 				this.refresherStatus = Enum.Refresher.Loading;
@@ -484,10 +485,12 @@ const ZPRefresher = {
 			}
 		},
 		//处理scroll-view bounce是否生效
-		_handleScrollViewDisableBounce(e) {
+		_handleScrollViewDisableBounce({ bounce }) {
 			if (!this.usePageScroll && !this.scrollToTopBounceEnabled) {
+				// #ifdef APP-VUE || MP-WEIXIN || MP-QQ || H5
 				this.refresherTransition = '';
-				this.scrollEnable = e.bounce;
+				// #endif
+				this.scrollEnable = bounce;
 			}
 		},
 		//wxs正在下拉状态改变处理
@@ -498,15 +501,15 @@ const ZPRefresher = {
 			}
 		},
 		//wxs正在下拉处理
-		_handleWxsPullingDown(e){
-			this._emitTouchmove({pullingDistance:e.moveDis,dy:e.diffDis});
+		_handleWxsPullingDown({ moveDis, diffDis }){
+			this._emitTouchmove({pullingDistance:moveDis,dy:diffDis});
 		},
 		//wxs触摸方向改变
-		_handleTouchDirectionChange(e) {
-			this.$emit('touchDirectionChange',e.direction);
+		_handleTouchDirectionChange({ direction }) {
+			this.$emit('touchDirectionChange',direction);
 		},
 		//wxs通知更新其props
-		_handlePropUpdate(e){
+		_handlePropUpdate(){
 			this.wxsPropType = u.getTime().toString();
 		},
 		//下拉刷新结束
@@ -519,7 +522,7 @@ const ZPRefresher = {
 				const refresherStatus = refresherCompleteDelay > 0 ? Enum.Refresher.Complete : Enum.Refresher.Default;
 				if (this.finalShowRefresherWhenReload) {
 					const stackCount = this.refresherRevealStackCount;
-					this.refresherRevealStackCount--;
+					this.refresherRevealStackCount --;
 					if (stackCount > 1) return;
 				}
 				this._cleanRefresherEndTimeout();
@@ -542,6 +545,7 @@ const ZPRefresher = {
 					this.refresherTransition = `transform ${fromAddData ? animateDuration : this.refresherDefaultDuration / 1000}s ${animateType}`;
 					// #ifndef APP-VUE || MP-WEIXIN || MP-QQ  || H5
 					this.refresherTransform = 'translateY(0px)';
+					this.currentDis = 0;
 					// #endif
 					// #ifdef APP-VUE || MP-WEIXIN || MP-QQ || H5
 					this.wxsPropType = this.refresherTransition + 'end' + u.getTime();
@@ -584,7 +588,7 @@ const ZPRefresher = {
 				return;
 			}
 			// #endif
-			this.refresherRevealStackCount++;
+			this.refresherRevealStackCount ++;
 			// #ifndef APP-VUE || MP-WEIXIN || MP-QQ  || H5
 			this.refresherTransform = `translateY(${this.finalRefresherThreshold}px)`;
 			// #endif
@@ -598,19 +602,26 @@ const ZPRefresher = {
 			this._doRefresherLoad(false);
 		},
 		//触发下拉刷新
-		_doRefresherLoad(isUserPullDown=true) {
+		_doRefresherLoad(isUserPullDown = true) {
 			this._onRefresh(false,isUserPullDown);
 			this.loading = true;
 		},
+		// #ifndef APP-VUE || MP-WEIXIN || MP-QQ || H5
 		//获取处理后的moveDis
 		_getFinalRefresherMoveDis(moveDis) {
-			moveDis = moveDis * this.finalRefresherPullRate;
-			if (moveDis >= this.finalRefresherThreshold) {
-				moveDis = this.finalRefresherThreshold + (moveDis - this.finalRefresherThreshold) * (1 - this.finalRefresherOutRate);
+			let diffDis = moveDis - this.oldCurrentMoveDis;
+			this.oldCurrentMoveDis = moveDis;
+			if (diffDis > 0) {
+				diffDis = diffDis * this.finalRefresherPullRate;
+				if (this.currentDis > this.finalRefresherThreshold) {
+					diffDis = diffDis * (1 - this.finalRefresherOutRate);
+				}
 			}
-			return moveDis;
+			diffDis = diffDis > 100 ? diffDis / 100 : diffDis;
+			this.currentDis += diffDis;
+			this.currentDis = Math.max(0, this.currentDis);
+			return this.currentDis;
 		},
-		// #ifndef APP-VUE || MP-WEIXIN || MP-QQ || H5
 		//判断touch手势是否要触发
 		_touchDisabled() {
 			const checkOldScrollTop = this.oldScrollTop > 5;
@@ -620,14 +631,8 @@ const ZPRefresher = {
 		//更新自定义下拉刷新view高度
 		_updateCustomRefresherHeight() {
 			this._getNodeClientRect('.zp-custom-refresher-slot-view').then((res) => {
-				if (res) {
-					this.customRefresherHeight = res[0].height;
-					if (this.customRefresherHeight > 0) {
-						this.showCustomRefresher = true;
-					}
-				} else {
-					this.customRefresherHeight = 0;
-				}
+				this.customRefresherHeight = res ? res[0].height : 0;
+				this.showCustomRefresher = this.customRefresherHeight > 0;
 				if (this.doRefreshAnimateAfter) {
 					this.doRefreshAnimateAfter = false;
 					this._doRefresherRefreshAnimate();
@@ -655,5 +660,3 @@ const ZPRefresher = {
 		},
 	}
 }
-
-export default ZPRefresher;

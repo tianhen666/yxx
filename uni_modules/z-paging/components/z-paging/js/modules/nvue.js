@@ -6,7 +6,7 @@ import Enum from '.././z-paging-enum'
 // #ifdef APP-NVUE
 const weexAnimation = weex.requireModule('animation');
 // #endif
-const ZPNvue = {
+export default {
 	props: {
 		// #ifdef APP-NVUE
 		//nvue中修改列表类型，可选值有list、waterfall和scroller，默认为list
@@ -78,7 +78,9 @@ const ZPNvue = {
 	watch: {
 		nIsFirstPageAndNoMore: {
 			handler(newVal) {
-				this.$emit('update:cellStyle', !this.useChatRecordMode || newVal ? {} : {transform: 'rotate(180deg)'});
+				const cellStyle = !this.useChatRecordMode || newVal ? {} : {transform: 'rotate(180deg)'};
+				this.$emit('update:cellStyle', cellStyle);
+				this.$emit('cellStyleChange', cellStyle);
 			},
 			immediate: true
 		}
@@ -115,6 +117,9 @@ const ZPNvue = {
 		},
 		nSafeAreaBottomHeight() {
 			return this.safeAreaInsetBottom ? this.safeAreaBottom : 0;
+		},
+		nChatRecordRotateStyle() {
+			return this.useChatRecordMode ? { transform: this.nIsFirstPageAndNoMore ? 'rotate(0deg)' : 'rotate(180deg)' } : {};
 		},
 		finalNvueListIs() {
 			if (this.usePageScroll) return 'view';
@@ -160,7 +165,7 @@ const ZPNvue = {
 			this.refresherStatus = pullingDis >= viewHeight ? Enum.Refresher.ReleaseToRefresh : Enum.Refresher.Default;
 		},
 		//下拉刷新结束
-		_nRefresherEnd(doEnd=true) {
+		_nRefresherEnd(doEnd = true) {
 			if (doEnd) {
 			   this._nDoRefresherEndAnimation(0, -this.nShowRefresherRevealHeight); 
 			   !this.usePageScroll && this.$refs['zp-n-list'].resetLoadmore();
@@ -185,7 +190,7 @@ const ZPNvue = {
 			}
 			const stackCount = this.refresherRevealStackCount;
 			if (height === 0 && checkStack) {
-				this.refresherRevealStackCount--;
+				this.refresherRevealStackCount --;
 				if (stackCount > 1) return;
 				this.refresherEndTimeout = setTimeout(() => {
 					this.refresherStatus = Enum.Refresher.Default;
@@ -233,10 +238,7 @@ const ZPNvue = {
 				this.$nextTick(()=>{
 					this._getNodeClientRect('.zp-n-list').then(node => {
 						if (node) {
-							const nodeWidth = node[0].width;
-							if (nodeWidth) {
-								this.nRefresherWidth = nodeWidth;
-							}
+							this.nRefresherWidth = node[0].width ? node[0].width : this.nRefresherWidth;
 						}
 					})
 				})
@@ -245,5 +247,3 @@ const ZPNvue = {
 		// #endif
 	}
 }
-
-export default ZPNvue;

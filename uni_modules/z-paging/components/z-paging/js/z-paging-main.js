@@ -244,10 +244,10 @@ export default {
 			},
 			immediate: true
 		},
-		autoHeight(newVal, oldVal) {
+		autoHeight(newVal) {
 			this.loaded && !this.usePageScroll && this._setAutoHeight(newVal);
 		},
-		autoHeightAddition(newVal, oldVal) {
+		autoHeightAddition(newVal) {
 			this.loaded && !this.usePageScroll && this.autoHeight && this._setAutoHeight(newVal);
 		},
 	},
@@ -366,8 +366,26 @@ export default {
 				this.$refs['zp-n-list'].setSpecialEffects(args);
 			}
 		},
+		//使手机发生较短时间的振动（15ms）
+		_doVibrateShort() {
+			// #ifdef APP-PLUS
+			if (this.isIos) {
+				const UISelectionFeedbackGenerator = plus.ios.importClass('UISelectionFeedbackGenerator');
+				const feedbackGenerator = new UISelectionFeedbackGenerator();
+				feedbackGenerator.init();
+				setTimeout(() => {
+					feedbackGenerator.selectionChanged();
+				},0)
+			} else {
+				plus.device.vibrate(15);
+			}
+			// #endif
+			// #ifndef APP-PLUS
+			uni.vibrateShort();
+			// #endif
+		},
 		//检测scrollView是否要铺满屏幕
-		_doCheckScrollViewShouldFullHeight(totalData){
+		_doCheckScrollViewShouldFullHeight(totalData) {
 			if (this.autoFullHeight && this.usePageScroll && this.isTotalChangeFromAddData) {
 				// #ifndef APP-NVUE
 				this.$nextTick(() => {
@@ -456,11 +474,7 @@ export default {
 			return new Promise((resolve, reject) => {
 				if (ref) {
 					weexDom.getComponentRect(ref, option => {
-						if (option && option.result) {
-							resolve([option.size]);
-						} else {
-							resolve(false);
-						}
+						resolve(option && option.result ? [option.size] : false);
 					})
 				} else {
 					resolve(false);
@@ -472,11 +486,7 @@ export default {
 			inThis = false;
 			//#endif
 			let res = inThis ? uni.createSelectorQuery().in(this) : uni.createSelectorQuery();
-			if (scrollOffset) {
-				res.select(select).scrollOffset();
-			} else {
-				res.select(select).boundingClientRect();
-			}
+			scrollOffset ? res.select(select).scrollOffset() : res.select(select).boundingClientRect();
 			return new Promise((resolve, reject) => {
 				res.exec(data => {
 					resolve((data && data != '' && data != undefined && data.length) ? data : false);

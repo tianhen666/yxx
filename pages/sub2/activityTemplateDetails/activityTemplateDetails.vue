@@ -20,7 +20,7 @@
 			<!-- 时间 -->
 			<view class="time">
 				时间：{{
-					dayjs(dataObj.startDt).format('YYYY年M月D日') + '  至  ' + dayjs(dataObj.endDt).format('YYYY年M月D日')
+					dayjs().format('YYYY年M月D日') + '  至  ' + dayjs().add(30,'days').format('YYYY年M月D日')
 				}}
 			</view>
 			<!-- 参与人 -->
@@ -106,17 +106,13 @@
 				class="useM"
 				@tap.stop="navigateTo(`/pages/sub2/addActivityTemplate/addActivityTemplate?addTemplate=1&id=${dataId}`)"
 			>
-				选择此模板，马上制作>
+				使用此模板，马上制作活动>
 			</view>
 		</view>
 	</view>
 
 	<!-- 普通弹窗 -->
-	<uni-popup ref="popupObj">
-		<view class="popup-content" type="center">
-			<text class="text">{{ dataObj.description }}</text>
-		</view>
-	</uni-popup>
+	<m-popup ref="popupObj" :content="dataObj.description"></m-popup>
 </template>
 
 <script setup>
@@ -168,14 +164,14 @@ const enrollformGetinfo = () => {
 		dataObj.value['myType'] = '活动'
 
 		// 倒计时
-		const timeDjs = dayjs(dataObj.value.endDt)
+		const timeDjs = dayjs(dayjs().add(30,'days'))
 		djsFun(timeDjs)
 
 		// 数据加载结束
 		loading.value = false
 
 		// 弹出提示
-		popupObj.value.open()
+		popupObj.value.popupfun()
 	})
 }
 
@@ -201,19 +197,6 @@ const preview = () => {
 </script>
 
 <style lang="scss" scoped>
-/* 弹出框 */
-.popup-content {
-	background-color: #fff;
-	border-radius: 16rpx;
-	overflow: hidden;
-	padding: 32rpx;
-	max-width: 500rpx;
-	max-height: 500rpx;
-	overflow-y: auto;
-	.text {
-		font-size: 28rpx;
-	}
-}
 
 .banner_img {
 	> .image {
@@ -446,8 +429,9 @@ const preview = () => {
 
 .useM {
 	margin-top: 40rpx;
-	padding: 20rpx 0;
+	padding: 28rpx 0;
 	text-align: center;
-	color: #aaa;
+	background-color: #{$main-color}99;
 }
+
 </style>

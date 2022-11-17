@@ -24,27 +24,29 @@
 				<view class="title">{{ item.title }}</view>
 			</view>
 
-			<!-- 按钮 -->
-			<view class="box">
-				<view class="sales">已参与 {{ item.infocount || 0 }}</view>
+			<!-- 出售 -->
+			<view class="sales">已参与 {{ item.infocount || 0 }}</view>
 
-				<view class="btn">
-					<view class="btn_item style1" @tap="wxWxqrCode(item, index)" v-if="item.status === 0">活动码</view>
-					<view class="btn_item style2" @tap="enrollformDisable(item, index)" v-if="item.status === 0">下架后编辑</view>
-					<view
-						v-if="item.status === 1"
-						class="btn_item style1"
-						@tap="
-							navigateTo(
-								`/pages/sub2/manageActivityIpnut/manageActivityIpnut?id=${item.id}&prevCurrentIndex=${currentIndex}`
-							)
-						"
-					>
-						编辑
-					</view>
-					<view class="btn_item style2" @tap="enrollformEnable(item, index)" v-if="item.status === 1">启用</view>
-					<view class="btn_item style3" @tap="enrollformDelete(item, index)" v-if="item.status === 1">删除</view>
+			<!-- 按钮 -->
+			<view class="btn">
+				<view class="btn_item style4" @tap.stop.prevent="navigateTo(`/pages/sub1/activityInfo/activityInfo?targetId=${item.id}`)">
+					查看
 				</view>
+				<view class="btn_item style1" @tap.stop.prevent="wxWxqrCode(item, index)" v-if="item.status === 0">活动码</view>
+				<view class="btn_item style2" @tap.stop.prevent="enrollformDisable(item, index)" v-if="item.status === 0">下架后编辑</view>
+				<view
+					v-if="item.status === 1"
+					class="btn_item style1"
+					@tap.stop.prevent="
+						navigateTo(
+							`/pages/sub2/manageActivityIpnut/manageActivityIpnut?id=${item.id}&prevCurrentIndex=${currentIndex}`
+						)
+					"
+				>
+					编辑
+				</view>
+				<view class="btn_item style2" @tap.stop.prevent="enrollformEnable(item, index)" v-if="item.status === 1">启用</view>
+				<view class="btn_item style3" @tap.stop.prevent="enrollformDelete(item, index)" v-if="item.status === 1">删除</view>
 			</view>
 		</view>
 	</view>
@@ -247,38 +249,40 @@ const wxWxqrCode = item => {
 				@include singleLineTextOverHidden;
 			}
 		}
-		> .box {
+		> .sales {
+			color: $uni-secondary-color;
+			font-size: 26rpx;
+			margin: 0 24rpx;
+		}
+		> .btn {
 			margin: $padding;
 			@include mFlex;
-			justify-content: space-between;
-			> .sales {
-				color: $uni-secondary-color;
+			justify-content: flex-end;
+			> .btn_item {
+				padding: 16rpx 30rpx;
+				text-align: center;
+				border-radius: 100rpx;
 				font-size: 26rpx;
+				margin-right: 25rpx;
+				&:last-child {
+					margin-right: 0;
+				}
 			}
-			> .btn {
-				> .btn_item {
-					padding: 16rpx 30rpx;
-					display: inline-block;
-					text-align: center;
-					border-radius: 100rpx;
-					font-size: 26rpx;
-					margin-right: 20rpx;
-					&:last-child {
-						margin-right: 0;
-					}
-				}
-				> .style1 {
-					background-color: $main-color;
-					color: #ffffff;
-				}
-				> .style2 {
-					color: $uni-secondary-color;
-					border: 1px solid $uni-border-3;
-				}
-				> .style3 {
-					background-color: $sub-color;
-					color: #ffffff;
-				}
+			> .style1 {
+				background-color: $main-color;
+				color: #ffffff;
+			}
+			> .style2 {
+				color: $uni-secondary-color;
+				border: 1px solid $uni-border-3;
+			}
+			> .style3 {
+				background-color: $sub-color;
+				color: #ffffff;
+			}
+			> .style4 {
+				background-color: rgb(0, 168, 112);
+				color: #ffffff;
 			}
 		}
 	}

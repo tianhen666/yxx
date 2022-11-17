@@ -14,6 +14,17 @@
 			</uni-forms-item>
 			<view class="blank32 blank_bg_color"></view>
 
+			<!-- 是否在商城中显示 -->
+			<uni-forms-item label="是否限购">
+				<switch
+					color="#4b8eff"
+					:checked="parseInt(formData.exhibition) === 1"
+					style="transform:scale(0.8)"
+					@change="formData.exhibition = parseInt(formData.exhibition) === 1 ? 0 : 1"
+				/>
+				<view class="tips"><text>开启选项，显示在商城页面\n关闭选项，显示在首页</text></view>
+			</uni-forms-item>
+
 			<!-- 相关商品 -->
 			<uni-forms-item :label="rules.productId.label" name="productId" label-position="top">
 				<m-xiangguan-goods />
@@ -126,5 +137,11 @@ const { chooseSuccess: chooseSuccess1, picList: picList1, selectNum: selectNum1 
 }
 .container {
 	width: 750rpx;
+}
+.tips {
+	color: #999;
+	font-size: 26rpx;
+	padding-top: 20rpx;
+	line-height: 1.6;
 }
 </style>

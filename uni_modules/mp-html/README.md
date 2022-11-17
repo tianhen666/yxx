@@ -132,6 +132,8 @@
 | getRect | 获取富文本内容的位置和大小 |
 | setContent | 设置富文本内容 |
 | imgList | 获取所有图片的数组 |
+| pauseMedia | 暂停播放音视频（[2.2.2+](https://jin-yufeng.gitee.io/mp-html/#/changelog/changelog#v222)） |
+| setPlaybackRate | 设置音视频播放速率（[2.4.0+](https://jin-yufeng.gitee.io/mp-html/#/changelog/changelog#v240)） |
 
 查看 [api](https://jin-yufeng.gitee.io/mp-html/#/advanced/api) 了解更多
 
@@ -151,7 +153,7 @@
 | img-cache | 图片缓存 by [@PentaTea](https://github.com/PentaTea) |
 | latex | 渲染 latex 公式 by [@Zeng-J](https://github.com/Zeng-J) |
 
-从插件市场导入的包中 **不含有** 扩展插件，需要使用插件参考以下方法：  
+从插件市场导入的包中 **不含有** 扩展插件，使用插件需通过微信小程序 `富文本插件` 获取或参考以下方法进行打包：  
 1. 获取完整组件包  
    ```bash
    npm install mp-html

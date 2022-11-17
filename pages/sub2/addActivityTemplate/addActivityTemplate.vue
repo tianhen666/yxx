@@ -208,7 +208,7 @@
 			<uni-forms-item label-position="top" :label="rules.description.label" name="description" v-if="addTemplate == 0">
 				<fuck-textarea v-model="formData.description" :placeholder="rules.description.rules[0].errorMessage" />
 			</uni-forms-item>
-			<view class="blank32 blank_bg_color"></view>
+			<view class="blank32 blank_bg_color" v-if="addTemplate == 0"></view>
 
 			<!-- 排序 -->
 			<!-- 	<uni-forms-item :label="rules.sort.label" name="sort">
@@ -224,6 +224,9 @@
 			@btnClick="enrollFormTemplateSaveEnrollForm()"
 		/>
 	</view>
+
+	<!-- 普通弹窗 -->
+	<m-popup ref="popupObj" content="此为活动模板&#10;请门诊根据自己情况修改&#10;然后保存信息"></m-popup>
 </template>
 
 <script setup>
@@ -238,6 +241,9 @@ import { navigateTo, showToastText } from '@/aTemp/utils/uniAppTools.js'
 import { _debounce } from '@/aTemp/utils/tools.js'
 import dayjs from 'dayjs'
 
+// 弹出层
+const popupObj = ref(null)
+
 // 数据ID
 const dataId = ref(0)
 // 表单数据
@@ -251,7 +257,7 @@ const formData = ref({
 	price: 0, // 价格
 	showShare: 1, //是否显示分佣
 	least: 2, //最低拼团人数
-	sort: 1, //排序
+	sort: 0, //排序
 	sharePriceType: 0 // 0分佣给第一个邀请人，1分佣给最新邀请人
 })
 // 获取表单对象
@@ -293,6 +299,14 @@ onLoad(optios => {
 			const { data } = res
 			// 数据赋值
 			formData.value = data.getinfo
+			formData.value.startDt = dayjs().format('YYYY-MM-DD HH:mm:ss')
+			formData.value.endDt = dayjs()
+				.add(30, 'days')
+				.format('YYYY-MM-DD HH:mm:ss')
+				
+				
+			// 弹出提示
+			popupObj.value.popupfun()
 		})
 	}
 })
@@ -395,7 +409,7 @@ const rules = {
 	},
 	postPic: {
 		rules: [{ errorMessage: '请上传活动海报图' }],
-		label: '活动【海报图】'
+		label: '海报图'
 	},
 	content: {
 		rules: [{ required: true, errorMessage: '请输入活动介绍' }],
@@ -403,7 +417,7 @@ const rules = {
 	},
 	details: {
 		rules: [{ errorMessage: '请上传活动详情图' }],
-		label: '活动【详情图】'
+		label: '详情图'
 	},
 	sharePriceType: {
 		rules: [{ required: true, errorMessage: '请选择分佣方式' }],

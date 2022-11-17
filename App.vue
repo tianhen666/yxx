@@ -40,8 +40,8 @@ onLaunch(async options => {
 	 * 获取进入小程序参数
 	 * invitationCode 邀请人id
 	 * storeId 店铺ID
-	 * Mscene 0直接邀请 1活动 2商品 3服务 4海报 5员工邀请 6店铺入驻邀请 7预约分享
-	 * const Mscene = ["直接邀请","活动邀请","商品邀请","服务邀请","海报邀请","员工邀请","店铺入驻邀请","预约分享"]
+	 * Mscene 0直接邀请 1活动 2商品 3服务 4海报 5员工邀请 6店铺入驻邀请 7预约分享 8文章邀请
+	 * const Mscene = ["直接邀请","活动邀请","商品邀请","服务邀请","海报邀请","员工邀请","店铺入驻邀请","预约分享","文章邀请"]
 	 * targetId 场景来源ID
 	 */
 	// console.log(options.query)
@@ -76,6 +76,8 @@ onLaunch(async options => {
 	// 兼容朋友圈打开小程序
 	if (options.scene == 1154) {
 		useUserMain.$patch({ storeId: storeId })
+		// 放行同步方法
+		proxy.$isResolve()
 	} else if (options.scene == 1155 && options.path != 'pages/main/index/index') {
 		// 从朋友圈进入小程序
 

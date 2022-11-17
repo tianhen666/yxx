@@ -1,7 +1,7 @@
 // [z-paging]使用页面滚动时引入此mixin，用于监听和处理onPullDownRefresh等页面生命周期方法
 
-const ZPagingMixin = {
-	onPullDownRefresh() {z
+export default {
+	onPullDownRefresh() {
 		if (this.isPagingRefNotFound()) return;
 		this.$refs.paging.reload();
 	},
@@ -18,9 +18,7 @@ const ZPagingMixin = {
 	},
 	methods: {
 		isPagingRefNotFound() {
-			return !this.$refs.paging || this.$refs.paging === undefined;
+			return !this.$refs.paging;
 		}
 	}
 }
-
-export default ZPagingMixin;

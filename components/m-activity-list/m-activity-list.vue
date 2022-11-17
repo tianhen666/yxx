@@ -8,7 +8,18 @@
 		>
 			<!-- 封面图 -->
 			<view class="activity_item_img">
-				<image class="image" :src="item.mainPic" mode="aspectFill"></image>
+				<video
+					id="myVideo"
+					class="myVideo"
+					:src="item.imgs"
+					@error="showToastText('视频加载失败')"
+					:controls="false"
+					autoplay
+					loop
+					v-if="item.imgs"
+				></video>
+				<image v-else class="image" :src="item.mainPic" mode="aspectFill"></image>
+				
 				<!-- 活动类型 -->
 				<view class="type">
 					<image class="image" :src="`/static/images/type${(index % 2) + 1}.png`" mode="aspectFill"></image>
@@ -122,6 +133,14 @@ const props = defineProps({
 			border-radius: 20rpx;
 			overflow: hidden;
 			> .image {
+				border-radius: 20rpx;
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				top: 0;
+				left: 0;
+			}
+			>.myVideo{
 				border-radius: 20rpx;
 				position: absolute;
 				width: 100%;

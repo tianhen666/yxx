@@ -1,6 +1,6 @@
 <template>
 	<view class="container">
-		<view class="container_item" v-for="(item, index) in listData" :key="index" @tap.stop="popFun(item.id)">
+		<view class="container_item" v-for="(item, index) in listData" :key="index">
 			<view class="container_item_left">
 				<image class="image" :src="item.avatar || '/static/images/default_avatar.png'" mode="aspectFill"></image>
 				<view class="index" :class="'style' + (index + 1)" v-if="index < 10">{{ index + 1 }}</view>
@@ -13,15 +13,15 @@
 					<text class="style3" v-else>用户</text> -->
 				</view>
 				<view class="container_item_right_box">
-					<view class="container_item_right_box_item">
-						共邀请
+					<view class="container_item_right_box_item" @tap.stop="popFun(item.id, 0)">
+						曝光
 						<text>{{ item.activityCount }}人</text>
 					</view>
-					<view class="container_item_right_box_item">
+					<view class="container_item_right_box_item" @tap.stop="popFun(item.id, 1)">
 						登录
 						<text>{{ item.empower }}人</text>
 					</view>
-					<view class="container_item_right_box_item">
+					<view class="container_item_right_box_item" @tap.stop="popFun(item.id, 2)">
 						参与
 						<text>{{ item.participate }}人</text>
 					</view>
@@ -41,8 +41,8 @@ const props = defineProps({
 })
 const emit = defineEmits(['popFun'])
 
-const popFun = userId => {
-	emit('popFun', userId)
+const popFun = (userId, index) => {
+	emit('popFun', userId, index)
 }
 </script>
 

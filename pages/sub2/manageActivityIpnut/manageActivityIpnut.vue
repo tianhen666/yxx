@@ -37,6 +37,19 @@
 			</uni-forms-item>
 			<view class="blank32 blank_bg_color"></view>
 
+			<!-- 活动封面视频 -->
+			<uni-forms-item :label="rules.imgs.label" label-position="top" name="imgs">
+				<htz-image-upload
+					:max="selectNum5"
+					v-model="picList5"
+					mediaType="video"
+					:action="uploadimageURL5"
+					:formData="{ baseDir: baseDir5 }"
+					@uploadSuccess="uploadSuccess5"
+				/>
+			</uni-forms-item>
+			<view class="blank32 blank_bg_color"></view>
+
 			<!-- 开始时间 -->
 			<uni-forms-item :label="rules.startDt.label" name="startDt">
 				<uni-datetime-picker
@@ -109,22 +122,22 @@
 					style="transform:scale(0.8)"
 					@change="formData.showShare = Math.abs(parseInt(formData.showShare) - 1)"
 				/>
-				<view class="tips">
-					<text>开启选项，前端显示分佣金额\n关闭选项，前端不显示分佣金额</text>
-				</view>
+				<view class="tips"><text>开启选项，前端显示分佣金额\n关闭选项，前端不显示分佣金额</text></view>
 			</uni-forms-item>
-			
+
 			<!-- 分佣方式 -->
-			<uni-forms-item v-if="formData.type === 1 || formData.type === 2" :label="rules.sharePriceType.label" name="sharePriceType">
+			<uni-forms-item
+				v-if="formData.type === 1 || formData.type === 2"
+				:label="rules.sharePriceType.label"
+				name="sharePriceType"
+			>
 				<switch
 					color="#4b8eff"
 					:checked="parseInt(formData.sharePriceType) === 0"
 					style="transform:scale(0.8)"
 					@change="formData.sharePriceType = Math.abs(parseInt(formData.sharePriceType) - 1)"
 				/>
-				<view class="tips">
-					<text>开启选项，分佣给第一邀请人\n关闭选项，分佣给最新邀请人</text>
-				</view>
+				<view class="tips"><text>开启选项，分佣给第一邀请人\n关闭选项，分佣给最新邀请人</text></view>
 			</uni-forms-item>
 
 			<!-- 最低拼团人数 -->
@@ -140,9 +153,7 @@
 					style="transform:scale(0.8)"
 					@change="formData.limitCount = parseInt(formData.limitCount) > 0 ? 0 : 1"
 				/>
-				<view class="tips">
-					<text>开启选项，输入限购数量\n关闭选项，不限购</text>
-				</view>
+				<view class="tips"><text>开启选项，输入限购数量\n关闭选项，不限购</text></view>
 			</uni-forms-item>
 
 			<!-- 限购数量 -->
@@ -225,8 +236,8 @@ const formData = ref({
 	price: 0, // 价格
 	showShare: 1, //是否显示分佣
 	least: 2, //最低拼团人数
-	sort: 1 ,//排序
-	sharePriceType:0 // 0分佣给第一个邀请人，1分佣给最新邀请人
+	sort: 1, //排序
+	sharePriceType: 0 // 0分佣给第一个邀请人，1分佣给最新邀请人
 })
 // 获取表单对象
 const formObj = ref(null)
@@ -269,6 +280,10 @@ onLoad(optios => {
 
 // 表单校验
 const rules = {
+	imgs: {
+		rules: [{ errorMessage: '请上传活动视频' }],
+		label: '活动视频'
+	},
 	views: {
 		rules: [{ errorMessage: '请输入虚拟人数' }],
 		label: '虚拟人数'
@@ -447,6 +462,21 @@ const {
 	selectNum: 5,
 	baseDir: 'active'
 })
+
+// 活动海报图
+const {
+	uploadSuccess: uploadSuccess5,
+	picList: picList5,
+	selectNum: selectNum5,
+	uploadimageURL: uploadimageURL5,
+	baseDir: baseDir5
+} = useHtzImageUpload({
+	url: '/upload-flv/uploadVideo',
+	refData: formData,
+	param: 'imgs',
+	selectNum: 1,
+	baseDir: 'active'
+})
 </script>
 
 <style lang="scss" scoped>
@@ -499,10 +529,10 @@ const {
 		font-size: 26rpx;
 	}
 }
-.tips{
-		color:#999;
-		font-size: 26rpx;
-		padding-top: 20rpx;
-		line-height: 1.6;
-	}
+.tips {
+	color: #999;
+	font-size: 26rpx;
+	padding-top: 20rpx;
+	line-height: 1.6;
+}
 </style>

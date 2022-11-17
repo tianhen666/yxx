@@ -1,7 +1,7 @@
 <template>
 	<!-- 提示登录组件 -->
 	<m-authorized-login ref="mLogin"></m-authorized-login>
-	
+
 	<!-- 加载提示 -->
 	<m-page-loading v-if="loading"></m-page-loading>
 	<!-- 背景 -->
@@ -31,8 +31,8 @@
 
 		<view class="container">
 			<!-- 轮播 -->
-			<m-carousel :listData="bannerListData"></m-carousel>
-			<view class="blank30"></view>
+			<m-carousel :listData="bannerListData"  v-if="bannerListData.length > 0"></m-carousel>
+			<view class="blank30" v-if="bannerListData.length > 0"></view>
 
 			<!-- 门诊信息 -->
 			<m-info :info="storeInfo"></m-info>
@@ -106,7 +106,7 @@ const serveListData = ref([])
 
 const getData = () => {
 	let ListData = Promise.all([
-		_bannerList({ sfuse: 0 }),
+		_bannerList({ sfuse: 0, exhibition: 0 }),
 		_storeGetinfo(),
 		_enrollformGetlist({ status: 0 }),
 		_serveGetlist()
@@ -228,8 +228,8 @@ onLoad(async options => {
 	 * 获取进入小程序参数
 	 * invitationCode 邀请人id
 	 * storeId 店铺ID
-	 * Mscene 0直接邀请 1活动 2商品 3服务 4海报 5员工邀请 6店铺入驻邀请 7预约分享
-	 * const Mscene = ["直接邀请","活动邀请","商品邀请","服务邀请","海报邀请","员工邀请","店铺入驻邀请","预约分享"]
+	 * Mscene 0直接邀请 1活动 2商品 3服务 4海报 5员工邀请 6店铺入驻邀请 7预约分享 8文章邀请
+	 * const Mscene = ["直接邀请","活动邀请","商品邀请","服务邀请","海报邀请","员工邀请","店铺入驻邀请","预约分享","文章邀请"]
 	 * targetId 场景来源ID
 	 */
 
@@ -247,7 +247,7 @@ onLoad(async options => {
 		// 跳转到目标--服务--页面
 		navigateTo(`/pages/sub1/serveInfo/serveInfo?${parmsStr}`)
 	} else if (Mscene === 4) {
-		// 跳转到目标--服务--页面
+		// 跳转到目标--海报--页面
 	} else if (Mscene === 5) {
 		// 跳转到目标--员工邀请--页面
 		navigateTo(`/pages/sub2/manageStaffListLogin/manageStaffListLogin?${parmsStr}`)
@@ -257,6 +257,9 @@ onLoad(async options => {
 	} else if (Mscene === 7) {
 		// 跳转到目标--预约分享--页面
 		navigateTo(`/pages/sub1/yuyue/yuyue?${parmsStr}`)
+	} else if (Mscene === 8) {
+		// 跳转到目标--文章邀请--页面
+		navigateTo(`/pages/sub1/newsDetails/newsDetails?${parmsStr}`)
 	}
 })
 </script>

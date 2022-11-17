@@ -93,7 +93,7 @@ const queryList = (pageNo, pageSize) => {
 			// 列表赋值
 			pagingObj.value.complete(res.data?.earningsrecord?.userlist || [])
 		})
-		.catch(res => {
+		.catch(error => {
 			pagingObj.value.complete(false)
 		})
 }

@@ -72,7 +72,7 @@
 			finalSwiperStyle() {
 				const swiperStyle = this.swiperStyle;
 				if (!this.systemInfo) return swiperStyle;
-				const windowTop = this.systemInfo.windowTop;
+				let windowTop = this.systemInfo.windowTop;
 				//暂时修复vue3中隐藏系统导航栏后windowTop获取不正确的问题，具体bug详见https://ask.dcloud.net.cn/question/141634
 				//感谢litangyu！！https://github.com/SmileZXLee/uni-z-paging/issues/25
 				// #ifdef VUE3 && H5
@@ -148,8 +148,8 @@
 					delayTime = 10;
 					// #endif
 					setTimeout(() => {
-						const query = uni.createSelectorQuery().in(this);
 						['left','right'].map(position => {
+							const query = uni.createSelectorQuery().in(this);
 							query.select(`.zp-swiper-${position}`).boundingClientRect(res => {
 								this.$set(this.swiperContentStyle, position, res ? res.width + 'px' : '0px');
 							}).exec();

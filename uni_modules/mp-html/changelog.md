@@ -1,3 +1,14 @@
+## v2.4.0（2022-08-27）
+1. `A` 增加了 [setPlaybackRate](https://jin-yufeng.gitee.io/mp-html/#/advanced/api#setPlaybackRate) 的 `api`，可以设置音视频的播放速率 [详细](https://github.com/jin-yufeng/mp-html/issues/452)
+2. `A` 示例小程序代码开源 [详细](https://github.com/jin-yufeng/mp-html-demo)
+3. `U` 优化 `ready` 事件触发时机，未设置懒加载的情况下基本可以准确触发 [详细](https://github.com/jin-yufeng/mp-html/issues/195)
+4. `U` `highlight` 插件在编辑状态下不进行高亮处理，便于编辑
+5. `F` 修复了 `flex` 布局下图片大小可能不正确的问题
+6. `F` 修复了 `selectable` 属性没有设置 `force` 也可能出现渲染异常的问题
+7. `F` 修复了表格中的图片大小可能不正确的问题 [详细](https://github.com/jin-yufeng/mp-html/issues/448)
+8. `F` 修复了含有合并单元格的表格可能无法设置竖直对齐的问题
+9. `F` 修复了 `editable` 插件在 `scroll-view` 中使用时工具条位置可能不正确的问题
+10. `F` 修复了 `vue3` 使用 [search](advanced/plugin#search) 插件可能导致错误换行的问题 [详细](https://github.com/jin-yufeng/mp-html/issues/449)
 ## v2.3.2（2022-08-13）
 1. `A` 增加 [latex](https://jin-yufeng.gitee.io/mp-html/#/advanced/plugin#latex) 插件，可以渲染数学公式 [详细](https://github.com/jin-yufeng/mp-html/pull/447) by [@Zeng-J](https://github.com/Zeng-J)
 2. `U` 优化根节点下有很多标签的长内容渲染速度

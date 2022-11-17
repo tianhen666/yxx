@@ -49,7 +49,7 @@ export default function(paramsObj) {
 				const dataObj = {
 					series: [{
 						data: [{
-							name: "浏览人数",
+							name: "曝光人数",
 							value: newVal.countNum,
 							legendShape: 'triangle'
 						}, {

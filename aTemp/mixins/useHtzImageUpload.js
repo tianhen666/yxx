@@ -108,7 +108,9 @@ export default function(paramsObj) {
 			msg
 		} = JSON.parse(res.data)
 
-		if (code !== 0) {
+
+		if (parseInt(code) !== 0 && parseInt(code) !== 200) {
+			uni.hideLoading()
 			showToastText("上传失败~")
 			return
 		}

@@ -51,7 +51,7 @@
 				<view class="time" v-if="item.status === 3">
 					完成时间: {{ dayjs(item.completeDt).format('YYYY-MM-DD HH:mm:ss') }}
 				</view>
-				<view class="item_btn style1" @tap.stop.prevent="makePhoneCall(item.mobile)">联系卖家</view>
+				<view class="item_btn style1" @tap.stop.prevent="makePhoneCall(item.mobile)">联系顾客</view>
 			</view>
 		</view>
 	</view>

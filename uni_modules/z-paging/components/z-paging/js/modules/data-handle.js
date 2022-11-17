@@ -4,7 +4,7 @@ import c from '.././z-paging-constant'
 import Enum from '.././z-paging-enum'
 import interceptor from '../z-paging-interceptor'
 
-const ZPData = {
+export default {
 	props: {
 		//自定义初始的pageNo，默认为1
 		defaultPageNo: {
@@ -315,10 +315,6 @@ const ZPData = {
 		},
 		//重新设置列表数据，调用此方法不会影响pageNo和pageSize，也不会触发请求。适用场景：当需要删除列表中某一项时，将删除对应项后的数组通过此方法传递给z-paging。(当出现类似的需要修改列表数组的场景时，请使用此方法，请勿直接修改page中:list.sync绑定的数组)
 		resetTotalData(data) {
-			if (data == undefined) {
-				u.consoleErr('方法resetTotalData参数缺失！');
-				return;
-			}
 			this.isTotalChangeFromAddData = true;
 			let dataType = Object.prototype.toString.call(data);
 			if (dataType !== '[object Array]') {
@@ -368,7 +364,10 @@ const ZPData = {
 				this.privateShowRefresherWhenReload = animate;
 				this.isUserPullDown = true;
 			}
-			this._preReload(animate, false);
+			this.listRendering = true;
+			this.$nextTick(() => {
+				this._preReload(animate, false);
+			})
 		},
 		//刷新列表数据，pageNo和pageSize不会重置，列表数据会重新从服务端获取。必须保证@query绑定的方法中的pageNo和pageSize和传给服务端的一致
 		refresh() {
@@ -739,5 +738,3 @@ const ZPData = {
 		},
 	}
 }
-
-export default ZPData;

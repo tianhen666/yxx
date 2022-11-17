@@ -6,8 +6,21 @@
 	<m-page-loading v-if="loading"></m-page-loading>
 
 	<view class="container" v-else>
+		<!-- 视频 -->
+		<view class="video_box" v-if="dataObj.imgs">
+			<video
+				id="myVideo"
+				class="myVideo"
+				:src="dataObj.imgs"
+				@error="showToastText('视频加载失败')"
+				:controls="false"
+				autoplay
+				loop
+			></video>
+		</view>
+
 		<!-- 封面图 -->
-		<view class="banner_img"><image class="image" :src="dataObj.mainPic" mode="aspectFill"></image></view>
+		<view class="banner_img" v-else><image class="image" :src="dataObj.mainPic" mode="aspectFill"></image></view>
 		<view class="blank24"></view>
 
 		<!-- 模块一 -->
@@ -136,28 +149,7 @@ onLoad(async options => {
 	// 等待onLaunch中放行后执行
 	await proxy.$onLaunched
 
-	let { invitationCode, storeId, Mscene, targetId, scene } = options
-	// 解析二维码中参数
-	if (scene) {
-		const codeParams = decodeURIComponent(scene)
-		const codeParamsList = codeParams.split('&')
-		const codeParamsObj = {}
-		codeParamsList.forEach(item => {
-			codeParamsObj[item.split('=')[0]] = item.split('=')[1]
-		})
-
-		// 覆盖上面几个参数值
-		invitationCode = codeParamsObj['i']
-		storeId = codeParamsObj['sd']
-		Mscene = codeParamsObj['s']
-		targetId = codeParamsObj['t']
-	}
-	console.log(
-		'活动页面---' + '邀请人ID：' + invitationCode,
-		'店铺id：' + storeId,
-		'场景值：' + Mscene,
-		'目标ID：' + targetId
-	)
+	let { targetId } = options
 
 	dataId.value = parseInt(targetId) || ''
 
@@ -276,7 +268,7 @@ const payConfirm = _debounce(
 			})
 			.catch(err => {
 				btnLoading.value = false
-				showToastText(err.msg||'参加失败')
+				showToastText(err.msg || '参加失败')
 				console.log(err)
 			})
 	},
@@ -466,6 +458,12 @@ const tapShare = () => {
 </script>
 
 <style lang="scss" scoped>
+	.video_box{
+		.myVideo{
+			width: 750rpx;
+			height: 750rpx * 0.8;
+		}
+	}
 .banner_img {
 	> .image {
 		width: 750rpx;

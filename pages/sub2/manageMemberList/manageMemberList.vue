@@ -175,7 +175,7 @@ watch(scene, (newVal, oldVal) => {
 	userDataStatistics()
 })
 
-// 0直接邀请 1活动 2商品 3服务 4海报 5员工邀请 6店铺入驻邀请 7预约分享
+// 0直接邀请 1活动 2商品 3服务 4海报 5员工邀请 6店铺入驻邀请 7预约分享 8文章邀请
 const dataTree = [
 	{
 		text: '直接邀请',
@@ -208,6 +208,10 @@ const dataTree = [
 	{
 		text: '预约邀请',
 		value: '7'
+	},
+	{
+		text: '文章邀请',
+		value: '8'
 	}
 ]
 

@@ -49,6 +49,14 @@
 			"enablePullDownRefresh": false
 		}
 
+	}, {
+		"path": "pages/main/news/news",
+		"style": {
+			"navigationBarTitleText": "口腔知识",
+			"enablePullDownRefresh": false,
+			"navigationStyle": "custom"
+		}
+
 	}],
 
 	// 子包 
@@ -178,7 +186,25 @@
 					"enablePullDownRefresh": false
 				}
 
-			}]
+			}    ,{
+                    "path" : "webView/webView",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
+                ,{
+                    "path" : "newsDetails/newsDetails",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "文章详情",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
+            ]
 		},
 		{
 			"root": "pages/sub2",
@@ -355,29 +381,32 @@
 					"enablePullDownRefresh": false
 				}
 
+			}, {
+				"path": "activityTemplate/activityTemplate",
+				"style": {
+					"navigationBarTitleText": "活动模板",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "addActivityTemplate/addActivityTemplate",
+				"style": {
+					"navigationBarTitleText": "添加活动模板",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "activityTemplateDetails/activityTemplateDetails",
+				"style": {
+					"navigationBarTitleText": "模板详情",
+					"enablePullDownRefresh": false
+				}
+
 			}    ,{
-                    "path" : "activityTemplate/activityTemplate",
+                    "path" : "newsList/newsList",
                     "style" :                                                                                    
                 {
-                    "navigationBarTitleText": "活动模板",
-                    "enablePullDownRefresh": false
-                }
-                
-                }
-                ,{
-                    "path" : "addActivityTemplate/addActivityTemplate",
-                    "style" :                                                                                    
-                {
-                    "navigationBarTitleText": "添加活动模板",
-                    "enablePullDownRefresh": false
-                }
-                
-                }
-                ,{
-                    "path" : "activityTemplateDetails/activityTemplateDetails",
-                    "style" :                                                                                    
-                {
-                    "navigationBarTitleText": "模板详情",
+                    "navigationBarTitleText": "文章列表",
                     "enablePullDownRefresh": false
                 }
                 
@@ -476,10 +505,10 @@
 			"selectedIconPath": "static/tabbar/slt_info.png",
 			"text": "门诊信息"
 		}, {
-			"pagePath": "pages/main/case/case",
+			"pagePath": "pages/main/news/news",
 			"iconPath": "static/tabbar/case.png",
 			"selectedIconPath": "static/tabbar/slt_case.png",
-			"text": "门诊案例"
+			"text": "口腔知识"
 		}, {
 			"pagePath": "pages/main/user/user",
 			"iconPath": "static/tabbar/user.png",

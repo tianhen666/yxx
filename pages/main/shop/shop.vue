@@ -25,9 +25,14 @@
 			<!-- #endif -->
 		</template>
 
-		<!-- 商品列表 -->
-		<!-- <m-shop-list :listData="listData" showBtn></m-shop-list> -->
-		<m-shop-list-1 :listData="listData"></m-shop-list-1>
+		<view class="container">
+			<!-- 轮播 -->
+			<m-carousel :listData="bannerListData" v-if="bannerListData.length > 0"></m-carousel>
+			<view class="blank40" v-if="bannerListData.length > 0"></view>
+			<!-- 商品列表 -->
+			<!-- <m-shop-list :listData="listData" showBtn></m-shop-list> -->
+			<m-shop-list-1 :listData="listData"></m-shop-list-1>
+		</view>
 	</z-paging>
 </template>
 
@@ -36,6 +41,8 @@ import { _storeproductGetlist } from '@/aTemp/apis/shop.js'
 import { onLoad, onShow } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import mShopList1 from './components/m-shop-list-1/m-shop-list-1.vue'
+import { _bannerList } from '@/aTemp/apis/banner'
+
 // 全局登录信息
 import { _useUserMain } from '@/aTemp/store/userMain.js'
 const useUserMain = _useUserMain()
@@ -44,6 +51,15 @@ const useUserMain = _useUserMain()
 const paging = ref(null)
 // 数据列表
 const listData = ref([])
+
+// 轮播图
+const bannerListData = ref([])
+
+onLoad(options => {
+	_bannerList({ sfuse: 0, exhibition: 1 }).then(res => {
+		bannerListData.value = res.data
+	})
+})
 
 // 后台获取数据
 const queryList = (pageNo, pageSize) => {

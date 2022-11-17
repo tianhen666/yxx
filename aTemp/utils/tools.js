@@ -64,9 +64,8 @@ export function _throttle(fun, delay) {
 
 // 倒计时
 export function _countDown(time, payTimer) {
-
 	let duration = dayjs.duration(dayjs(time) - dayjs())
-	let days = duration.days() < 10 ? '0' + duration.days() : duration.days()
+	let days = parseInt(duration.asDays()) < 10 ? '0' + parseInt(duration.asDays()) : parseInt(duration.asDays())
 	let hours = duration.hours() < 10 ? '0' + duration.hours() : duration.hours()
 	let minutes = duration.minutes() < 10 ? '0' + duration.minutes() : duration.minutes()
 	let seconds = duration.seconds() < 10 ? '0' + duration.seconds() : duration.seconds()

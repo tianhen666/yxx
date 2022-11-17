@@ -128,7 +128,7 @@ const selectClick = item => {
 			}
 			> .select_cover {
 				position: absolute;
-				z-index: 100;
+				z-index: 55;
 				width: 100%;
 				height: 100%;
 				left: 0;

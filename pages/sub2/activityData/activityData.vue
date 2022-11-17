@@ -1,6 +1,6 @@
 <template>
 	<!-- 禁止页面滚动 -->
-	<page-meta :page-style="'overflow:'+(popupStatus?'hidden':'visible')"></page-meta>
+	<page-meta :page-style="'overflow:' + (popupStatus ? 'hidden' : 'visible')"></page-meta>
 	<view class="container">
 		<view class="blank40"></view>
 
@@ -142,12 +142,14 @@
 	</view>
 
 	<!-- 普通弹窗 -->
-	<uni-popup ref="popupRef" type="center" @change='popupRefChange'>
+	<uni-popup ref="popupRef" type="center" @change="popupRefChange">
 		<view class="popup-content">
+			<view class="close" @tap.stop="popupRef.close()">
+				<image class="img" src="@/static/images/close1.png" mode="aspectFill"></image>
+			</view>
 			<m-user-list activityShow :listData="popupRefListData"></m-user-list>
 		</view>
 	</uni-popup>
-	
 </template>
 
 <script setup>
@@ -157,6 +159,7 @@ import qiunDataCharts from '@/pages/sub2/components/qiun-data-charts/components/
 import dayjs from 'dayjs'
 import { _enrollformGetlist, _storeproductActivityPopup } from '@/aTemp/apis/activity.js'
 import { _storeproductActivitystatistics } from '@/aTemp/apis/store.js'
+import { showToastText } from '@/aTemp/utils/uniAppTools.js'
 
 // 活动数据列表
 const categoryOption1 = ref([])
@@ -271,29 +274,51 @@ const {
 /**
  * 获取排行榜详情数据
  * */
- const popupRef = ref(null)
- const popupRefListData = ref([])
- const popupStatus = ref(false)
-const storeproductActivityPopup = userId => {
-	_storeproductActivityPopup({productid:productid.value,userId:userId}).then(res=>{
-		popupRefListData.value = res.data
+const popupRef = ref(null)
+const popupRefListData = ref([])
+const popupStatus = ref(false)
+const storeproductActivityPopup = (userId, index) => {
+	_storeproductActivityPopup({ productid: productid.value, userId: userId }).then(res => {
+		if (index === 0) {
+			popupRefListData.value = res.data.activityPopupAllUser
+		} else if (index === 1) {
+			popupRefListData.value = res.data.activityPopup
+		} else if (index === 2) {
+			popupRefListData.value = res.data.activityPopupParticipate
+		}
+
+		if (popupRefListData.value.length === 0) {
+			showToastText('没有数据')
+			return
+		}
 		popupRef.value.open()
 	})
 }
-const popupRefChange = (e)=>{
+const popupRefChange = e => {
 	popupStatus.value = e.show
 }
 </script>
 
 <style lang="scss" scoped>
-	.popup-content{
-		background-color: #fff;
-		overflow-y: auto;
-		width: 710rpx;
-		max-height: 1000rpx;
-		padding: $padding;
-		border-radius: 16rpx;
+.popup-content {
+	background-color: #fff;
+	overflow-y: auto;
+	width: 710rpx;
+	max-height: 1000rpx;
+	padding: $padding;
+	border-radius: 16rpx;
+	padding: 48rpx;
+	position: relative;
+	.close {
+		position: absolute;
+		top: 10rpx;
+		right: 10rpx;
+		.img {
+			width: 35rpx;
+			height: 35rpx;
+		}
 	}
+}
 .container {
 	.charts-box {
 		height: 480rpx;
