@@ -34,7 +34,7 @@ const btnClick = () => {
 	box-sizing: content-box;
 	.fix_warpper {
 		position: fixed;
-		z-index: 77;
+		z-index: 66;
 		width: 100%;
 		left: 0;
 		bottom: 0;

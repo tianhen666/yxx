@@ -9,13 +9,13 @@
 		<!-- 视频 -->
 		<view class="video_box" v-if="dataObj.imgs">
 			<video
-				id="myVideo"
+				id="myVideo0"
 				class="myVideo"
 				:src="dataObj.imgs"
-				@error="showToastText('视频加载失败')"
-				:controls="false"
-				autoplay
-				loop
+				:poster="dataObj.mainPic"
+				controls
+				@tap.stop.prevent="videoTap(0)"
+				object-fit="cover"
 			></video>
 		</view>
 
@@ -107,8 +107,8 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, getCurrentInstance } from 'vue'
-import { onLoad, onUnload } from '@dcloudio/uni-app'
+import { ref, reactive, computed, getCurrentInstance, watch } from 'vue'
+import { onLoad, onUnload, onPageScroll } from '@dcloudio/uni-app'
 import { _enrollformGetinfo, _enrollformEnpayment, _enrollformWxNotifys } from '@/aTemp/apis/activity.js'
 import { _debounce, _countDown } from '@/aTemp/utils/tools.js'
 import { _wxWxqrCode } from '@/aTemp/apis/login.js'
@@ -123,6 +123,8 @@ import {
 	getImageInfo
 } from '@/aTemp/utils/uniAppTools.js'
 import dayjs from 'dayjs'
+
+const instance = getCurrentInstance() // 获取组件实例
 
 // 全局登录信息
 import { _useUserMain } from '@/aTemp/store/userMain.js'
@@ -195,6 +197,58 @@ const enrollformGetinfo = () => {
 			() => `invitationCode=${useUserMain.userid}&storeId=${useUserMain.storeId}&Mscene=1&targetId=${dataObj.value.id}`
 		)
 	})
+}
+
+const { windowHeight } = uni.getSystemInfoSync()
+// 页面滚动监听
+onPageScroll(options => {
+	// 计算当前播放视频位置
+	const query = uni.createSelectorQuery().in(instance)
+	query.select(`#myVideo${payIndex.value}`).boundingClientRect()
+	query.exec(rect => {
+		if (!rect[0]) {
+			return
+		}
+
+		const { top, height } = rect[0]
+		// console.log('windowHeight', windowHeight)
+		// console.log('height', height)
+		// console.log('top', top)
+
+		// windowHeight = top（目标元素刚进入可视区域）
+		// windowHeight - top = height（目标元素完全进入可视区域）
+		// top = 0 (目标元素刚离开可视区域)
+		// top + height = 0 （目标元素完全离开可视区域 ）
+
+		if (top < windowHeight && top + height > 0) {
+			const videoObj = uni.createVideoContext(`myVideo${payIndex.value}`, instance)
+			videoObj.play()
+			// console.log('元素在可视区域出现')
+		} else {
+			const videoObj = uni.createVideoContext(`myVideo${payIndex.value}`, instance)
+			videoObj.pause()
+			// console.log('元素在可视区域消失')
+		}
+	})
+})
+
+let payIndex = ref('')
+watch(payIndex, (newVal, preVal) => {
+	// console.log(preVal)
+	// console.log(newVal)
+	const preVideoObj = uni.createVideoContext(`myVideo${preVal}`, instance)
+	const videoObj = uni.createVideoContext(`myVideo${newVal}`, instance)
+	preVideoObj.pause()
+	videoObj.play()
+})
+
+// 当前视频播放切关闭
+const videoTap = index => {
+	if (payIndex.value === index) {
+		payIndex.value = ''
+	} else {
+		payIndex.value = index
+	}
 }
 
 // 调用支付函数
@@ -458,12 +512,12 @@ const tapShare = () => {
 </script>
 
 <style lang="scss" scoped>
-	.video_box{
-		.myVideo{
-			width: 750rpx;
-			height: 750rpx * 0.8;
-		}
+.video_box {
+	.myVideo {
+		width: 750rpx;
+		height: 750rpx * 0.8;
 	}
+}
 .banner_img {
 	> .image {
 		width: 750rpx;

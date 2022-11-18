@@ -15,7 +15,7 @@
 			<view class="blank32 blank_bg_color"></view>
 
 			<!-- 是否在商城中显示 -->
-			<uni-forms-item label="是否限购">
+			<uni-forms-item :label="rules.exhibition.label">
 				<switch
 					color="#4b8eff"
 					:checked="parseInt(formData.exhibition) === 1"
@@ -68,6 +68,10 @@ const rules = {
 	productId: {
 		rules: [{ errorMessage: '请选择相关商品' }],
 		label: '相关商品'
+	},
+	exhibition: {
+		rules: [{ errorMessage: '请选择显示位置' }],
+		label: '显示位置'
 	}
 }
 

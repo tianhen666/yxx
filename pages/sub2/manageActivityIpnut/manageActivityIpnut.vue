@@ -34,6 +34,7 @@
 			<!-- 活动封面图上传 -->
 			<uni-forms-item :label="rules.mainPic.label" label-position="top" name="mainPic">
 				<htz-image-upload :max="selectNum1" v-model="picList1" mediaType="image" @chooseSuccess="chooseSuccess1" />
+				<view class="tips"><text>封面图比例5:4，建议宽度750px</text></view>
 			</uni-forms-item>
 			<view class="blank32 blank_bg_color"></view>
 
@@ -46,7 +47,9 @@
 					:action="uploadimageURL5"
 					:formData="{ baseDir: baseDir5 }"
 					@uploadSuccess="uploadSuccess5"
+					@uploadFail="uploadFail5"
 				/>
+				<view class="tips"><text>上传视频最大不能超过5M</text></view>
 			</uni-forms-item>
 			<view class="blank32 blank_bg_color"></view>
 
@@ -191,6 +194,7 @@
 					:formData="{ baseDir: baseDir4 }"
 					@uploadSuccess="uploadSuccess4"
 				/>
+				<view class="tips"><text>最多可以上传5张图片，每张图片体积不能超过2M</text></view>
 			</uni-forms-item>
 			<view class="blank32 blank_bg_color"></view>
 
@@ -204,12 +208,14 @@
 					:formData="{ baseDir: baseDir3 }"
 					@uploadSuccess="uploadSuccess3"
 				/>
+				<view class="tips"><text>生成的海报图，图片体积不能超过2M</text></view>
 			</uni-forms-item>
 			<view class="blank32 blank_bg_color"></view>
 
 			<!-- 排序 -->
 			<uni-forms-item :label="rules.sort.label" name="sort">
 				<uni-number-box :min="1" :max="255" v-model="formData.sort" />
+				<view class="tips"><text>首页显示顺序，序号小的排在前面</text></view>
 			</uni-forms-item>
 			<view class="blank32 blank_bg_color"></view>
 		</uni-forms>
@@ -469,7 +475,8 @@ const {
 	picList: picList5,
 	selectNum: selectNum5,
 	uploadimageURL: uploadimageURL5,
-	baseDir: baseDir5
+	baseDir: baseDir5,
+	uploadFail:uploadFail5
 } = useHtzImageUpload({
 	url: '/upload-flv/uploadVideo',
 	refData: formData,

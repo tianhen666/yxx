@@ -9,17 +9,17 @@
 			<!-- 封面图 -->
 			<view class="activity_item_img">
 				<video
-					id="myVideo"
+					:id="`myVideo${index}`"
 					class="myVideo"
 					:src="item.imgs"
-					@error="showToastText('视频加载失败')"
-					:controls="false"
-					autoplay
-					loop
+					:poster="item.mainPic"
+					controls
+					object-fit="cover"
+					@tap.stop="videoTap(index)"
 					v-if="item.imgs"
 				></video>
 				<image v-else class="image" :src="item.mainPic" mode="aspectFill"></image>
-				
+
 				<!-- 活动类型 -->
 				<view class="type">
 					<image class="image" :src="`/static/images/type${(index % 2) + 1}.png`" mode="aspectFill"></image>
@@ -55,11 +55,7 @@
 					<view class="left">
 						<view class="img_wrapper" v-if="item.infoList.length > 0">
 							<template v-for="(subItem, subIndex) in item.infoList" :key="subIndex">
-								<view
-									class="image_box"
-									:style="{ zIndex: subIndex + 1}"
-									v-if="subItem && subIndex < 5"
-								>
+								<view class="image_box" :style="{ zIndex: subIndex + 1 }" v-if="subItem && subIndex < 5">
 									<image
 										class="image"
 										:src="subItem.avatar || '/static/images/default_avatar.png'"
@@ -88,6 +84,12 @@
 <script setup>
 import dayjs from 'dayjs'
 import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
+import { ref, watch } from 'vue'
+import { onPageScroll } from '@dcloudio/uni-app'
+
+import { getCurrentInstance } from 'vue'
+const instance = getCurrentInstance() // 获取组件实例
+
 const props = defineProps({
 	listData: {
 		required: true,
@@ -101,6 +103,58 @@ const props = defineProps({
 		default: false
 	}
 })
+
+const { windowHeight } = uni.getSystemInfoSync()
+// 页面滚动监听
+onPageScroll(options => {
+	// 计算当前播放视频位置
+	const query = uni.createSelectorQuery().in(instance)
+	query.select(`#myVideo${payIndex.value}`).boundingClientRect()
+	query.exec(rect => {
+		if (!rect[0]) {
+			return
+		}
+
+		const { top, height } = rect[0]
+		// console.log('windowHeight', windowHeight)
+		// console.log('height', height)
+		// console.log('top', top)
+
+		// windowHeight = top（目标元素刚进入可视区域）
+		// windowHeight - top = height（目标元素完全进入可视区域）
+		// top = 0 (目标元素刚离开可视区域)
+		// top + height = 0 （目标元素完全离开可视区域 ）
+
+		if (top < windowHeight && top + height - 100 > 0) {
+			const videoObj = uni.createVideoContext(`myVideo${payIndex.value}`, instance)
+			videoObj.play()
+			// console.log('元素在可视区域出现')
+		} else {
+			const videoObj = uni.createVideoContext(`myVideo${payIndex.value}`, instance)
+			videoObj.pause()
+			// console.log('元素在可视区域消失')
+		}
+	})
+})
+
+let payIndex = ref('')
+watch(payIndex, (newVal, preVal) => {
+	// console.log(preVal)
+	// console.log(newVal)
+	const preVideoObj = uni.createVideoContext(`myVideo${preVal}`, instance)
+	const videoObj = uni.createVideoContext(`myVideo${newVal}`, instance)
+	preVideoObj.pause()
+	videoObj.play()
+})
+
+// 当前视频播放切关闭
+const videoTap = index => {
+	if (payIndex.value === index) {
+		payIndex.value = ''
+	} else {
+		payIndex.value = index
+	}
+}
 </script>
 
 <style lang="scss" scoped>
@@ -140,7 +194,7 @@ const props = defineProps({
 				top: 0;
 				left: 0;
 			}
-			>.myVideo{
+			> .myVideo {
 				border-radius: 20rpx;
 				position: absolute;
 				width: 100%;
@@ -258,7 +312,7 @@ const props = defineProps({
 							background-color: #efefef;
 							overflow: hidden;
 							margin-left: -20rpx;
-							&:first-of-type{
+							&:first-of-type {
 								margin-left: 0;
 							}
 							> .image {

@@ -108,12 +108,9 @@ export default function(paramsObj) {
 			msg
 		} = JSON.parse(res.data)
 
-
-		if (parseInt(code) !== 0 && parseInt(code) !== 200) {
-			uni.hideLoading()
-			showToastText("上传失败~")
-			return
-		}
+		setTimeout(() => {
+			showToastText(msg)
+		}, 500)
 
 		if (refData.value[param]) {
 			refData.value[param] = refData.value[param] + ',' + data
@@ -122,9 +119,16 @@ export default function(paramsObj) {
 		}
 	}
 
+	// 自动上传失败函数
+	const uploadFail = (error) => {
+		console.log(error)
+		showToastText("上传失败~")
+	}
+
 	return {
 		picList, //图片选择的的列表
 		selectNum, // 选择图片的数量
+		uploadFail, //图片自动上传失败的函数
 		uploadSuccess, //图片自动上传成功的函数
 		uploadimageURL, //上传图片的地址
 		baseDir // 文件前缀
