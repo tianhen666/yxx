@@ -469,7 +469,7 @@ const {
 	baseDir: 'active'
 })
 
-// 活动海报图
+// 活动视频
 const {
 	uploadSuccess: uploadSuccess5,
 	picList: picList5,

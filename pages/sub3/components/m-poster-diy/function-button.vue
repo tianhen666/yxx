@@ -2,9 +2,9 @@
 	<view class="fix-wrapper">
 		<view class="fix">
 			<!-- 功能一 -->
-			<view class="button-container">
+			<view class="button-container" v-if="false">
 				<!-- 撤销 -->
-				<view class="item" @tap.prevent.stop="revoke">
+				<view class="item" @tap.prevent.stop="revoke" v-if="false">
 					<view class="icon">
 						<uni-icons
 							type="undo-filled"
@@ -16,7 +16,7 @@
 				</view>
 
 				<!-- 重做 -->
-				<view class="item" @tap.prevent.stop="recovery">
+				<view class="item" @tap.prevent.stop="recovery" v-if="false">
 					<view class="icon">
 						<uni-icons
 							type="redo-filled"
@@ -28,13 +28,13 @@
 				</view>
 
 				<!-- 文案 -->
-				<view class="item" @tap.prevent.stop="copywriting" v-if="!posterAdd">
+				<view class="item" @tap.prevent.stop="copywriting" v-if="!posterAdd && false">
 					<view class="icon"><uni-icons type="pyq" :color="icon.color" :size="icon.size"></uni-icons></view>
 					<text>文案</text>
 				</view>
 
 				<!-- 暂存 -->
-				<view class="item" @tap.prevent.stop="stagingPosterImg" v-if="!posterAdd">
+				<view class="item" @tap.prevent.stop="stagingPosterImg" v-if="!posterAdd && false">
 					<view class="icon">
 						<uni-icons type="folder-add-filled" :color="icon.color" :size="icon.size"></uni-icons>
 					</view>
@@ -42,13 +42,13 @@
 				</view>
 
 				<!-- 帮助 -->
-				<view class="item" @tap.prevent.stop="mHelp" v-if="!posterAdd">
+				<view class="item" @tap.prevent.stop="mHelp" v-if="!posterAdd && false">
 					<view class="icon"><uni-icons type="help-filled" :color="icon.color" :size="icon.size"></uni-icons></view>
 					<text>帮助</text>
 				</view>
 
 				<!-- 分类 -->
-				<view class="item" @tap.prevent.stop="popupCategory.open()" v-if="posterAdd">
+				<view class="item" @tap.prevent.stop="popupCategory.open()">
 					<view class="icon">
 						<uni-icons type="folder-add-filled" :color="icon.color" :size="icon.size"></uni-icons>
 					</view>
@@ -59,15 +59,14 @@
 			<!-- 功能二 -->
 			<view class="button1-container">
 				<!-- 添加-->
-				<view class="item" @tap.prevent.stop="handleAdd">
+				<view class="item" @tap.prevent.stop="handleAdd" v-if="false">
 					<view class="icon">
 						<uni-icons type="folder-add-filled" :color="icon1.color" :size="icon1.size"></uni-icons>
 					</view>
 					<text>添加</text>
 				</view>
-
 				<!-- 编辑 -->
-				<view class="item" @tap.prevent.stop="handleEdit">
+				<view class="item" @tap.prevent.stop="handleEdit" v-if="false">
 					<view class="icon">
 						<uni-icons type="folder-add-filled" :color="icon1.color" :size="icon1.size"></uni-icons>
 					</view>
@@ -75,7 +74,7 @@
 				</view>
 
 				<!-- 设置文字样式 -->
-				<view class="item" @tap="handleFontStyle">
+				<view class="item" @tap="handleFontStyle" v-if="false">
 					<view class="icon">
 						<uni-icons type="folder-add-filled" :color="icon1.color" :size="icon1.size"></uni-icons>
 					</view>
@@ -83,13 +82,38 @@
 				</view>
 
 				<!-- 生成海报 -->
-				<view class="item">
-					<button class="btn" @tap.prevent.stop="createPosterImg" v-if="!posterAdd">生成海报并下载到手机</button>
+				<view class="item" v-if="!posterAdd">
+					<button class="btn" @tap.prevent.stop="createPosterImg">生成海报并下载到手机</button>
 				</view>
 
 				<!-- 保存海报 -->
-				<view class="item">
-					<button class="btn" @tap.prevent.stop="savePosterImg" v-if="posterAdd">保存海报</button>
+				<view class="item" v-if="posterAdd">
+					<button class="btn" @tap.prevent.stop="savePosterImg">保存海报</button>
+				</view>
+
+				<view class="item" @tap="handleAdd" v-if="posterAdd">
+					<view class="icon">
+						<uni-icons type="folder-add-filled" :color="icon1.color" :size="icon1.size"></uni-icons>
+					</view>
+					<text>添加</text>
+				</view>
+				<view class="item" @tap="popupCategory.open()" v-if="posterAdd">
+					<view class="icon">
+						<uni-icons type="folder-add-filled" :color="icon1.color" :size="icon1.size"></uni-icons>
+					</view>
+					<text>分类</text>
+				</view>
+				<view class="item" @tap="stagingPosterImg" v-if="!posterAdd">
+					<view class="icon">
+						<uni-icons type="folder-add-filled" :color="icon.color" :size="icon.size"></uni-icons>
+					</view>
+					<text>暂存</text>
+				</view>
+				<view class="item" @tap="delPosterImg" v-if="posterAdd">
+					<view class="icon">
+						<uni-icons type="folder-add-filled" :color="icon.color" :size="icon.size"></uni-icons>
+					</view>
+					<text>删除</text>
 				</view>
 			</view>
 		</view>
@@ -98,30 +122,28 @@
 
 <script setup>
 import { readonly, provide, inject, ref, watch, computed, toRaw } from 'vue'
-import { showLoading, showToastText } from '@/aTemp/utils/uniAppTools.js'
+import { showLoading, showToastText, navigateBack, showModal } from '@/aTemp/utils/uniAppTools.js'
 import { _debounce } from '@/aTemp/utils/tools.js'
-import { _posterRenewalPosterImg, _posterSavePostLog } from '@/aTemp/apis/poster.js'
+import { _posterRenewalPosterImg, _posterSavePostLog, _posterDeletePosterImg } from '@/aTemp/apis/poster.js'
 
 // 图标样式
 const icon = readonly({
-	color: '#ffffff',
-	size: 19
+	color: '#666666',
+	size: 29
 })
 const icon1 = readonly({
-	color: '#550000',
+	color: '#666666',
 	size: 29
 })
 // 接收选中对象(初始值)
 const movableViewObj = inject('movableViewObj')
 // 当前选中的索引
 const movableViewIndex = inject('movableViewIndex')
-// 接收海报数据
-const posterData = inject('posterData')
 
 // 海报其他属性
 const posterOtherData = inject('posterOtherData')
-// 当前暂存的ID
-const posterStagingId = ref(0)
+// 接收海报数据
+const posterData = inject('posterData')
 
 // 是否添加海报
 const posterAdd = inject('posterAdd', false)
@@ -181,23 +203,40 @@ const stagingPosterImg = async () => {
 	showToastText('成功暂存到-->门诊素材')
 }
 
+// 删除海报
+const delPosterImg = () => {
+	showModal('是否确认删除？').then(e => {
+		if (e.confirm) {
+			_posterDeletePosterImg({ TemplateId: posterOtherData.value.id }).then(res => {
+				showToastText('删除成功')
+				setTimeout(() => {
+					navigateBack()
+				}, 500)
+			})
+		}
+	})
+}
+
+// 当前暂存的ID
+const posterStagingId = ref(0)
+// 是否草稿箱
+const drafts = inject('drafts', 0)
 // 暂存海报请求
 const posterRenewalPosterImg = () => {
 	const m_posterData = JSON.parse(JSON.stringify(posterData.value))
 
 	// 删除固定的元素code
 	m_posterData.views.splice(posterData.value.code, 1)
-	
+
 	console.log(JSON.stringify(m_posterData))
-	
-	
+	console.log(posterOtherData.value)
+	console.log(!drafts.value)
 	return _posterRenewalPosterImg({
-		openid: uni.getStorageSync('UserMain').openId,
 		posterImg: JSON.stringify(m_posterData),
-		posterName: posterOtherData.value.postercampaign,
-		posterUrl: posterOtherData.value.posterurl,
-		posterid: posterOtherData.value.id,
-		id: posterStagingId.value
+		posterName: !drafts.value ? posterOtherData.value.postercampaign : posterOtherData.value.posterName,
+		posterUrl: !drafts.value ? posterOtherData.value.posterurl : posterOtherData.value.posterUrl,
+		posterid: !drafts.value ? posterOtherData.value.id : posterOtherData.value.posterid,
+		id: !drafts.value ? posterStagingId.value : posterOtherData.value.id
 	})
 }
 
@@ -327,7 +366,7 @@ const handleFontStyle = () => {
 	background-color: #ffffff;
 	display: flex;
 	flex-direction: row;
-	justify-content: space-between;
+	justify-content: space-around;
 	align-items: center;
 	padding: 13px 30rpx;
 	padding-bottom: 80rpx;

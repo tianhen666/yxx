@@ -12,8 +12,15 @@
 		@query="getListData"
 		min-delay="1000"
 		created-reload
+		:loading-full-fixed="true"
 		show-loading-more-when-reload
 	>
+	
+		<!-- 加载状态 -->
+		<template v-slot:loading>
+			<m-page-loading></m-page-loading>
+		</template>
+		
 		<!-- 固定顶部 -->
 		<template #top>
 			<!-- #ifndef H5 -->

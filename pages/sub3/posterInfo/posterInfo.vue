@@ -5,7 +5,8 @@
 		@imgErr="imgErr"
 		:use2D="true"
 		:dirty="false"
-		:LRU="false"
+		:LRU="true"
+		:scaleRatio="2"
 		customStyle="left: -9999px; top: -9999rpx;position: absolute;"
 	></w-painter>
 	<m-poster-diy></m-poster-diy>
@@ -15,7 +16,14 @@
 import { onLoad } from '@dcloudio/uni-app'
 import { ref, provide, reactive } from 'vue'
 import mPosterDiy from '@/pages/sub3/components/m-poster-diy/m-poster-diy.vue'
-import { showLoading, saveImageToPhotosAlbum, previewImage, showToastText } from '@/aTemp/utils/uniAppTools.js'
+import {
+	showLoading,
+	saveImageToPhotosAlbum,
+	previewImage,
+	showToastText,
+	getImageInfo,
+	navigateBack
+} from '@/aTemp/utils/uniAppTools.js'
 import { _wxWxqrCode } from '@/aTemp/apis/login.js'
 import { _posterGetPostercontent, _posterDraftsOne } from '@/aTemp/apis/poster.js'
 // base64转图片路径
@@ -38,11 +46,13 @@ const posterOtherData = reactive({ value: {} })
 provide('posterOtherData', posterOtherData)
 
 // 是否门诊草稿箱
-const drafts = ref('')
+const drafts = ref(0)
+provide('drafts', drafts)
+
 
 onLoad(options => {
-	console.log(options)
-	drafts.value = options.drafts
+	// console.log(options)
+	drafts.value = parseInt(options.drafts) || 0
 	posterId.value = parseInt(options.id) || 0
 	posterGetPostercontent()
 })
@@ -51,37 +61,67 @@ onLoad(options => {
 const posterGetPostercontent = async () => {
 	showLoading('海报数据加载中')
 
-	// 获取邀请码
-	const wxWxqrCode = await _wxWxqrCode({
-		page: 'pages/main/index/index',
-		scene: `i=${useUserMain.userid}&sd=${useUserMain.storeId}&s=0&t=0`,
-		width: 430
-	})
-	const imgPath = await base64ToPath('data:image/png;base64,' + wxWxqrCode.data)
-
+	// 获取海报数据
 	let res = {}
-	if (drafts.value == 'true') {
+	if (drafts.value === 1) {
+		// 获取门诊草稿箱中的海报
 		res = await _posterDraftsOne({
 			id: posterId.value
 		})
 	} else {
+		// 获取海报数据
 		res = await _posterGetPostercontent({
 			id: posterId.value
 		})
 	}
 
 	const { code, data, msg } = res
-	// console.log(data)
+	if (!data) {
+		showToastText('此海报已被删除')
+		setTimeout(() => {
+			navigateBack()
+		}, 500)
+		return
+	}
+
+	// 赋值海报其他参数
 	posterOtherData.value = data
-	posterData.value = JSON.parse(data.posterImg)
+	// 获取海报中json数据
+	let getPosterData = JSON.parse(data.posterImg)
+	// 判断海报中的数据是否为空
+	if (!getPosterData) {
+		console.log('海报信息', posterOtherData)
+		console.log('海报数据json数据', getPosterData)
+
+		const initPosterData = { width: '', height: '', background: '', views: [] }
+		const getImgInfo = await getImageInfo(posterOtherData.value.posterurl)
+		const { height: imgHeight, width: imgWidth, path: imgPath } = getImgInfo
+
+		initPosterData.height = imgHeight / (imgWidth / 310) + 'px'
+		initPosterData.width = '310px'
+		initPosterData.background = posterOtherData.value.posterurl
+		getPosterData = initPosterData
+	}
+
+	// 设置海报中的json数据
+	posterData.value = getPosterData
+
+	// 获取邀请码
+	const wxWxqrCode = await _wxWxqrCode({
+		page: 'pages/main/index/index',
+		scene: `i=${useUserMain.userid}&sd=${useUserMain.storeId}&s=4&t=${posterOtherData.value.id}`,
+		width: 430
+	})
+	// 邀请码base64转成图片
+	const imgPath = await base64ToPath('data:image/png;base64,' + wxWxqrCode.data)
 
 	// 添加二维码
 	posterData.value.views.push({
 		css: {
-			top: parseInt(posterData.value.height) - 100 + 'px',
-			left: parseInt(posterData.value.width) - 100 + 'px',
-			width: '80px',
-			height: '80px'
+			top: parseInt(posterData.value.height) - 85 + 'px',
+			left: parseInt(posterData.value.width) - 85 + 'px',
+			width: '65px',
+			height: '65px'
 		},
 		id: 'code',
 		type: 'image',
@@ -116,6 +156,6 @@ const imgErr = e => {
 </script>
 <style scoped>
 :global(page) {
-	background-color: #f1f1f1;
+	background-color: #ccc;
 }
 </style>

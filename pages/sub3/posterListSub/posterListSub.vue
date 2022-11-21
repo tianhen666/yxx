@@ -7,20 +7,10 @@
 			@modifyCurrentIndex="modifyCurrentIndex"
 		></m-sub-fenlei>
 
-		<!-- 列表 -->
-		<view class="list">
-			<view
-				class="list_item"
-				v-for="(item, index) in posterList"
-				:key="index"
-				@tap="navigateTo(`/pages/sub3/posterInfo/posterInfo?id=${item.id}`)"
-			>
-				<image class="image" :src="item.posterurl" mode="aspectFill"></image>
-			</view>
-		</view>
+		<!-- 列表  -->
+		<m-poster-list :listData="posterList" :parentClassId="parentClassId" :maxNumber="-1" :column="2"></m-poster-list>
 		<view class="blank30"></view>
-		
-		
+
 		<!-- 加载更多 -->
 		<uni-load-more :status="pageLoadStatus" />
 	</view>
@@ -33,40 +23,46 @@ import { ref, computed } from 'vue'
 import { onLoad, onReachBottom } from '@dcloudio/uni-app'
 import { mSubFenlei } from '../components/m-sub-fenlei/m-sub-fenlei.vue'
 import { navigateTo, showToastText } from '@/aTemp/utils/uniAppTools.js'
+import { mPosterList } from '../components/m-poster-list/m-poster-list.vue'
+import { _posterGetPostTypeChild, _posterGetIdPost } from '@/aTemp/apis/poster.js'
 
-import { _posterGetIdPostAll, _posterGetIdPost } from '@/aTemp/apis/poster.js'
+// 一级分类id
+const parentClassId = ref(0)
 
 // 二级分类列表
 const posterCategoryList = ref([])
-// 当前索引
+// 选中的二级分类索引
 const currentIndex = ref(0)
 // 当前选中的二级分类ID
 const posterCategoryId = computed(() => posterCategoryList.value[currentIndex.value]?.id)
+
+
 // 海报内容
 const posterList = ref([])
 
 // 每页数量
-const pageSize = ref(6)
-// 有多少页面
+const pageSize = ref(12)
+// 当前页面索引
 const pageNum = ref(1)
 // 是否加载完成
 const pageLoadStatus = ref('more')
 onLoad(async options => {
 	// console.log(options)
-
-	// 设置索引
+	// 设置一级分类id
+	parentClassId.value = parseInt(options.parentClassId) || 0
+	
+	// 设置选中二级二索引
 	currentIndex.value = parseInt(options.currentIndex) || 0
 
 	// 设置页面标题
-	let pageName = options.parentName || '海报列表'
+	let pageName = options.parentClassName || '海报列表'
 	uni.setNavigationBarTitle({
 		title: pageName
 	})
 
 	// 获取海报分类数据
-	const parentId = parseInt(options.parentId || 0)
-	const posterCategoryListResponse = await _posterGetIdPostAll({
-		id: parentId
+	const posterCategoryListResponse = await _posterGetPostTypeChild({
+		id: parentClassId.value
 	})
 	posterCategoryList.value = posterCategoryListResponse.data
 
@@ -125,21 +121,5 @@ onReachBottom(() => {
 	width: 100%;
 	padding: 0rpx 20rpx;
 	background-color: #fff;
-}
-
-.list {
-	@include mFlex;
-	flex-wrap: wrap;
-	justify-content: space-between;
-	margin-top: -30rpx;
-	&_item {
-		width: 340rpx;
-		.image {
-			margin-top: 30rpx;
-			width: 100%;
-			height: 606rpx;
-			border-radius: 8rpx;
-		}
-	}
 }
 </style>

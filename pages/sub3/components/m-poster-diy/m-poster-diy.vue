@@ -294,7 +294,6 @@ $iocn-size: 18px;
 	position: relative;
 	width: $movable-area-w;
 	height: $movable-area-h;
-	overflow: hidden;
 	background-color: #fff;
 	background-size: 100% 100%;
 	background-repeat: no-repeat;

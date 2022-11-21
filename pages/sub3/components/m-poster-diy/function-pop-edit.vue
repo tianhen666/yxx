@@ -5,19 +5,19 @@
 				<view class="icon"><image class="image" src="./images/scale_icon.png" mode="aspectFit" /></view>
 				<text>修改</text>
 			</view>
-			<view class="fun-item" @tap.prevent.stop="copy">
+			<view class="fun-item" @tap.prevent.stop="copy" v-if="false">
 				<view class="icon"><image class="image" src="./images/scale_icon.png" mode="aspectFit" /></view>
 				<text>复制</text>
 			</view>
-			<view class="fun-item" @tap.prevent.stop="del">
+			<view class="fun-item" @tap.prevent.stop="del" v-if="false">
 				<view class="icon"><image class="image" src="./images/scale_icon.png" mode="aspectFit" /></view>
 				<text>删除</text>
 			</view>
-			<view class="fun-item" @tap.prevent.stop="moveTop">
+			<view class="fun-item" @tap.prevent.stop="moveTop" v-if="false">
 				<view class="icon"><image class="image" src="./images/scale_icon.png" mode="aspectFit" /></view>
 				<text>置顶</text>
 			</view>
-			<view class="fun-item" @tap.prevent.stop="moveBottom">
+			<view class="fun-item" @tap.prevent.stop="moveBottom" v-if="false">
 				<view class="icon"><image class="image" src="./images/scale_icon.png" mode="aspectFit" /></view>
 				<text>置底</text>
 			</view>
@@ -36,7 +36,7 @@
 
 <script setup>
 import { ref, inject } from 'vue'
-import { chooseImage, uploadFile, showToastText } from '@/aTemp/utils/uniAppTools.js'
+import { chooseImage, uploadFile, showToastText, getImageInfo } from '@/aTemp/utils/uniAppTools.js'
 // 全局基础配置
 import config from '@/global-config.js'
 
@@ -57,8 +57,23 @@ const funShow = inject('funShow')
 // 输入框是否显示
 const textInput = inject('textInput')
 // 修改元素
-const modify = () => {
+const modify = async () => {
 	if (movableViewObj.value.type === 'image') {
+		const imgList = await chooseImage(1)
+
+		const getImgInfo = await getImageInfo(imgList[0])
+		const { height: imgHeight, width: imgWidth, path: imgPath } = getImgInfo
+
+		const resUploadFile = await uploadFile(imgPath, config.BASE_URL + '/upload-flv/uploadimage', {
+			baseDir: 'poster_view'
+		})
+		const { code, data, msg } = JSON.parse(resUploadFile)
+
+		posterData.value.views[movableViewIndex.value].url = data
+		const objWidth = parseFloat(posterData.value.views[movableViewIndex.value].css.width)
+		posterData.value.views[movableViewIndex.value].css.height = imgHeight / (imgWidth / objWidth) + 'px'
+
+		typeEditPopup.value.close()
 	} else if (movableViewObj.value.type === 'text') {
 		funShow.value = false
 		textInput.value = true
@@ -72,8 +87,7 @@ const textIpnutConfirm = () => {
 		posterData.value.views[movableViewIndex.value].text = movableViewObj.value.text
 		textInput.value = false
 	}
-	
-	
+
 	typeEditPopup.value.close()
 	funShow.value = true
 }

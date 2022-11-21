@@ -3,8 +3,6 @@
 		<view class="blank30"></view>
 		<!-- 搜索 -->
 		<uni-search-bar
-			:focus="true"
-			@confirm="searchConfirmRequest"
 			@input="searchInputRequest"
 			v-model="searchText"
 			radius="30"
@@ -14,16 +12,7 @@
 
 		<view class="blank30"></view>
 		<!-- 列表 -->
-		<view class="list">
-			<view
-				class="list_item"
-				v-for="(item, index) in posterList"
-				:key="index"
-				@tap="navigateTo(`/pages/sub3/posterInfo/posterInfo?id=${item.id}`)"
-			>
-				<image class="image" :src="item.posterurl" mode="aspectFill"></image>
-			</view>
-		</view>
+		<m-poster-list :listData="posterList" :maxNumber="-1" :column="2"></m-poster-list>
 	</view>
 	<view class="blank30"></view>
 
@@ -39,7 +28,7 @@ import { onLoad, onReachBottom } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import { navigateTo, showToastText } from '@/aTemp/utils/uniAppTools.js'
 import { _debounce } from '@/aTemp/utils/tools.js'
-
+import { mPosterList } from '../components/m-poster-list/m-poster-list.vue'
 import { _posterGetIdPost } from '@/aTemp/apis/poster.js'
 
 // 每页数量
@@ -66,18 +55,14 @@ const posterGetIdPost = async () => {
 		pageNum: pageNum.value
 	})
 
-	// 暂时延时一下
-	setTimeout(() => {
-		posterList.value.push(...posterListResponse.data.poster)
-
-		// 判断是否加载完成
-		if (posterListResponse.data.pageindex > pageNum.value) {
-			pageNum.value++
-			pageLoadStatus.value = 'more'
-		} else {
-			pageLoadStatus.value = 'noMore'
-		}
-	}, 1000)
+	posterList.value.push(...posterListResponse.data.poster)
+	// 判断是否加载完成
+	if (posterListResponse.data.poster.length >= pageSize.value) {
+		pageNum.value++
+		pageLoadStatus.value = 'more'
+	} else {
+		pageLoadStatus.value = 'noMore'
+	}
 }
 
 // 动态搜索

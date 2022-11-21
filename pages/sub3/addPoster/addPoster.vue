@@ -35,26 +35,32 @@
 	<!-- 海报生成插件 -->
 	<w-painter
 		:palette="posterData.value"
+		:widthPixels="155"
 		@imgOK="createImgOk"
 		@imgErr="imgErr"
 		:use2D="true"
 		:dirty="false"
-		:LRU="false"
+		:LRU="true"
 		customStyle="left: -9999px; top: -9999rpx;position: absolute;"
 	></w-painter>
 </template>
 
 <script setup>
 import mPosterDiy from '@/pages/sub3/components/m-poster-diy/m-poster-diy.vue'
-import { _posterGetIdPostAll } from '@/aTemp/apis/poster.js'
+import {
+	_posterGetPostType,
+	_posterGetPostercontent,
+	_posterSavePostLog,
+	_posterGetPostTypeChild
+} from '@/aTemp/apis/poster.js'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { ref, provide, reactive } from 'vue'
-import { uploadFile, showToastText } from '@/aTemp/utils/uniAppTools.js'
-import { _posterSavePostLog } from '@/aTemp/apis/poster.js'
+import { uploadFile, showToastText, navigateBack, getImageInfo, showLoading } from '@/aTemp/utils/uniAppTools.js'
 // 全局基础配置
 import config from '@/global-config.js'
 
-const posterData = reactive({ value: { width: '310px', height: '534px', background: '#ccc', views: [] } })
+// 海报图片数据
+const posterData = reactive({ value: {} })
 provide('posterData', posterData)
 
 // 海报其他数据(全部属性)
@@ -84,42 +90,99 @@ const secondLevelClassList = ref([])
 const secondLevelClass = ref('')
 provide('secondLevelClass', secondLevelClass)
 
-// 节点未加载完成
+// 海报ID
+const posterId = ref(0)
 onLoad(options => {
-	// 获取一级分类
-	posterGetIdPostAll(0)
+	// 设置一级海报分类
+	firstLevelClass.value = parseInt(options.parentClassId) || 0
+	// 获取全部海报分类
+	posterGetPostType()
+
+	// 设置海报ID
+	posterId.value = parseInt(options.id) || 0
+
+	// 判断是否新增海报
+	if (posterId.value) {
+		// 获取海报详情
+		posterGetPostercontent()
+	} else {
+		posterData.value = { width: '310px', height: '534px', background: '#fff', views: [] }
+	}
 })
 
-// 节点加载完成
-onReady(e => {
-	popupCategory.value.open()
-})
+// 获取海报数据
+const posterGetPostercontent = () => {
+	showLoading('海报数据加载中')
+	_posterGetPostercontent({
+		id: posterId.value
+	})
+		.then(async res => {
+			const { code, data, msg } = res
+			// 设置二级海报id
+			secondLevelClass.value = data.posterId
+			// 设置海报名称
+			posterName.value = data.postercampaign || ''
+
+			// 赋值海报其他参数
+			posterOtherData.value = data
+
+			// 获取海报中json数据
+			let getPosterData = JSON.parse(data.posterImg)
+			// 判断海报中的数据是否为空
+			if (!getPosterData) {
+				console.log('海报信息', posterOtherData)
+				console.log('海报数据json数据', getPosterData)
+
+				const initPosterData = { width: '', height: '', background: '', views: [] }
+				const getImgInfo = await getImageInfo(posterOtherData.value.posterurl)
+				const { height: imgHeight, width: imgWidth, path: imgPath } = getImgInfo
+
+				initPosterData.height = imgHeight / (imgWidth / 310) + 'px'
+				initPosterData.width = '310px'
+				initPosterData.background = posterOtherData.value.posterurl
+				getPosterData = initPosterData
+			}
+			// 设置海报中的json数据
+			posterData.value = getPosterData
+		})
+		.catch(err => {
+			showToastText('此海报已被删除')
+			setTimeout(() => {
+				navigateBack()
+			}, 500)
+		})
+}
 
 // 获取分类列表
-const posterGetIdPostAll = id => {
-	_posterGetIdPostAll({ id: id }).then(res => {
+const posterGetPostType = () => {
+	_posterGetPostType().then(res => {
 		const { code, msg, data } = res
-		if (id == 0) {
-			firstLevelClassList.value = data.map(item => ({ value: item.id, text: item.posterName }))
-		} else {
-			secondLevelClassList.value = data.map(item => ({ value: item.id, text: item.posterName }))
+		firstLevelClassList.value = data.map(item => ({ value: item.id, text: item.posterName }))
+
+		if (!firstLevelClass.value) {
+			return
 		}
+		// 获取二级海报分类
+		_posterGetPostTypeChild({ id: firstLevelClass.value }).then(res => {
+			const { code, msg, data } = res
+			secondLevelClassList.value = data.map(item => ({ value: item.id, text: item.posterName }))
+		})
 	})
 }
 
 // 更改一级分类
 const firstLevelClassChange = e => {
 	if (e) {
-		posterGetIdPostAll(e)
+		_posterGetPostTypeChild({ id: e }).then(res => {
+			const { code, msg, data } = res
+			secondLevelClassList.value = data.map(item => ({ value: item.id, text: item.posterName }))
+		})
 		secondLevelClass.value = ''
 	}
 }
 
 // 海报生成并且上传成功过的图片路径
 const createImgPath = ref('')
-provide('createImgPath', createImgPath)
-// 当前的海报ID
-const mPosterId = ref(0)
 // 海报是否初始化完成
 const firstComplete = ref(false)
 // 图片生成完成
@@ -138,10 +201,10 @@ const createImgOk = async e => {
 		// 打印生成并且上传的封面图路径
 		console.log(data)
 		console.log(posterData.value)
-		
+
 		// 上传海报数据
 		_posterSavePostLog({
-			id: mPosterId.value,
+			id: posterId.value,
 			posterId: secondLevelClass.value,
 			postercampaign: posterName.value,
 			posterImg: JSON.stringify(posterData.value),
@@ -149,9 +212,10 @@ const createImgOk = async e => {
 		})
 			.then(res => {
 				const { code, msg, data } = res
-				mPosterId.value = data.id
+				posterId.value = data.id
 				uni.hideLoading()
 				showToastText('海报添加成功~')
+				navigateBack()
 			})
 			.catch(err => {
 				uni.hideLoading()
@@ -171,6 +235,9 @@ const imgErr = e => {
 </script>
 
 <style lang="scss" scoped>
+:global(page) {
+	background-color: #ccc;
+}
 .popup_box {
 	background-color: #fff;
 	width: 550rpx;

@@ -6,7 +6,7 @@
 				:class="index === currentIndex ? 'active' : ''"
 				v-for="(item, index) in listData"
 				:key="index"
-				@tap="scrollViewItemTap(item, index)"
+				@tap.stop="scrollViewItemTap(item, index)"
 			>
 				{{ item.posterName }}
 			</view>
@@ -29,12 +29,12 @@ const props = defineProps({
 		type: Array,
 		default: () => []
 	},
-	parentId: {
+	parentClassId: {
 		// 父分类ID
 		type: Number,
 		default: 0
 	},
-	parentName: {
+	parentClassName: {
 		// 父分类名称
 		type: String,
 		default: '海报列表'
@@ -57,8 +57,8 @@ const scrollViewItemTap = (item, index) => {
 		emits('modifyCurrentIndex', index)
 	} else {
 		navigateTo(
-			`/pages/sub3/posterListSub/posterListSub?parentId=${props.parentId}&currentIndex=${index}&parentName=${
-				props.parentName
+			`/pages/sub3/posterListSub/posterListSub?parentClassId=${props.parentClassId}&currentIndex=${index}&parentClassName=${
+				props.parentClassName
 			}`
 		)
 	}

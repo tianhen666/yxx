@@ -1,13 +1,13 @@
 <template>
 	<view class="fun-container">
 		<!-- 添加文字 -->
-		<view class="fun-item" @tap.prevent.stop="addFont">
+		<view class="fun-item" @tap.prevent.stop="addFont" v-if="false">
 			<view class="icon"><image class="image" src="./images/scale_icon.png" mode="aspectFit" /></view>
 			<text>文字</text>
 		</view>
 
 		<!-- 添加图片 -->
-		<view class="fun-item" @tap.prevent.stop="addImg">
+		<view class="fun-item" @tap.prevent.stop="addImg" v-if="false">
 			<view class="icon"><image class="image" src="./images/scale_icon.png" mode="aspectFit" /></view>
 			<text>图片</text>
 		</view>
@@ -28,7 +28,7 @@
 
 <script setup>
 import { ref, inject } from 'vue'
-import { chooseImage, uploadFile, showToastText, getImageInfo } from '@/aTemp/utils/uniAppTools.js'
+import { chooseImage, uploadFile, showToastText, getImageInfo, showLoading } from '@/aTemp/utils/uniAppTools.js'
 // 全局基础配置
 import config from '@/global-config.js'
 
@@ -103,15 +103,17 @@ const addImg = async () => {
 
 // 修改背景
 const addBg = async () => {
+	typeAddPopup.value.close()
 	const imgList = await chooseImage(1)
 	const getImgInfo = await getImageInfo(imgList[0])
 	const { height: imgHeight, width: imgWidth, path: imgPath } = getImgInfo
+	showLoading('图片上传中')
 	const resUploadFile = await uploadFile(imgPath, config.BASE_URL + '/upload-flv/uploadimage', { baseDir: 'poster_bg' })
 	const { code, data, msg } = JSON.parse(resUploadFile)
 	posterData.value.width = '310px'
 	posterData.value.height = imgHeight / (imgWidth / 310) + 'px'
 	posterData.value.background = data
-	typeAddPopup.value.close()
+	uni.hideLoading()
 }
 </script>
 

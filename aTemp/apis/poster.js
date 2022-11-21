@@ -3,24 +3,32 @@ import http from '@/aTemp/request';
 /* 
  * 海报管理接口
  */
-
-// 获取所有分类海报接口
-export function _posterGetPostAll(data) {
+// 获取全局海报分类
+export function _posterGetPostType(data) {
 	return http.post({
-		url: '/poster/getPostAll',
+		url: 'poster/getPostType',
 		data
 	})
 }
 
-// 根据父ID查询子分类
-export function _posterGetIdPostAll(data) {
+// 根据分类获取海报列表6条
+export function _posterGetPostTypeId(data) {
 	return http.post({
-		url: '/poster/getIdPostAll',
+		url: 'poster/getPostTypeId',
 		data
 	})
 }
 
-// 根据分类查询海报内容
+
+// 根据海报分类ID获取子分类
+export function _posterGetPostTypeChild(data) {
+	return http.post({
+		url: '/poster/getPostTypeChild',
+		data
+	})
+}
+
+// 根据海报分类ID 获取海报列表
 export function _posterGetIdPost(data) {
 	return http.post({
 		url: '/poster/getIdPost',
@@ -45,6 +53,15 @@ export function _posterSavePostLog(data) {
 	})
 }
 
+// 删除海报
+export function _posterDeletePosterImg(params) {
+	return http.post({
+		url: '/poster/deletePosterImg',
+		params
+	})
+}
+
+
 // 添加到门诊草稿箱
 export function _posterRenewalPosterImg(data) {
 	return http.post({
@@ -66,5 +83,13 @@ export function _posterDraftsOne(data) {
 	return http.post({
 		url: '/poster/draftsOne',
 		data
+	})
+}
+
+// 删除草稿箱
+export function _posterDeleteTemplate(params) {
+	return http.post({
+		url: '/poster/deleteTemplate',
+		params
 	})
 }

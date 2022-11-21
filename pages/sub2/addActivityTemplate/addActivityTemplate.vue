@@ -34,9 +34,25 @@
 			<!-- 活动封面图上传 -->
 			<uni-forms-item :label="rules.mainPic.label" label-position="top" name="mainPic">
 				<htz-image-upload :max="selectNum1" v-model="picList1" mediaType="image" @chooseSuccess="chooseSuccess1" />
+				<view class="tips"><text>封面图比例5:4，建议宽度750px</text></view>
 			</uni-forms-item>
 			<view class="blank32 blank_bg_color"></view>
-
+			
+			<!-- 活动封面视频 -->
+			<uni-forms-item :label="rules.imgs.label" label-position="top" name="imgs">
+				<htz-image-upload
+					:max="selectNum5"
+					v-model="picList5"
+					mediaType="video"
+					:action="uploadimageURL5"
+					:formData="{ baseDir: baseDir5 }"
+					@uploadSuccess="uploadSuccess5"
+					@uploadFail="uploadFail5"
+				/>
+				<view class="tips"><text>上传视频最大不能超过5M</text></view>
+			</uni-forms-item>
+			<view class="blank32 blank_bg_color"></view>
+			
 			<!-- 开始时间 -->
 			<uni-forms-item :label="rules.startDt.label" name="startDt">
 				<uni-datetime-picker
@@ -178,6 +194,7 @@
 					:formData="{ baseDir: baseDir4 }"
 					@uploadSuccess="uploadSuccess4"
 				/>
+				<view class="tips"><text>最多可以上传5张图片，每张图片体积不能超过2M</text></view>
 			</uni-forms-item>
 			<view class="blank32 blank_bg_color"></view>
 
@@ -191,6 +208,7 @@
 					:formData="{ baseDir: baseDir3 }"
 					@uploadSuccess="uploadSuccess3"
 				/>
+				<view class="tips"><text>生成的海报图，图片体积不能超过2M</text></view>
 			</uni-forms-item>
 			<view class="blank32 blank_bg_color"></view>
 
@@ -313,6 +331,10 @@ onLoad(optios => {
 
 // 表单校验
 const rules = {
+	imgs: {
+		rules: [{ errorMessage: '请上传活动视频' }],
+		label: '活动视频'
+	},
 	views: {
 		rules: [{ errorMessage: '请输入虚拟人数' }],
 		label: '虚拟人数'
@@ -523,6 +545,22 @@ const {
 	refData: formData,
 	param: 'details',
 	selectNum: 5,
+	baseDir: 'active'
+})
+
+// 活动视频
+const {
+	uploadSuccess: uploadSuccess5,
+	picList: picList5,
+	selectNum: selectNum5,
+	uploadimageURL: uploadimageURL5,
+	baseDir: baseDir5,
+	uploadFail:uploadFail5
+} = useHtzImageUpload({
+	url: '/upload-flv/uploadVideo',
+	refData: formData,
+	param: 'imgs',
+	selectNum: 1,
 	baseDir: 'active'
 })
 </script>
