@@ -20,7 +20,7 @@
 			<view class="pageBg"><image class="image" src="/static/images/bg.png" mode="aspectFill"></image></view>
 			<!-- #ifndef H5 -->
 			<!-- 标题栏 -->
-			<uni-nav-bar statusBar fixed :title="'商城'" color="#ffffff" :border="false"></uni-nav-bar>
+			<uni-nav-bar statusBar fixed :title="'心选好物'" color="#ffffff" :border="false"></uni-nav-bar>
 			<view class="blank20"></view>
 			<!-- #endif -->
 		</template>

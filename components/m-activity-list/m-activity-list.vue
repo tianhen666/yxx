@@ -21,10 +21,10 @@
 				<image v-else class="image" :src="item.mainPic" mode="aspectFill"></image>
 
 				<!-- 活动类型 -->
-				<view class="type">
-					<image class="image" :src="`/static/images/type${(index % 2) + 1}.png`" mode="aspectFill"></image>
+				<view class="type" :class="`type${item.type}`">
+					<image class="image" :src="`/static/images/type${item.type}.png`" mode="aspectFill"></image>
 					<text class="text">
-						{{ item.type === 0 ? '免费活动' : item.type === 1 ? '爆款活动' : item.type === 2 ? '限量秒杀' : '' }}
+						{{ item.type === 0 ? '公益活动' : item.type === 1 ? '鸭鸭课堂' : item.type === 2 ? '限量秒杀' : '' }}
 					</text>
 				</view>
 			</view>
@@ -34,7 +34,7 @@
 				<view class="title">{{ item.title }}</view>
 				<!-- 价格,时间 -->
 				<view class="b_wrapper">
-					<view class="time">
+					<view class="time" :class="`time${item.type}`">
 						{{ dayjs(item.startDt).format('M月D日') + '——' + dayjs(item.endDt).format('M月D日') }}
 					</view>
 					<view class="price_wrapper" v-if="parseFloat(item.price) > 0">
@@ -66,9 +66,9 @@
 						</view>
 						<view class="text">已有{{ (item.infocount || 0) + (item.views || 0) }}人参与</view>
 					</view>
-					<view class="jion" :class="`style${(index % 2) + 1}`">
+					<view class="jion" :class="`style${item.type}`">
 						<text>参与活动</text>
-						<image class="image" :src="`/static/images/right${(index % 2) + 1}.png`" mode="aspectFill"></image>
+						<image class="image" :src="`/static/images/right${item.type}.png`" mode="aspectFill"></image>
 					</view>
 				</view>
 			</view>
@@ -229,6 +229,9 @@ const videoTap = index => {
 					z-index: 2;
 				}
 			}
+			:deep(.type1) {
+				color: #000;
+			}
 		}
 
 		.a_wrapper {
@@ -249,14 +252,23 @@ const videoTap = index => {
 				> .time {
 					width: 288rpx;
 					height: 40rpx;
-					background: #d5e6ff;
+					background: #fbf9d7;
 					border-radius: 21px;
 					flex: none;
 					font-weight: 400;
-					color: #4b8eff;
+					color: #000;
 					line-height: 24px;
 					@include mFlex;
 					font-size: 24rpx;
+				}
+				:deep(.time0){
+					background: #fff3f3;
+				}
+				:deep(.time1){
+					background: #fbf9d7;
+				}
+				:deep(.time2){
+					background: #fbf9d7;
 				}
 
 				.price_wrapper {
@@ -338,7 +350,7 @@ const videoTap = index => {
 					height: 48rpx;
 					flex: none;
 					border-radius: 48rpx;
-					font-size: 24rpx;
+					font-size: 26rpx;
 					font-weight: 400;
 
 					> .image {
@@ -347,15 +359,15 @@ const videoTap = index => {
 						height: 24rpx;
 					}
 				}
-				> .style1 {
-					color: #4685fb;
-					background: linear-gradient(to right, transparent, rgba(70, 133, 251, 0.3));
-				}
-				> .style2 {
+				:deep(.style0) {
 					color: #fb4646;
-					background: linear-gradient(to right, transparent, rgba(251, 70, 70, 0.3));
+					background: linear-gradient(to right, transparent, rgba(251, 70, 70, 0.6));
 				}
-				> .style3 {
+				:deep(.style1) {
+					color: #000;
+					background: linear-gradient(to right, transparent, rgba(251, 233, 61, 0.6));
+				}
+				:deep(.style2) {
 					color: #4685fb;
 					background: linear-gradient(to right, transparent, rgba(70, 133, 251, 0.3));
 				}

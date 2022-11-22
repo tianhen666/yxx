@@ -43,10 +43,11 @@ const btnClick = () => {
 			width: $main-width;
 			border-radius: 16rpx;
 			margin: auto;
-			font-size: 32rpx;
+			font-size: 34rpx;
 			height: 92rpx;
 			line-height: 92rpx;
-			color: #ffffff;
+			color: #000;
+			font-weight: 500;
 			background-color: $main-color;
 			&:after{
 				border: none;

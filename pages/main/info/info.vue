@@ -22,7 +22,7 @@
 		<template #top>
 			<!-- #ifndef H5 -->
 			<!-- 标题栏 -->
-			<uni-nav-bar statusBar fixed :title="'门诊信息'" color="#ffffff" :border="false"></uni-nav-bar>
+			<uni-nav-bar statusBar fixed :title="'小白鸭'" color="#ffffff" :border="false"></uni-nav-bar>
 			<view class="blank20"></view>
 			<!-- #endif -->
 		</template>
@@ -31,14 +31,6 @@
 			<!-- 当前店铺 -->
 			<m-address :info="info"></m-address>
 			<view class="blank30"></view>
-
-			<!-- 连锁门店 -->
-			<m-chain :infoList="infoList" :info="info" v-if="infoList.length > 1">
-				<template #title>
-					<m-title3 title="连锁门店"></m-title3>
-				</template>
-			</m-chain>
-			<view class="blank30" v-if="infoList.length > 1"></view>
 
 			<!-- 关于我们 -->
 			<m-about :info="info">
@@ -51,7 +43,7 @@
 			<!-- 专家团队 -->
 			<m-dentist :listData="docotorList">
 				<template #title>
-					<m-title3 title="专家团队"></m-title3>
+					<m-title3 title="合作伙伴"></m-title3>
 				</template>
 			</m-dentist>
 			<view class="blank30"></view>

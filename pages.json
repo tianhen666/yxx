@@ -10,7 +10,7 @@
 	}, {
 		"path": "pages/main/shop/shop",
 		"style": {
-			"navigationBarTitleText": "商城",
+			"navigationBarTitleText": "心选好物",
 			"enablePullDownRefresh": false,
 			"navigationStyle": "custom"
 		}
@@ -169,7 +169,7 @@
 			}, {
 				"path": "yuyue/yuyue",
 				"style": {
-					"navigationBarTitleText": "快速预约",
+					"navigationBarTitleText": "当面聊",
 					"enablePullDownRefresh": false
 				}
 			}, {
@@ -186,25 +186,21 @@
 					"enablePullDownRefresh": false
 				}
 
-			}    ,{
-                    "path" : "webView/webView",
-                    "style" :                                                                                    
-                {
-                    "navigationBarTitleText": "",
-                    "enablePullDownRefresh": false
-                }
-                
-                }
-                ,{
-                    "path" : "newsDetails/newsDetails",
-                    "style" :                                                                                    
-                {
-                    "navigationBarTitleText": "文章详情",
-                    "enablePullDownRefresh": false
-                }
-                
-                }
-            ]
+			}, {
+				"path": "webView/webView",
+				"style": {
+					"navigationBarTitleText": "",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "newsDetails/newsDetails",
+				"style": {
+					"navigationBarTitleText": "文章详情",
+					"enablePullDownRefresh": false
+				}
+
+			}]
 		},
 		{
 			"root": "pages/sub2",
@@ -402,16 +398,14 @@
 					"enablePullDownRefresh": false
 				}
 
-			}    ,{
-                    "path" : "newsList/newsList",
-                    "style" :                                                                                    
-                {
-                    "navigationBarTitleText": "文章列表",
-                    "enablePullDownRefresh": false
-                }
-                
-                }
-            ]
+			}, {
+				"path": "newsList/newsList",
+				"style": {
+					"navigationBarTitleText": "文章列表",
+					"enablePullDownRefresh": false
+				}
+
+			}]
 		},
 		{
 			"root": "pages/sub3",
@@ -485,8 +479,8 @@
 		}
 	},
 	"tabBar": {
-		"color": "#333333",
-		"selectedColor": "#4B8EFF",
+		"color": "#666666",
+		"selectedColor": "#000000",
 		"borderStyle": "black",
 		"backgroundColor": "#ffffff",
 		"list": [{
@@ -498,17 +492,17 @@
 			"pagePath": "pages/main/shop/shop",
 			"iconPath": "static/tabbar/shop.png",
 			"selectedIconPath": "static/tabbar/slt_shop.png",
-			"text": "商城"
+			"text": "心选好物"
 		}, {
 			"pagePath": "pages/main/info/info",
 			"iconPath": "static/tabbar/info.png",
 			"selectedIconPath": "static/tabbar/slt_info.png",
-			"text": "门诊信息"
+			"text": "小白鸭"
 		}, {
 			"pagePath": "pages/main/news/news",
 			"iconPath": "static/tabbar/case.png",
 			"selectedIconPath": "static/tabbar/slt_case.png",
-			"text": "口腔知识"
+			"text": "往期活动"
 		}, {
 			"pagePath": "pages/main/user/user",
 			"iconPath": "static/tabbar/user.png",

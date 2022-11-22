@@ -97,23 +97,23 @@ useShare(shareInfo)
 // 表单校验
 const rules = {
 	doctorname: {
-		rules: [{ required: true, errorMessage: '请输入就诊人姓名' }],
-		label: '就诊人'
+		rules: [{ required: true, errorMessage: '请输入联系人姓名' }],
+		label: '联系人'
 	},
 	doctorphone: {
 		rules: [
-			{ required: true, errorMessage: '请输入就诊人手机号' },
+			{ required: true, errorMessage: '请输入联系人手机号' },
 			{ pattern: RegExp(/^1[345789][0-9]{9}$/), errorMessage: '请输入正确的手机号' }
 		],
 		label: '联系方式'
 	},
 	doctortime: {
-		rules: [{ required: true, errorMessage: '请选择就诊时间' }],
-		label: '期望就诊时间'
+		rules: [{ required: true, errorMessage: '请选择期望见面时间' }],
+		label: '期望见面时间'
 	},
 	doctorproject: {
-		rules: [{ errorMessage: '请选择就诊项目' }],
-		label: '就诊项目'
+		rules: [{ errorMessage: '请选择' }],
+		label: '我们聊什么呢'
 	},
 	remark: {
 		rules: [{ errorMessage: '请输入备注' }],
@@ -122,28 +122,12 @@ const rules = {
 }
 
 const doctorproject = [
-	{ text: '种植检查', hot: true },
-	{ text: '标准洁牙', hot: true },
-	{ text: '涂氟', hot: true },
-	{ text: '十项口腔全面检查' },
-	{ text: '智齿检查' },
-	{ text: '龋齿检查' },
-	{ text: '矫正检查' },
-	{ text: '舒适洁牙' },
-	{ text: '补牙' },
-	{ text: '拔牙' },
-	{ text: '美白' },
-	{ text: '牙周治疗' },
-	{ text: '根管治疗' },
-	{ text: '牙体修复' },
-	{ text: '活动义齿' },
-	{ text: '贴面' },
-	{ text: '正畸' },
-	{ text: '种植' },
-	{ text: '窝沟封闭' },
-	{ text: '乳牙拔除' },
-	{ text: '儿童补牙' },
-	{ text: '儿童矫正' }
+	{ text: '活动设计，策划及落地' },
+	{ text: '活动招募'},
+	{ text: '商务合作'},
+	{ text: '我想加入' },
+	{ text: '我要冠名赞助' },
+	{ text: '我只是单纯暗恋你' }
 ]
 
 // 表单数据
@@ -320,7 +304,7 @@ const saveClick = _debounce(
 			}
 			.current {
 				background-color: $main-color;
-				color: #fff;
+				color: #000;
 			}
 		}
 	}

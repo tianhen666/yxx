@@ -1,26 +1,26 @@
 <template>
 	<view class="box_fuwu">
 		<view class="box_fuwu_left" @tap="navigateTo('/pages/sub1/yuyue/yuyue')">
-			<image class="image" src="/static/images/fuwu1.png" mode="aspectFill"></image>
-			<view class="title">预约服务</view>
-			<view class="sub_title">关爱牙齿 从我做起</view>
+			<image class="image" src="/static/images/fuwu1.png" mode="heightFix"></image>
+			<view class="title">找我合作</view>
+			<view class="sub_title">我喜欢....见面聊！</view>
 		</view>
 		<view class="box_fuwu_right">
 			<view class="box_fuwu_right_item1" @tap="navigateTo(`/pages/sub1/serveList/serveList`)">
-				<image class="image" src="/static/images/fuwu2.png" mode="aspectFill"></image>
-				<view class="title">爱牙护牙</view>
-				<view class="sub_title">牙齿管理专家</view>
+				<image class="image" src="/static/images/fuwu2.png" mode="heightFix"></image>
+				<view class="title">往期活动</view>
+				<view class="sub_title">哈哈，玩过的都在这儿</view>
 			</view>
 			<view class="box_fuwu_right_item2">
 				<view class="box_fuwu_right_item2_left" @tap="switchTab('/pages/main/news/news')">
-					<image class="image" src="/static/images/fuwu3.png" mode="aspectFill"></image>
-					<view class="title" style="color:#D56464;">口腔知识</view>
-					<view class="sub_title" style="color:#D5646488;">关爱口腔健康</view>
+					<image class="image" src="/static/images/fuwu3.png" mode="heightFix"></image>
+					<view class="title" style="color:#65601d;">鸭鸭课堂</view>
+					<view class="sub_title" style="color:#65601d88;">一起去浪</view>
 				</view>
 				<view class="box_fuwu_right_item2_right" @tap="switchTab('/pages/main/info/info')">
-					<image class="image" src="/static/images/fuwu4.png" mode="aspectFill"></image>
-					<view class="title" style="color:#CB9B57;">门诊信息</view>
-					<view class="sub_title" style="color:#CB9B5788;">详细门诊信息</view>
+					<image class="image" src="/static/images/fuwu4.png" mode="heightFix"></image>
+					<view class="title" style="color:#366991;">公益活动</view>
+					<view class="sub_title" style="color:#36699188;">会员特享</view>
 				</view>
 			</view>
 		</view>
@@ -48,10 +48,16 @@ const props = defineProps({
 		width: 274rpx;
 		height: 340rpx;
 		position: relative;
+		background-color: #bb2329;
+		border-radius: 16rpx;
 		> .image {
-			border-radius: 16rpx;
-			width: 100%;
-			height: 100%;
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			margin: auto;
+			width: 50%;
+			height: 65%;
 		}
 		> .title {
 			position: absolute;
@@ -60,7 +66,7 @@ const props = defineProps({
 			font-size: 32rpx;
 			font-family: 'HelloFont-WenYiHei', 'HelloFont';
 			font-weight: bold;
-			color: #4885fe;
+			color: #fff;
 			line-height: 40rpx;
 			width: 100%;
 			text-align: center;
@@ -73,7 +79,7 @@ const props = defineProps({
 			font-size: 24rpx;
 			font-family: 'PingFangSC-Regular', 'PingFang SC';
 			font-weight: 400;
-			color: #4885fe88;
+			color: #fff;
 			line-height: 34rpx;
 			width: 100%;
 		}
@@ -88,10 +94,14 @@ const props = defineProps({
 			height: 160rpx;
 			width: 100%;
 			position: relative;
+			background-color: #73ecff;
+			border-radius: 16rpx;
 			> .image {
-				border-radius: 16rpx;
-				width: 100%;
-				height: 100%;
+				position: absolute;
+				width: 50%;
+				height: 90%;
+				bottom: 0;
+				right: 20rpx;
 			}
 			> .title {
 				position: absolute;
@@ -103,7 +113,7 @@ const props = defineProps({
 				line-height: 40rpx;
 				width: 100%;
 				padding-left: 20rpx;
-				color: #0ba681;
+				color: #2d666f;
 			}
 			> .sub_title {
 				position: absolute;
@@ -115,7 +125,7 @@ const props = defineProps({
 				line-height: 34rpx;
 				width: 100%;
 				padding-left: 20rpx;
-				color: #0ba68188;
+				color: #2d666f88;
 			}
 		}
 
@@ -124,16 +134,25 @@ const props = defineProps({
 			width: 100%;
 			@include mFlex;
 			justify-content: space-between;
+			&_left{
+				background-color: #fbef4f;
+			}
+			&_right{
+				background-color: #8cccff;
+			}
 			&_left,
 			&_right {
 				width: 192rpx;
 				height: 160rpx;
 				flex: none;
 				position: relative;
+				border-radius: 16rpx;
 				> .image {
-					border-radius: 16rpx;
-					width: 100%;
-					height: 100%;
+					position: absolute;
+					width: 50%;
+					height: 50%;
+					bottom: 10rpx;
+					right: 10rpx;
 				}
 				> .title {
 					position: absolute;
@@ -142,7 +161,6 @@ const props = defineProps({
 					font-size: 32rpx;
 					font-family: 'HelloFont-WenYiHei', 'HelloFont';
 					font-weight: bold;
-
 					line-height: 40rpx;
 					width: 100%;
 					padding-left: 20rpx;

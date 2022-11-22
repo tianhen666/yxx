@@ -75,7 +75,7 @@ const props = defineProps({
 	}
 	.item {
 		padding: 1px;
-		background-image: linear-gradient($main-color, #{$main-color}33);
+		background-image: linear-gradient($sub-color, #{$sub-color}33);
 		width: 100%;
 		border-radius: 16rpx;
 		overflow: hidden;
@@ -116,8 +116,8 @@ const props = defineProps({
 				.left {
 					flex: none;
 					font-size: 25rpx;
-					color: $main-color;
-					background-color: #{$main-color}33;
+					color: $sub-color;
+					background-color: #{$sub-color}33;
 					border-radius: 100rpx;
 					padding: 6rpx 10rpx;
 				}

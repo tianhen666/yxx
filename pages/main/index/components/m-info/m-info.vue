@@ -28,13 +28,13 @@
 					@tap="makePhoneCall(info.mobile)"
 					class="icon"
 					src="/static/images/dianhua.png"
-					mode="aspectFill"
+					mode="heightFix"
 				></image>
 			</view>
 			<!-- 预约服务 -->
 			<button class="addWx" @tap="navigateTo('/pages/sub1/yuyue/yuyue')">
-				<image class="image" src="/static/images/shijian.png" mode="aspectFill"></image>
-				<text>预约服务</text>
+				<image class="image" src="/static/images/shijian.png" mode="heightFix"></image>
+				<text>见面聊~</text>
 			</button>
 		</view>
 	</view>
@@ -144,7 +144,7 @@ const daohang = () => {
 			}
 			.work_time {
 				font-size: 24rpx;
-				color: $main-color;
+				color: #000;
 				font-weight: 400;
 				font-size: 24rpx;
 			}
@@ -163,8 +163,8 @@ const daohang = () => {
 		@include mFlex;
 		justify-content: space-between;
 		> .icon {
-			width: 60rpx;
-			height: 60rpx;
+			width: 65rpx;
+			height: 65rpx;
 		}
 	}
 
@@ -175,13 +175,17 @@ const daohang = () => {
 		width: 396rpx;
 		border-radius: 80rpx;
 		background-color: $main-color;
-		color: $text-color-inverse;
-		font-size: 32rpx;
+		color: #000000;
+		font-size: 34rpx;
 		margin: 0;
+		font-weight: 500;
+		&:after{
+			border: none;
+		}
 		> .image {
-			width: 32rpx;
-			height: 32rpx;
-			margin-right: 10rpx;
+			width: 38rpx;
+			height: 38rpx;
+			margin-right: 20rpx;
 		}
 	}
 }

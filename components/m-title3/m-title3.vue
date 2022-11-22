@@ -1,7 +1,7 @@
 <template>
 	<view class="container">
 		<view class="title">{{ props.title }}</view>
-		<image class="image" src="/static/images/m-title3.png" mode="aspectFill"></image>
+		<image class="image" src="/static/images/m-title3.png" mode="aspectFit"></image>
 	</view>
 </template>
 
@@ -21,15 +21,16 @@ const props = defineProps({
 	@include mFlex;
 	flex-direction: column;
 	>.title{
-		font-size: 32rpx;
+		font-size: 34rpx;
 		font-weight: 500;
 		color: #333333;
 		line-height: 44rpx;
 		padding-bottom: 6rpx;
+		font-weight: 600;
 	}
 	>.image{
 		width: 306rpx;
-		height: 14rpx;
+		height: 36rpx;
 	}
 }
 </style>

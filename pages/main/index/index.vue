@@ -47,16 +47,15 @@
 			<!-- 服务入口 -->
 			<view class="box_serveList">
 				<!-- m-fuwu start  -->
-				<m-title2 title="门诊服务">
+				<m-title2 title="我们的服务">
 					<template v-slot:icon>
-						<image class="shijian1" src="/static/images/shijian1.png" mode="aspectFill"></image>
+						<image class="shijian1" src="/static/images/shijian1.png" mode="heightFix"></image>
 					</template>
 				</m-title2>
 				<m-fuwu :info="storeInfo"></m-fuwu>
-				<view class="blank40"></view>
 				<!-- m-fuwu end -->
 
-				<m-serve-list2 more :listData="serveListData" v-if="serveListData.length > 0"></m-serve-list2>
+				<!-- <m-serve-list2 more :listData="serveListData" v-if="serveListData.length > 0"></m-serve-list2> -->
 			</view>
 			<view class="blank40"></view>
 		</view>
