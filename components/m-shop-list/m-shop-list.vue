@@ -90,6 +90,7 @@ const props = defineProps({
 	}
 })
 
+
 /*
  *选中事件
  */
@@ -100,16 +101,11 @@ const selectClick = item => {
 
 <style lang="scss" scoped>
 .container {
-	width: $main-width;
-	margin: auto;
 	&_item {
-		overflow: hidden;
 		background-color: #ffffff;
-		border-radius: 16rpx;
 		@include mFlex;
 		justify-content: space-between;
-		margin-bottom: 25rpx;
-		padding: $padding;
+		margin-bottom: 35rpx;
 		position: relative;
 		&:last-child {
 			margin-bottom: 0;

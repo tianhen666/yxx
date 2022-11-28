@@ -6,18 +6,24 @@
 			<view class="sub_title">我喜欢....见面聊！</view>
 		</view>
 		<view class="box_fuwu_right">
-			<view class="box_fuwu_right_item1" @tap="navigateTo(`/pages/sub1/serveList/serveList`)">
+			<view class="box_fuwu_right_item1" @tap="switchTab('/pages/main/news/news')">
 				<image class="image" src="/static/images/fuwu2.png" mode="heightFix"></image>
 				<view class="title">往期活动</view>
 				<view class="sub_title">哈哈，玩过的都在这儿</view>
 			</view>
 			<view class="box_fuwu_right_item2">
-				<view class="box_fuwu_right_item2_left" @tap="switchTab('/pages/main/news/news')">
+				<view
+					class="box_fuwu_right_item2_left"
+					@tap="navigateTo(`/pages/sub1/serveInfo/serveInfo?targetId=${listData[0].id}`)"
+				>
 					<image class="image" src="/static/images/fuwu3.png" mode="heightFix"></image>
 					<view class="title" style="color:#65601d;">鸭鸭课堂</view>
 					<view class="sub_title" style="color:#65601d88;">一起去浪</view>
 				</view>
-				<view class="box_fuwu_right_item2_right" @tap="switchTab('/pages/main/info/info')">
+				<view
+					class="box_fuwu_right_item2_right"
+					@tap="navigateTo(`/pages/sub1/serveInfo/serveInfo?targetId=${listData[1].id}`)"
+				>
 					<image class="image" src="/static/images/fuwu4.png" mode="heightFix"></image>
 					<view class="title" style="color:#366991;">公益活动</view>
 					<view class="sub_title" style="color:#36699188;">会员特享</view>
@@ -28,8 +34,13 @@
 </template>
 
 <script setup>
-import { previewImage, switchTab, navigateTo,showToastText } from '@/aTemp/utils/uniAppTools.js'
+import { previewImage, switchTab, navigateTo, showToastText } from '@/aTemp/utils/uniAppTools.js'
 const props = defineProps({
+	listData:{
+		required: true,
+		type: Array,
+		default: () => []
+	},
 	info: {
 		required: true,
 		type: Object,
@@ -134,10 +145,10 @@ const props = defineProps({
 			width: 100%;
 			@include mFlex;
 			justify-content: space-between;
-			&_left{
+			&_left {
 				background-color: #fbef4f;
 			}
-			&_right{
+			&_right {
 				background-color: #8cccff;
 			}
 			&_left,

@@ -270,7 +270,7 @@ const wxWxqrCode = item => {
 			}
 			> .style1 {
 				background-color: $main-color;
-				color: #ffffff;
+				color: #000;
 			}
 			> .style2 {
 				color: $uni-secondary-color;

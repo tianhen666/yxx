@@ -33,9 +33,9 @@
 			</uni-forms-item>
 
 			<!-- 客服微信 -->
-			<!-- <uni-forms-item :label="rules.customer.label" label-position="top" name="customer">
+			<uni-forms-item :label="rules.customer.label" label-position="top" name="customer">
 				<htz-image-upload :max="selectNum2" v-model="picList2" mediaType="image" @chooseSuccess="chooseSuccess2" />
-			</uni-forms-item> -->
+			</uni-forms-item>
 
 			<!-- 所在区域 -->
 			<uni-forms-item :label="rules.address.label" name="address">
@@ -218,14 +218,14 @@ const { chooseSuccess: chooseSuccess1, picList: picList1, selectNum: selectNum1 
 })
 
 // 客服微信图片上传
-// const { chooseSuccess: chooseSuccess2, picList: picList2, selectNum: selectNum2 } = useHtzImageUpload({
-// 	ratio: 1 / 1,
-// 	url: '/upload-flv/uploadimage',
-// 	refData: formData,
-// 	param: 'customer',
-// 	selectNum: 1,
-// 	baseDir: 'store_kfwx'
-// })
+const { chooseSuccess: chooseSuccess2, picList: picList2, selectNum: selectNum2 } = useHtzImageUpload({
+	ratio: 1 / 1,
+	url: '/upload-flv/uploadimage',
+	refData: formData,
+	param: 'customer',
+	selectNum: 1,
+	baseDir: 'store_kfwx'
+})
 
 // 店铺分享图
 const { chooseSuccess: chooseSuccess3, picList: picList3, selectNum: selectNum3 } = useHtzImageUpload({
@@ -253,7 +253,7 @@ const { chooseSuccess: chooseSuccess5, picList: picList5, selectNum: selectNum5 
 	url: '/upload-flv/uploadimage',
 	refData: formData,
 	param: 'pics',
-	selectNum: 1,
+	selectNum: 5,
 	baseDir: 'store'
 })
 </script>

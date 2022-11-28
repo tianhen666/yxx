@@ -5,7 +5,12 @@
 	<pinapp-empty-page v-if="listData.length === 0" />
 	<view class="tab_content" v-else>
 		<view v-for="(item, index) in listData" :key="index" class="tab_content_item">
-			<image class="image" :src="item.avatar" mode="aspectFit" @tap="previewImage([item.avatar])"></image>
+			<image
+				class="image"
+				:src="item.avatar?item.avatar[0]:''"
+				mode="aspectFit"
+				@tap="navigateTo(`/pages/sub1/dentistInfo/dentistInfo?targetId=${item.id}`)"
+			></image>
 			<view class="right">
 				<view class="name">姓名：{{ item.name }}</view>
 				<view class="post">职务：{{ item.post }}</view>
@@ -37,9 +42,13 @@ import { showModal, previewImage, navigateTo } from '@/aTemp/utils/uniAppTools'
 const listData = ref([])
 
 // 拉取拉取数据列表
-const getList = data => {
-	_storedoctorGetlist(data).then(res => {
+const getList = () => {
+	_storedoctorGetlist().then(res => {
 		const { code, data, msg } = res
+		data.map((item, index) => {
+			item.avatar = item.avatar.split(',')
+			return item
+		})
 		listData.value = data
 	})
 }
@@ -78,7 +87,7 @@ const mDelete = (item, index) => {
 		}
 		> .image {
 			height: 280rpx;
-			width: 280rpx * 0.25 * 3;
+			width: 280rpx;
 			flex: none;
 			border-radius: 8rpx;
 		}
@@ -88,10 +97,10 @@ const mDelete = (item, index) => {
 			overflow: hidden;
 			color: $text-color-grey;
 			font-size: 28rpx;
-			>.post{
+			> .post {
 				margin: 32rpx 0;
 			}
-			>.descData{
+			> .descData {
 				line-height: 1.6;
 				padding-left: 3em;
 				text-indent: -3em;

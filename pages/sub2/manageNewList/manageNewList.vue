@@ -23,9 +23,14 @@
 				class="item-inner"
 				@tap="navigateTo(`/pages/sub1/newsDetails/newsDetails?targetId=${encodeURIComponent(item.id)}`)"
 			>
-				<view class="img_box"><image class="img" :src="item.thumbUrl" mode="aspectFill"></image></view>
+				<view class="img_box">
+					<image class="img" :src="item.thumbUrl" mode="aspectFill"></image>
+					<view class="type type0" v-if="item.classify==='鸭鸭课堂'">{{item.classify}}</view>
+					<view class="type type1" v-if="item.classify==='公益活动'">{{item.classify}}</view>
+				</view>
 				<view class="right_box">
 					<view class="title">{{ item.title }}</view>
+					<view class="time">{{ dayjs(item.createDt).format('YYYY年MM月DD日') }}</view>
 					<view class="digest">{{ item.digest || item.title }}</view>
 				</view>
 			</view>
@@ -38,17 +43,30 @@
 					查看
 				</view>
 				<view class="btn_item style1" @tap.stop.prevent="wxWxqrCode(item, index)">文章码</view>
+				<view
+					class="btn_item style2"
+					@tap.stop.prevent="navigateTo(`/pages/sub2/manageNewInput/manageNewInput?id=${item.id}`)"
+				>
+					编辑
+				</view>
+				<view class="btn_item style3" @tap.stop.prevent="freePublishDelFree(item, index)">删除</view>
 			</view>
 		</view>
+
+		<!-- 固定底部 -->
+		<template #bottom>
+			<m-btn-fix-bottom text="添加文章" @btnClick="navigateTo(`/pages/sub2/manageNewInput/manageNewInput`)" />
+		</template>
 	</z-paging>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import { onLoad, onShow } from '@dcloudio/uni-app'
-import { _freePublishGetFreePublish } from '@/aTemp/apis/wx.js'
-import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
+import { _freePublishGetStoreFree, _freePublishDelFree } from '@/aTemp/apis/wx.js'
+import { navigateTo, showModal } from '@/aTemp/utils/uniAppTools.js'
 import { showLoading } from '@/aTemp/utils/uniAppTools.js'
+import dayjs from 'dayjs'
 
 // 全局登录信息
 import { _useUserMain } from '@/aTemp/store/userMain.js'
@@ -71,9 +89,10 @@ onLoad(options => {})
 const getListData = (pageNo, pageSize) => {
 	const params = {
 		pageNum: pageNo,
-		pageSize: pageSize
+		pageSize: pageSize,
+		store_Id: useUserMain.storeId
 	}
-	_freePublishGetFreePublish(params)
+	_freePublishGetStoreFree(params)
 		.then(res => {
 			loading.value = false
 			pagingObj.value.complete(res.data?.records || [])
@@ -113,6 +132,17 @@ const wxWxqrCode = item => {
 			showToastText('生成失败')
 		})
 }
+
+// 删除
+const freePublishDelFree = (item, index) => {
+	showModal('是否删除？').then(res => {
+		if (res.confirm) {
+			_freePublishDelFree({ freeId: item.id }).then(() => {
+				mdataList.value.splice(index, 1)
+			})
+		}
+	})
+}
 </script>
 
 <style lang="scss" scoped>
@@ -144,6 +174,19 @@ const wxWxqrCode = item => {
 				width: 100%;
 				border-radius: 10rpx;
 			}
+			.type {
+				position: absolute;
+				right: 0;
+				top: 20rpx;
+				border-radius: 10rpx 0 0 10rpx;
+				font-size: 24rpx;
+				background-color: $main-color;
+				padding: 8rpx 12rpx;
+			}
+			.type1 {
+				color: #fff;
+				background-color: $sub-color;
+			}
 		}
 		.right_box {
 			flex: none;
@@ -154,6 +197,11 @@ const wxWxqrCode = item => {
 				line-height: 1.8;
 				color: #000;
 				font-weight: 400;
+			}
+			.time {
+				margin-top: 20rpx;
+				color: #999;
+				font-size: 26rpx;
 			}
 			.digest {
 				color: #999;
@@ -180,7 +228,7 @@ const wxWxqrCode = item => {
 		}
 		.style1 {
 			background-color: $main-color;
-			color: #ffffff;
+			color: #000;
 		}
 		.style2 {
 			color: $uni-secondary-color;

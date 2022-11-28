@@ -52,7 +52,7 @@
 	}, {
 		"path": "pages/main/news/news",
 		"style": {
-			"navigationBarTitleText": "口腔知识",
+			"navigationBarTitleText": "往期活动",
 			"enablePullDownRefresh": false,
 			"navigationStyle": "custom"
 		}
@@ -111,19 +111,13 @@
 			}, {
 				"path": "dentistInfo/dentistInfo",
 				"style": {
-					"navigationBarTitleText": "医生信息",
+					"navigationBarTitleText": "合作伙伴",
 					"enablePullDownRefresh": false
 				}
 			}, {
 				"path": "caseInfo/caseInfo",
 				"style": {
 					"navigationBarTitleText": "案例详情",
-					"enablePullDownRefresh": false
-				}
-			}, {
-				"path": "articleInfo/articleInfo",
-				"style": {
-					"navigationBarTitleText": "科普详情",
 					"enablePullDownRefresh": false
 				}
 			}, {
@@ -402,6 +396,20 @@
 				"path": "newsList/newsList",
 				"style": {
 					"navigationBarTitleText": "文章列表",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "manageNewList/manageNewList",
+				"style": {
+					"navigationBarTitleText": "文章管理",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "manageNewInput/manageNewInput",
+				"style": {
+					"navigationBarTitleText": "文章管理",
 					"enablePullDownRefresh": false
 				}
 

@@ -47,11 +47,11 @@ const myFunItems = {
 			name: '我的推广收益',
 			path: '/pages/sub1/profitList/profitList'
 		},
-		{
-			imgUrl: '/static/images/u-qhmenzhen.png',
-			name: '切换门店',
-			path: '/pages/sub2/switchStore/switchStore'
-		}
+		// {
+		// 	imgUrl: '/static/images/u-qhmenzhen.png',
+		// 	name: '切换门店',
+		// 	path: '/pages/sub2/switchStore/switchStore'
+		// }
 	]
 }
 

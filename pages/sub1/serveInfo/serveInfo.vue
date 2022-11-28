@@ -3,7 +3,7 @@
 	<view class="container" v-else>
 		<!-- 服务图片 -->
 		<view class="banner_img"><image :src="dataObj.pic" mode="aspectFill" class="image"></image></view>
-		<view class="blank20"></view>
+		<view class="blank24"></view>
 
 		<!-- 介绍 -->
 		<view class="serve_text">
@@ -18,17 +18,17 @@
 				</view>
 			</view>
 		</view>
-		<view class="blank20"></view>
+		<view class="blank24"></view>
 
 		<!-- 相关商品 -->
 		<view class="related_goods" v-if="dataObj.productList && dataObj.productList?.length > 0">
-			<shop-list :listData="dataObj.productList">
+			<m-shop-list :listData="dataObj.productList" showBtn>
 				<template #title>
 					<m-title2 title="相关商品" />
 				</template>
-			</shop-list>
+			</m-shop-list>
 		</view>
-		<view class="blank20"></view>
+		<view class="blank24"></view>
 
 		<!-- 图文详情 -->
 		<view class="serve_img">
@@ -53,7 +53,6 @@
 </template>
 
 <script setup>
-import shopList from './components/shop-list/shop-list.vue'
 import { ref, watch, getCurrentInstance } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { _serveGetinfo } from '@/aTemp/apis/service'
@@ -75,11 +74,21 @@ onLoad(async options => {
 	if (dataId.value > 0) {
 		// 拉取数据
 		_serveGetinfo({ id: dataId.value }).then(res => {
-			const { data, msg, code } = res
-			// 数据赋值
-			dataObj.value = data
-
-			loading.value = false
+			try{
+				const { data, msg, code } = res
+				if (data.productList) {
+					data.productList.map((item, index, arr) => {
+						item.pics = item.pics ? item.pics.split(',') : []
+						return item
+					})
+				}
+				// 数据赋值
+				dataObj.value = data
+				
+				loading.value = false
+			}catch(e){
+				console.log(e)
+			}
 		})
 	}
 })

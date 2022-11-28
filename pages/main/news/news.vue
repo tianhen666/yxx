@@ -15,17 +15,16 @@
 		:loading-full-fixed="true"
 		show-loading-more-when-reload
 	>
-	
 		<!-- 加载状态 -->
 		<template v-slot:loading>
 			<m-page-loading></m-page-loading>
 		</template>
-		
+
 		<!-- 固定顶部 -->
 		<template #top>
 			<!-- #ifndef H5 -->
 			<!-- 标题栏 -->
-			<uni-nav-bar fixed statusBar :title="'口腔知识'" color="#ffffff" :border="false"></uni-nav-bar>
+			<uni-nav-bar fixed statusBar :title="'往期活动'" color="#ffffff" :border="false"></uni-nav-bar>
 			<view class="blank20"></view>
 			<!-- #endif -->
 		</template>
@@ -35,9 +34,14 @@
 				class="item-inner"
 				@tap="navigateTo(`/pages/sub1/newsDetails/newsDetails?targetId=${encodeURIComponent(item.id)}`)"
 			>
-				<view class="img_box"><image class="img" :src="item.thumbUrl" mode="aspectFill"></image></view>
+				<view class="img_box">
+					<image class="img" :src="item.thumbUrl" mode="aspectFill"></image>
+					<view class="type type0" v-if="item.classify==='鸭鸭课堂'">{{item.classify}}</view>
+					<view class="type type1" v-if="item.classify==='公益活动'">{{item.classify}}</view>
+				</view>
 				<view class="right_box">
 					<view class="title">{{ item.title }}</view>
+					<view class="time">{{ dayjs(item.createDt).format('YYYY年MM月DD日') }}</view>
 					<view class="digest">{{ item.digest || item.title }}</view>
 				</view>
 			</view>
@@ -50,8 +54,13 @@
 <script setup>
 import { ref } from 'vue'
 import { onLoad, onShow } from '@dcloudio/uni-app'
-import { _freePublishGetFreePublish } from '@/aTemp/apis/wx.js'
+import { _freePublishGetStoreFree } from '@/aTemp/apis/wx.js'
 import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
+import dayjs from 'dayjs'
+
+// 全局登录信息
+import { _useUserMain } from '@/aTemp/store/userMain.js'
+const useUserMain = _useUserMain()
 
 // z-ping对象
 const pagingObj = ref(null)
@@ -66,9 +75,10 @@ onLoad(options => {})
 const getListData = (pageNo, pageSize) => {
 	const params = {
 		pageNum: pageNo,
-		pageSize: pageSize
+		pageSize: pageSize,
+		store_Id: useUserMain.storeId
 	}
-	_freePublishGetFreePublish(params)
+	_freePublishGetStoreFree(params)
 		.then(res => {
 			loading.value = false
 			pagingObj.value.complete(res.data?.records || [])
@@ -107,6 +117,19 @@ const getListData = (pageNo, pageSize) => {
 				width: 100%;
 				border-radius: 10rpx;
 			}
+			.type {
+				position: absolute;
+				right: 0;
+				top: 20rpx;
+				border-radius: 10rpx 0 0 10rpx;
+				font-size: 24rpx;
+				background-color: $main-color;
+				padding: 8rpx 12rpx;
+			}
+			.type1 {
+				color: #fff;
+				background-color: $sub-color;
+			}
 		}
 		.right_box {
 			flex: none;
@@ -114,9 +137,14 @@ const getListData = (pageNo, pageSize) => {
 			.title {
 				font-size: 30rpx;
 				@include textOverHidden;
-				line-height: 1.8;
+				line-height: 1.4;
 				color: #000;
-				font-weight: 400;
+				font-weight: 500;
+			}
+			.time {
+				margin-top: 20rpx;
+				color: #999;
+				font-size: 26rpx;
 			}
 			.digest {
 				color: #999;

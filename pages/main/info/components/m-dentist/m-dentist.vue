@@ -7,7 +7,7 @@
 			:key="index"
 			@tap="navigateTo(`/pages/sub1/dentistInfo/dentistInfo?targetId=${item.id}`)"
 		>
-			<image class="image" :src="item.avatar" mode="aspectFill"></image>
+			<image class="image" :src="item.avatar?item.avatar[0]:''" mode="aspectFill"></image>
 			<view class="right">
 				<view class="name">{{ item.name }}</view>
 				<text class="type">{{ item.post }}</text>
@@ -45,18 +45,18 @@ const props = defineProps({
 		@include mFlex;
 		justify-content: space-between;
 		margin-bottom: 30rpx;
-		background-color: #f7f9ff;
+		background-color: #f6f5ee;
 		&:last-child {
 			margin-bottom: 0;
 		}
 		> .image {
-			width: 200rpx;
-			height: 200rpx * 1.3;
+			width: 240rpx;
+			height: 240rpx;
 			flex: none;
 			border-radius: 4rpx;
 		}
 		> .right {
-			width: 380rpx;
+			width: 340rpx;
 			flex: none;
 			.name {
 				@include mFlex;
@@ -70,16 +70,16 @@ const props = defineProps({
 			.type {
 				display: inline-block;
 				border-radius: 8rpx;
-				border: 1px solid #3f5eff;
-				font-size: 20rpx;
+				font-size: 24rpx;
 				font-weight: 400;
-				color: #3f5eff;
+				color: #000;
+				background-color: $main-color;
 				line-height: 20rpx;
 				padding: 10rpx 20rpx;
 				margin-bottom: 20rpx;
 			}
 			.desc {
-				color: $text-color-grey;
+				color: #929292;
 				line-height: 1.6;
 				font-size: 26rpx;
 				text-align: justify;

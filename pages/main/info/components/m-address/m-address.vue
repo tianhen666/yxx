@@ -3,7 +3,7 @@
 		<view class="box_type">
 			<view class="swiper_wrapper">
 				<uni-swiper-dot
-					:info="[info.pics, '/static/images/no_img.jpg']"
+					:info="info.pics"
 					:current="Bcurrent"
 					mode="round"
 					:dotsStyles="{
@@ -14,7 +14,7 @@
 					}"
 				>
 					<swiper class="swiper" autoplay circular interval="500000" @change="Bchange">
-						<swiper-item v-for="(item, index) in [info.pics, '/static/images/no_img.jpg']" :key="index">
+						<swiper-item v-for="(item, index) in info.pics" :key="index">
 							<image class="image" :src="item" mode="aspectFill"></image>
 						</swiper-item>
 					</swiper>
@@ -35,7 +35,7 @@
 			<!-- 按钮 -->
 			<view class="button_container">
 				<button class="btn" @tap.stop="makePhoneCall(info.mobile)">快call我</button>
-				<button class="btn" @tap.stop="">加微信</button>
+				<button class="btn" @tap.stop="previewImage([info.customer])">加微信</button>
 				<button class="btn" @tap.stop="navigateTo('/pages/sub1/yuyue/yuyue')">见面聊</button>
 			</view>
 		</view>
@@ -44,7 +44,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { makePhoneCall, openLocation, navigateTo } from '@/aTemp/utils/uniAppTools.js'
+import { makePhoneCall, openLocation, navigateTo,previewImage } from '@/aTemp/utils/uniAppTools.js'
 
 const props = defineProps({
 	// 当前店铺信息

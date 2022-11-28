@@ -52,7 +52,6 @@
 </template>
 
 <script setup>
-import mChain from './components/m-chain/m-chain.vue'
 import mAddress from './components/m-address/m-address.vue'
 import mAbout from './components/m-about/m-about.vue'
 import mDentist from './components/m-dentist/m-dentist.vue'
@@ -75,9 +74,17 @@ const queryall = () => {
 	let ListData = Promise.all([_storedoctorGetlist(), _storeGetinfolist(), _storeGetinfo()])
 	//全部加载成功
 	ListData.then(res => {
+		res[0].data.map((item, index) => {
+			item.avatar = item.avatar.split(',')
+			return item
+		})
 		docotorList.value = res[0].data
+		
 		infoList.value = res[1].data
+	
+		res[2].data.pics = res[2].data.pics.split(',')
 		info.value = res[2].data
+		
 		paging.value.complete()
 	})
 }

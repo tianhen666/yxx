@@ -1,6 +1,9 @@
 <template>
-	<!-- 商品列表 -->
-	<m-shop-list selectOption :selectListId="selectListId" :listData="listData" @selectClick="selectClick" />
+	<view class="container">
+		<!-- 商品列表 -->
+		<m-shop-list selectOption :selectListId="selectListId" :listData="listData" @selectClick="selectClick" />
+	</view>
+
 
 	<!-- 返回上一页 -->
 	<m-btn-fix-bottom
@@ -72,4 +75,9 @@ const confirmSelection = () => {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+	.container{
+		width: $main-width;
+		margin: auto;
+	}
+</style>

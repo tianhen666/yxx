@@ -217,6 +217,10 @@
 				<uni-number-box :min="1" :max="255" v-model="formData.sort" />
 				<view class="tips"><text>首页显示顺序，序号小的排在前面</text></view>
 			</uni-forms-item>
+			<!-- 相关商品 -->
+			<uni-forms-item :label="rules.productId.label" name="productId" label-position="top">
+				<m-xiangguan-goods />
+			</uni-forms-item>
 			<view class="blank32 blank_bg_color"></view>
 		</uni-forms>
 		<m-btn-fix-bottom :loading="loading" text="保存信息" @btnClick="saveClick" />
@@ -224,11 +228,27 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref,watch } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { _enrollformSave, _enrollformGetinfo } from '@/aTemp/apis/activity.js'
 import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
 import dayjs from 'dayjs'
+
+import { _storeSelectShop } from '@/aTemp/store/storeSelectShop.js'
+import { storeToRefs } from 'pinia'
+// 商品选择的列表
+const storeSelectShop = _storeSelectShop()
+// 选着数量,选中列表ID,选中列表数据
+const { selectQuantity, selectListId, selectListData } = storeToRefs(storeSelectShop)
+// 重置数据
+storeSelectShop.$reset()
+// 设置可选择数量
+selectQuantity.value = 5
+// 监听选中的商品ID变化
+watch(selectListId.value, (newValue, oldValue) => {
+	formData.value.productId = newValue.join(',')
+})
+
 
 // 数据ID
 const dataId = ref(0)
@@ -399,7 +419,11 @@ const rules = {
 	sharePriceType: {
 		rules: [{ required: true, errorMessage: '请选择分佣方式' }],
 		label: '分佣方式'
-	}
+	},
+	productId: {
+		rules: [{ errorMessage: '请选择相关商品' }],
+		label: '相关商品'
+	},
 }
 
 /*

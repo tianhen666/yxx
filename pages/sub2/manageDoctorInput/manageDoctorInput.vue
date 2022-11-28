@@ -117,11 +117,11 @@ import useHtzImageUpload from '@/aTemp/mixins/useHtzImageUpload.js'
 
 // 医生图片上传
 const { chooseSuccess: chooseSuccess1, picList: picList1, selectNum: selectNum1 } = useHtzImageUpload({
-	ratio: 3 / 4,
+	ratio: 1,
 	url: '/upload-flv/uploadimage',
 	refData: formData,
 	param: 'avatar',
-	selectNum: 1,
+	selectNum: 5,
 	baseDir: 'doctor'
 })
 

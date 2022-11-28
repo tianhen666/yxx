@@ -67,6 +67,18 @@
 		</view>
 		<view class="blank24"></view>
 
+		<!-- 相关商品 -->
+		<view class="box3 box" v-if="dataObj.storeProductList && dataObj.storeProductList?.length > 0">
+			<view class="related_goods">
+				<m-shop-list :listData="dataObj.storeProductList" showBtn>
+					<template #title>
+						<m-title2 title="相关商品" />
+					</template>
+				</m-shop-list>
+			</view>
+		</view>
+		<view class="blank24" v-if="dataObj.storeProductList && dataObj.storeProductList?.length > 0"></view>
+
 		<!-- 活动内容 -->
 		<view class="box2 box">
 			<m-title2 title="活动内容"></m-title2>
@@ -163,39 +175,49 @@ const enrollformGetinfo = () => {
 	loading.value = true
 	_enrollformGetinfo({ id: dataId.value }).then(res => {
 		const { data, code, msg } = res
+		try {
+			if(data.getinfo.storeProductList){
+				data.getinfo.storeProductList.map((item, index, arr) => {
+					item.pics = item.pics ? item.pics.split(',') : []
+					return item
+				})
+			}
+			// 活动详情
+			dataObj.value = data.getinfo
+			// 已参加活动人数
+			dataObj.value['count'] = data.count
+			// 已参与活动人的信息列表
+			dataObj.value['activityListObj'] = data.activitynumber
+			// 自己参与活动次数
+			dataObj.value['myJionCount'] = data.purchasecount
 
-		// 活动详情
-		dataObj.value = data.getinfo
-		// 已参加活动人数
-		dataObj.value['count'] = data.count
-		// 已参与活动人的信息列表
-		dataObj.value['activityListObj'] = data.activitynumber
-		// 自己参与活动次数
-		dataObj.value['myJionCount'] = data.purchasecount
+			// 标识活动商品
+			dataObj.value['myType'] = '活动'
 
-		// 标识活动商品
-		dataObj.value['myType'] = '活动'
+			// 倒计时
+			const timeDjs = dayjs(dataObj.value.endDt)
+			djsFun(timeDjs)
 
-		// 倒计时
-		const timeDjs = dayjs(dataObj.value.endDt)
-		djsFun(timeDjs)
+			// 数据加载结束
+			loading.value = false
 
-		// 数据加载结束
-		loading.value = false
-
-		// 设置分享参数
-		shareInfo.title = computed(() => `${useUserMain.nickname || ''} 邀请您参加【${dataObj.value.title}】`)
-		shareInfo.path = computed(
-			() =>
-				`/pages/main/index/index?invitationCode=${useUserMain.userid}&storeId=${
-					useUserMain.storeId
-				}&Mscene=1&targetId=${dataObj.value.id}`
-		)
-		shareInfo.imageUrl = dataObj.value.mainPic || `https://imgs.fenxiangzl.com/store/tooth/invitbg.png`
-		// 分享到朋友圈用到
-		shareInfo.query = computed(
-			() => `invitationCode=${useUserMain.userid}&storeId=${useUserMain.storeId}&Mscene=1&targetId=${dataObj.value.id}`
-		)
+			// 设置分享参数
+			shareInfo.title = computed(() => `${useUserMain.nickname || ''} 邀请您参加【${dataObj.value.title}】`)
+			shareInfo.path = computed(
+				() =>
+					`/pages/main/index/index?invitationCode=${useUserMain.userid}&storeId=${
+						useUserMain.storeId
+					}&Mscene=1&targetId=${dataObj.value.id}`
+			)
+			shareInfo.imageUrl = dataObj.value.mainPic || `https://imgs.fenxiangzl.com/store/tooth/invitbg.png`
+			// 分享到朋友圈用到
+			shareInfo.query = computed(
+				() =>
+					`invitationCode=${useUserMain.userid}&storeId=${useUserMain.storeId}&Mscene=1&targetId=${dataObj.value.id}`
+			)
+		} catch (e) {
+			console.log(e)
+		}
 	})
 }
 
@@ -607,7 +629,7 @@ const tapShare = () => {
 		.jion_right {
 			font-size: 26rpx;
 			font-weight: bold;
-			color: #fff;
+			color: #000;
 			width: 170rpx;
 			background-color: $main-color;
 			border-radius: 50rpx;

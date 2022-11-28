@@ -31,7 +31,7 @@
 
 		<view class="container">
 			<!-- 轮播 -->
-			<m-carousel :listData="bannerListData"  v-if="bannerListData.length > 0"></m-carousel>
+			<m-carousel :listData="bannerListData" v-if="bannerListData.length > 0"></m-carousel>
 			<view class="blank30" v-if="bannerListData.length > 0"></view>
 
 			<!-- 门诊信息 -->
@@ -52,7 +52,7 @@
 						<image class="shijian1" src="/static/images/shijian1.png" mode="heightFix"></image>
 					</template>
 				</m-title2>
-				<m-fuwu :info="storeInfo"></m-fuwu>
+				<m-fuwu :info="storeInfo" :listData="serveListData"></m-fuwu>
 				<!-- m-fuwu end -->
 
 				<!-- <m-serve-list2 more :listData="serveListData" v-if="serveListData.length > 0"></m-serve-list2> -->
@@ -113,32 +113,39 @@ const getData = () => {
 
 	//全部加载成功
 	ListData.then(res => {
-		bannerListData.value = res[0].data
-		storeInfo.value = res[1].data
-		activityListData.value = res[2].data.slice(0, 3)
-		serveListData.value = res[3].data.slice(0, 6)
-
-		// 设置页面分享参数
-		shareInfo.title = computed(() => `${useUserMain.nickname} - 邀请您进入【${storeInfo.value.name}】`)
-		// 分享图片
-		shareInfo.imageUrl =
-			storeInfo.value.sharePic || storeInfo.value.pics || `https://imgs.fenxiangzl.com/store/tooth/invitbg.png`
-
-		// 分享到聊天框用到
-		shareInfo.path = computed(
-			() =>
-				`/pages/main/index/index?invitationCode=${useUserMain.userid}&storeId=${
-					useUserMain.storeId
-				}&Mscene=0&targetId=0`
-		)
-		// 分享到朋友圈用到
-		shareInfo.query = computed(
-			() => `invitationCode=${useUserMain.userid}&storeId=${useUserMain.storeId}&Mscene=0&targetId=0`
-		)
-
-		// 加载完成
-		loading.value = false
-		paging.value.complete()
+		try{
+			bannerListData.value = res[0].data
+			storeInfo.value = res[1].data
+			activityListData.value = res[2].data.slice(0, 3)
+			serveListData.value = res[3].data.slice(0, 6)
+			
+			storeInfo.value.pics = storeInfo.value.pics.split(',') || []
+			
+			// 设置页面分享参数
+			shareInfo.title = computed(() => `${useUserMain.nickname} - 邀请您进入【${storeInfo.value.name}】`)
+			// 分享图片
+			shareInfo.imageUrl =
+				storeInfo.value.sharePic || storeInfo.value.pics[0] || `https://imgs.fenxiangzl.com/store/tooth/invitbg.png`
+			
+			// 分享到聊天框用到
+			shareInfo.path = computed(
+				() =>
+					`/pages/main/index/index?invitationCode=${useUserMain.userid}&storeId=${
+						useUserMain.storeId
+					}&Mscene=0&targetId=0`
+			)
+			// 分享到朋友圈用到
+			shareInfo.query = computed(
+				() => `invitationCode=${useUserMain.userid}&storeId=${useUserMain.storeId}&Mscene=0&targetId=0`
+			)
+			
+			// 加载完成
+			loading.value = false
+			paging.value.complete()
+		}catch(e){
+			console.log(e)
+		}
+		
 	})
 }
 

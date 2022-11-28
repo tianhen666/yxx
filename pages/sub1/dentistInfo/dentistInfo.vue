@@ -1,7 +1,28 @@
 <template>
 	<m-page-loading v-if="loading"></m-page-loading>
 	<view class="container" v-else>
-		<view class="item"><image class="image" :src="dataObj.avatar" mode="aspectFill"></image></view>
+		<view class="item" style="border-bottom: none; padding: 0;">
+			<!-- <image class="image" :src="dataObj.avatar" mode="aspectFill"></image> -->
+			<view class="swiper_wrapper">
+				<uni-swiper-dot
+					:info="dataObj.avatar"
+					:current="Bcurrent"
+					mode="round"
+					:dotsStyles="{
+						backgroundColor: 'rgba(0, 0, 0, .4)',
+						border: 'none',
+						selectedBackgroundColor: '#ffffff',
+						selectedBorder: 'none'
+					}"
+				>
+					<swiper class="swiper" autoplay circular interval="500000" @change="Bchange">
+						<swiper-item v-for="(item, index) in dataObj.avatar" :key="index">
+							<image class="image" :src="item" mode="aspectFill"></image>
+						</swiper-item>
+					</swiper>
+				</uni-swiper-dot>
+			</view>
+		</view>
 		<view class="item left_right">
 			<text class="title">医生名称</text>
 			<text class="text">{{ dataObj.name }}</text>
@@ -50,16 +71,35 @@ onLoad(optios => {
 		// 拉取数据
 		_storedoctorGetinfo({ id: dataId.value }).then(res => {
 			const { data, msg, code } = res
+			data.avatar = data.avatar.split(',')
 			dataObj.value = data
 			loading.value = false
 		})
 	}
 })
+
+const Bcurrent = ref(0)
+// 改变索引事件
+const Bchange = e => {
+	Bcurrent.value = e.detail.current
+}
 </script>
 
 <style lang="scss" scoped>
 :global(page) {
 	background-color: #fff;
+}
+.swiper {
+	width: $main-width;
+	height: $main-width;
+	margin: auto;
+	overflow: hidden;
+	border-radius: 16rpx;
+	.image {
+		width: 100%;
+		height: 100%;
+		border-radius: 16rpx;
+	}
 }
 .left_right {
 	@include mFlex;
@@ -74,12 +114,22 @@ onLoad(optios => {
 		&:last-child {
 			border-bottom: none;
 		}
-		> .image {
-			width: 300rpx;
-			height: 400rpx;
-			margin: auto;
-			border: 1px solid #f5f5f5;
+		.image_box {
+			width: 100%;
+			height: 0;
+			padding-top: 50%;
+			position: relative;
+			.image {
+				width: 100%;
+				height: 100%;
+				position: absolute;
+				top: 0;
+				left: 0;
+				border-radius: 10rpx;
+				border: 1px solid #f5f5f5;
+			}
 		}
+
 		.title {
 			font-size: 32rpx;
 			color: $text-color;

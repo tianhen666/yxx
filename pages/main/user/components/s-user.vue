@@ -16,7 +16,7 @@
 	<view class="blank30"></view>
 
 	<!-- 营销助手 -->
-	<view class="box">
+<!-- 	<view class="box">
 		<m-title2 :title="module4.title"></m-title2>
 		<view class="yxzs">
 			<template v-for="(item, index) in module4.sub" :key="index">
@@ -30,7 +30,7 @@
 			</template>
 		</view>
 	</view>
-	<view class="blank30"></view>
+	<view class="blank30"></view> -->
 
 	<!-- 选项 -->
 	<m-option :listData="module5"></m-option>
@@ -114,6 +114,11 @@ const module1 = {
 			imgUrl: '/static/images/u-yisheng.png',
 			name: '医生管理',
 			path: '/pages/sub2/manageDoctorList/manageDoctorList'
+		},
+		{
+			imgUrl: '/static/images/u-yisheng.png',
+			name: '文章管理',
+			path: '/pages/sub2/manageNewList/manageNewList'
 		}
 	]
 }
@@ -285,11 +290,11 @@ const module5 = {
 			name: '我的收益',
 			path: '/pages/sub1/profitList/profitList'
 		},
-		{
-			imgUrl: '/static/images/u-qhmenzhen.png',
-			name: '切换门店',
-			path: '/pages/sub2/switchStore/switchStore'
-		}
+		// {
+		// 	imgUrl: '/static/images/u-qhmenzhen.png',
+		// 	name: '切换门店',
+		// 	path: '/pages/sub2/switchStore/switchStore'
+		// }
 	]
 }
 </script>

@@ -91,20 +91,20 @@ const tapShare = () => {
 				@include mFlex;
 				flex-direction: column;
 				flex: none;
+				color: #000;
 				.btn {
-					padding: 10rpx;
+					padding: 20rpx 30rpx;
 					font-weight: bold;
 					font-size: 32rpx;
-					border-radius: 0;
-					color: $main-color;
-					background-color: transparent;
+					border-radius: 20rpx;
+					color: #000;
+					background-color: #fbf9d7;
 					line-height: 1;
 					&:after {
 						border: none;
 					}
 				}
 				.price {
-					color: $main-color;
 					padding-top: 15rpx;
 					font-weight: normal;
 					font-size: 26rpx;
@@ -114,15 +114,15 @@ const tapShare = () => {
 				@include mFlex;
 				flex-direction: column;
 				flex: none;
-				color: $main-color;
+				color: #000;
 				font-size: 32rpx;
 				.btn {
-					padding: 10rpx;
+					padding: 20rpx 30rpx;
+					border-radius: 20rpx;
 					font-weight: bold;
 					font-size: 32rpx;
-					border-radius: 0;
-					color: $main-color;
-					background-color: transparent;
+					color: #000;
+					background-color: #fbf9d7;
 					line-height: 1;
 					&:after {
 						border: none;
@@ -142,7 +142,7 @@ const tapShare = () => {
 				@include mFlex;
 				flex: none;
 				width: 33.3%;
-				color: #fff;
+				color: #000;
 				.right_btn {
 					width: 100%;
 					height: 100rpx;
@@ -150,7 +150,7 @@ const tapShare = () => {
 					flex-direction: column;
 					background-color: $main-color;
 					border-radius: 16rpx;
-					color: #fff;
+					color: #000;
 					line-height: 1;
 					&:after {
 						border: none;
