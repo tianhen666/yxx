@@ -1,83 +1,84 @@
 <template>
 	<view class="activity">
-		<view
-			class="activity_item"
-			v-for="(item, index) in listData"
-			:key="index"
-			@tap="navigateTo(`/pages/sub1/activityInfo/activityInfo?targetId=${item.id}`)"
-		>
-			<!-- 封面图 -->
-			<view class="activity_item_img">
-				<video
-					:id="`myVideo${index}`"
-					class="myVideo"
-					:src="item.imgs"
-					:poster="item.mainPic"
-					controls
-					object-fit="cover"
-					@tap.stop="videoTap(index)"
-					v-if="item.imgs"
-				></video>
-				<image v-else class="image" :src="item.mainPic" mode="aspectFill"></image>
+		<template v-for="(item, index) in listData" :key="index">
+			<view
+				class="activity_item"
+				@tap.stop="navigateTo(`/pages/sub1/activityInfo/activityInfo?targetId=${item.id}`)"
+				v-if="index > 2 ? showStatus : true"
+			>
+				<!-- 封面图 -->
+				<view class="activity_item_img">
+					<video
+						:id="`myVideo${index}`"
+						class="myVideo"
+						:src="item.imgs"
+						:poster="item.mainPic"
+						controls
+						object-fit="cover"
+						@tap.stop="videoTap(index)"
+						v-if="item.imgs"
+					></video>
+					<image v-else class="image" :src="item.mainPic" mode="aspectFill"></image>
 
-				<!-- 活动类型 -->
-				<view class="type">
-					<image class="image" :src="`/static/images/type${(index % 2) + 1}.png`" mode="aspectFill"></image>
-					<text class="text">
-						{{ item.type === 0 ? '免费活动' : item.type === 1 ? '爆款活动' : item.type === 2 ? '限量秒杀' : '' }}
-					</text>
+					<!-- 活动类型 -->
+					<view class="type">
+						<image class="image" :src="`/static/images/type${(index % 2) + 1}.png`" mode="aspectFill"></image>
+						<text class="text">
+							{{ item.type === 0 ? '免费活动' : item.type === 1 ? '爆款活动' : item.type === 2 ? '限量秒杀' : '' }}
+						</text>
+					</view>
+				</view>
+
+				<!-- 带有背景区域 -->
+				<view class="a_wrapper">
+					<view class="title">{{ item.title }}</view>
+					<!-- 价格,时间 -->
+					<view class="b_wrapper">
+						<view class="time">
+							{{ dayjs(item.startDt).format('M月D日') + '——' + dayjs(item.endDt).format('M月D日') }}
+						</view>
+						<view class="price_wrapper" v-if="parseFloat(item.price) > 0">
+							<!-- 划线价格 -->
+							<view class="originalPrice" v-if="item.alonePrice">
+								<text class="through">￥{{ item.alonePrice }}</text>
+							</view>
+							<!-- 出售价格 -->
+							<view class="price">
+								<text class="price_cn">￥</text>
+								<text>{{ item.price }}</text>
+							</view>
+						</view>
+					</view>
+
+					<!-- 参与 -->
+					<view class="add_wrapper">
+						<view class="left">
+							<view class="img_wrapper" v-if="item.infoList.length > 0">
+								<template v-for="(subItem, subIndex) in item.infoList" :key="subIndex">
+									<view class="image_box" :style="{ zIndex: subIndex + 1 }" v-if="subItem && subIndex < 5">
+										<image
+											class="image"
+											:src="subItem.avatar || '/static/images/default_avatar.png'"
+											mode="aspectFill"
+										></image>
+									</view>
+								</template>
+							</view>
+							<view class="text">已有{{ (item.infocount || 0) + (item.views || 0) }}人参与</view>
+						</view>
+						<view class="jion" :class="`style${(index % 2) + 1}`">
+							<text>参与活动</text>
+							<image class="image" :src="`/static/images/right${(index % 2) + 1}.png`" mode="aspectFill"></image>
+						</view>
+					</view>
 				</view>
 			</view>
-
-			<!-- 带有背景区域 -->
-			<view class="a_wrapper">
-				<view class="title">{{ item.title }}</view>
-				<!-- 价格,时间 -->
-				<view class="b_wrapper">
-					<view class="time">
-						{{ dayjs(item.startDt).format('M月D日') + '——' + dayjs(item.endDt).format('M月D日') }}
-					</view>
-					<view class="price_wrapper" v-if="parseFloat(item.price) > 0">
-						<!-- 划线价格 -->
-						<view class="originalPrice" v-if="item.alonePrice">
-							<text class="through">￥{{ item.alonePrice }}</text>
-						</view>
-						<!-- 出售价格 -->
-						<view class="price">
-							<text class="price_cn">￥</text>
-							<text>{{ item.price }}</text>
-						</view>
-					</view>
-				</view>
-
-				<!-- 参与 -->
-				<view class="add_wrapper">
-					<view class="left">
-						<view class="img_wrapper" v-if="item.infoList.length > 0">
-							<template v-for="(subItem, subIndex) in item.infoList" :key="subIndex">
-								<view class="image_box" :style="{ zIndex: subIndex + 1 }" v-if="subItem && subIndex < 5">
-									<image
-										class="image"
-										:src="subItem.avatar || '/static/images/default_avatar.png'"
-										mode="aspectFill"
-									></image>
-								</view>
-							</template>
-						</view>
-						<view class="text">已有{{ (item.infocount || 0) + (item.views || 0) }}人参与</view>
-					</view>
-					<view class="jion" :class="`style${(index % 2) + 1}`">
-						<text>参与活动</text>
-						<image class="image" :src="`/static/images/right${(index % 2) + 1}.png`" mode="aspectFill"></image>
-					</view>
-				</view>
-			</view>
-		</view>
+		</template>
 	</view>
 
-	<view class="more" @click="navigateTo('/pages/sub1/activityList/activityList')" v-if="listData.length > 2 && more">
-		<text class="text">查看更多</text>
-		<uni-icons type="bottom" size="16" color="#bbb"></uni-icons>
+	<view class="more" @tap.stop="showStatus = !showStatus" v-if="listData.length > 2 && more">
+		<text class="text">{{ showStatus ? '收起更多' : '展开更多' }}</text>
+		<uni-icons :type="showStatus ? 'top' : 'bottom'" size="16" color="#bbb"></uni-icons>
 	</view>
 </template>
 
@@ -86,6 +87,8 @@ import dayjs from 'dayjs'
 import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
 import { ref, watch } from 'vue'
 import { onPageScroll } from '@dcloudio/uni-app'
+
+const showStatus = ref(false)
 
 import { getCurrentInstance } from 'vue'
 const instance = getCurrentInstance() // 获取组件实例

@@ -6,16 +6,27 @@
 			<text>文字</text>
 		</view>
 
-		<!-- 添加图片 -->
-		<view class="fun-item" @tap.prevent.stop="addImg" v-if="false">
+		<!-- 添加图片  -->
+		<view class="fun-item" @tap.prevent.stop="addImg">
 			<view class="icon"><image class="image" src="./images/scale_icon.png" mode="aspectFit" /></view>
-			<text>图片</text>
+			<text>添加图片</text>
+		</view>
+
+		<!-- 添加logo -->
+		<view class="fun-item" @tap.prevent.stop="addLogo" v-if="!posterAdd">
+			<view class="icon"><image class="image" src="./images/scale_icon.png" mode="aspectFit" /></view>
+			<text>添加logo</text>
+		</view>
+		<!-- 添加二维码 -->
+		<view class="fun-item" @tap.prevent.stop="addCode" v-if="!posterAdd">
+			<view class="icon"><image class="image" src="./images/scale_icon.png" mode="aspectFit" /></view>
+			<text>添加二维码</text>
 		</view>
 
 		<!-- 更换背景 -->
 		<view class="fun-item" @tap.prevent.stop="addBg">
 			<view class="icon"><image class="image" src="./images/scale_icon.png" mode="aspectFit" /></view>
-			<text>背景</text>
+			<text>更换背景</text>
 		</view>
 
 		<!-- 其他选项 -->
@@ -29,11 +40,25 @@
 <script setup>
 import { ref, inject } from 'vue'
 import { chooseImage, uploadFile, showToastText, getImageInfo, showLoading } from '@/aTemp/utils/uniAppTools.js'
+import { _wxWxqrCode } from '@/aTemp/apis/login.js'
+// base64转图片路径
+import { base64ToPath } from 'image-tools'
+
+// 全局登录信息
+import { _useUserMain } from '@/aTemp/store/userMain.js'
+const useUserMain = _useUserMain()
+
 // 全局基础配置
 import config from '@/global-config.js'
 
+// 是否添加海报
+const posterAdd = inject('posterAdd', false)
+
 // 接收弹出窗对象
 const typeAddPopup = inject('typeAddPopup')
+
+// 接收海报数据其他数据
+const posterOtherData = inject('posterOtherData')
 
 // 接收海报数据
 const posterData = inject('posterData')
@@ -41,6 +66,74 @@ const posterData = inject('posterData')
 const movableViewObj = inject('movableViewObj')
 // 当前选中的索引
 const movableViewIndex = inject('movableViewIndex')
+
+// 添加logo
+const addLogo = async () => {
+	try{
+		const logoUrl = uni.getStorageSync('storeInfo').icon
+		const getImgInfo = await getImageInfo(logoUrl)
+		const { height: imgHeight, width: imgWidth, path: imgPath } = getImgInfo
+		
+		const newViewObj = {
+			id: Date.now(),
+			type: 'image',
+			url: logoUrl,
+			css: {
+				top: '20px',
+				left: '20px',
+				width: '50px',
+				height: imgHeight / (imgWidth / 50) + 'px'
+			}
+		}
+		posterData.value.views.push(newViewObj)
+		
+		// 选中这个元素
+		movableViewObj.value = newViewObj
+		movableViewIndex.value = posterData.value.views.length - 1
+		// console.log(movableViewObj.value)
+		// console.log(movableViewIndex.value)
+		
+		typeAddPopup.value.close()
+	}catch(e){
+		console.log(e)
+		showToastText('没有上传门诊logo')
+	}
+	
+}
+
+// 添加二维码
+const addCode = async () => {
+	// 获取邀请码
+	const wxWxqrCode = await _wxWxqrCode({
+		page: 'pages/main/index/index',
+		scene: `i=${useUserMain.userid}&sd=${useUserMain.storeId}&s=4&t=${posterOtherData.value.id}`,
+		width: 430
+	})
+	// 邀请码base64转成图片
+	const imgPath = await base64ToPath('data:image/png;base64,' + wxWxqrCode.data)
+
+	const newViewObj = {
+		css: {
+			top: parseInt(posterData.value.height) - 85 + 'px',
+			left: parseInt(posterData.value.width) - 85 + 'px',
+			width: '65px',
+			height: '65px'
+		},
+		id: 'code',
+		type: 'image',
+		url: imgPath
+	}
+	// 添加二维码
+	posterData.value.views.splice(posterData.value.code, 1, newViewObj)
+
+	// 选中这个元素
+	movableViewObj.value = newViewObj
+	movableViewIndex.value = posterData.value.code
+	// console.log(movableViewObj.value)
+	// console.log(movableViewIndex.value)
+
+	typeAddPopup.value.close()
+}
 
 // 添加文字
 const addFont = () => {

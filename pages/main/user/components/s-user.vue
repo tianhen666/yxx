@@ -20,10 +20,7 @@
 		<m-title2 :title="module4.title"></m-title2>
 		<view class="yxzs">
 			<template v-for="(item, index) in module4.sub" :key="index">
-				<view
-					class="yxzs_item"
-					@tap="index == 2 ? showToastText('功能陆续更新中...') : navigateTo(item.path)"
-				>
+				<view class="yxzs_item" @tap="index == 2 ? showToastText('功能陆续更新中...') : navigateTo(item.path)">
 					<image class="image" :src="item.imgUrl" mode="aspectFill"></image>
 					<text class="text">{{ item.name }}</text>
 				</view>
@@ -77,43 +74,59 @@ const useUserMain = _useUserMain()
 // 订单核销
 import { _orderVerificationSheet } from '@/aTemp/apis/order.js'
 
+// 权限
+// const optionPower = [
+// 	{ value: 1, text: '创建者', disable: true },
+// 	{ value: 2, text: '管理员' },
+// 	{ value: 3, text: '商品管理' },
+// 	{ value: 4, text: '活动管理' },
+// 	{ value: 0, text: '无权限' }
+// ]
+
 const module1 = {
 	title: '门诊管理',
 	sub: [
 		{
 			imgUrl: '/static/images/u-huodong.png',
 			name: '活动管理',
-			path: '/pages/sub2/manageActivityList/manageActivityList'
+			path: '/pages/sub2/manageActivityList/manageActivityList',
+			power: [1, 2, 4]
 		},
 		{
 			imgUrl: '/static/images/u-shangpin.png',
 			name: '商品管理',
-			path: '/pages/sub2/manageShopList/manageShopList'
+			path: '/pages/sub2/manageShopList/manageShopList',
+			power: [1, 2, 3]
 		},
 		{
 			imgUrl: '/static/images/u-fuwu.png',
 			name: '服务项目',
-			path: '/pages/sub2/manageServiceList/manageServiceList'
+			path: '/pages/sub2/manageServiceList/manageServiceList',
+			power: [1, 2]
 		},
 		{
 			imgUrl: '/static/images/u-anli.png',
 			name: '案例管理',
-			path: '/pages/sub2/manageCaseList/manageCaseList'
+			path: '/pages/sub2/manageCaseList/manageCaseList',
+			power: [1, 2]
 		},
 		{
 			imgUrl: '/static/images/u-lunbo.png',
 			name: '轮播图管理',
-			path: '/pages/sub2/manageBannerList/manageBannerList'
+			path: '/pages/sub2/manageBannerList/manageBannerList',
+			power: [1, 2]
 		},
 		{
 			imgUrl: '/static/images/u-mzxinxi.png',
 			name: '门诊信息',
-			path: '/pages/sub2/manageInfoInput/manageInfoInput'
+			path: '/pages/sub2/manageInfoInput/manageInfoInput',
+			power: [1, 2]
 		},
 		{
 			imgUrl: '/static/images/u-yisheng.png',
 			name: '医生管理',
-			path: '/pages/sub2/manageDoctorList/manageDoctorList'
+			path: '/pages/sub2/manageDoctorList/manageDoctorList',
+			power: [1, 2]
 		}
 	]
 }

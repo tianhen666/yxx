@@ -91,7 +91,7 @@
 					<button class="btn" @tap.prevent.stop="savePosterImg">保存海报</button>
 				</view>
 
-				<view class="item" @tap="handleAdd" v-if="posterAdd">
+				<view class="item" @tap="handleAdd">
 					<view class="icon">
 						<uni-icons type="folder-add-filled" :color="icon1.color" :size="icon1.size"></uni-icons>
 					</view>
@@ -228,9 +228,9 @@ const posterRenewalPosterImg = () => {
 	// 删除固定的元素code
 	m_posterData.views.splice(posterData.value.code, 1)
 
-	console.log(JSON.stringify(m_posterData))
-	console.log(posterOtherData.value)
-	console.log(!drafts.value)
+	// console.log(JSON.stringify(m_posterData))
+	// console.log(posterOtherData.value)
+	// console.log(!drafts.value)
 	return _posterRenewalPosterImg({
 		posterImg: JSON.stringify(m_posterData),
 		posterName: !drafts.value ? posterOtherData.value.postercampaign : posterOtherData.value.posterName,

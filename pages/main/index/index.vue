@@ -31,7 +31,7 @@
 
 		<view class="container">
 			<!-- 轮播 -->
-			<m-carousel :listData="bannerListData"  v-if="bannerListData.length > 0"></m-carousel>
+			<m-carousel :listData="bannerListData" v-if="bannerListData.length > 0"></m-carousel>
 			<view class="blank30" v-if="bannerListData.length > 0"></view>
 
 			<!-- 门诊信息 -->
@@ -116,7 +116,8 @@ const getData = () => {
 	ListData.then(res => {
 		bannerListData.value = res[0].data
 		storeInfo.value = res[1].data
-		activityListData.value = res[2].data.slice(0, 3)
+		uni.setStorageSync('storeInfo', res[1].data)
+		activityListData.value = res[2].data
 		serveListData.value = res[3].data.slice(0, 6)
 
 		// 设置页面分享参数
@@ -218,6 +219,7 @@ onLoad(async options => {
 		})
 	} catch (e) {
 		console.log('登录请求出错', e)
+		return
 	}
 
 	// 开始加载

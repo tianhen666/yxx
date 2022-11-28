@@ -186,25 +186,21 @@
 					"enablePullDownRefresh": false
 				}
 
-			}    ,{
-                    "path" : "webView/webView",
-                    "style" :                                                                                    
-                {
-                    "navigationBarTitleText": "",
-                    "enablePullDownRefresh": false
-                }
-                
-                }
-                ,{
-                    "path" : "newsDetails/newsDetails",
-                    "style" :                                                                                    
-                {
-                    "navigationBarTitleText": "文章详情",
-                    "enablePullDownRefresh": false
-                }
-                
-                }
-            ]
+			}, {
+				"path": "webView/webView",
+				"style": {
+					"navigationBarTitleText": "",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "newsDetails/newsDetails",
+				"style": {
+					"navigationBarTitleText": "文章详情",
+					"enablePullDownRefresh": false
+				}
+
+			}]
 		},
 		{
 			"root": "pages/sub2",
@@ -402,16 +398,14 @@
 					"enablePullDownRefresh": false
 				}
 
-			}    ,{
-                    "path" : "newsList/newsList",
-                    "style" :                                                                                    
-                {
-                    "navigationBarTitleText": "文章列表",
-                    "enablePullDownRefresh": false
-                }
-                
-                }
-            ]
+			}, {
+				"path": "newsList/newsList",
+				"style": {
+					"navigationBarTitleText": "文章列表",
+					"enablePullDownRefresh": false
+				}
+
+			}]
 		},
 		{
 			"root": "pages/sub3",

@@ -25,6 +25,12 @@
 </template>
 
 <script setup>
+// 全局登录信息
+import { _useUserMain } from '@/aTemp/store/userMain.js'
+const useUserMain = _useUserMain()
+
+import {showToastText} from '@/aTemp/utils/uniAppTools.js'
+
 const props = defineProps({
 	listData: {
 		type: Object,
@@ -37,6 +43,11 @@ const props = defineProps({
 
 const emits = defineEmits(['moduleFun'])
 const itemClick = (item, index) => {
+	if(Array.isArray(item.power)&&!(item.power.includes(useUserMain.power))){
+		showToastText('没有权限~')
+		return
+	}
+	
 	if (item.path) {
 		uni.navigateTo({
 			url: item.path

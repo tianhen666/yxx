@@ -350,6 +350,8 @@ onUnload(() => {
 const posterData = reactive({
 	value: {}
 })
+
+const storeInfo = uni.getStorageSync('storeInfo')
 // 生成海报函数
 const tapCreateImg = async () => {
 	// 判断是否授权登录
@@ -397,7 +399,7 @@ const tapCreateImg = async () => {
 	} else {
 		posterData.value = {
 			width: '750px',
-			height: '940px',
+			height: '1100px',
 			background: '#FFF',
 			views: [
 				{
@@ -426,7 +428,7 @@ const tapCreateImg = async () => {
 						}
 					],
 					css: {
-						width: '610px',
+						width: '620px',
 						top: '45px',
 						left: '110px'
 					}
@@ -439,7 +441,8 @@ const tapCreateImg = async () => {
 						top: '120px',
 						left: '30px',
 						width: '690px',
-						height: '552px'
+						height: '552px',
+						borderRadius:'10px'
 					}
 				},
 				{
@@ -452,24 +455,54 @@ const tapCreateImg = async () => {
 					id: '4',
 					type: 'text',
 					text: dataObj.value.price ? '￥' + dataObj.value.price : '免费活动',
-					css: { top: '840px', left: '30px', fontSize: '38px', color: '#f73639' }
+					css: { top: '780px', left: '30px', fontSize: '38px', color: '#f73639' }
 				},
 				{
-					id: '5',
+					id: '5-1-1',
+					type: 'inlineText',
+					textList: [
+						{
+							text: `门诊预约：`,
+							css: { fontSize: '28px', color: '#000', lineHeight: '48px' }
+						},
+						{
+							text: `${storeInfo.mobile}`,
+							css: { fontSize: '28px', color: '#666', lineHeight: '48px' }
+						}
+					],
+					css: { top: '860px', left: '30px', width: '440px' }
+				},
+				{
+					id: '5-1',
+					type: 'inlineText',
+					textList: [
+						{
+							text: `门诊地址：`,
+							css: { fontSize: '28px', color: '#000', lineHeight: '48px' }
+						},
+						{
+							text: `${storeInfo.address}${storeInfo.addressDetail}`,
+							css: { fontSize: '28px', color: '#666', lineHeight: '48px' }
+						}
+					],
+					css: { top: '920px', left: '30px', width: '440px' }
+				},
+				{
+					id: '5-2',
 					type: 'image',
 					url: imgPath,
 					css: {
 						top: '710px',
-						right: '30px',
-						width: '160px',
-						height: '160px'
+						right: '38px',
+						width: '200px',
+						height: '200px'
 					}
 				},
 				{
 					id: '6',
 					type: 'text',
-					text: '长按识别',
-					css: { top: '880px', right: '58px', fontSize: '26px', color: '#999' }
+					text: '长按识别查看活动',
+					css: { top: '930px', right: '30px', fontSize: '26px', color: '#333' }
 				}
 			]
 		}

@@ -13,6 +13,10 @@
 </template>
 
 <script setup>
+// 全局登录信息
+import { _useUserMain } from '@/aTemp/store/userMain.js'
+const useUserMain = _useUserMain()
+
 import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
 const props = defineProps({
 	listData: {
