@@ -41,7 +41,7 @@ const posterCategoryId = computed(() => posterCategoryList.value[currentIndex.va
 const posterList = ref([])
 
 // 每页数量
-const pageSize = ref(12)
+const pageSize = ref(6)
 // 当前页面索引
 const pageNum = ref(1)
 // 是否加载完成
