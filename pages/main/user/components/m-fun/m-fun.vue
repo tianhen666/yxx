@@ -15,10 +15,9 @@
 					<image class="image" :src="item.imgUrl" mode="heightFix"></image>
 					<text class="text">{{ item.name }}</text>
 				</view>
-
-				<view class="btn_box_item" v-if="props.listData.sub.length % 4 === 1"></view>
-				<view class="btn_box_item" v-if="props.listData.sub.length % 4 === 2"></view>
-				<view class="btn_box_item" v-if="props.listData.sub.length % 4 === 3"></view>
+				<view class="btn_box_item" v-if="props.listData.sub.length % 4 >= 1"></view>
+				<view class="btn_box_item" v-if="props.listData.sub.length % 4 >= 2"></view>
+				<view class="btn_box_item" v-if="props.listData.sub.length % 4 >= 3"></view>
 			</view>
 		</view>
 	</view>

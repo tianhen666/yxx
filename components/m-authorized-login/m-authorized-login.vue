@@ -68,7 +68,7 @@
 				</uni-forms-item>
 
 				<!-- 勾选协议 -->
-				<uni-forms-item name="isAgree" label-width="0">
+				<!-- <uni-forms-item name="isAgree" label-width="0">
 					<view class="box1">
 						<radio class="myradio" :checked="formData.isAgree" @tap.stop="formData.isAgree = !formData.isAgree" />
 						<view class="box1_item2">
@@ -77,12 +77,13 @@
 							<text class="text1" @tap="navigateTo('/pages/main/agree/agree?text=2')">《隐私协议》</text>
 						</view>
 					</view>
-				</uni-forms-item>
+				</uni-forms-item> -->
 			</uni-forms>
 
 			<view class="box2">
+				<!-- v-if="!formData.avatar || !formData.nickname || !formData.isAgree" -->
 				<button
-					v-if="!formData.avatar || !formData.nickname || !formData.isAgree"
+					v-if="!formData.avatar || !formData.nickname"
 					class="btn btnAgree"
 					:loading="loading"
 					@tap="saveClick"

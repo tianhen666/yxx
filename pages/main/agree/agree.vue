@@ -1,5 +1,5 @@
 <template>
-	<view class="agree" style="width:90%;margin:20px auto;padding-bottom: 40px;"><rich-text :nodes="text"></rich-text></view>
+	<view class="agree" style="width:90%;margin:20px auto;padding-bottom: 40px;"><mp-html :content="text"></mp-html></view>
 </template>
 
 <script>

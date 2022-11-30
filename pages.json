@@ -121,12 +121,6 @@
 					"enablePullDownRefresh": false
 				}
 			}, {
-				"path": "articleInfo/articleInfo",
-				"style": {
-					"navigationBarTitleText": "科普详情",
-					"enablePullDownRefresh": false
-				}
-			}, {
 				"path": "orderList/orderList",
 				"style": {
 					"navigationBarTitleText": "我的订单",

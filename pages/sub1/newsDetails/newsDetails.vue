@@ -4,13 +4,16 @@
 	<!-- 加载提示 -->
 	<m-page-loading v-if="loading"></m-page-loading>
 	<view class="title">{{ articleObj.title }}</view>
-	<view class="content">
-		<mp-html
-			:content="articleObj.content"
-			@load="loading = false"
-			container-style="background-color:rgb(255, 255, 255);line-height:1.6;font-size: 15px;overflow: hidden;display: inline;white-space: pre-wrap;white-space: pre-line;"
-		/>
-	</view>
+	<mp-html
+		:content="articleObj.content"
+		:container-style="containerStyle"
+		@load="mpLoad"
+		lazy-load
+		scroll-table
+		selectable
+		use-anchor
+		:tag-style="tagStyle"
+	/>
 	<view class="blank40"></view>
 	<view class="blank40"></view>
 
@@ -22,7 +25,7 @@
 </template>
 
 <script setup>
-import { onLoad, onShow } from '@dcloudio/uni-app'
+import { onLoad } from '@dcloudio/uni-app'
 import { ref, computed, reactive } from 'vue'
 import { _freePublishGetInfo } from '@/aTemp/apis/wx.js'
 
@@ -39,6 +42,14 @@ const useUserMain = _useUserMain()
 const articleId = ref('')
 const articleObj = ref({})
 const loading = ref(true)
+
+const containerStyle = `background-color:rgb(255, 255, 255);line-height:1.6;font-size: 15px;overflow: hidden;display: inline;white-space: pre-wrap;white-space: pre-line;`
+const tagStyle = {
+	table: 'box-sizing: border-box; border-top: 1px solid #dfe2e5; border-left: 1px solid #dfe2e5;',
+	th: 'border-right: 1px solid #dfe2e5; border-bottom: 1px solid #dfe2e5;',
+	td: 'border-right: 1px solid #dfe2e5; border-bottom: 1px solid #dfe2e5;',
+	li: 'margin: 5px 0;'
+}
 onLoad(options => {
 	articleId.value = decodeURIComponent(options.targetId || '')
 
@@ -66,6 +77,13 @@ onLoad(options => {
 		)
 	})
 })
+
+const mpLoad = () => {
+	// console.log('dom加载完成')
+	setTimeout(()=>{
+		loading.value = false
+	},300)
+}
 </script>
 <style lang="scss" scoped>
 .inviteStore {
@@ -94,8 +112,6 @@ onLoad(options => {
 	padding: 40rpx 30rpx;
 	font-size: 38rpx;
 	font-weight: 500;
-}
-.content {
-	padding: 0 30rpx;
+	line-height: 1.8;
 }
 </style>

@@ -4,8 +4,7 @@
 			ref="cropper"
 			showGrid
 			:quality="1"
-			:dWidth="0"
-			:maxWidth="1200"
+			:dWidth="750"
 			:fileType="imgFormat"
 			:ratio="ratio"
 			:imageSrc="imageSrcs[imageSrcIndex]"

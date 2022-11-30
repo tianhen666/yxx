@@ -104,12 +104,12 @@ const module1 = {
 			path: '/pages/sub2/manageServiceList/manageServiceList',
 			power: [1, 2]
 		},
-		{
-			imgUrl: '/static/images/u-anli.png',
-			name: '案例管理',
-			path: '/pages/sub2/manageCaseList/manageCaseList',
-			power: [1, 2]
-		},
+		// {
+		// 	imgUrl: '/static/images/u-anli.png',
+		// 	name: '案例管理',
+		// 	path: '/pages/sub2/manageCaseList/manageCaseList',
+		// 	power: [1, 2]
+		// },
 		{
 			imgUrl: '/static/images/u-lunbo.png',
 			name: '轮播图管理',

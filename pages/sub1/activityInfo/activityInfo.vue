@@ -470,7 +470,7 @@ const tapCreateImg = async () => {
 							css: { fontSize: '28px', color: '#666', lineHeight: '48px' }
 						}
 					],
-					css: { top: '860px', left: '30px', width: '440px' }
+					css: { top: '880px', left: '30px', width: '440px' }
 				},
 				{
 					id: '5-1',
@@ -485,7 +485,7 @@ const tapCreateImg = async () => {
 							css: { fontSize: '28px', color: '#666', lineHeight: '48px' }
 						}
 					],
-					css: { top: '920px', left: '30px', width: '440px' }
+					css: { top: '940px', left: '30px', width: '440px' }
 				},
 				{
 					id: '5-2',
@@ -589,11 +589,11 @@ const tapShare = () => {
 
 	> .title {
 		color: $text-color;
-		@include singleLineTextOverHidden;
 		overflow: hidden;
-		font-size: 36rpx;
+		font-size: 40rpx;
 		font-weight: 600;
 		padding: 48rpx 0;
+		line-height: 1.8;
 	}
 
 	> .time {
