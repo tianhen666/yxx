@@ -7,7 +7,7 @@
 	<mp-html
 		:content="articleObj.content"
 		:container-style="containerStyle"
-		@load="mpLoad"
+		@ready="mpReady"
 		lazy-load
 		scroll-table
 		selectable
@@ -78,11 +78,8 @@ onLoad(options => {
 	})
 })
 
-const mpLoad = () => {
-	// console.log('dom加载完成')
-	setTimeout(()=>{
-		loading.value = false
-	},300)
+const mpReady = () => {
+	loading.value = false
 }
 </script>
 <style lang="scss" scoped>
