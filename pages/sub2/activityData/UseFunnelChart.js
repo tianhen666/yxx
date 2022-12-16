@@ -53,7 +53,7 @@ export default function(paramsObj) {
 							value: newVal.countNum,
 							legendShape: 'triangle'
 						}, {
-							name: "登录人数",
+							name: "意向人数",
 							value: newVal.countNumempower,
 							legendShape: 'circle'
 						}, {

@@ -135,3 +135,12 @@ export function _enrollformEarningsportexport(params) {
 		params
 	})
 }
+
+// 会员数据导出
+export function _userInviteUserEx(params) {
+	return http.get({
+		url: '/userInvite/userEx',
+		params
+	})
+}
+

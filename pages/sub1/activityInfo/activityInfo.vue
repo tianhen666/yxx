@@ -199,8 +199,8 @@ const enrollformGetinfo = () => {
 	})
 }
 
-const { windowHeight } = uni.getSystemInfoSync()
 // 页面滚动监听
+const { windowHeight } = uni.getSystemInfoSync()
 onPageScroll(options => {
 	// 计算当前播放视频位置
 	const query = uni.createSelectorQuery().in(instance)
@@ -255,13 +255,21 @@ const videoTap = index => {
 const btnLoading = ref(false)
 const payConfirm = _debounce(
 	() => {
+		
 		// 判断是否授权登录
 		if (!useUserMain.isLogin) {
 			mLogin.value.popupfun()
 			btnLoading.value = false
 			return
 		}
-
+		
+		// 判断是否限购
+		if (dataObj.value.limitCount > 0 && dataObj.value.limitCount <= dataObj.value.myJionCount) {
+			showToastText(`此活动最多参与${dataObj.value.limitCount}次`)
+			return
+		}
+		
+		// 支付请求
 		_enrollformEnpayment({ id: dataId.value })
 			.then(res => {
 				btnLoading.value = false
@@ -310,6 +318,7 @@ const payConfirm = _debounce(
 						const resDataObj = JSON.parse(data)
 						showToastText(resDataObj.result_msg || '参加失败')
 					} catch (e) {
+						console.log(e)
 						if (data === '参与成功') {
 							showToastText(data)
 							// 设置活动已参与
@@ -442,7 +451,7 @@ const tapCreateImg = async () => {
 						left: '30px',
 						width: '690px',
 						height: '552px',
-						borderRadius:'10px'
+						borderRadius: '10px'
 					}
 				},
 				{

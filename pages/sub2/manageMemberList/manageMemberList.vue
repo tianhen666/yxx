@@ -1,8 +1,6 @@
 <template>
 	<!-- 背景 -->
-	<view class="pageBg">
-		<image class="image" src="/static/images/bg.png" mode="aspectFill"></image>
-	</view>
+	<view class="pageBg"><image class="image" src="/static/images/bg.png" mode="aspectFill"></image></view>
 	<!-- #ifndef H5 -->
 	<!-- 标题栏 -->
 	<uni-nav-bar
@@ -82,6 +80,18 @@
 
 	<view class="blank40"></view>
 	<view class="blank40"></view>
+	
+	<!-- 管理员和创建者可以导出数据 -->
+	<view
+		class="inviteStore"
+		v-if="
+			(useUserMain.storeId == 1 || useUserMain.storeId == 11) && (useUserMain.power === 1 || useUserMain.power === 2)
+		"
+		@tap="userInviteUserEx"
+	>
+		<text>数据</text>
+		<text>导出</text>
+	</view>
 </template>
 
 <script setup>
@@ -89,7 +99,12 @@ import { ref, computed, watch } from 'vue'
 import { onLoad, onReachBottom } from '@dcloudio/uni-app'
 import { navigateBack } from '@/aTemp/utils/uniAppTools.js'
 import { _userDataStatistics } from '@/aTemp/apis/user.js'
+import { _userInviteUserEx } from '@/aTemp/apis/store.js'
 import dayjs from 'dayjs'
+
+// 全局登录信息
+import { _useUserMain } from '@/aTemp/store/userMain.js'
+const useUserMain = _useUserMain()
 
 // 开始时间
 const startTime = computed(() => rangeTime.value[0])
@@ -134,7 +149,7 @@ const userDataStatistics = () => {
 		invitationsNumber.value[2] = resultMonthNewly.data
 
 		// 邀请人列表赋值
-		categoryOption1.value = distinctness.data.map(item=>({text:item.remarkname||item.nickname,value:item.id}))
+		categoryOption1.value = distinctness.data.map(item => ({ text: item.remarkname || item.nickname, value: item.id }))
 
 		// 暂时延时一下
 		setTimeout(() => {
@@ -150,7 +165,6 @@ const userDataStatistics = () => {
 		}, 1000)
 	})
 }
-
 
 // 触底加载
 onReachBottom(() => {
@@ -270,9 +284,35 @@ const searchFun = e => {
 		userDataStatistics()
 	}, 500)
 }
+
+// 数据导出
+const userInviteUserEx = () => {
+	_userInviteUserEx().then(res => {
+		console.log(res)
+	})
+}
 </script>
 
 <style lang="scss" scoped>
+.inviteStore {
+	position: fixed;
+	right: 40rpx;
+	bottom: 60rpx;
+	z-index: 10;
+	background-color: $main-color;
+	color: #fff;
+	box-sizing: content-box;
+	font-size: 24rpx;
+	line-height: 1.5em;
+	border-radius: 50%;
+	overflow: hidden;
+	width: 100rpx;
+	height: 100rpx;
+	text-align: justify;
+	@include mFlex;
+	flex-direction: column;
+}
+
 :deep(.uni-select__input-box) {
 	overflow: hidden;
 }

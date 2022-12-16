@@ -160,7 +160,7 @@ const confirm = _debounce(
 							redirectTo('/pages/sub1/orderList/orderList?current=1')
 							showToastText('取消支付~')
 						})
-				} catch (e) {
+				} catch (err) {
 					// 错误信息
 					console.log(err)
 
@@ -169,6 +169,8 @@ const confirm = _debounce(
 						const resDataObj = JSON.parse(data)
 						showToastText(resDataObj.result_msg || '支付失败')
 					} catch (e) {
+						// 错误信息
+						console.log(e)
 						showToastText(data || '支付失败')
 					}
 				}
