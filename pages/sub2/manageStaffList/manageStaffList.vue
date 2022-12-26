@@ -138,11 +138,12 @@ const rules = {
 }
 // 权限数据
 const optionPower = [
-	{ value: 1, text: '创建者', disable: true },
-	{ value: 2, text: '管理员' },
-	{ value: 3, text: '商品管理' },
-	{ value: 4, text: '活动管理' },
-	{ value: 0, text: '无权限' }
+	{ value: 1, text: '创建者', disable: true, des: '创建者, 拥有全部权限' },
+	{ value: 2, text: '管理员', des: '管理员, 拥有全部权限' },
+	{ value: 3, text: '商品管理', des: '商品管理, 拥有商品管理权限' },
+	{ value: 4, text: '活动管理', des: '活动管理, 拥有活动管理权限' },
+	{ value: 5, text: '订单核销', des: '订单核销, 拥有订单核销权限' },
+	{ value: 0, text: '无权限', des: '没有任何权限' }
 ]
 
 // 弹出层

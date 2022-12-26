@@ -1,31 +1,27 @@
 <template>
 	<!-- 提示登录组件 -->
 	<m-authorized-login ref="mLogin"></m-authorized-login>
-
+	
 	<!-- 加载提示 -->
 	<m-page-loading v-if="loading"></m-page-loading>
-	<!-- 背景 -->
-	<view class="pageBg"><image class="image" src="/static/images/bg.png" mode="aspectFill"></image></view>
+	
 	<z-paging
 		ref="pagingObj"
 		v-model="mdataList"
 		@query="getListData"
-		min-delay="1000"
 		created-reload
 		:loading-full-fixed="true"
 		show-loading-more-when-reload
+		min-delay="1000"
 	>
 	
-		<!-- 加载状态 -->
-		<template v-slot:loading>
-			<m-page-loading></m-page-loading>
-		</template>
-		
 		<!-- 固定顶部 -->
-		<template #top>
+		<template v-slot:top>
+			<!-- 背景 -->
+			<view class="pageBg"><image class="image" src="/static/images/bg.png" mode="aspectFill"></image></view>
 			<!-- #ifndef H5 -->
 			<!-- 标题栏 -->
-			<uni-nav-bar fixed statusBar :title="'口腔知识'" color="#ffffff" :border="false"></uni-nav-bar>
+			<uni-nav-bar statusBar fixed :title="'口腔知识'" color="#ffffff" :border="false"></uni-nav-bar>
 			<view class="blank20"></view>
 			<!-- #endif -->
 		</template>
@@ -70,7 +66,9 @@ const getListData = (pageNo, pageSize) => {
 	}
 	_freePublishGetFreePublish(params)
 		.then(res => {
-			loading.value = false
+			setTimeout(() => {
+				loading.value = false
+			}, 1000)
 			pagingObj.value.complete(res.data?.records || [])
 		})
 		.catch(error => {

@@ -1,19 +1,19 @@
 <template>
 	<!-- 提示登录组件 -->
 	<m-authorized-login ref="mLogin"></m-authorized-login>
+
+	<!-- 加载提示 -->
+	<m-page-loading v-if="loading"></m-page-loading>
+
 	<z-paging
 		ref="paging"
 		v-model="listData"
 		@query="queryList"
 		:loading-full-fixed="true"
+		:loading-more-enabled="false"
 		created-reload
 		min-delay="1000"
 	>
-		<!-- 加载状态 -->
-		<template v-slot:loading>
-			<m-page-loading></m-page-loading>
-		</template>
-
 		<!-- 固定顶部 -->
 		<template v-slot:top>
 			<!-- 背景 -->
@@ -39,7 +39,7 @@
 <script setup>
 import { _storeproductGetlist } from '@/aTemp/apis/shop.js'
 import { onLoad, onShow } from '@dcloudio/uni-app'
-import { ref } from 'vue'
+import { ref, nextTick } from 'vue'
 import mShopList1 from './components/m-shop-list-1/m-shop-list-1.vue'
 import { _bannerList } from '@/aTemp/apis/banner'
 
@@ -49,6 +49,9 @@ const useUserMain = _useUserMain()
 
 // 插件对象
 const paging = ref(null)
+
+// 加载中
+const loading = ref(true)
 // 数据列表
 const listData = ref([])
 
@@ -76,6 +79,11 @@ const queryList = (pageNo, pageSize) => {
 				item.pics = item.pics ? item.pics.split(',') : []
 				return item
 			})
+
+			setTimeout(() => {
+				loading.value = false
+			}, 1000)
+
 			paging.value.complete(resData)
 		})
 		.catch(res => {

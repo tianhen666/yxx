@@ -20,7 +20,7 @@
 		<m-title2 :title="module4.title"></m-title2>
 		<view class="yxzs">
 			<template v-for="(item, index) in module4.sub" :key="index">
-				<view class="yxzs_item" @tap="index == 2 ? showToastText('功能陆续更新中...') : navigateTo(item.path)">
+				<view class="yxzs_item" @tap.stop="yxzsTap(item, index)">
 					<image class="image" :src="item.imgUrl" mode="aspectFill"></image>
 					<text class="text">{{ item.name }}</text>
 				</view>
@@ -137,22 +137,26 @@ const module2 = {
 		{
 			imgUrl: '/static/images/u-shouyi.png',
 			name: '门诊收益',
-			path: '/pages/sub2/storeProfit/storeProfit'
+			path: '/pages/sub2/storeProfit/storeProfit',
+			power: [1, 2]
 		},
 		{
 			imgUrl: '/static/images/u-huodong1.png',
 			name: '活动数据',
-			path: '/pages/sub2/activityData/activityData'
+			path: '/pages/sub2/activityData/activityData',
+			power: [1, 2]
 		},
 		{
 			imgUrl: '/static/images/u-huiyuan.png',
 			name: '会员管理',
-			path: '/pages/sub2/manageMemberList/manageMemberList'
+			path: '/pages/sub2/manageMemberList/manageMemberList',
+			power: [1, 2]
 		},
 		{
 			imgUrl: '/static/images/u-huiyuan.png',
 			name: '预约列表',
-			path: '/pages/sub1/yuyueList/yuyueList'
+			path: '/pages/sub1/yuyueList/yuyueList',
+			power: [1, 2]
 		}
 	]
 }
@@ -162,17 +166,20 @@ const module3 = {
 		{
 			imgUrl: '/static/images/u-shaoma.png',
 			name: '扫码核销',
-			fun: true
+			fun: true,
+			power: [1, 2, 5]
 		},
 		{
 			imgUrl: '/static/images/u-shoudong.png',
 			name: '手动核销',
-			fun: true
+			fun: true,
+			power: [1, 2, 5]
 		},
 		{
 			imgUrl: '/static/images/u-dingdan.png',
 			name: '全部订单',
-			path: '/pages/sub2/orderList/orderList?current=0'
+			path: '/pages/sub2/orderList/orderList?current=0',
+			power: [1, 2, 5]
 		}
 	]
 }
@@ -183,7 +190,8 @@ const module4 = {
 		{
 			imgUrl: '/static/images/u-huodongmuban.png',
 			name: '活动模板',
-			path: '/pages/sub2/activityTemplate/activityTemplate'
+			path: '/pages/sub2/activityTemplate/activityTemplate',
+			power: [1, 2, 4]
 		},
 		{
 			imgUrl: '/static/images/u-jingmeihaibao.png',
@@ -201,6 +209,19 @@ const module4 = {
 			path: '/pages/sub2/newsList/newsList'
 		}
 	]
+}
+const yxzsTap = (item, index) => {
+	if (Array.isArray(item.power) && !item.power.includes(useUserMain.power)) {
+		showToastText('没有权限~')
+		return
+	}
+	
+	
+	if (index == 2) {
+		showToastText('功能陆续更新中...')
+	} else {
+		navigateTo(item.path)
+	}
 }
 
 // 表单校验
@@ -221,10 +242,14 @@ const loading = ref(false)
 
 // 调用核销接口
 const orderVerificationSheet = orderNo => {
-	_orderVerificationSheet({ orderNo }).then(res => {
-		const { msg, data, code } = res
-		showToastText('核销成功')
-	})
+	_orderVerificationSheet({ orderNo })
+		.then(res => {
+			const { msg, data, code } = res
+			showToastText('核销成功')
+		})
+		.catch(err => {
+			showToastText(err?.msg || '核销失败')
+		})
 }
 
 const module3Fun = listIndex => {
@@ -244,7 +269,7 @@ const module3Fun = listIndex => {
 				orderVerificationSheet(res.result)
 			})
 			.catch(err => {
-				// console.log(err)
+				showToastText(err?.msg || '核销失败')
 			})
 	}
 	// 手动核销

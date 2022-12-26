@@ -37,10 +37,18 @@ export function _orderVerificationSheet(params) {
 }
 
 // 获取门诊端订单
-  
 export function _orderAllOrderStore(params) {
 	return http.get({
 		url: '/order/allOrderStore',
+		params
+	})
+}
+
+
+// 获取门诊，个人每种订单状态的数量
+export function _orderGetOrderCount(params) {
+	return http.post({
+		url: '/order/getOrderCount',
 		params
 	})
 }

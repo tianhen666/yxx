@@ -73,7 +73,7 @@ onLaunch(async options => {
 	// 打印进入小程序参数
 	console.log('邀请人ID：' + invitationCode, '店铺id：' + storeId, '场景值：' + Mscene, '目标ID：' + targetId)
 
-	// 兼容朋友圈打开小程序
+	// 从朋友圈打开小程序
 	if (options.scene == 1154) {
 		useUserMain.$patch({ storeId: storeId })
 		// 放行同步方法
@@ -108,7 +108,7 @@ onLaunch(async options => {
 			}
 		)
 		const { code, data, msg } = resData
-		const { power, token, user } = data
+		const { power, token, user,store } = data
 
 		// 获取到数据后赋值给全局变量
 		useUserMain.$patch({
@@ -121,7 +121,8 @@ onLaunch(async options => {
 			nickname: user.nickname,
 			remarkname: user.remarkname,
 			userid: user.id,
-			storeId: user.storeId
+			storeId: user.storeId,
+			headPortrait: store.headPortrait
 		})
 
 		// 路由拦截

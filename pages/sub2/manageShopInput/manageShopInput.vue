@@ -41,12 +41,21 @@
 					style="transform:scale(0.8)"
 					@change="formData.limitCount = parseInt(formData.limitCount) > 0 ? 0 : 1"
 				/>
+				<view class="tips"><text>开启选项，输入限购数量\n关闭选项，不限购</text></view>
 			</uni-forms-item>
 
 			<!-- 限购数量 -->
 			<uni-forms-item :label="rules.limitCount.label" name="limitCount" v-if="parseInt(formData.limitCount) > 0">
 				<uni-number-box :min="1" :max="255" v-model="formData.limitCount" />
 			</uni-forms-item>
+			<view class="blank32 blank_bg_color"></view>
+			
+			<!-- 虚拟人数 -->
+			<uni-forms-item :label="rules.virtualCount.label" name="virtualCount">
+				<uni-number-box :min="0" :step="10" :max="500" v-model="formData.virtualCount" />
+				<view class="tips"><text>输入后前端显示虚拟购买人数</text></view>
+			</uni-forms-item>
+			<view class="blank32 blank_bg_color"></view>
 
 			<!-- 排序 -->
 			<uni-forms-item :label="rules.orderNum.label" name="orderNum">
@@ -215,6 +224,10 @@ const rules = {
 	detail: {
 		rules: [{ errorMessage: '请上传商品详情图' }],
 		label: '商品详情图'
+	},
+	virtualCount:{
+		rules: [{ errorMessage: '请输入虚拟人数' }],
+		label: '虚拟人数'
 	}
 }
 
@@ -288,5 +301,11 @@ const {
 }
 .container {
 	width: 750rpx;
+}
+.tips {
+	color: #999;
+	font-size: 26rpx;
+	padding-top: 20rpx;
+	line-height: 1.6;
 }
 </style>

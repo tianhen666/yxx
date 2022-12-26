@@ -12,7 +12,7 @@
 						<view class="title">{{ item.title }}</view>
 						<view class="descData">{{ item.descData }}</view>
 						<view class="bottom_box">
-							<view class="left">{{ item.sold || 0 }}人买过</view>
+							<view class="left">{{ item.sold + item.virtualCount || 0 }}人买过</view>
 							<view class="right">
 								<text class="price_cn">￥</text>
 								<text>{{ item.price }}</text>
@@ -36,7 +36,7 @@
 						<view class="title">{{ item.title }}</view>
 						<view class="descData">{{ item.descData }}</view>
 						<view class="bottom_box">
-							<view class="left">{{ item.sold || 0 }}人买过</view>
+							<view class="left">{{ item.sold + item.virtualCount || 0 }}人买过</view>
 							<view class="right">
 								<text class="price_cn">￥</text>
 								<text>{{ item.price }}</text>
@@ -47,7 +47,6 @@
 				</view>
 			</template>
 		</view>
-
 	</view>
 </template>
 
@@ -135,7 +134,7 @@ const props = defineProps({
 						font-size: 24rpx;
 						font-weight: normal;
 						padding-left: 10rpx;
-						text-decoration:line-through;
+						text-decoration: line-through;
 					}
 				}
 			}

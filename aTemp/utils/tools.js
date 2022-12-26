@@ -71,11 +71,10 @@ export function _countDown(time, payTimer) {
 	let seconds = duration.seconds() < 10 ? '0' + duration.seconds() : duration.seconds()
 	let milliseconds = duration.milliseconds() < 10 ? '00' + duration.milliseconds() : duration
 		.milliseconds() < 100 ? '0' + duration.milliseconds() : duration.milliseconds()
-		
 	if (parseInt(days) <= 0 && parseInt(hours) <= 0 && parseInt(minutes) <= 0 && parseInt(seconds) <= 0) {
 		// console.log("定时器移除")
 		clearInterval(payTimer)
-		return `${days}天${hours}时${minutes}分${seconds}秒 000`
+		return `00天00时00分00秒 000`
 	} else {
 		return `${days}天${hours}时${minutes}分${seconds}秒 ${milliseconds}`
 	}

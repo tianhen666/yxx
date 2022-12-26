@@ -53,7 +53,9 @@
 						@change="timeChange"
 					></uni-data-select>
 				</view>
-				<view class="box2_options_item"><button class="button">数据导出</button></view>
+				<view class="box2_options_item">
+					<button class="button" @tap="enrollformEarningsportexport">数据导出</button>
+				</view>
 			</view>
 
 			<!-- 日期选择 -->
@@ -112,10 +114,11 @@ import { ref, watch, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import qiunDataCharts from '@/pages/sub2/components/qiun-data-charts/components/qiun-data-charts/qiun-data-charts.vue'
 import dayjs from 'dayjs'
-import { _storeproductStatistics } from '@/aTemp/apis/store.js'
+import { _storeproductStatistics, _enrollformEarningsportexport } from '@/aTemp/apis/store.js'
+import { showToastText, showLoading } from '@/aTemp/utils/uniAppTools.js'
 // 开始时间
 const startTime = computed(() => rangeTime.value[0])
-// 结束时间
+// 结束时间 
 const endTime = computed(() => rangeTime.value[1])
 
 // 每页数量
@@ -239,6 +242,46 @@ const {
 } = UseColumnChart({
 	zData: zColumnData
 })
+
+/**
+ * 门诊数据导出
+ */
+const enrollformEarningsportexport = () => {
+	showLoading('数据导出中')
+	try {
+		_enrollformEarningsportexport().then(res => {
+			const { code, data, msg } = res
+			uni.downloadFile({
+				url: data,
+				success: res => {
+					const filePath = res.tempFilePath
+					if (res.statusCode === 200) {
+						uni.openDocument({
+							filePath: filePath,
+							showMenu: true,
+							success: function(res) {
+								uni.hideLoading()
+							},
+							fail: error => {
+								console.log(error)
+								uni.hideLoading()
+								showToastText('导出失败，请联系我们客服')
+							}
+						})
+					}
+				},
+				fail: error => {
+					console.log(error)
+					uni.hideLoading()
+					showToastText('导出失败，请联系我们客服')
+				}
+			})
+		})
+	} catch (e) {
+		console.log(e)
+		uni.hideLoading()
+	}
+}
 </script>
 
 <style lang="scss" scoped>

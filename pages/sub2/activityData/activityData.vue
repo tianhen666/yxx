@@ -18,7 +18,7 @@
 				</view>
 
 				<!-- 数据导出 -->
-				<view class="box1_options_item"><button class="button">数据导出</button></view>
+				<view class="box1_options_item"><button class="button" @tap.stop="enrollformExport">数据导出</button></view>
 			</view>
 		</view>
 		<view class="blank40"></view>
@@ -157,9 +157,9 @@ import { ref, watch, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import qiunDataCharts from '@/pages/sub2/components/qiun-data-charts/components/qiun-data-charts/qiun-data-charts.vue'
 import dayjs from 'dayjs'
-import { _enrollformGetlist, _storeproductActivityPopup } from '@/aTemp/apis/activity.js'
+import { _enrollformGetlist, _storeproductActivityPopup, _enrollformExport } from '@/aTemp/apis/activity.js'
 import { _storeproductActivitystatistics } from '@/aTemp/apis/store.js'
-import { showToastText } from '@/aTemp/utils/uniAppTools.js'
+import { showToastText, showLoading } from '@/aTemp/utils/uniAppTools.js'
 
 // 活动数据列表
 const categoryOption1 = ref([])
@@ -296,6 +296,46 @@ const storeproductActivityPopup = (userId, index) => {
 }
 const popupRefChange = e => {
 	popupStatus.value = e.show
+}
+
+/**
+ * 会员数据导出
+ */
+const enrollformExport = () => {
+	showLoading('数据导出中')
+	try {
+		_enrollformExport({ enrollId: productid.value }).then(res => {
+			const { code, data, msg } = res
+			uni.downloadFile({
+				url: data,
+				success: res => {
+					const filePath = res.tempFilePath
+					if (res.statusCode === 200) {
+						uni.openDocument({
+							filePath: filePath,
+							showMenu: true,
+							success: function(res) {
+								uni.hideLoading()
+							},
+							fail: error => {
+								console.log(error)
+								uni.hideLoading()
+								showToastText('导出失败，请联系我们客服')
+							}
+						})
+					}
+				},
+				fail: error => {
+					console.log(error)
+					uni.hideLoading()
+					showToastText('导出失败，请联系我们客服')
+				}
+			})
+		})
+	} catch (e) {
+		console.log(e)
+		uni.hideLoading()
+	}
 }
 </script>
 

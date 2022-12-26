@@ -1,6 +1,10 @@
 <template>
 	<!-- 提示登录组件 -->
 	<m-authorized-login ref="mLogin"></m-authorized-login>
+	
+	<!-- 加载提示 -->
+	<m-page-loading v-if="loading"></m-page-loading>
+	
 	<!-- 背景 -->
 	<view class="pageBg"><image class="image" src="/static/images/bg.png" mode="aspectFill"></image></view>
 	<z-paging
@@ -13,10 +17,6 @@
 		created-reload
 		min-delay="1000"
 	>
-		<!-- 加载状态 -->
-		<template #loading>
-			<m-page-loading></m-page-loading>
-		</template>
 
 		<!-- 固定顶部 -->
 		<template #top>
@@ -69,6 +69,8 @@ import { onLoad } from '@dcloudio/uni-app'
 import { _storedoctorGetlist } from '@/aTemp/apis/doctor.js'
 import { _storeGetinfolist, _storeGetinfo } from '@/aTemp/apis/store.js'
 
+// 加载中
+const loading = ref(true)
 // 医生列表
 const docotorList = ref([])
 // 相关联店铺列表
@@ -86,6 +88,10 @@ const queryall = () => {
 		docotorList.value = res[0].data
 		infoList.value = res[1].data
 		info.value = res[2].data
+		
+		setTimeout(() => {
+			loading.value = false
+		}, 1000)
 		paging.value.complete()
 	})
 }

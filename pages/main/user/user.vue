@@ -1,6 +1,10 @@
 <template>
 	<!-- 提示登录组件 -->
 	<m-authorized-login ref="mLogin"></m-authorized-login>
+	
+	<!-- 加载提示 -->
+	<m-page-loading v-if="loading"></m-page-loading>
+	
 	<!-- 背景 -->
 	<view class="pageBg"><image class="image" src="/static/images/bg.png" mode="aspectFill"></image></view>
 	<z-paging
@@ -13,11 +17,6 @@
 		created-reload
 		min-delay="1000"
 	>
-		<!-- 加载状态 -->
-		<template #loading>
-			<m-page-loading></m-page-loading>
-		</template>
-
 		<!-- z-ping头部固定 -->
 		<template #top>
 			<!-- #ifndef H5 -->
@@ -31,10 +30,10 @@
 		<m-header></m-header>
 
 		<!-- 用户端显示 -->
-		<p-user v-if="useUserMain.power === -1"></p-user>
+		<p-user v-if="useUserMain.power <= 0"></p-user>
 
 		<!-- 商家端显示 -->
-		<s-user v-if="useUserMain.power != -1"></s-user>
+		<s-user v-if="useUserMain.power > 0"></s-user>
 	</z-paging>
 </template>
 <script setup>
@@ -86,7 +85,9 @@ const storeGetinfo = () => {
 		shareInfo.imageUrl = `https://imgs.fenxiangzl.com/store/tooth/invitbg.png`
 
 		// 加载完成
-		loading.value = false
+		setTimeout(() => {
+			loading.value = false
+		}, 1000)
 		paging.value.complete()
 	})
 }

@@ -120,7 +120,8 @@ import {
 	saveImageToPhotosAlbum,
 	showLoading,
 	showToastText,
-	getImageInfo
+	getImageInfo,
+	showModal
 } from '@/aTemp/utils/uniAppTools.js'
 import dayjs from 'dayjs'
 
@@ -179,7 +180,12 @@ const enrollformGetinfo = () => {
 		// 倒计时
 		const timeDjs = dayjs(dataObj.value.endDt)
 		djsFun(timeDjs)
-
+		
+		// 活动已结束
+		if(dayjs(dataObj.value.endDt).valueOf() < Date.now()){
+			showModal('活动已经结束了')
+		}
+		
 		// 数据加载结束
 		loading.value = false
 
@@ -255,20 +261,19 @@ const videoTap = index => {
 const btnLoading = ref(false)
 const payConfirm = _debounce(
 	() => {
-		
 		// 判断是否授权登录
 		if (!useUserMain.isLogin) {
 			mLogin.value.popupfun()
 			btnLoading.value = false
 			return
 		}
-		
+
 		// 判断是否限购
 		if (dataObj.value.limitCount > 0 && dataObj.value.limitCount <= dataObj.value.myJionCount) {
 			showToastText(`此活动最多参与${dataObj.value.limitCount}次`)
 			return
 		}
-		
+
 		// 支付请求
 		_enrollformEnpayment({ id: dataId.value })
 			.then(res => {

@@ -35,15 +35,25 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
-import { _orderAllOrderStore } from '@/aTemp/apis/order.js'
+import { _orderAllOrderStore, _orderGetOrderCount } from '@/aTemp/apis/order.js'
 import mTabContent from './components/m-tab-content/m-tab-content.vue'
 // 全局登录信息
 // import { _useUserMain } from '@/aTemp/store/userMain.js'
 // const useUserMain = _useUserMain()
 
+// 获取每种订单状态数量
+const orderGetOrderCount = () => {
+	_orderGetOrderCount({ userId: 0 }).then(res => {
+		const { account, count, havecount, unpaidcount } = res.data[0]
+		tabList.value[1] += ' ' + havecount
+		tabList.value[0] += ' ' + account
+	})
+}
+
 // 页面加载
 onLoad(option => {
 	tabIndex.value = parseInt(option.current || 0)
+	orderGetOrderCount()
 })
 
 // 数据列表
@@ -80,12 +90,6 @@ const queryList = (pageNo, pageSize) => {
 	}
 	_orderAllOrderStore(params)
 		.then(res => {
-			if (tabIndex.value === 0) {
-				tabList.value[tabIndex.value] = '未使用 ' + res.data.total
-			} else if (tabIndex.value === 1) {
-				tabList.value[tabIndex.value] = '已完成 ' + res.data.total
-			}
-
 			pagingObj.value.complete(res.data.records)
 		})
 		.catch(res => {

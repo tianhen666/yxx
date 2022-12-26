@@ -80,7 +80,7 @@
 
 	<view class="blank40"></view>
 	<view class="blank40"></view>
-	
+
 	<!-- 管理员和创建者可以导出数据 -->
 	<view
 		class="inviteStore"
@@ -97,7 +97,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { onLoad, onReachBottom } from '@dcloudio/uni-app'
-import { navigateBack } from '@/aTemp/utils/uniAppTools.js'
+import { navigateBack, showLoading, showToastText } from '@/aTemp/utils/uniAppTools.js'
 import { _userDataStatistics } from '@/aTemp/apis/user.js'
 import { _userInviteUserEx } from '@/aTemp/apis/store.js'
 import dayjs from 'dayjs'
@@ -284,12 +284,44 @@ const searchFun = e => {
 		userDataStatistics()
 	}, 500)
 }
-
-// 数据导出
+/**
+ * 活动数据导出
+ */
 const userInviteUserEx = () => {
-	_userInviteUserEx().then(res => {
-		console.log(res)
-	})
+	showLoading('数据导出中')
+	try {
+		_userInviteUserEx().then(res => {
+			const { code, data, msg } = res
+			uni.downloadFile({
+				url: data,
+				success: res => {
+					const filePath = res.tempFilePath
+					if (res.statusCode === 200) {
+						uni.openDocument({
+							filePath: filePath,
+							showMenu: true,
+							success: function(res) {
+								uni.hideLoading()
+							},
+							fail: error => {
+								console.log(error)
+								uni.hideLoading()
+								showToastText('导出失败，请联系我们客服')
+							},
+						})
+					}
+				},
+				fail: error => {
+					console.log(error)
+					uni.hideLoading()
+					showToastText('导出失败，请联系我们客服')
+				}
+			})
+		})
+	} catch (e) {
+		console.log(e)
+		uni.hideLoading()
+	}
 }
 </script>
 

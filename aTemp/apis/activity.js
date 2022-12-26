@@ -77,7 +77,13 @@ export function _storeproductActivityPopup(params) {
 }
 
 
-
+// 活动数据导出
+export function _enrollformExport(params) {
+	return http.get({
+		url: '/enrollform/export',
+		params,
+	})
+}
 
 // 获取活动模板详情
 export function _enrollFormTemplateGetinfo(params) {

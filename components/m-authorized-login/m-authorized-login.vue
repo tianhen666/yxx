@@ -1,6 +1,6 @@
 <template>
 	<uni-popup ref="popupObj" type="bottom">
-		<view class="login-container">
+		<view class="login-container" v-if="useUserMain.headPortrait===0">
 			<view class="close" @tap.stop="closefun">
 				<image class="img" src="@/static/images/close1.png" mode="aspectFill"></image>
 			</view>
@@ -82,17 +82,26 @@
 
 			<view class="box2">
 				<!-- v-if="!formData.avatar || !formData.nickname || !formData.isAgree" -->
-				<button
-					v-if="!formData.avatar || !formData.nickname"
-					class="btn btnAgree"
-					:loading="loading"
-					@tap="saveClick"
-				>
+				<button v-if="!formData.avatar || !formData.nickname" class="btn btnAgree" :loading="loading" @tap="saveClick">
 					微信授权登录
 				</button>
 				<button v-else open-type="getPhoneNumber" class="btn btnAgree" @getphonenumber="getphonenumber">
 					微信授权登录
 				</button>
+			</view>
+		</view>
+
+		<!-- 只授权手机号不需要用户头像和昵称 -->
+		<view class="login-container" v-if="useUserMain.headPortrait===1">
+			<view class="close" @tap.stop="closefun">
+				<image class="img" src="@/static/images/close1.png" mode="aspectFill"></image>
+			</view>
+			<view class="login-top1">授权登录</view>
+			<view class="login-top2">获取用户手机号，主要用于向用户提供具有辨识度的用户中心页面，和订单生成</view>
+			<view class="blank40"></view>
+
+			<view class="box2">
+				<button open-type="getPhoneNumber" class="btn btnAgree" @getphonenumber="getphonenumber">微信授权登录</button>
 			</view>
 		</view>
 	</uni-popup>
@@ -136,7 +145,7 @@ const formObj = ref(null)
 const formData = ref({
 	avatar: useUserMain.avatar,
 	nickname: useUserMain.nickname,
-	isAgree:false
+	isAgree: false
 })
 
 // 表单校验
@@ -171,13 +180,6 @@ const closefun = () => {
 defineExpose({
 	popupfun,
 	closefun
-})
-
-// dom加载完毕执行
-onMounted(() => {
-	if (!useUserMain.isLogin) {
-		popupfun()
-	}
 })
 
 // 获取头像

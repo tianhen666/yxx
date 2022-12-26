@@ -19,7 +19,7 @@
 import mTabContent from './components/m-tab-content/m-tab-content.vue'
 import { ref, reactive } from 'vue'
 import { onLoad, onReachBottom } from '@dcloudio/uni-app'
-import { _orderAllorder, _orderPayment } from '@/aTemp/apis/order.js'
+import { _orderAllorder, _orderPayment, _orderGetOrderCount } from '@/aTemp/apis/order.js'
 
 // 全局登录信息
 import { _useUserMain } from '@/aTemp/store/userMain.js'
@@ -49,11 +49,23 @@ const onClickItem = e => {
 	orderGetList()
 }
 
+// 获取每种订单状态数量
+const orderGetOrderCount = () => {
+	_orderGetOrderCount({ userId: useUserMain.userid }).then(res => {
+		const { account, count, havecount, unpaidcount } = res.data[0]
+		items[0] += ' ' + count
+		items[1] += ' ' + unpaidcount
+		items[2] += ' ' + account
+		items[3] += ' ' + havecount
+	})
+}
+
 // 页面加载
 onLoad(option => {
 	// 在传递的参数中获取订单状态索引
 	current.value = parseInt(option.current) || 0
-
+	// 获取订单数量
+	orderGetOrderCount()
 	// 获取订单列表
 	orderGetList()
 })

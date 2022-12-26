@@ -4,7 +4,8 @@
 
 	<!-- 加载提示 -->
 	<m-page-loading v-if="loading"></m-page-loading>
-	<!-- 背景 -->
+	
+	<!-- 顶部背景 -->
 	<view class="pageBg"><image class="image" src="/static/images/bg.png" mode="aspectFill"></image></view>
 	<z-paging
 		ref="paging"
@@ -15,11 +16,6 @@
 		:loading-more-enabled="false"
 		min-delay="1000"
 	>
-		<!-- 加载状态 -->
-		<!-- <template #loading>
-			<m-page-loading></m-page-loading>
-		</template> -->
-
 		<!-- 固定顶部 -->
 		<template #top>
 			<!-- #ifndef H5 -->
@@ -92,6 +88,9 @@ useShare(shareInfo)
 
 // z-ping插件对象
 const paging = ref(null)
+
+// 登录组件
+const mLogin = ref(null)
 
 // 加载中
 const loading = ref(true)
@@ -202,7 +201,7 @@ onLoad(async options => {
 			}
 		)
 		const { code, data, msg } = resData
-		const { power, token, user } = data
+		const { power, token, user, store } = data
 
 		// 获取到数据后赋值给全局变量
 		useUserMain.$patch({
@@ -215,8 +214,14 @@ onLoad(async options => {
 			nickname: user.nickname,
 			remarkname: user.remarkname,
 			userid: user.id,
-			storeId: user.storeId
+			storeId: user.storeId,
+			headPortrait: store.headPortrait
 		})
+
+		// 弹出登录组件
+		if (!useUserMain.isLogin) {
+			mLogin.value.popupfun()
+		}
 	} catch (e) {
 		console.log('登录请求出错', e)
 		return
@@ -224,6 +229,7 @@ onLoad(async options => {
 
 	// 开始加载
 	loading.value = true
+	// 解决onLoad不能通过ref获取到组件对象
 	proxy.$refs.paging.reload()
 
 	/*
@@ -242,8 +248,7 @@ onLoad(async options => {
 	} else if (Mscene === 1) {
 		// 跳转到目标--活动--页面
 		navigateTo(`/pages/sub1/activityInfo/activityInfo?${parmsStr}`)
-	} else if (Mscene === 2) {
-		// 跳转到目标--商品--页面
+	} else if (Mscene === 2) {		// 跳转到目标--商品--页面
 		navigateTo(`/pages/sub1/goodsInfo/goodsInfo?${parmsStr}`)
 	} else if (Mscene === 3) {
 		// 跳转到目标--服务--页面
