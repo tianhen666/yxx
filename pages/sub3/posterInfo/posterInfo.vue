@@ -6,7 +6,7 @@
 		:use2D="true"
 		:dirty="false"
 		:LRU="true"
-		:scaleRatio="2"
+		:scaleRatio="1"
 		customStyle="left: -9999px; top: -9999rpx;position: absolute;"
 	></w-painter>
 	<m-poster-diy></m-poster-diy>

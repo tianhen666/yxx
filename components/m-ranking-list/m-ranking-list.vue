@@ -18,7 +18,7 @@
 						<text>{{ item.activityCount }}人</text>
 					</view>
 					<view class="container_item_right_box_item" @tap.stop="popFun(item.id, 1)">
-						登录
+						意向
 						<text>{{ item.empower }}人</text>
 					</view>
 					<view class="container_item_right_box_item" @tap.stop="popFun(item.id, 2)">
