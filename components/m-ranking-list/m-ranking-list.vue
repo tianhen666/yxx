@@ -15,15 +15,15 @@
 				<view class="container_item_right_box">
 					<view class="container_item_right_box_item" @tap.stop="popFun(item.id, 0)">
 						曝光
-						<text>{{ item.activityCount }}人</text>
+						<text>{{ item.activityCount || 0 }}人</text>
 					</view>
 					<view class="container_item_right_box_item" @tap.stop="popFun(item.id, 1)">
 						意向
-						<text>{{ item.empower }}人</text>
+						<text>{{ item.empower || 0 }}人</text>
 					</view>
 					<view class="container_item_right_box_item" @tap.stop="popFun(item.id, 2)">
 						参与
-						<text>{{ item.participate }}人</text>
+						<text>{{ item.participate || 0 }}人</text>
 					</view>
 				</view>
 			</view>
