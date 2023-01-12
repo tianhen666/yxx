@@ -23,10 +23,10 @@
 				</view>
 			</view>
 			<!-- 销售量 -->
-			<view class="sale">已售：{{ dataObj.sold || 0 }}件</view>
+			<view class="sale">已售：{{ dataObj.sold + dataObj.virtualCount || 0 }}件</view>
 		</view>
 		<view class="blank20"></view>
-
+		
 		<!-- 商品介绍 -->
 		<view class="box2">
 			<m-title2 title="商品介绍"></m-title2>
@@ -44,7 +44,7 @@
 		<view class="blank20"></view> -->
 
 		<!-- 商品详情 -->
-		<view class="goods_img">
+		<view class="goods_img" v-if="dataObj.detail.length > 0">
 			<m-title1 title="商品详情"></m-title1>
 			<image
 				v-for="(item, index) in dataObj.detail"
@@ -281,7 +281,7 @@ const tapCreateImg = async () => {
 						left: '30px',
 						width: '690px',
 						height: '690px',
-						borderRadius:'10px'
+						borderRadius: '10px'
 					}
 				},
 				{
