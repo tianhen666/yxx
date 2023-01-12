@@ -46,7 +46,7 @@
 			<view class="box2_item">
 				<view class="box2_item_left">
 					<text class="text1">购买数量</text>
-					<text class="text2" v-if="dataObj.limitCount">此商品限购{{ dataObj.limitCount }}件</text>
+					<text class="text2" v-if="dataObj.limitCount > 0">此商品限购{{ dataObj.limitCount }}件</text>
 				</view>
 
 				<view class="box2_item_right">

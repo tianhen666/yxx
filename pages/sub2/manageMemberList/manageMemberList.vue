@@ -84,9 +84,7 @@
 	<!-- 管理员和创建者可以导出数据 -->
 	<view
 		class="inviteStore"
-		v-if="
-			(useUserMain.storeId == 1 || useUserMain.storeId == 11) && (useUserMain.power === 1 || useUserMain.power === 2)
-		"
+		v-if="useUserMain.power === 1 || useUserMain.power === 2"
 		@tap="userInviteUserEx"
 	>
 		<text>数据</text>
