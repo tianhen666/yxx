@@ -1,4 +1,6 @@
 <template>
+	<!-- 提示登录组件 -->
+	<m-authorized-login ref="mLogin"></m-authorized-login>
 	<view v-if="loading" style="padding:0 32rpx;"><ls-skeleton :skeleton="skeleton" :loading="loading" /></view>
 	<view class="container" v-else>
 		<view class="blank32"></view>
@@ -114,7 +116,7 @@ const confirm = _debounce(
 	() => {
 		// 判断是否授权登录
 		if (!useUserMain.isLogin) {
-			navigateTo('/pages/main/login/login')
+			mLogin.value.popupfun()
 			btnLoading.value = false
 			return
 		}
