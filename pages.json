@@ -461,6 +461,17 @@
 					}
 				}
 			}]
+		},
+		{
+			"root": "pages/sub4",
+			"pages": [{
+				"path": "aboutInfo/aboutInfo",
+				"style": {
+					"navigationBarTitleText": "关于牙小新",
+					"enablePullDownRefresh": false
+				}
+
+			}]
 		}
 	],
 	"globalStyle": {

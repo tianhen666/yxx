@@ -3,9 +3,6 @@
 		<uni-forms :rules="rules" ref="formObj" :model="formData" label-position="left" label-width="240rpx">
 			<!-- 活动类型 -->
 			<view class="uni-forms-item-wrapper1">
-				<!-- <uni-forms-item :label="rules.type.label" name="type" label-position="top">
-					<uni-data-checkbox v-model="formData.type" :localdata="type"></uni-data-checkbox>
-				</uni-forms-item> -->
 				<view class="type_title">活动类型</view>
 				<view class="type_name">
 					<view class="type_name_item" v-for="(item, index) in type" :key="index" @tap="formData.type = index">
@@ -149,7 +146,7 @@
 			</uni-forms-item>
 
 			<!-- 是否限购 -->
-			<uni-forms-item label="是否限购" v-if="formData.type !== 0">
+			<uni-forms-item label="是否限购">
 				<switch
 					color="#4b8eff"
 					:checked="parseInt(formData.limitCount) > 0"
@@ -163,7 +160,7 @@
 			<uni-forms-item
 				:label="rules.limitCount.label"
 				name="limitCount"
-				v-if="parseInt(formData.limitCount) > 0 && formData.type !== 0"
+				v-if="parseInt(formData.limitCount) > 0"
 			>
 				<uni-number-box :min="1" :max="255" v-model="formData.limitCount" />
 			</uni-forms-item>
@@ -173,11 +170,6 @@
 				<uni-number-box :min="0" :max="255" v-model="formData.views" />
 			</uni-forms-item>
 			<view class="blank32 blank_bg_color"></view>
-
-			<!-- 活动分享图 -->
-			<!-- 	<uni-forms-item :label="rules.sharePic.label" label-position="top" name="sharePic">
-				<htz-image-upload :max="selectNum2" v-model="picList2" mediaType="image" @chooseSuccess="chooseSuccess2" />
-			</uni-forms-item> -->
 
 			<!-- 活动介绍 -->
 			<uni-forms-item label-position="top" :label="rules.content.label" name="content">

@@ -44,11 +44,9 @@
 				></image>
 			</view>
 		</view>
+		<!-- 技术支持 -->
+		<m-technical-support></m-technical-support>
 		<view class="blank40"></view>
-		<view class="blank40"></view>
-
-		<!-- 底部按钮 -->
-		<!-- <m-bottom-btn></m-bottom-btn> -->
 	</view>
 </template>
 

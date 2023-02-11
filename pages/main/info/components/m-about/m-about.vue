@@ -12,64 +12,75 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue'
-import { previewImage } from '@/aTemp/utils/uniAppTools.js'
+	import {
+		ref,
+		reactive,
+		computed
+	} from 'vue'
+	import {
+		previewImage
+	} from '@/aTemp/utils/uniAppTools.js'
 
-const props = defineProps({
-	// 数据列表
-	info: {
-		type: Object,
-		required: true,
-		default: () => ({})
-	}
-})
-
-const imgList = computed(() => {
-	if (Array.isArray(props.info.innerPics)) {
-		return props.info.innerPics
-	} else {
-		if (props.info.innerPics) {
-			return props.info.innerPics.split(',')
+	const props = defineProps({
+		// 数据列表
+		info: {
+			type: Object,
+			required: true,
+			default: () => ({})
 		}
-		return []
-	}
-})
+	})
+
+	const imgList = computed(() => {
+		if (Array.isArray(props.info.innerPics)) {
+			return props.info.innerPics
+		} else {
+			if (props.info.innerPics) {
+				return props.info.innerPics.split(',')
+			}
+			return []
+		}
+	})
 </script>
 
 <style lang="scss" scoped>
-.container {
-	width: $main-width;
-	padding: $padding;
-	background-color: #fff;
-	overflow: hidden;
-	margin: auto;
-	position: relative;
-	z-index: 2;
-	border-radius: 16rpx;
-	overflow: hidden;
-	.scroll-view_H {
-		white-space: nowrap;
-		border-radius: 4rpx;
+	.container {
+		width: $main-width;
+		padding: $padding;
+		background-color: #fff;
 		overflow: hidden;
-		.scroll_item {
-			display: inline-block;
-			margin-right: 20rpx;
-			> .image {
-				height: 180rpx;
-				width: 200rpx;
-				border-radius: 4rpx;
-			}
-			&:last-child {
-				margin-right: 0;
+		margin: auto;
+		position: relative;
+		z-index: 2;
+		border-radius: 16rpx;
+		overflow: hidden;
+
+		.scroll-view_H {
+			white-space: nowrap;
+			border-radius: 4rpx;
+			overflow: hidden;
+
+			.scroll_item {
+				display: inline-block;
+				margin-right: 20rpx;
+
+				>.image {
+					height: 180rpx;
+					width: 200rpx;
+					border-radius: 4rpx;
+				}
+
+				&:last-child {
+					margin-right: 0;
+				}
 			}
 		}
+
+		.about_text {
+			color: $text-color-grey;
+			font-size: 26rpx;
+			line-height: 1.6;
+			text-align: justify;
+			margin-top: 10rpx;
+		}
 	}
-	.about_text {
-		color: $text-color-grey;
-		font-size: 26rpx;
-		line-height: 1.6;
-		text-align: justify;
-		margin-top: 10rpx;
-	}
-}
 </style>
