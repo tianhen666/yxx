@@ -1,6 +1,6 @@
 <template>
 	<!-- 提示登录组件 -->
-	<m-authorized-login ref="mLogin"></m-authorized-login>
+	<!-- <m-authorized-login ref="mLogin"></m-authorized-login> -->
 
 	<!-- 加载提示 -->
 	<m-page-loading v-if="loading"></m-page-loading>
