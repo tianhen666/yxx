@@ -26,7 +26,7 @@
 			<view class="sale">已售：{{ dataObj.sold + dataObj.virtualCount || 0 }}件</view>
 		</view>
 		<view class="blank20"></view>
-		
+
 		<!-- 商品介绍 -->
 		<view class="box2">
 			<m-title2 title="商品介绍"></m-title2>
@@ -38,7 +38,11 @@
 		<!-- 评论 -->
 		<!-- 	<m-comment-list>
 			<template #title>
-				<m-title2 title="商品评价" moreText="查看全部" path="/pages-sub1/commentList/commentList"></m-title2>
+				<m-title2
+					title="商品评价"
+					moreText="查看全部"
+					path="/pages-sub1/commentList/commentList"
+				></m-title2>
 			</template>
 		</m-comment-list>
 		<view class="blank20"></view> -->
@@ -55,7 +59,7 @@
 				@tap="previewImage(dataObj.detail, index)"
 			></image>
 		</view>
-		
+
 		<!-- 技术支持 -->
 		<m-technical-support></m-technical-support>
 		<view class="blank40"></view>
@@ -82,11 +86,11 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, getCurrentInstance } from 'vue'
-import { _storeproductGetinfo } from '@/aTemp/apis/shop.js'
-import { onLoad, onShow } from '@dcloudio/uni-app'
+import { ref, reactive, computed, getCurrentInstance } from 'vue';
+import { _storeproductGetinfo } from '@/aTemp/apis/shop.js';
+import { onLoad, onShow } from '@dcloudio/uni-app';
 // base64转图片路径
-import { base64ToPath } from 'image-tools'
+import { base64ToPath } from 'image-tools';
 import {
 	navigateTo,
 	previewImage,
@@ -94,88 +98,84 @@ import {
 	showLoading,
 	showToastText,
 	getImageInfo
-} from '@/aTemp/utils/uniAppTools.js'
-import { _wxWxqrCode } from '@/aTemp/apis/login.js'
+} from '@/aTemp/utils/uniAppTools.js';
+import { _wxWxqrCode } from '@/aTemp/apis/login.js';
 
 // 全局登录信息
-import { _useUserMain } from '@/aTemp/store/userMain.js'
-const useUserMain = _useUserMain()
+import { _useUserMain } from '@/aTemp/store/userMain.js';
+const useUserMain = _useUserMain();
+// 登录弹出对象
+const mLogin = ref(null);
 
 // 分享 (onShareAppMessage,onShareTimeline) 不能删,必要 https://github.com/dcloudio/uni-app/issues/3097
-import useShare from '@/aTemp/mixins/useShare.js'
-const shareInfo = reactive({ title: '', path: '', imageUrl: '', query: '' })
+import useShare from '@/aTemp/mixins/useShare.js';
+const shareInfo = reactive({ title: '', path: '', imageUrl: '', query: '' });
 // 设置分享
-useShare(shareInfo)
-
-// 登录弹出对象
-const mLogin = ref(null)
+useShare(shareInfo);
 
 // 数据ID
-const dataId = ref(0)
+const dataId = ref(0);
 // 数据对象
-const dataObj = ref({ myType: '商品' })
+const dataObj = ref({ myType: '商品' });
 // 加载中
-const loading = ref(true)
+const loading = ref(true);
 
 onLoad(async options => {
-	const { proxy } = getCurrentInstance()
+	const { proxy } = getCurrentInstance();
 	// 等待onLaunch中放行后执行
-	await proxy.$onLaunched
-
-	let { invitationCode, storeId, Mscene, targetId, scene } = options
-	// 解析二维码中参数
-	if (scene) {
-		const codeParams = decodeURIComponent(scene)
-		const codeParamsList = codeParams.split('&')
-		const codeParamsObj = {}
-		codeParamsList.forEach(item => {
-			codeParamsObj[item.split('=')[0]] = item.split('=')[1]
-		})
-
-		// 覆盖上面几个参数值
-		invitationCode = codeParamsObj['i']
-		storeId = codeParamsObj['sd']
-		Mscene = codeParamsObj['s']
-		targetId = codeParamsObj['t']
-	}
-	console.log(
-		'商品页面---' + '邀请人ID：' + invitationCode,
-		'店铺id：' + storeId,
-		'场景值：' + Mscene,
-		'目标ID：' + targetId
-	)
+	await proxy.$onLaunched;
 
 	// 获取商品ID
-	dataId.value = parseInt(targetId) || 0
+	let { targetId } = options;
+	dataId.value = parseInt(targetId) || 0;
 
 	// 发起商品详情请求
 	_storeproductGetinfo({ id: dataId.value }).then(res => {
-		const { code, data, msg } = res
+		const { code, data, msg } = res;
 
 		// 图片详情转列表
-		;(data.detail = data.detail ? data.detail.split(',') : []),
+		(data.detail = data.detail ? data.detail.split(',') : []),
 			// 主图转列表
-			(data.pics = data.pics ? data.pics.split(',') : [])
+			(data.pics = data.pics ? data.pics.split(',') : []);
 		// 商品信息赋值
-		dataObj.value = data
+		dataObj.value = data;
 		// 标识商品
-		dataObj.value['myType'] = '商品'
+		dataObj.value['myType'] = '商品';
 
 		// 加载结束
-		loading.value = false
+		loading.value = false;
 
 		// 设置分享参数
-		shareInfo.title = computed(() => `${useUserMain.nickname}-给您分享了【${dataObj.value.title}】`)
+		shareInfo.title = computed(
+			() => `${useUserMain.nickname}-给您分享了【${dataObj.value.title}】`
+		);
+		// 分享到聊天框
 		shareInfo.path = computed(
 			() =>
 				`/pages/main/index/index?invitationCode=${useUserMain.userid}&storeId=${
 					useUserMain.storeId
 				}&Mscene=2&targetId=${dataObj.value.id}`
-		)
+		);
+		// 分享图片
 		shareInfo.imageUrl =
-			dataObj.value.sharePic || dataObj.value.pics[0] || `https://imgs.fenxiangzl.com/store/tooth/invitbg.png`
-	})
-})
+			dataObj.value.sharePic ||
+			dataObj.value.pics[0] ||
+			`https://imgs.lechiwl.com/store/tooth/invitbg.png`;
+
+		// 分享到朋友圈用到
+		shareInfo.query = computed(
+			() =>
+				`invitationCode=${useUserMain.userid}&storeId=${
+					useUserMain.storeId
+				}&Mscene=2&targetId=${dataObj.value.id}`
+		);
+	});
+
+	// 弹出登录组件
+	if (!useUserMain.isLogin) {
+		mLogin.value.popupfun();
+	}
+});
 
 /**
  * 去支付页面
@@ -184,42 +184,42 @@ onLoad(async options => {
 const goPayPage = () => {
 	// 判断是否授权登录
 	if (!useUserMain.isLogin) {
-		mLogin.value.popupfun()
-		return
+		mLogin.value.popupfun();
+		return;
 	}
-	navigateTo(`/pages/sub1/confirmOrder/confirmOrder?id=${dataId.value}`)
-}
+	navigateTo(`/pages/sub1/confirmOrder/confirmOrder?id=${dataId.value}`);
+};
 
 // 海报数据
 const posterData = reactive({
 	value: {}
-})
+});
 
-const storeInfo = uni.getStorageSync('storeInfo')
+const storeInfo = uni.getStorageSync('storeInfo');
 // 生成海报函数
 const tapCreateImg = async () => {
 	// 判断是否授权登录
 	if (!useUserMain.isLogin) {
-		mLogin.value.popupfun()
-		return
+		mLogin.value.popupfun();
+		return;
 	}
 
-	showLoading('海报数据加载中')
+	showLoading('海报数据加载中');
 
 	// 获取小程序码
 	const wxWxqrCode = await _wxWxqrCode({
 		page: 'pages/main/index/index',
 		scene: `i=${useUserMain.userid}&sd=${useUserMain.storeId}&s=2&t=${dataObj.value.id}`,
 		width: 430
-	})
+	});
 	// console.log('data:image/png;base64,' + wxWxqrCode.data)
-	const imgPath = await base64ToPath('data:image/png;base64,' + wxWxqrCode.data)
+	const imgPath = await base64ToPath('data:image/png;base64,' + wxWxqrCode.data);
 
 	// 如果有海报
 	if (dataObj.value.postPic) {
 		// 获取海报图片尺寸
-		const resImgInfo = await getImageInfo(dataObj.value.postPic)
-		console.log(resImgInfo)
+		const resImgInfo = await getImageInfo(dataObj.value.postPic);
+		console.log(resImgInfo);
 		//  海报宽度为500px高度，自动
 		posterData.value = {
 			width: '500px',
@@ -238,7 +238,7 @@ const tapCreateImg = async () => {
 					}
 				}
 			]
-		}
+		};
 	} else {
 		posterData.value = {
 			width: '750px',
@@ -348,43 +348,42 @@ const tapCreateImg = async () => {
 					css: { top: '1070px', right: '30px', fontSize: '26px', color: '#333' }
 				}
 			]
-		}
+		};
 	}
-}
+};
 
 // 图片生成完成
 const createImgOk = e => {
-	uni.hideLoading()
+	uni.hideLoading();
 	saveImageToPhotosAlbum(e.detail.path).then(() => {
 		// 分享图片
-		uni
-			.showShareImageMenu({
-				path: e.detail.path
-			})
+		uni.showShareImageMenu({
+			path: e.detail.path
+		})
 			.then(res => {
-				console.log(res)
+				console.log(res);
 			})
 			.catch(err => {
-				console.log(err)
-			})
-	})
+				console.log(err);
+			});
+	});
 
-	console.log(e.detail.path)
-}
+	console.log(e.detail.path);
+};
 // 图片生成失败
 const imgErr = e => {
-	uni.hideLoading()
-	showToastText('海报加载失败~')
-}
+	uni.hideLoading();
+	showToastText('海报加载失败~');
+};
 
 // 没有登录禁止分享
 const tapShare = () => {
 	// 判断是否授权登录
 	if (!useUserMain.isLogin) {
-		mLogin.value.popupfun()
-		return
+		mLogin.value.popupfun();
+		return;
 	}
-}
+};
 </script>
 
 <style lang="scss" scoped>

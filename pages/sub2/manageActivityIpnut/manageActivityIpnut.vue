@@ -79,7 +79,7 @@
 			</uni-forms-item>
 
 			<!-- 活动数量 -->
-			<uni-forms-item v-if="formData.type !== 0" :label="rules.quantity.label" name="quantity">
+			<uni-forms-item :label="rules.quantity.label" name="quantity">
 				<uni-number-box :min="1" :step="10" :max="10000" v-model="formData.quantity" />
 			</uni-forms-item>
 

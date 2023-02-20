@@ -14,8 +14,8 @@ export const _useUserMain = defineStore('main', {
 			userid: '', // 用户ID
 			power: -1, //权限 -1普通用户，0普通员工，1创建者，2管理员，3商品管理，4商品管理，5订单核销
 			avatar: '', //用户头像
-			nickname: '' ,//用户昵称
-			headPortrait:0, //是否有收集头像弹窗
+			nickname: '', //用户昵称
+			headPortrait: 1, //是否有收集头像弹窗 0收集，1不收集
 		}
 	},
 	getters: {

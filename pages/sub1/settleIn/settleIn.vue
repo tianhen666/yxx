@@ -100,7 +100,7 @@ useShare(shareInfo)
 // 设置页面分享参数
 shareInfo.title = computed(() => `${useUserMain.nickname}-邀请您开通入驻牙小新`)
 // 分享图片
-shareInfo.imageUrl = `https://imgs.fenxiangzl.com/store/tooth/vipshare.png`
+shareInfo.imageUrl = `https://imgs.lechiwl.com/store/tooth/vipshare.png`
 
 // 分享到聊天框
 shareInfo.path = computed(

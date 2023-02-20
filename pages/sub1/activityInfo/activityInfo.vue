@@ -20,7 +20,9 @@
 		</view>
 
 		<!-- 封面图 -->
-		<view class="banner_img" v-else><image class="image" :src="dataObj.mainPic" mode="aspectFill"></image></view>
+		<view class="banner_img" v-else>
+			<image class="image" :src="dataObj.mainPic" mode="aspectFill"></image>
+		</view>
 		<view class="blank24"></view>
 
 		<!-- 模块一 -->
@@ -36,13 +38,17 @@
 			<!-- 时间 -->
 			<view class="time">
 				时间：{{
-					dayjs(dataObj.startDt).format('YYYY年M月D日') + '  至  ' + dayjs(dataObj.endDt).format('YYYY年M月D日')
+					dayjs(dataObj.startDt).format('YYYY年M月D日') +
+						'  至  ' +
+						dayjs(dataObj.endDt).format('YYYY年M月D日')
 				}}
 			</view>
 			<!-- 参与人 -->
 			<view class="join">
 				<view class="join_left">
-					<view class="num">已有{{ (dataObj.count || 0) + (dataObj.views || 0) }}人参与活动</view>
+					<view class="num">
+						已有{{ (dataObj.count || 0) + (dataObj.views || 0) }}人参与活动
+					</view>
 					<view class="img_wrapper">
 						<template v-for="(item, index) in dataObj.activityListObj" :key="index">
 							<view
@@ -59,7 +65,9 @@
 						</template>
 					</view>
 				</view>
-				<button class="jion_right" @tap="payConfirm">{{ dataObj.myJionCount > 0 ? '已参与' : '参与活动' }}</button>
+				<button class="jion_right" @tap="payConfirm">
+					{{ dataObj.myJionCount > 0 ? '已参与' : '参与活动' }}
+				</button>
 			</view>
 
 			<!-- 购买须知 -->
@@ -84,7 +92,7 @@
 				></image>
 			</view>
 		</view>
-		
+
 		<!-- 技术支持 -->
 		<m-technical-support></m-technical-support>
 	</view>
@@ -110,13 +118,17 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, getCurrentInstance, watch } from 'vue'
-import { onLoad, onUnload, onPageScroll } from '@dcloudio/uni-app'
-import { _enrollformGetinfo, _enrollformEnpayment, _enrollformWxNotifys } from '@/aTemp/apis/activity.js'
-import { _debounce, _countDown } from '@/aTemp/utils/tools.js'
-import { _wxWxqrCode } from '@/aTemp/apis/login.js'
+import { ref, reactive, computed, getCurrentInstance, watch } from 'vue';
+import { onLoad, onUnload, onPageScroll } from '@dcloudio/uni-app';
+import {
+	_enrollformGetinfo,
+	_enrollformEnpayment,
+	_enrollformWxNotifys
+} from '@/aTemp/apis/activity.js';
+import { _debounce, _countDown } from '@/aTemp/utils/tools.js';
+import { _wxWxqrCode } from '@/aTemp/apis/login.js';
 // base64转图片路径
-import { base64ToPath } from 'image-tools'
+import { base64ToPath } from 'image-tools';
 import {
 	navigateTo,
 	previewImage,
@@ -125,273 +137,272 @@ import {
 	showToastText,
 	getImageInfo,
 	showModal
-} from '@/aTemp/utils/uniAppTools.js'
-import dayjs from 'dayjs'
+} from '@/aTemp/utils/uniAppTools.js';
+import dayjs from 'dayjs';
 
-const instance = getCurrentInstance() // 获取组件实例
+const instance = getCurrentInstance(); // 获取组件实例
 
 // 全局登录信息
-import { _useUserMain } from '@/aTemp/store/userMain.js'
-const useUserMain = _useUserMain()
-
-// 分享 (onShareAppMessage,onShareTimeline) 不能删,必要 https://github.com/dcloudio/uni-app/issues/3097
-import useShare from '@/aTemp/mixins/useShare.js'
-const shareInfo = reactive({ title: '', path: '', imageUrl: '', query: '' })
-// 设置分享
-useShare(shareInfo)
-
-// 加载中
-const loading = ref(true)
-// 数据ID
-const dataId = ref('')
-// 数据对象
-const dataObj = ref({ myType: '活动' })
+import { _useUserMain } from '@/aTemp/store/userMain.js';
+const useUserMain = _useUserMain();
 
 // 登录弹出对象
-const mLogin = ref(null)
+const mLogin = ref(null);
+
+// 分享 (onShareAppMessage,onShareTimeline) 不能删,必要 https://github.com/dcloudio/uni-app/issues/3097
+import useShare from '@/aTemp/mixins/useShare.js';
+const shareInfo = reactive({ title: '', path: '', imageUrl: '', query: '' });
+// 设置分享
+useShare(shareInfo);
+
+// 加载中
+const loading = ref(true);
+// 数据ID
+const dataId = ref('');
+// 数据对象
+const dataObj = ref({ myType: '活动' });
+
 // 页面开始加载
 onLoad(async options => {
-	const { proxy } = getCurrentInstance()
+	const { proxy } = getCurrentInstance();
 	// 等待onLaunch中放行后执行
-	await proxy.$onLaunched
+	await proxy.$onLaunched;
 
-	let { targetId } = options
+	let { targetId } = options;
+	dataId.value = parseInt(targetId) || 0;
 
-	dataId.value = parseInt(targetId) || ''
+	enrollformGetinfo();
 
-	enrollformGetinfo()
-})
+	// 弹出登录组件
+	if (!useUserMain.isLogin) {
+		mLogin.value.popupfun();
+	}
+});
 // 获取活动详情
 const enrollformGetinfo = () => {
 	// 加载中
-	loading.value = true
+	loading.value = true;
 	_enrollformGetinfo({ id: dataId.value }).then(res => {
-		const { data, code, msg } = res
+		const { data, code, msg } = res;
 
 		// 活动详情
-		dataObj.value = data.getinfo
+		dataObj.value = data.getinfo;
 		// 已参加活动人数
-		dataObj.value['count'] = data.count
+		dataObj.value['count'] = data.count;
 		// 已参与活动人的信息列表
-		dataObj.value['activityListObj'] = data.activitynumber
+		dataObj.value['activityListObj'] = data.activitynumber;
 		// 自己参与活动次数
-		dataObj.value['myJionCount'] = data.purchasecount
+		dataObj.value['myJionCount'] = data.purchasecount;
 
 		// 标识活动商品
-		dataObj.value['myType'] = '活动'
+		dataObj.value['myType'] = '活动';
 
 		// 倒计时
-		const timeDjs = dayjs(dataObj.value.endDt)
-		djsFun(timeDjs)
-		
+		const timeDjs = dayjs(dataObj.value.endDt);
+		djsFun(timeDjs);
+
 		// 活动已结束
-		if(dayjs(dataObj.value.endDt).valueOf() < Date.now()){
-			showModal('活动已经结束了')
+		if (dayjs(dataObj.value.endDt).valueOf() < Date.now()) {
+			showModal('活动已经结束了');
 		}
-		
+
 		// 数据加载结束
-		loading.value = false
+		loading.value = false;
 
 		// 设置分享参数
-		shareInfo.title = computed(() => `${useUserMain.nickname || ''} 邀请您参加【${dataObj.value.title}】`)
+		shareInfo.title = computed(
+			() => `${useUserMain.nickname || ''} 邀请您参加【${dataObj.value.title}】`
+		);
 		shareInfo.path = computed(
 			() =>
 				`/pages/main/index/index?invitationCode=${useUserMain.userid}&storeId=${
 					useUserMain.storeId
 				}&Mscene=1&targetId=${dataObj.value.id}`
-		)
-		shareInfo.imageUrl = dataObj.value.mainPic || `https://imgs.fenxiangzl.com/store/tooth/invitbg.png`
+		);
+		shareInfo.imageUrl =
+			dataObj.value.mainPic || `https://imgs.lechiwl.com/store/tooth/invitbg.png`;
 		// 分享到朋友圈用到
 		shareInfo.query = computed(
-			() => `invitationCode=${useUserMain.userid}&storeId=${useUserMain.storeId}&Mscene=1&targetId=${dataObj.value.id}`
-		)
-	})
-}
+			() =>
+				`invitationCode=${useUserMain.userid}&storeId=${
+					useUserMain.storeId
+				}&Mscene=1&targetId=${dataObj.value.id}`
+		);
+	});
+};
 
 // 页面滚动监听
-const { windowHeight } = uni.getSystemInfoSync()
+const { windowHeight } = uni.getSystemInfoSync();
 onPageScroll(options => {
 	// 计算当前播放视频位置
-	const query = uni.createSelectorQuery().in(instance)
-	query.select(`#myVideo${payIndex.value}`).boundingClientRect()
+	const query = uni.createSelectorQuery().in(instance);
+	query.select(`#myVideo${payIndex.value}`).boundingClientRect();
 	query.exec(rect => {
 		if (!rect[0]) {
-			return
+			return;
 		}
-
-		const { top, height } = rect[0]
-		// console.log('windowHeight', windowHeight)
-		// console.log('height', height)
-		// console.log('top', top)
-
-		// windowHeight = top（目标元素刚进入可视区域）
-		// windowHeight - top = height（目标元素完全进入可视区域）
-		// top = 0 (目标元素刚离开可视区域)
-		// top + height = 0 （目标元素完全离开可视区域 ）
+		const { top, height } = rect[0];
 
 		if (top < windowHeight && top + height > 0) {
-			const videoObj = uni.createVideoContext(`myVideo${payIndex.value}`, instance)
-			videoObj.play()
+			const videoObj = uni.createVideoContext(`myVideo${payIndex.value}`, instance);
+			videoObj.play();
 			// console.log('元素在可视区域出现')
 		} else {
-			const videoObj = uni.createVideoContext(`myVideo${payIndex.value}`, instance)
-			videoObj.pause()
+			const videoObj = uni.createVideoContext(`myVideo${payIndex.value}`, instance);
+			videoObj.pause();
 			// console.log('元素在可视区域消失')
 		}
-	})
-})
+	});
+});
 
-let payIndex = ref('')
+let payIndex = ref('');
 watch(payIndex, (newVal, preVal) => {
-	// console.log(preVal)
-	// console.log(newVal)
-	const preVideoObj = uni.createVideoContext(`myVideo${preVal}`, instance)
-	const videoObj = uni.createVideoContext(`myVideo${newVal}`, instance)
-	preVideoObj.pause()
-	videoObj.play()
-})
+	const preVideoObj = uni.createVideoContext(`myVideo${preVal}`, instance);
+	const videoObj = uni.createVideoContext(`myVideo${newVal}`, instance);
+	preVideoObj.pause();
+	videoObj.play();
+});
 
 // 当前视频播放切关闭
 const videoTap = index => {
 	if (payIndex.value === index) {
-		payIndex.value = ''
+		payIndex.value = '';
 	} else {
-		payIndex.value = index
+		payIndex.value = index;
 	}
-}
+};
 
 // 调用支付函数
-const btnLoading = ref(false)
+const btnLoading = ref(false);
 const payConfirm = _debounce(
 	() => {
 		// 判断是否授权登录
 		if (!useUserMain.isLogin) {
-			mLogin.value.popupfun()
-			btnLoading.value = false
-			return
+			mLogin.value.popupfun();
+			btnLoading.value = false;
+			return;
 		}
 
 		// 判断是否限购
 		if (dataObj.value.limitCount > 0 && dataObj.value.limitCount <= dataObj.value.myJionCount) {
-			showToastText(`此活动最多参与${dataObj.value.limitCount}次`)
-			return
+			showToastText(`此活动最多参与${dataObj.value.limitCount}次`);
+			return;
 		}
 
 		// 支付请求
 		_enrollformEnpayment({ id: dataId.value })
 			.then(res => {
-				btnLoading.value = false
-				const { data, code, msg } = res
+				btnLoading.value = false;
+				const { data, code, msg } = res;
 				// 判断是否需要支付
 				try {
 					// 支付返回信息
-					const resDataObj = JSON.parse(data)
+					const resDataObj = JSON.parse(data);
 					// console.log(resDataObj)
 
 					// 订单编号
-					const orderNumExternal = resDataObj.orderNumExternal
+					const orderNumExternal = resDataObj.orderNumExternal;
 					// 支付信息
-					const payInfo = JSON.parse(resDataObj.pay_info)
+					const payInfo = JSON.parse(resDataObj.pay_info);
 					// console.log(payInfo)
 
 					// 唤醒支付
-					uni
-						.requestPayment({
-							timeStamp: payInfo.timeStamp,
-							nonceStr: payInfo.nonceStr,
-							package: payInfo.package,
-							signType: payInfo.signType,
-							paySign: payInfo.sign
-						})
+					uni.requestPayment({
+						timeStamp: payInfo.timeStamp,
+						nonceStr: payInfo.nonceStr,
+						package: payInfo.package,
+						signType: payInfo.signType,
+						paySign: payInfo.sign
+					})
 						.then(val => {
-							showToastText('参与成功~')
+							showToastText('参与成功~');
 							// 设置活动已参与
-							dataObj.value['myJionCount'] = (dataObj.value['myJionCount'] || 0) + 1
+							dataObj.value['myJionCount'] = (dataObj.value['myJionCount'] || 0) + 1;
 
 							// 支付成功回调，并且分账 status: 2 //待使用
-							const myParameter = { orderNumExternal: orderNumExternal, status: 2 }
+							const myParameter = { orderNumExternal: orderNumExternal, status: 2 };
 							_enrollformWxNotifys(myParameter).then(resData => {
-								console.log('resData')
-							})
+								console.log('resData');
+							});
 						})
 						.catch(err => {
-							showToastText('取消支付~')
-						})
+							showToastText('取消支付~');
+						});
 				} catch (err) {
 					// 错误信息
-					console.log(err)
+					console.log(err);
 
 					try {
 						// 支付返回信息
-						const resDataObj = JSON.parse(data)
-						showToastText(resDataObj.result_msg || '参加失败')
+						const resDataObj = JSON.parse(data);
+						showToastText(resDataObj.result_msg || '参加失败');
 					} catch (e) {
-						console.log(e)
+						console.log(e);
 						if (data === '参与成功') {
-							showToastText(data)
+							showToastText(data);
 							// 设置活动已参与
-							dataObj.value['myJionCount'] = (dataObj.value['myJionCount'] || 0) + 1
+							dataObj.value['myJionCount'] = (dataObj.value['myJionCount'] || 0) + 1;
 						} else {
-							showToastText(data || '参加失败')
+							showToastText(data || '参加失败');
 						}
 					}
 				}
 			})
 			.catch(err => {
-				btnLoading.value = false
-				showToastText(err.msg || '参加失败')
-				console.log(err)
-			})
+				btnLoading.value = false;
+				showToastText(err.msg || '参加失败');
+				console.log(err);
+			});
 	},
-	1000,
+	500,
 	btnLoading
-)
+);
 
 // 倒计时
-const djs = ref('')
-let djsIndex = 0
+const djs = ref('');
+let djsIndex = 0;
 const djsFun = time => {
 	djsIndex = setInterval(() => {
 		// console.log("定时器执行",time)
-		djs.value = _countDown(time, djsIndex)
-	}, 100)
-}
+		djs.value = _countDown(time, djsIndex);
+	}, 100);
+};
 //页面卸载执行
 onUnload(() => {
 	// console.log('页面卸载')
 	// 移除定时器
-	clearInterval(djsIndex)
-})
+	clearInterval(djsIndex);
+});
 
 // 海报数据
 const posterData = reactive({
 	value: {}
-})
+});
 
-const storeInfo = uni.getStorageSync('storeInfo')
+const storeInfo = uni.getStorageSync('storeInfo');
 // 生成海报函数
 const tapCreateImg = async () => {
 	// 判断是否授权登录
 	if (!useUserMain.isLogin) {
-		mLogin.value.popupfun()
-		return
+		mLogin.value.popupfun();
+		return;
 	}
 
-	showLoading('海报数据加载中')
+	showLoading('海报数据加载中');
 
 	// 获取小程序码
 	const wxWxqrCode = await _wxWxqrCode({
 		page: 'pages/main/index/index',
 		scene: `i=${useUserMain.userid}&sd=${useUserMain.storeId}&s=1&t=${dataObj.value.id}`,
 		width: 430
-	})
+	});
 	// console.log('data:image/png;base64,' + wxWxqrCode.data)
-	const imgPath = await base64ToPath('data:image/png;base64,' + wxWxqrCode.data)
+	const imgPath = await base64ToPath('data:image/png;base64,' + wxWxqrCode.data);
 
 	// 如果有海报
 	if (dataObj.value.postPic) {
 		// 获取海报图片尺寸
-		const resImgInfo = await getImageInfo(dataObj.value.postPic)
+		const resImgInfo = await getImageInfo(dataObj.value.postPic);
 		// console.log(resImgInfo)
 
 		//  海报宽度为500px高度，自动
@@ -412,7 +423,7 @@ const tapCreateImg = async () => {
 					}
 				}
 			]
-		}
+		};
 	} else {
 		posterData.value = {
 			width: '750px',
@@ -522,43 +533,42 @@ const tapCreateImg = async () => {
 					css: { top: '930px', right: '30px', fontSize: '26px', color: '#333' }
 				}
 			]
-		}
+		};
 	}
-}
+};
 // 图片生成完成
 const createImgOk = e => {
-	uni.hideLoading()
+	uni.hideLoading();
 
 	saveImageToPhotosAlbum(e.detail.path).then(res => {
 		// 分享图片
-		uni
-			.showShareImageMenu({
-				path: e.detail.path
-			})
+		uni.showShareImageMenu({
+			path: e.detail.path
+		})
 			.then(res => {
-				console.log(res)
+				console.log(res);
 			})
 			.catch(err => {
-				console.log(err)
-			})
-	})
+				console.log(err);
+			});
+	});
 
-	console.log(e.detail.path)
-}
+	console.log(e.detail.path);
+};
 // 图片生成失败
 const imgErr = e => {
-	uni.hideLoading()
-	showToastText('海报加载失败~')
-}
+	uni.hideLoading();
+	showToastText('海报加载失败~');
+};
 
 // 没有登录禁止分享
 const tapShare = () => {
 	// 判断是否授权登录
 	if (!useUserMain.isLogin) {
-		mLogin.value.popupfun()
-		return
+		mLogin.value.popupfun();
+		return;
 	}
-}
+};
 </script>
 
 <style lang="scss" scoped>

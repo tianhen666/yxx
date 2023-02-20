@@ -4,8 +4,16 @@
 	<!-- 加载提示 -->
 	<m-page-loading v-if="loading"></m-page-loading>
 	<view class="title">{{ articleObj.title }}</view>
-	<mp-html :content="articleObj.content" :container-style="containerStyle" @ready="mpReady" lazy-load scroll-table
-		selectable use-anchor :tag-style="tagStyle" />
+	<mp-html
+		:content="articleObj.content"
+		:container-style="containerStyle"
+		@ready="mpReady"
+		lazy-load
+		scroll-table
+		selectable
+		use-anchor
+		:tag-style="tagStyle"
+	/>
 	<!-- 技术支持 -->
 	<m-technical-support></m-technical-support>
 	<view class="blank40"></view>
@@ -21,124 +29,122 @@
 		<text>分享</text>
 		<text>文章</text>
 	</button>
-
 </template>
 
 <script setup>
-	import {
-		onLoad
-	} from '@dcloudio/uni-app'
-	import {
-		ref,
-		computed,
-		reactive
-	} from 'vue'
-	import {
-		_freePublishGetInfo
-	} from '@/aTemp/apis/wx.js'
+import { onLoad } from '@dcloudio/uni-app';
+import { ref, computed, reactive } from 'vue';
+import { _freePublishGetInfo } from '@/aTemp/apis/wx.js';
 
-	// 分享 (onShareAppMessage,onShareTimeline) 不能删,必要 https://github.com/dcloudio/uni-app/issues/3097
-	import useShare from '@/aTemp/mixins/useShare.js'
-	const shareInfo = reactive({
-		title: '',
-		path: '',
-		imageUrl: '',
-		query: ''
-	})
-	// 设置分享
-	useShare(shareInfo)
+// 分享 (onShareAppMessage,onShareTimeline) 不能删,必要 https://github.com/dcloudio/uni-app/issues/3097
+import useShare from '@/aTemp/mixins/useShare.js';
+const shareInfo = reactive({
+	title: '',
+	path: '',
+	imageUrl: '',
+	query: ''
+});
+// 设置分享
+useShare(shareInfo);
 
-	// 全局登录信息
-	import {
-		_useUserMain
-	} from '@/aTemp/store/userMain.js'
-	const useUserMain = _useUserMain()
+// 全局登录信息
+import { _useUserMain } from '@/aTemp/store/userMain.js';
+const useUserMain = _useUserMain();
 
-	const articleId = ref('')
-	const articleObj = ref({})
-	const loading = ref(true)
+// 登录弹出对象
+const mLogin = ref(null);
 
-	const containerStyle =
-		`background-color:rgb(255, 255, 255);line-height:1.6;font-size: 15px;overflow: hidden;display: inline;white-space: pre-wrap;white-space: pre-line;`
-	const tagStyle = {
-		table: 'box-sizing: border-box; border-top: 1px solid #dfe2e5; border-left: 1px solid #dfe2e5;',
-		th: 'border-right: 1px solid #dfe2e5; border-bottom: 1px solid #dfe2e5;',
-		td: 'border-right: 1px solid #dfe2e5; border-bottom: 1px solid #dfe2e5;',
-		li: 'margin: 5px 0;'
-	}
-	onLoad(options => {
-		articleId.value = decodeURIComponent(options.targetId || '')
+const articleId = ref('');
+const articleObj = ref({});
+const loading = ref(true);
 
-		_freePublishGetInfo({
-			freeId: articleId.value
-		}).then(res => {
-			articleObj.value = res.data
+const containerStyle = `background-color:rgb(255, 255, 255);line-height:1.6;font-size: 15px;overflow: hidden;display: inline;white-space: pre-wrap;white-space: pre-line;`;
+const tagStyle = {
+	table: 'box-sizing: border-box; border-top: 1px solid #dfe2e5; border-left: 1px solid #dfe2e5;',
+	th: 'border-right: 1px solid #dfe2e5; border-bottom: 1px solid #dfe2e5;',
+	td: 'border-right: 1px solid #dfe2e5; border-bottom: 1px solid #dfe2e5;',
+	li: 'margin: 5px 0;'
+};
+onLoad(options => {
+	articleId.value = decodeURIComponent(options.targetId || '');
 
-			// 设置页面分享参数
-			shareInfo.title = computed(() => `${articleObj.value.title}`)
-			// 分享图片
-			shareInfo.imageUrl = articleObj.value.thumbUrl ||
-				`https://imgs.fenxiangzl.com/store/tooth/invitbg.png`
+	_freePublishGetInfo({
+		freeId: articleId.value
+	}).then(res => {
+		articleObj.value = res.data;
 
-			// 分享到聊天框用到
-			shareInfo.path = computed(
-				() =>
+		// 设置页面分享参数
+		shareInfo.title = computed(() => `${articleObj.value.title}`);
+		// 分享图片
+		shareInfo.imageUrl =
+			articleObj.value.thumbUrl || `https://imgs.lechiwl.com/store/tooth/invitbg.png`;
+
+		// 分享到聊天框用到
+		shareInfo.path = computed(
+			() =>
 				`/pages/main/index/index?invitationCode=${useUserMain.userid}&storeId=${
 					useUserMain.storeId
 				}&Mscene=8&targetId=${articleObj.value.id}`
-			)
-			// 分享到朋友圈用到
-			shareInfo.query = computed(
-				() =>
-				`invitationCode=${useUserMain.userid}&storeId=${useUserMain.storeId}&Mscene=8&targetId=${articleObj.value.id}`
-			)
-		})
-	})
+		);
+		// 分享到朋友圈用到
+		shareInfo.query = computed(
+			() =>
+				`invitationCode=${useUserMain.userid}&storeId=${
+					useUserMain.storeId
+				}&Mscene=8&targetId=${articleObj.value.id}`
+		);
 
-	// 富文本渲染完成
-	const mpReady = () => {
-		loading.value = false
-	}
-	// 返回首页
-	const goToHome = () => {
-		uni.switchTab({
-			url: '/pages/main/index/index'
-		})
-	}
+		// 弹出登录组件
+		if (!useUserMain.isLogin) {
+			mLogin.value.popupfun();
+		}
+	});
+});
+
+// 富文本渲染完成
+const mpReady = () => {
+	loading.value = false;
+};
+// 返回首页
+const goToHome = () => {
+	uni.switchTab({
+		url: '/pages/main/index/index'
+	});
+};
 </script>
 <style lang="scss" scoped>
-	.inviteStore {
-		padding: 0;
-		position: fixed;
-		right: 40rpx;
-		bottom: 60rpx;
-		z-index: 10;
-		background-color: $main-color;
-		color: #fff;
-		box-sizing: content-box;
-		font-size: 24rpx;
-		line-height: 1.5em;
-		border-radius: 50%;
-		overflow: hidden;
-		width: 100rpx;
-		height: 100rpx;
-		text-align: justify;
-		@include mFlex;
-		flex-direction: column;
-	}
+.inviteStore {
+	padding: 0;
+	position: fixed;
+	right: 40rpx;
+	bottom: 60rpx;
+	z-index: 10;
+	background-color: $main-color;
+	color: #fff;
+	box-sizing: content-box;
+	font-size: 24rpx;
+	line-height: 1.5em;
+	border-radius: 50%;
+	overflow: hidden;
+	width: 100rpx;
+	height: 100rpx;
+	text-align: justify;
+	@include mFlex;
+	flex-direction: column;
+}
 
-	.home {
-		bottom: 200rpx;
-	}
+.home {
+	bottom: 200rpx;
+}
 
-	:global(page) {
-		background-color: rgb(255, 255, 255);
-	}
+:global(page) {
+	background-color: rgb(255, 255, 255);
+}
 
-	.title {
-		padding: 40rpx 30rpx;
-		font-size: 38rpx;
-		font-weight: 500;
-		line-height: 1.8;
-	}
+.title {
+	padding: 40rpx 30rpx;
+	font-size: 38rpx;
+	font-weight: 500;
+	line-height: 1.8;
+}
 </style>

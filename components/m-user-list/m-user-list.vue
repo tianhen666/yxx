@@ -1,30 +1,47 @@
 <template>
 	<view class="container">
-		<view class="container_item" v-for="(item, index) in listData" :key="index" @tap="!activityShow && popupTap(item)">
+		<view
+			class="container_item"
+			v-for="(item, index) in listData"
+			:key="index"
+			@tap="!activityShow && popupTap(item)"
+		>
 			<view class="container_item_box">
 				<!-- 头像 -->
 				<view class="container_item_box_left">
-					<image class="image" :src="item.avatar || '/static/images/default_avatar.png'" mode="aspectFill"></image>
+					<image
+						class="image"
+						:src="item.avatar || 'https://imgs.lechiwl.com/fileyxx/imgs/thIcon.png'"
+						mode="aspectFill"
+					></image>
 				</view>
 
 				<!-- 信息 -->
 				<view class="container_item_box_center">
-					<view class="name">{{ item.remarkname || item.nickname }}</view>
+					<view class="name">{{ item.remarkname || item.nickname || '微信用户' }}</view>
 					<view class="mobile">{{ item.mobile }}</view>
 				</view>
 
 				<!-- 拨打电话 -->
 				<view class="container_item_box_right">
-					<view class="copy_mobile" @tap.stop.prevent="setClipboardData(item.mobile)">复制号码</view>
+					<view class="copy_mobile" @tap.stop.prevent="setClipboardData(item.mobile)">
+						复制号码
+					</view>
 					<view class="call" @tap.stop.prevent="makePhoneCall(item.mobile)">
-						<image class="image" src="/static/images/phone.png" mode="heightFix"></image>
+						<image
+							class="image"
+							src="/static/images/phone.png"
+							mode="heightFix"
+						></image>
 					</view>
 				</view>
 			</view>
 			<view class="blank32"></view>
 			<!-- 活动数据分析页面显示 -->
 			<view class="container_item_box2" v-if="activityShow">
-				<view class="Invited item">邀请人：{{ item.yremarkname || item.ynickname || '微信用户' }}</view>
+				<view class="Invited item">
+					邀请人：{{ item.yremarkname || item.ynickname || '微信用户' }}
+				</view>
 				<view class="views item">浏览次数：{{ item.views }}</view>
 				<view class="join item" v-if="item.participate === 1">已参与</view>
 				<view class="unJoin item" v-else>未参与</view>
@@ -32,20 +49,38 @@
 
 			<!-- 会员管理页面显示 -->
 			<view class="container_item_box2" v-if="!activityShow">
-				<view class="source item">来源：{{ dataTree[item.scene]?.text || '无' }}</view>
-				<view class="Invited item">邀请人：{{ item.rname || item.yname || '无' }}</view>
-				<view class="Invited item" v-if="item.ytime">{{ dayjs(item.ytime).format('YYYY年M月D日') }}</view>
+				<view class="source item">来源：{{ dataTree[item.scene]?.text || '未知' }}</view>
+				<view class="Invited item" v-if="item.ytime">
+					{{ dayjs(item.ytime).format('YYYY年M月D日') }}
+				</view>
+				<view class="Invited item">
+					邀请人：{{ item.rname || item.yname || item.ymobile || '未知' }}
+				</view>
 			</view>
-			<view class="blank32" v-if="!activityShow"></view>
 			<view v-if="!activityShow" class="container_item_box3">
 				{{ jsonToObj(item['userremark']).remarks || '点击添加备注信息' }}
 			</view>
 			<view
-				v-if="!activityShow && (jsonToObj(item['userremark']).sex || jsonToObj(item['userremark']).age)"
+				v-if="
+					!activityShow &&
+						(jsonToObj(item['userremark']).sex || jsonToObj(item['userremark']).age)
+				"
 				class="container_item_box4"
 			>
-				<view class="item"><uni-tag :text="jsonToObj(item['userremark']).sex" size="small" type="primary" /></view>
-				<view class="item"><uni-tag :text="jsonToObj(item['userremark']).age" size="small" type="primary" /></view>
+				<view class="item">
+					<uni-tag
+						:text="jsonToObj(item['userremark']).sex"
+						size="small"
+						type="primary"
+					/>
+				</view>
+				<view class="item">
+					<uni-tag
+						:text="jsonToObj(item['userremark']).age"
+						size="small"
+						type="primary"
+					/>
+				</view>
 			</view>
 		</view>
 	</view>
@@ -54,9 +89,19 @@
 	<uni-popup ref="popup" type="bottom" :safe-area="false" v-if="!activityShow">
 		<view class="popup_box">
 			<image class="close" @tap="popup.close" src="/static/images/close.png"></image>
-			<uni-forms :rules="rules" ref="formObj" v-model="formData" label-width="220rpx" label-position="top">
+			<uni-forms
+				:rules="rules"
+				ref="formObj"
+				v-model="formData"
+				label-width="220rpx"
+				label-position="top"
+			>
 				<!-- 备注名 -->
-				<uni-forms-item :label="rules.remarkname.label" name="remarkname" label-position="top">
+				<uni-forms-item
+					:label="rules.remarkname.label"
+					name="remarkname"
+					label-position="top"
+				>
 					<uni-easyinput
 						v-model="formData.remarkname"
 						:placeholder="rules.remarkname.rules[0].errorMessage"
@@ -65,12 +110,20 @@
 
 				<!-- 性别 -->
 				<uni-forms-item :label="rules.sex.label" name="sex">
-					<uni-data-checkbox mode="tag" v-model="formData.sex" :localdata="sex"></uni-data-checkbox>
+					<uni-data-checkbox
+						mode="tag"
+						v-model="formData.sex"
+						:localdata="sex"
+					></uni-data-checkbox>
 				</uni-forms-item>
 
 				<!-- 年龄 -->
 				<uni-forms-item :label="rules.age.label" name="age">
-					<uni-data-checkbox mode="tag" v-model="formData.age" :localdata="age"></uni-data-checkbox>
+					<uni-data-checkbox
+						mode="tag"
+						v-model="formData.age"
+						:localdata="age"
+					></uni-data-checkbox>
 				</uni-forms-item>
 
 				<!-- 备注信息 -->
@@ -89,11 +142,11 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import dayjs from 'dayjs'
-import { _debounce } from '@/aTemp/utils/tools.js'
-import { makePhoneCall, setClipboardData } from '@/aTemp/utils/uniAppTools.js'
-import { _userUpdate } from '@/aTemp/apis/user.js'
+import { ref } from 'vue';
+import dayjs from 'dayjs';
+import { _debounce } from '@/aTemp/utils/tools.js';
+import { makePhoneCall, setClipboardData } from '@/aTemp/utils/uniAppTools.js';
+import { _userUpdate } from '@/aTemp/apis/user.js';
 // 0直接邀请 1活动 2商品 3服务 4海报 5员工邀请 6店铺入驻邀请 7预约分享
 const dataTree = [
 	{
@@ -127,8 +180,12 @@ const dataTree = [
 	{
 		text: '预约邀请',
 		value: '7'
+	},
+	{
+		text: '文章邀请',
+		value: '8'
 	}
-]
+];
 const props = defineProps({
 	activityShow: {
 		type: Boolean,
@@ -139,22 +196,22 @@ const props = defineProps({
 		type: Array,
 		default: () => []
 	}
-})
+});
 
 const jsonToObj = str => {
 	try {
-		return JSON.parse(str) || {}
+		return JSON.parse(str) || {};
 	} catch (e) {
-		return {}
+		return {};
 	}
-}
+};
 
 // 弹出层
-const popup = ref(null)
+const popup = ref(null);
 // 表单数据
-const formData = ref({})
+const formData = ref({});
 // 获取表单对象
-const formObj = ref(null)
+const formObj = ref(null);
 const sex = [
 	{
 		text: '女性',
@@ -164,7 +221,7 @@ const sex = [
 		text: '男性',
 		value: '男性'
 	}
-]
+];
 const age = [
 	{
 		text: '18岁以下',
@@ -190,7 +247,7 @@ const age = [
 		text: '60岁以上',
 		value: '60岁以上'
 	}
-]
+];
 
 // 表单校验
 const rules = {
@@ -210,15 +267,15 @@ const rules = {
 		rules: [{ errorMessage: '请输入备注信息' }],
 		label: '备注信息'
 	}
-}
+};
 
 // 当前编辑的对象
-let pupItem = {}
+let pupItem = {};
 
 // 弹出模态框
 const popupTap = item => {
 	// 保存当前编辑的对象
-	pupItem = item
+	pupItem = item;
 	// 赋值表单数据
 	formData.value = {
 		id: item['id'],
@@ -226,10 +283,10 @@ const popupTap = item => {
 		sex: jsonToObj(item['userremark'])['sex'],
 		age: jsonToObj(item['userremark'])['age'],
 		remarks: jsonToObj(item['userremark'])['remarks']
-	}
-	popup.value.open()
-}
-const loading = ref(false)
+	};
+	popup.value.open();
+};
+const loading = ref(false);
 // 保存函数 防抖
 const saveClick = _debounce(
 	() => {
@@ -240,7 +297,7 @@ const saveClick = _debounce(
 					sex: formData.value['sex'],
 					age: formData.value['age'],
 					remarks: formData.value['remarks']
-				}
+				};
 
 				// console.log(pupItem)
 
@@ -250,25 +307,25 @@ const saveClick = _debounce(
 					userremark: JSON.stringify(remarks)
 				}).then(res => {
 					// 修改成功重新赋值当前修改对象
-					pupItem['remarkname'] = formData.value['remarkname']
-					pupItem['userremark'] = JSON.stringify(remarks)
+					pupItem['remarkname'] = formData.value['remarkname'];
+					pupItem['userremark'] = JSON.stringify(remarks);
 
 					// 加载结束
-					loading.value = false
-				})
+					loading.value = false;
+				});
 				// 关闭弹出框
-				popup.value.close()
-				loading.value = false
+				popup.value.close();
+				loading.value = false;
 			})
 			.catch(err => {
-				loading.value = false
-				showToastText(err[0].errorMessage)
-				console.log('表单错误信息：', err)
-			})
+				loading.value = false;
+				showToastText(err[0].errorMessage);
+				console.log('表单错误信息：', err);
+			});
 	},
 	500,
 	loading
-)
+);
 </script>
 
 <style scoped lang="scss">
@@ -344,6 +401,7 @@ const saveClick = _debounce(
 		&_box2 {
 			@include mFlex;
 			justify-content: flex-start;
+			flex-wrap: wrap;
 			> .item {
 				padding: 8rpx 12rpx;
 				font-size: 24rpx;
@@ -354,8 +412,13 @@ const saveClick = _debounce(
 				&:last-child {
 					margin-right: 0;
 				}
+				margin-bottom: 32rpx;
+			}
+			.source {
+				flex: none;
 			}
 			.Invited {
+				flex: none;
 				/* 	color: #fff;
 				background-color: #1890ff; */
 			}

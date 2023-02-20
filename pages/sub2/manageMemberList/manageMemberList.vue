@@ -1,6 +1,8 @@
 <template>
 	<!-- 背景 -->
-	<view class="pageBg"><image class="image" src="/static/images/bg.png" mode="aspectFill"></image></view>
+	<view class="pageBg">
+		<image class="image" src="/static/images/bg.png" mode="aspectFill"></image>
+	</view>
 	<!-- #ifndef H5 -->
 	<!-- 标题栏 -->
 	<uni-nav-bar
@@ -34,11 +36,20 @@
 		<!-- 数据筛选 -->
 		<view class="select">
 			<view class="select_item">
-				<uni-data-picker placeholder="用户来源" popup-title="用户来源" :localdata="dataTree" v-model="scene" />
+				<uni-data-picker
+					placeholder="用户来源"
+					popup-title="用户来源"
+					:localdata="dataTree"
+					v-model="scene"
+				/>
 			</view>
 
 			<view class="select_item select_invite">
-				<uni-data-select v-model="inviteUserId" :localdata="categoryOption1" placeholder="邀请人"></uni-data-select>
+				<uni-data-select
+					v-model="inviteUserId"
+					:localdata="categoryOption1"
+					placeholder="邀请人"
+				></uni-data-select>
 			</view>
 
 			<view class="select_item">
@@ -93,42 +104,42 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
-import { onLoad, onReachBottom } from '@dcloudio/uni-app'
-import { navigateBack, showLoading, showToastText } from '@/aTemp/utils/uniAppTools.js'
-import { _userDataStatistics } from '@/aTemp/apis/user.js'
-import { _userInviteUserEx } from '@/aTemp/apis/store.js'
-import dayjs from 'dayjs'
+import { ref, computed, watch } from 'vue';
+import { onLoad, onReachBottom } from '@dcloudio/uni-app';
+import { navigateBack, showLoading, showToastText } from '@/aTemp/utils/uniAppTools.js';
+import { _userDataStatistics } from '@/aTemp/apis/user.js';
+import { _userInviteUserEx } from '@/aTemp/apis/store.js';
+import dayjs from 'dayjs';
 
 // 全局登录信息
-import { _useUserMain } from '@/aTemp/store/userMain.js'
-const useUserMain = _useUserMain()
+import { _useUserMain } from '@/aTemp/store/userMain.js';
+const useUserMain = _useUserMain();
 
 // 开始时间
-const startTime = computed(() => rangeTime.value[0])
+const startTime = computed(() => rangeTime.value[0]);
 // 结束时间
-const endTime = computed(() => rangeTime.value[1])
+const endTime = computed(() => rangeTime.value[1]);
 // 邀请渠道
-const scene = ref('')
+const scene = ref('');
 // 邀请人ID
-const inviteUserId = ref('')
+const inviteUserId = ref('');
 // 搜索
-const search = ref('')
+const search = ref('');
 
 // 每页数量
-const pageSize = ref(6)
+const pageSize = ref(6);
 // 有多少页面
-const pageNum = ref(1)
+const pageNum = ref(1);
 // 是否加载完成
-const pageLoadStatus = ref('loading')
+const pageLoadStatus = ref('loading');
 // 会员列表
-const userListData = ref([])
+const userListData = ref([]);
 // 数量统计
-const invitationsNumber = ref([])
+const invitationsNumber = ref([]);
 
 // 获取用户列表
 const userDataStatistics = () => {
-	pageLoadStatus.value = 'loading'
+	pageLoadStatus.value = 'loading';
 	_userDataStatistics({
 		startTime: startTime.value,
 		endTime: endTime.value,
@@ -138,54 +149,57 @@ const userDataStatistics = () => {
 		pageSize: pageSize.value,
 		search: search.value
 	}).then(res => {
-		const { msg, code, data } = res
-		const { customConditionInquire, resultMonthNewly, resultTodayNewly, distinctness } = data
+		const { msg, code, data } = res;
+		const { customConditionInquire, resultMonthNewly, resultTodayNewly, distinctness } = data;
 
 		// 数量统计
-		invitationsNumber.value[0] = customConditionInquire.data.count
-		invitationsNumber.value[1] = resultTodayNewly.data
-		invitationsNumber.value[2] = resultMonthNewly.data
+		invitationsNumber.value[0] = customConditionInquire.data.count;
+		invitationsNumber.value[1] = resultTodayNewly.data;
+		invitationsNumber.value[2] = resultMonthNewly.data;
 
 		// 邀请人列表赋值
-		categoryOption1.value = distinctness.data.map(item => ({ text: item.remarkname || item.nickname, value: item.id }))
+		categoryOption1.value = distinctness.data.map(item => ({
+			text: item.remarkname || item.nickname,
+			value: item.id
+		}));
 
 		// 暂时延时一下
 		setTimeout(() => {
-			userListData.value.push(...customConditionInquire.data.userlist)
+			userListData.value.push(...customConditionInquire.data.userlist);
 			// console.log(customConditionInquire.data.userlist)
 			// 判断是否加载完成
 			if (customConditionInquire.data.pageindex > pageNum.value) {
-				pageNum.value++
-				pageLoadStatus.value = 'more'
+				pageNum.value++;
+				pageLoadStatus.value = 'more';
 			} else {
-				pageLoadStatus.value = 'noMore'
+				pageLoadStatus.value = 'noMore';
 			}
-		}, 1000)
-	})
-}
+		}, 1000);
+	});
+};
 
 // 触底加载
 onReachBottom(() => {
 	if (pageLoadStatus.value === 'more') {
-		userDataStatistics()
+		userDataStatistics();
 	}
-})
+});
 
 onLoad(options => {
 	// console.log(options)
-	pageNum.value = 1
-	pageLoadStatus.value = 'loading'
-	userListData.value.length = 0
-	userDataStatistics()
-})
+	pageNum.value = 1;
+	pageLoadStatus.value = 'loading';
+	userListData.value.length = 0;
+	userDataStatistics();
+});
 
 // 监听来源选择的变化重新获取数据
 watch(scene, (newVal, oldVal) => {
-	pageNum.value = 1
-	pageLoadStatus.value = 'loading'
-	userListData.value.length = 0
-	userDataStatistics()
-})
+	pageNum.value = 1;
+	pageLoadStatus.value = 'loading';
+	userListData.value.length = 0;
+	userDataStatistics();
+});
 
 // 0直接邀请 1活动 2商品 3服务 4海报 5员工邀请 6店铺入驻邀请 7预约分享 8文章邀请
 const dataTree = [
@@ -225,7 +239,7 @@ const dataTree = [
 		text: '文章邀请',
 		value: '8'
 	}
-]
+];
 
 // 时间选择
 const categoryOption2 = ref([
@@ -241,86 +255,92 @@ const categoryOption2 = ref([
 		value: 3,
 		text: '自定义'
 	}
-])
-const timeType = ref()
-let rangeTime = ref([])
+]);
+const timeType = ref();
+let rangeTime = ref([]);
 const timeChange = e => {
-	const nowTime = dayjs()
+	const nowTime = dayjs();
 	if (e === 1) {
-		rangeTime.value = [nowTime.subtract(7, 'day').format('YYYY-MM-DD'), nowTime.format('YYYY-MM-DD')]
+		rangeTime.value = [
+			nowTime.subtract(7, 'day').format('YYYY-MM-DD'),
+			nowTime.format('YYYY-MM-DD')
+		];
 	} else if (e === 2) {
-		rangeTime.value = [nowTime.subtract(1, 'month').format('YYYY-MM-DD'), nowTime.format('YYYY-MM-DD')]
+		rangeTime.value = [
+			nowTime.subtract(1, 'month').format('YYYY-MM-DD'),
+			nowTime.format('YYYY-MM-DD')
+		];
 	} else {
-		rangeTime.value = []
+		rangeTime.value = [];
 	}
-}
+};
 // 监听选择时间的变化重新获取数据
 watch(rangeTime, (newVal, oldVal) => {
 	if (newVal.length > 0) {
-		pageNum.value = 1
-		pageLoadStatus.value = 'loading'
-		userListData.value.length = 0
-		userDataStatistics()
+		pageNum.value = 1;
+		pageLoadStatus.value = 'loading';
+		userListData.value.length = 0;
+		userDataStatistics();
 	}
-})
+});
 
 // 邀请人筛选
-const categoryOption1 = ref([])
+const categoryOption1 = ref([]);
 watch(inviteUserId, (newVal, oldVal) => {
-	pageNum.value = 1
-	pageLoadStatus.value = 'loading'
-	userListData.value.length = 0
-	userDataStatistics()
-})
+	pageNum.value = 1;
+	pageLoadStatus.value = 'loading';
+	userListData.value.length = 0;
+	userDataStatistics();
+});
 
 // 搜索筛选
 const searchFun = e => {
-	pageNum.value = 1
-	pageLoadStatus.value = 'loading'
-	userListData.value.length = 0
+	pageNum.value = 1;
+	pageLoadStatus.value = 'loading';
+	userListData.value.length = 0;
 	setTimeout(() => {
-		userDataStatistics()
-	}, 500)
-}
+		userDataStatistics();
+	}, 500);
+};
 /**
  * 活动数据导出
  */
 const userInviteUserEx = () => {
-	showLoading('数据导出中')
+	showLoading('数据导出中');
 	try {
 		_userInviteUserEx().then(res => {
-			const { code, data, msg } = res
+			const { code, data, msg } = res;
 			uni.downloadFile({
 				url: data,
 				success: res => {
-					const filePath = res.tempFilePath
+					const filePath = res.tempFilePath;
 					if (res.statusCode === 200) {
 						uni.openDocument({
 							filePath: filePath,
 							showMenu: true,
 							success: function(res) {
-								uni.hideLoading()
+								uni.hideLoading();
 							},
 							fail: error => {
-								console.log(error)
-								uni.hideLoading()
-								showToastText('导出失败，请联系我们客服')
-							},
-						})
+								console.log(error);
+								uni.hideLoading();
+								showToastText('导出失败，请联系我们客服');
+							}
+						});
 					}
 				},
 				fail: error => {
-					console.log(error)
-					uni.hideLoading()
-					showToastText('导出失败，请联系我们客服')
+					console.log(error);
+					uni.hideLoading();
+					showToastText('导出失败，请联系我们客服');
 				}
-			})
-		})
+			});
+		});
 	} catch (e) {
-		console.log(e)
-		uni.hideLoading()
+		console.log(e);
+		uni.hideLoading();
 	}
-}
+};
 </script>
 
 <style lang="scss" scoped>

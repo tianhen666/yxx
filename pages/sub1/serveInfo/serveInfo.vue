@@ -1,8 +1,15 @@
 <template>
+	<!-- 提示登录组件 -->
+	<m-authorized-login ref="mLogin"></m-authorized-login>
+
+	<!-- 加载中 -->
 	<m-page-loading v-if="loading"></m-page-loading>
+
 	<view class="container" v-else>
 		<!-- 服务图片 -->
-		<view class="banner_img"><image :src="dataObj.pic" mode="aspectFill" class="image"></image></view>
+		<view class="banner_img">
+			<image :src="dataObj.pic" mode="aspectFill" class="image"></image>
+		</view>
 		<view class="blank20"></view>
 
 		<!-- 介绍 -->
@@ -33,7 +40,11 @@
 		<!-- 图文详情 -->
 		<view class="serve_img">
 			<m-title1 title="图文详情"></m-title1>
-			<view class="content_img" v-if="dataObj.details" @tap="previewImage(dataObj.details.split(','))">
+			<view
+				class="content_img"
+				v-if="dataObj.details"
+				@tap="previewImage(dataObj.details.split(','))"
+			>
 				<image
 					class="image"
 					v-for="(item, index) in dataObj.details.split(',')"
@@ -51,36 +62,47 @@
 </template>
 
 <script setup>
-import shopList from './components/shop-list/shop-list.vue'
-import { ref, watch, getCurrentInstance } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
-import { _serveGetinfo } from '@/aTemp/apis/service'
-import { previewImage } from '@/aTemp/utils/uniAppTools.js'
-const dataObj = ref({})
-const dataId = ref(0)
-const loading = ref(true)
+import shopList from './components/shop-list/shop-list.vue';
+import { ref, watch, getCurrentInstance } from 'vue';
+import { onLoad } from '@dcloudio/uni-app';
+import { _serveGetinfo } from '@/aTemp/apis/service';
+import { previewImage } from '@/aTemp/utils/uniAppTools.js';
+const dataObj = ref({});
+const dataId = ref(0);
+const loading = ref(true);
+
+// 全局登录信息
+import { _useUserMain } from '@/aTemp/store/userMain.js';
+const useUserMain = _useUserMain();
+// 登录弹出对象
+const mLogin = ref(null);
 
 // 页面开始加载
 onLoad(async options => {
-	const { proxy } = getCurrentInstance()
+	const { proxy } = getCurrentInstance();
 	// 等待onLaunch中放行后执行
-	await proxy.$onLaunched
+	await proxy.$onLaunched;
 
 	// 赋值ID
-	dataId.value = parseInt(options.targetId) || 0
+	dataId.value = parseInt(options.targetId) || 0;
 
 	// 是否存在商品ID
 	if (dataId.value > 0) {
 		// 拉取数据
 		_serveGetinfo({ id: dataId.value }).then(res => {
-			const { data, msg, code } = res
+			const { data, msg, code } = res;
 			// 数据赋值
-			dataObj.value = data
+			dataObj.value = data;
 
-			loading.value = false
-		})
+			loading.value = false;
+		});
 	}
-})
+
+	// 弹出登录组件
+	if (!useUserMain.isLogin) {
+		mLogin.value.popupfun();
+	}
+});
 </script>
 
 <style lang="scss" scoped>

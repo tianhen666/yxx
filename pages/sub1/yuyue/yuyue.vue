@@ -161,7 +161,7 @@ onLoad(async optios => {
 	// 设置页面分享参数
 	shareInfo.title = computed(() => `${useUserMain.nickname} - 邀请您，填写预约信息`)
 	// 分享图片
-	shareInfo.imageUrl = `https://imgs.fenxiangzl.com/store/tooth/invitbg.png`
+	shareInfo.imageUrl = `https://imgs.lechiwl.com/store/tooth/invitbg.png`
 
 	// 分享到聊天框用到
 	shareInfo.path = computed(

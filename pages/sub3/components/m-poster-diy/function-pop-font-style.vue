@@ -238,11 +238,11 @@ const fontBoldChange = (item, index) => {
 const familyList = [
 	{
 		val: '宋体',
-		imgUrl: 'https://imgs.fenxiangzl.com/tooth/activity/0e5d2c8c-5a95-4daf-817e-feb6686e2e4b.jpg'
+		imgUrl: 'https://imgs.lechiwl.com/tooth/activity/0e5d2c8c-5a95-4daf-817e-feb6686e2e4b.jpg'
 	},
 	{
 		val: '微软雅黑',
-		imgUrl: 'https://imgs.fenxiangzl.com/tooth/activity/0e5d2c8c-5a95-4daf-817e-feb6686e2e4b.jpg'
+		imgUrl: 'https://imgs.lechiwl.com/tooth/activity/0e5d2c8c-5a95-4daf-817e-feb6686e2e4b.jpg'
 	}
 ]
 const fontStyleFamily = inject('fontStyleFamily')

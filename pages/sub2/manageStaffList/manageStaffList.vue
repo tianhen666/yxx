@@ -105,7 +105,7 @@ onLoad(options => {
 					useUserMain.storeId
 				}&Mscene=5&targetId=0`
 		)
-		shareInfo.imageUrl = `https://imgs.fenxiangzl.com/store/tooth/invitbg.png`
+		shareInfo.imageUrl = `https://imgs.lechiwl.com/store/tooth/invitbg.png`
 	})
 })
 

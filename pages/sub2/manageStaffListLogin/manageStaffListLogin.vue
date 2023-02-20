@@ -1,7 +1,7 @@
 <template>
 	<m-page-loading v-if="loading"></m-page-loading>
 	<view class="container">
-		<image class="bg_img" src="https://imgs.fenxiangzl.com/store/tooth/invitbg1.png" mode="widthFix"></image>
+		<image class="bg_img" src="https://imgs.lechiwl.com/store/tooth/invitbg1.png" mode="widthFix"></image>
 		<view class="box box1">
 			<view class="text1">邀请您加入</view>
 			<view class="text2">{{ storeInfo.name }}</view>

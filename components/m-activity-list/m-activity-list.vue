@@ -22,9 +22,21 @@
 
 					<!-- 活动类型 -->
 					<view class="type">
-						<image class="image" :src="`/static/images/type${(index % 2) + 1}.png`" mode="aspectFill"></image>
+						<image
+							class="image"
+							:src="`/static/images/type${(index % 2) + 1}.png`"
+							mode="aspectFill"
+						></image>
 						<text class="text">
-							{{ item.type === 0 ? '免费活动' : item.type === 1 ? '爆款活动' : item.type === 2 ? '限量秒杀' : '' }}
+							{{
+								item.type === 0
+									? '免费活动'
+									: item.type === 1
+									? '爆款活动'
+									: item.type === 2
+									? '限量秒杀'
+									: ''
+							}}
 						</text>
 					</view>
 				</view>
@@ -35,7 +47,11 @@
 					<!-- 价格,时间 -->
 					<view class="b_wrapper">
 						<view class="time">
-							{{ dayjs(item.startDt).format('M月D日') + '——' + dayjs(item.endDt).format('M月D日') }}
+							{{
+								dayjs(item.startDt).format('M月D日') +
+									'——' +
+									dayjs(item.endDt).format('M月D日')
+							}}
 						</view>
 						<view class="price_wrapper" v-if="parseFloat(item.price) > 0">
 							<!-- 划线价格 -->
@@ -54,21 +70,37 @@
 					<view class="add_wrapper">
 						<view class="left">
 							<view class="img_wrapper" v-if="item.infoList.length > 0">
-								<template v-for="(subItem, subIndex) in item.infoList" :key="subIndex">
-									<view class="image_box" :style="{ zIndex: subIndex + 1 }" v-if="subItem && subIndex < 5">
+								<template
+									v-for="(subItem, subIndex) in item.infoList"
+									:key="subIndex"
+								>
+									<view
+										class="image_box"
+										:style="{ zIndex: subIndex + 1 }"
+										v-if="subItem && subIndex < 5"
+									>
 										<image
 											class="image"
-											:src="subItem.avatar || '/static/images/default_avatar.png'"
+											:src="
+												subItem.avatar ||
+													'/static/images/default_avatar.png'
+											"
 											mode="aspectFill"
 										></image>
 									</view>
 								</template>
 							</view>
-							<view class="text">已有{{ (item.infocount || 0) + (item.views || 0) }}人参与</view>
+							<view class="text">
+								已有{{ (item.infocount || 0) + (item.views || 0) }}人参与
+							</view>
 						</view>
 						<view class="jion" :class="`style${(index % 2) + 1}`">
 							<text>参与活动</text>
-							<image class="image" :src="`/static/images/right${(index % 2) + 1}.png`" mode="aspectFill"></image>
+							<image
+								class="image"
+								:src="`/static/images/right${(index % 2) + 1}.png`"
+								mode="aspectFill"
+							></image>
 						</view>
 					</view>
 				</view>
@@ -83,81 +115,73 @@
 </template>
 
 <script setup>
-import dayjs from 'dayjs'
-import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
-import { ref, watch } from 'vue'
-import { onPageScroll } from '@dcloudio/uni-app'
+import dayjs from 'dayjs';
+import { navigateTo } from '@/aTemp/utils/uniAppTools.js';
+import { ref, watch } from 'vue';
+import { onPageScroll } from '@dcloudio/uni-app';
 
-const showStatus = ref(false)
+const showStatus = ref(false);
 
-import { getCurrentInstance } from 'vue'
-const instance = getCurrentInstance() // 获取组件实例
+import { getCurrentInstance } from 'vue';
+const instance = getCurrentInstance(); // 获取组件实例
 
 const props = defineProps({
 	listData: {
 		required: true,
 		type: Array,
 		default() {
-			return []
+			return [];
 		}
 	},
 	more: {
 		type: Boolean,
 		default: false
 	}
-})
+});
 
-const { windowHeight } = uni.getSystemInfoSync()
+const { windowHeight } = uni.getSystemInfoSync();
 // 页面滚动监听
 onPageScroll(options => {
 	// 计算当前播放视频位置
-	const query = uni.createSelectorQuery().in(instance)
-	query.select(`#myVideo${payIndex.value}`).boundingClientRect()
+	const query = uni.createSelectorQuery().in(instance);
+	query.select(`#myVideo${payIndex.value}`).boundingClientRect();
 	query.exec(rect => {
 		if (!rect[0]) {
-			return
+			return;
 		}
 
-		const { top, height } = rect[0]
-		// console.log('windowHeight', windowHeight)
-		// console.log('height', height)
-		// console.log('top', top)
-
-		// windowHeight = top（目标元素刚进入可视区域）
-		// windowHeight - top = height（目标元素完全进入可视区域）
-		// top = 0 (目标元素刚离开可视区域)
-		// top + height = 0 （目标元素完全离开可视区域 ）
+		const { top, height } = rect[0];
 
 		if (top < windowHeight && top + height - 100 > 0) {
-			const videoObj = uni.createVideoContext(`myVideo${payIndex.value}`, instance)
-			videoObj.play()
+			const videoObj = uni.createVideoContext(`myVideo${payIndex.value}`, instance);
+			videoObj.play();
 			// console.log('元素在可视区域出现')
 		} else {
-			const videoObj = uni.createVideoContext(`myVideo${payIndex.value}`, instance)
-			videoObj.pause()
+			const videoObj = uni.createVideoContext(`myVideo${payIndex.value}`, instance);
+			videoObj.pause();
 			// console.log('元素在可视区域消失')
 		}
-	})
-})
+	});
+});
 
-let payIndex = ref('')
+let payIndex = ref('');
 watch(payIndex, (newVal, preVal) => {
 	// console.log(preVal)
 	// console.log(newVal)
-	const preVideoObj = uni.createVideoContext(`myVideo${preVal}`, instance)
-	const videoObj = uni.createVideoContext(`myVideo${newVal}`, instance)
-	preVideoObj.pause()
-	videoObj.play()
-})
+	const preVideoObj = uni.createVideoContext(`myVideo${preVal}`, instance);
+	const videoObj = uni.createVideoContext(`myVideo${newVal}`, instance);
+	preVideoObj.pause();
+	videoObj.play();
+});
 
 // 当前视频播放切关闭
 const videoTap = index => {
 	if (payIndex.value === index) {
-		payIndex.value = ''
+		payIndex.value = '';
 	} else {
-		payIndex.value = index
+		payIndex.value = index;
 	}
-}
+};
 </script>
 
 <style lang="scss" scoped>
