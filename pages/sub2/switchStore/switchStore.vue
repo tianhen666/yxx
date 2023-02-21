@@ -1,7 +1,13 @@
 <template>
 	<view class="container">
 		<view class="box1">
-			<uni-search-bar placeholder="搜索店铺名称" radius="50" v-model="searchText" bgColor="#EEEEEE" @confirm="search" />
+			<uni-search-bar
+				placeholder="搜索店铺名称"
+				radius="50"
+				v-model="searchText"
+				bgColor="#EEEEEE"
+				@confirm="search"
+			/>
 		</view>
 		<view class="blank20"></view>
 
@@ -10,18 +16,32 @@
 			<view class="box2_item">
 				<view class="box2_item_box">
 					<view class="box2_item_box_left">
-						<image class="image" :src="item.pics || '/static/images/no_img.jpg'" mode="aspectFill"></image>
+						<image
+							class="image"
+							:src="item.store.pics || '/static/images/no_img.jpg'"
+							mode="aspectFill"
+						></image>
 					</view>
 					<view class="box2_item_box_right">
-						<view class="name">{{ item.name }}</view>
-						<view class="address">{{ `${item.address}${item.addressDetail}` }}</view>
+						<view class="name">{{ item.store.name }}</view>
+						<view class="address">
+							{{ `${item.store.address}${item.store.addressDetail}` }}
+						</view>
 					</view>
 				</view>
 
 				<!-- 按钮 -->
 				<view class="box2_btn">
 					<!-- <button class="box2_btn_item style1">删除</button> -->
-					<button class="box2_btn_item style2" @tap="switchStore(item)">进入门诊</button>
+					<button
+						class="box2_btn_item style1"
+						v-if="useUserMain.storeId === item.storeId"
+					>
+						当前门诊
+					</button>
+					<button class="box2_btn_item style2" v-else @tap="switchStore(item)">
+						进入门诊
+					</button>
 				</view>
 			</view>
 		</view>
@@ -32,50 +52,55 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
-import { _storeGetinfolist } from '@/aTemp/apis/store.js'
-import { reLaunch } from '@/aTemp/utils/uniAppTools.js'
-import { _userChangeUserId } from '@/aTemp/apis/user.js'
+import { ref } from 'vue';
+import { onLoad } from '@dcloudio/uni-app';
+import { _storeLogGetinfo } from '@/aTemp/apis/store.js';
+import { reLaunch } from '@/aTemp/utils/uniAppTools.js';
+import { _userChangeUserId } from '@/aTemp/apis/user.js';
 // 全局登录信息
-import { _useUserMain } from '@/aTemp/store/userMain.js'
-const useUserMain = _useUserMain()
+import { _useUserMain } from '@/aTemp/store/userMain.js';
+const useUserMain = _useUserMain();
 
 // 搜索文字
-const searchText = ref('')
+const searchText = ref('');
 // 数据列表
-const dataList = ref([])
+const dataList = ref([]);
 
 // 页面加载，获取数据
 onLoad(options => {
-	storeGetinfolist()
-})
+	storeGetinfolist();
+});
 
 // 搜索确认搜索
 const search = () => {
-	storeGetinfolist()
-}
+	storeGetinfolist();
+};
 
 // 获取店铺连锁店铺
 const storeGetinfolist = () => {
-	_storeGetinfolist({ searchText: searchText.value }).then(res => {
-		dataList.value = res.data
-	})
-}
+	_storeLogGetinfo({ searchText: searchText.value }).then(res => {
+		dataList.value = res.data;
+	});
+};
 
 // 切换店铺
 const switchStore = async infoObj => {
-	_userChangeUserId({ storeId: infoObj.storeId, userid: useUserMain.userid }, { storeId: infoObj.storeId })
+	_userChangeUserId(
+		{ storeId: infoObj.storeId, userid: useUserMain.userid },
+		{ storeId: infoObj.storeId, userid: useUserMain.userid }
+	)
 		.then(res => {
-			const { data, msg, code } = res
+			const { data, msg, code } = res;
+			// 重置全局数据
+			useUserMain.$reset();
 			// 设置缓存和全局中的店铺id
-			useUserMain.$patch({ storeId: data.storeId })
-			reLaunch(`/pages/main/index/index?storeId=${data.storeId}`)
+			useUserMain.$patch({ storeId: data.storeId });
+			reLaunch(`/pages/main/index/index?storeId=${data.storeId}`);
 		})
 		.catch(err => {
-			console.log(err)
-		})
-}
+			console.log(err);
+		});
+};
 </script>
 
 <style scoped lang="scss">

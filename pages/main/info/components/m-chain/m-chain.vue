@@ -3,19 +3,37 @@
 		<slot name="title"></slot>
 		<view class="box2_item_box" v-for="(item, index) in infoList" :key="index">
 			<view class="box2_item_box_left">
-				<image class="image" :src="item.pics || '/static/images/no_img.jpg'" mode="aspectFill"></image>
+				<image
+					class="image"
+					:src="item.pics || '/static/images/no_img.jpg'"
+					mode="aspectFill"
+				></image>
 			</view>
 			<view class="box2_item_box_right">
 				<view class="name">{{ item.name }}</view>
 				<view class="address">{{ `${item.address}${item.addressDetail}` }}</view>
-				<view class="btn_box"><button class="btn" @tap.stop="reLaunch(`/pages/main/index/index?storeId=${item.storeId}`)">进入门店</button></view>
+				<view class="btn_box">
+					<button class="btn style1" v-if="useUserMain.storeId === item.storeId">
+						当前门诊
+					</button>
+					<button
+						class="btn"
+						v-else
+						@tap.stop="reLaunch(`/pages/main/index/index?storeId=${item.storeId}`)"
+					>
+						进入门店
+					</button>
+				</view>
 			</view>
 		</view>
 	</view>
 </template>
 
 <script setup>
-import { reLaunch } from '@/aTemp/utils/uniAppTools.js'
+import { reLaunch } from '@/aTemp/utils/uniAppTools.js';
+// 全局登录信息
+import { _useUserMain } from '@/aTemp/store/userMain.js';
+const useUserMain = _useUserMain();
 
 const props = defineProps({
 	// 当前店铺信息
@@ -30,8 +48,7 @@ const props = defineProps({
 		required: true,
 		default: () => {}
 	}
-})
-
+});
 </script>
 
 <style lang="scss" scoped>
@@ -91,6 +108,14 @@ const props = defineProps({
 				padding: 8rpx 18rpx;
 				border-radius: 16rpx;
 				margin-top: 15rpx;
+			}
+			.style1 {
+				background-color: #fff;
+				color: #333;
+				border: 1px solid #333;
+			}
+			.style1::after {
+				border: none;
 			}
 		}
 	}

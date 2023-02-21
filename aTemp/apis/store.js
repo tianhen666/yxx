@@ -53,6 +53,13 @@ export function _storeGetinfolist(data) {
 }
 
 
+// 获取进入的门诊
+export function _storeLogGetinfo(data) {
+	return http.get({
+		url: '/storeLog/getinfo',
+		data
+	})
+}
 
 // 商品支付
 export function _wxpayPayment(data) {

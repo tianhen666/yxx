@@ -8,23 +8,23 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
-import { _enrollformGetlist } from '@/aTemp/apis/activity.js'
+import { ref } from 'vue';
+import { onLoad } from '@dcloudio/uni-app';
+import { _enrollformGetlist } from '@/aTemp/apis/activity.js';
 // 拉取活动信息
-const activityListData = ref([])
+const activityListData = ref([]);
 
 // 加载中
-const loading = ref(true)
+const loading = ref(true);
 
 onLoad(options => {
 	// console.log(options)
 	_enrollformGetlist({ status: 0 }).then(res => {
-		const { code, msg, data } = res
-		activityListData.value = data
-		loading.value = false
-	})
-})
+		const { code, msg, data } = res;
+		activityListData.value = data.filter(item => item.productId != '1');
+		loading.value = false;
+	});
+});
 </script>
 
 <style lang="scss" scoped>

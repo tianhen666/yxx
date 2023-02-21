@@ -65,9 +65,7 @@
 						</template>
 					</view>
 				</view>
-				<button class="jion_right" @tap="payConfirm">
-					{{ dataObj.myJionCount > 0 ? '已参与' : '参与活动' }}
-				</button>
+				<button class="jion_right" @tap="payConfirm">参与活动</button>
 			</view>
 
 			<!-- 购买须知 -->
@@ -113,7 +111,8 @@
 		:use2D="true"
 		:dirty="false"
 		:LRU="false"
-		customStyle="left: -9999px; top: -9999rpx;position: absolute;"
+		:scaleRatio="3"
+		customStyle="left: -9999px; top: -9999px;position: absolute;"
 	></w-painter>
 </template>
 
@@ -255,6 +254,7 @@ onPageScroll(options => {
 	});
 });
 
+// 视频播放相关
 let payIndex = ref('');
 watch(payIndex, (newVal, preVal) => {
 	const preVideoObj = uni.createVideoContext(`myVideo${preVal}`, instance);
@@ -275,7 +275,7 @@ const videoTap = index => {
 // 调用支付函数
 const btnLoading = ref(false);
 const payConfirm = _debounce(
-	() => {
+	async () => {
 		// 判断是否授权登录
 		if (!useUserMain.isLogin) {
 			mLogin.value.popupfun();
@@ -287,6 +287,16 @@ const payConfirm = _debounce(
 		if (dataObj.value.limitCount > 0 && dataObj.value.limitCount <= dataObj.value.myJionCount) {
 			showToastText(`此活动最多参与${dataObj.value.limitCount}次`);
 			return;
+		}
+
+		// 提示购买几次
+		if (dataObj.value.myJionCount > 0) {
+			const showRes = await showModal(
+				`您已经参与${dataObj.value.myJionCount}次，是否继续参与`
+			);
+			if (showRes.cancel) {
+				return;
+			}
 		}
 
 		// 支付请求
@@ -396,7 +406,7 @@ const tapCreateImg = async () => {
 		scene: `i=${useUserMain.userid}&sd=${useUserMain.storeId}&s=1&t=${dataObj.value.id}`,
 		width: 430
 	});
-	// console.log('data:image/png;base64,' + wxWxqrCode.data)
+	// base64转图片地址
 	const imgPath = await base64ToPath('data:image/png;base64,' + wxWxqrCode.data);
 
 	// 如果有海报
@@ -405,10 +415,10 @@ const tapCreateImg = async () => {
 		const resImgInfo = await getImageInfo(dataObj.value.postPic);
 		// console.log(resImgInfo)
 
-		//  海报宽度为500px高度，自动
+		//  海报宽度为310px高度，自动
 		posterData.value = {
-			width: '500px',
-			height: resImgInfo.height / (resImgInfo.width / 500) + 'px',
+			width: '310px',
+			height: resImgInfo.height / (resImgInfo.width / 310) + 'px',
 			background: resImgInfo.path,
 			views: [
 				{
@@ -425,6 +435,7 @@ const tapCreateImg = async () => {
 			]
 		};
 	} else {
+		// 没有海报
 		posterData.value = {
 			width: '750px',
 			height: '1100px',
@@ -538,9 +549,8 @@ const tapCreateImg = async () => {
 };
 // 图片生成完成
 const createImgOk = e => {
-	uni.hideLoading();
-
 	saveImageToPhotosAlbum(e.detail.path).then(res => {
+		uni.hideLoading();
 		// 分享图片
 		uni.showShareImageMenu({
 			path: e.detail.path

@@ -1,6 +1,11 @@
 <template>
 	<!-- tab切换 -->
-	<uni-segmented-control :current="currentIndex" :values="items" style-type="text" @clickItem="onClickItem" />
+	<uni-segmented-control
+		:current="currentIndex"
+		:values="items"
+		style-type="text"
+		@clickItem="onClickItem"
+	/>
 	<view class="blank32"></view>
 
 	<!-- tab内容 -->
@@ -9,7 +14,12 @@
 		<view v-for="(item, index) in listData" :key="index" class="tab_content_item">
 			<!-- 图片 -->
 			<view class="image_box">
-				<image class="image" :src="item.mainPic" mode="scaleToFill" @tap="previewImage([item.mainPic])"></image>
+				<image
+					class="image"
+					:src="item.mainPic"
+					mode="scaleToFill"
+					@tap="previewImage([item.mainPic])"
+				></image>
 				<view class="type">
 					<view class="type_item">{{ type[item.type].text }}</view>
 				</view>
@@ -18,8 +28,14 @@
 			<!-- 标题时间 -->
 			<view class="center">
 				<view class="time">
-					{{ dayjs(item.startDt).format('YYYY年MM月DD日') + '--' + dayjs(item.endDt).format('YYYY年MM月DD日') }}
-					<text class="color1">{{ dayjs(item.endDt).valueOf() < Date.now() ? '(活动已结束)' : '' }}</text>
+					{{
+						dayjs(item.startDt).format('YYYY年MM月DD日') +
+							'--' +
+							dayjs(item.endDt).format('YYYY年MM月DD日')
+					}}
+					<text class="color1">
+						{{ dayjs(item.endDt).valueOf() < Date.now() ? '(活动已结束)' : '' }}
+					</text>
 				</view>
 				<view class="title">{{ item.title }}</view>
 			</view>
@@ -29,24 +45,63 @@
 
 			<!-- 按钮 -->
 			<view class="btn">
-				<view class="btn_item style4" @tap.stop.prevent="navigateTo(`/pages/sub1/activityInfo/activityInfo?targetId=${item.id}`)">
+				<view
+					class="btn_item"
+					:class="{ style3: item.productId === '1', style1: item.productId === '0' }"
+					v-if="item.status === 0"
+					@tap="enrollformSave(item)"
+				>
+					{{ item.productId === '0' ? '显示' : '隐藏' }}
+				</view>
+				<view
+					class="btn_item style4"
+					@tap.stop.prevent="
+						navigateTo(`/pages/sub1/activityInfo/activityInfo?targetId=${item.id}`)
+					"
+				>
 					查看
 				</view>
-				<view class="btn_item style1" @tap.stop.prevent="wxWxqrCode(item, index)" v-if="item.status === 0">活动码</view>
-				<view class="btn_item style2" @tap.stop.prevent="enrollformDisable(item, index)" v-if="item.status === 0">下架后编辑</view>
+				<view
+					class="btn_item style1"
+					@tap.stop.prevent="wxWxqrCode(item, index)"
+					v-if="item.status === 0"
+				>
+					活动码
+				</view>
+				<view
+					class="btn_item style2"
+					@tap.stop.prevent="enrollformDisable(item, index)"
+					v-if="item.status === 0"
+				>
+					下架后编辑
+				</view>
 				<view
 					v-if="item.status === 1"
 					class="btn_item style1"
 					@tap.stop.prevent="
 						navigateTo(
-							`/pages/sub2/manageActivityIpnut/manageActivityIpnut?id=${item.id}&prevCurrentIndex=${currentIndex}`
+							`/pages/sub2/manageActivityIpnut/manageActivityIpnut?id=${
+								item.id
+							}&prevCurrentIndex=${currentIndex}`
 						)
 					"
 				>
 					编辑
 				</view>
-				<view class="btn_item style2" @tap.stop.prevent="enrollformEnable(item, index)" v-if="item.status === 1">启用</view>
-				<view class="btn_item style3" @tap.stop.prevent="enrollformDelete(item, index)" v-if="item.status === 1">删除</view>
+				<view
+					class="btn_item style2"
+					@tap.stop.prevent="enrollformEnable(item, index)"
+					v-if="item.status === 1"
+				>
+					启用
+				</view>
+				<view
+					class="btn_item style3"
+					@tap.stop.prevent="enrollformDelete(item, index)"
+					v-if="item.status === 1"
+				>
+					删除
+				</view>
 			</view>
 		</view>
 	</view>
@@ -54,31 +109,45 @@
 	<!-- 添加活动 -->
 	<m-btn-fix-bottom
 		text="添加活动"
-		@btnClick="navigateTo(`/pages/sub2/manageActivityIpnut/manageActivityIpnut?prevCurrentIndex=1`)"
+		@btnClick="
+			navigateTo(`/pages/sub2/manageActivityIpnut/manageActivityIpnut?prevCurrentIndex=1`)
+		"
 	/>
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
-import { _enrollformGetlist, _enrollformDelete, _enrollformEnable, _enrollformDisable } from '@/aTemp/apis/activity.js'
-import { showModal, previewImage, navigateTo, showLoading, showToastText } from '@/aTemp/utils/uniAppTools.js'
-import dayjs from 'dayjs'
+import { ref, reactive, computed } from 'vue';
+import { onLoad } from '@dcloudio/uni-app';
+import {
+	_enrollformGetlist,
+	_enrollformDelete,
+	_enrollformEnable,
+	_enrollformDisable,
+	_enrollformSave
+} from '@/aTemp/apis/activity.js';
+import {
+	showModal,
+	previewImage,
+	navigateTo,
+	showLoading,
+	showToastText
+} from '@/aTemp/utils/uniAppTools.js';
+import dayjs from 'dayjs';
 
-import { _wxWxqrCode } from '@/aTemp/apis/login.js'
+import { _wxWxqrCode } from '@/aTemp/apis/login.js';
 // base64转图片路径
-import { base64ToPath } from 'image-tools'
+import { base64ToPath } from 'image-tools';
 
 // 全局登录信息
-import { _useUserMain } from '@/aTemp/store/userMain.js'
-const useUserMain = _useUserMain()
+import { _useUserMain } from '@/aTemp/store/userMain.js';
+const useUserMain = _useUserMain();
 
 // 数据列表
-const listData = ref([])
+const listData = ref([]);
 // tab选项
-const items = ref(['启用中', '仓库'])
+const items = ref(['启用中', '仓库']);
 //tab当前索引，0:启用中，1:仓库
-const currentIndex = ref(0)
+const currentIndex = ref(0);
 /*
 	活动类型
  */
@@ -99,96 +168,109 @@ const type = [
 		text: '拼团活动',
 		value: 3
 	}
-]
+];
 
 // 拉取列表数据
 const getListData = data => {
 	_enrollformGetlist(data).then(res => {
-		const { code, data, msg } = res
-		listData.value = data
-	})
-}
+		const { code, data, msg } = res;
+		listData.value = data;
+	});
+};
 
 // 页面加载
 onLoad(option => {
 	// 设置tab索引
-	currentIndex.value = parseInt(option.currentIndex) || 0
+	currentIndex.value = parseInt(option.currentIndex) || 0;
 	// 拉取商品列表
-	getListData({ status: currentIndex.value })
-})
+	getListData({ status: currentIndex.value });
+});
 
 // tab切换
 const onClickItem = e => {
 	if (currentIndex.value !== e.currentIndex) {
-		currentIndex.value = e.currentIndex
+		currentIndex.value = e.currentIndex;
 		// 切换后重新获取商品数据
-		getListData({ status: currentIndex.value })
+		getListData({ status: currentIndex.value });
 	}
-}
+};
 
 // 放入仓库
 const enrollformDisable = (item, index) => {
 	showModal('是否放入仓库？').then(res => {
 		if (res.confirm) {
 			_enrollformDisable({ id: item.id }).then(() => {
-				listData.value.splice(index, 1)
-			})
+				listData.value.splice(index, 1);
+			});
 		}
-	})
-}
+	});
+};
 
 // 删除
 const enrollformDelete = (item, index) => {
 	showModal('是否删除？').then(res => {
 		if (res.confirm) {
 			_enrollformDelete({ id: item.id }).then(() => {
-				listData.value.splice(index, 1)
-			})
+				listData.value.splice(index, 1);
+			});
 		}
-	})
-}
+	});
+};
 
 // 启用
 const enrollformEnable = (item, index) => {
 	showModal('是否启用？').then(res => {
 		if (res.confirm) {
 			_enrollformEnable({ id: item.id }).then(() => {
-				listData.value.splice(index, 1)
-			})
+				listData.value.splice(index, 1);
+			});
 		}
-	})
-}
+	});
+};
+
+// 处理首页是否隐藏
+const enrollformSave = (item, index) => {
+	showModal(`首页是否${item.productId === '0' ? '隐藏' : '显示'}？`).then(res => {
+		if (res.confirm) {
+			_enrollformSave({
+				id: item.id,
+				productId: item.productId === '0' ? '1' : '0'
+			}).then(res => {
+				item.productId = item.productId === '0' ? '1' : '0';
+			});
+		}
+	});
+};
 
 // 生成直接邀请码
 const wxWxqrCode = item => {
-	showLoading('加载中')
+	showLoading('加载中');
 	_wxWxqrCode({
 		page: 'pages/main/index/index',
 		scene: `i=${useUserMain.userid}&sd=${useUserMain.storeId}&s=1&t=${item.id}`,
 		width: 430
 	})
 		.then(async res => {
-			const { msg, data, code } = res
-			const imgPath = await base64ToPath('data:image/png;base64,' + data)
-			console.log('邀请码', imgPath)
-			uni.hideLoading()
+			const { msg, data, code } = res;
+			const imgPath = await base64ToPath('data:image/png;base64,' + data);
+			console.log('邀请码', imgPath);
+			uni.hideLoading();
 			// 分享图片
-			uni
-				.showShareImageMenu({
-					path: imgPath
-				})
+			uni.showShareImageMenu({
+				path: imgPath
+			})
 				.then(res => {
-					console.log(res)
+					console.log(res);
 				})
 				.catch(err => {
-					console.log(err)
-				})
+					console.log(err);
+				});
 		})
 		.catch(err => {
-			console.log(err)
-			showToastText('生成失败')
-		})
-}
+			console.log(err);
+			showToastText('生成失败');
+		});
+};
 </script>
 
 <style lang="scss" scoped>
@@ -259,10 +341,10 @@ const wxWxqrCode = item => {
 			@include mFlex;
 			justify-content: flex-end;
 			> .btn_item {
-				padding: 16rpx 30rpx;
+				padding: 14rpx 26rpx;
 				text-align: center;
 				border-radius: 100rpx;
-				font-size: 26rpx;
+				font-size: 22rpx;
 				margin-right: 25rpx;
 				&:last-child {
 					margin-right: 0;

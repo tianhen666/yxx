@@ -4,15 +4,25 @@
 			<view class="btn_container">
 				<view class="left">
 					<button class="btn" v-if="!useUserMain.isLogin" @tap="tapShare">
-						<view class="text">分享{{ dataObj.myType === '活动' ? '活动' : '商品' }}</view>
-						<view class="price" v-if="dataObj.showShare === 0 && dataObj.sharePrice > 0">
+						<view class="text">
+							分享{{ dataObj.myType === '活动' ? '活动' : '商品' }}
+						</view>
+						<view
+							class="price"
+							v-if="dataObj.showShare === 0 && dataObj.sharePrice > 0"
+						>
 							赚￥{{ dataObj.sharePrice }}
 						</view>
 					</button>
 
 					<button class="btn" open-type="share" v-else>
-						<view class="text">分享{{ dataObj.myType === '活动' ? '活动' : '商品' }}</view>
-						<view class="price" v-if="dataObj.showShare === 0 && dataObj.sharePrice > 0">
+						<view class="text">
+							分享{{ dataObj.myType === '活动' ? '活动' : '商品' }}
+						</view>
+						<view
+							class="price"
+							v-if="dataObj.showShare === 0 && dataObj.sharePrice > 0"
+						>
 							赚￥{{ dataObj.sharePrice }}
 						</view>
 					</button>
@@ -20,16 +30,17 @@
 				<view class="center" @tap="tapCreateImg">
 					<button class="btn">
 						<view class="text">分享海报</view>
-						<view class="price" v-if="dataObj.showShare === 0 && dataObj.sharePrice > 0">
+						<view
+							class="price"
+							v-if="dataObj.showShare === 0 && dataObj.sharePrice > 0"
+						>
 							赚￥{{ dataObj.sharePrice }}
 						</view>
 					</button>
 				</view>
 				<view class="right">
 					<button class="right_btn" @tap="payConfirm">
-						<view class="text" v-if="dataObj.myType === '活动'">
-							{{ dataObj.myJionCount > 0 ? '已参与' : '参与活动' }}
-						</view>
+						<view class="text" v-if="dataObj.myType === '活动'">参与活动</view>
 						<view class="text" v-else>立即购买</view>
 						<view class="price" v-if="dataObj.price > 0">￥{{ dataObj.price }}</view>
 					</button>
@@ -40,31 +51,30 @@
 </template>
 
 <script setup>
-
 // 全局登录信息
-import { _useUserMain } from '@/aTemp/store/userMain.js'
-const useUserMain = _useUserMain()
+import { _useUserMain } from '@/aTemp/store/userMain.js';
+const useUserMain = _useUserMain();
 
-const emits = defineEmits(['payConfirm', 'tapCreateImg', 'tapShare'])
+const emits = defineEmits(['payConfirm', 'tapCreateImg', 'tapShare']);
 const props = defineProps({
 	dataObj: {
 		required: true,
 		type: Object,
 		default() {
-			return []
+			return [];
 		}
 	}
-})
+});
 
 const payConfirm = () => {
-	emits('payConfirm')
-}
+	emits('payConfirm');
+};
 const tapCreateImg = () => {
-	emits('tapCreateImg')
-}
+	emits('tapCreateImg');
+};
 const tapShare = () => {
-	emits('tapShare')
-}
+	emits('tapShare');
+};
 </script>
 
 <style lang="scss" scoped>

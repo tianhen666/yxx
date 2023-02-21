@@ -4,7 +4,7 @@
 			<view
 				class="activity_item"
 				@tap.stop="navigateTo(`/pages/sub1/activityInfo/activityInfo?targetId=${item.id}`)"
-				v-if="index > 2 ? showStatus : true"
+				v-if="index > 2 ? showStatus || !more : true"
 			>
 				<!-- 封面图 -->
 				<view class="activity_item_img">
@@ -108,7 +108,7 @@
 		</template>
 	</view>
 
-	<view class="more" @tap.stop="showStatus = !showStatus" v-if="listData.length > 2 && more">
+	<view class="more" @tap.stop="showStatus = !showStatus" v-if="listData.length > 3 && more">
 		<text class="text">{{ showStatus ? '收起更多' : '展开更多' }}</text>
 		<uni-icons :type="showStatus ? 'top' : 'bottom'" size="16" color="#bbb"></uni-icons>
 	</view>

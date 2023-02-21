@@ -81,7 +81,8 @@
 		:use2D="true"
 		:dirty="false"
 		:LRU="false"
-		customStyle="left: -9999px; top: -9999rpx;position: absolute;"
+		:scaleRatio="3"
+		customStyle="left: -9999px; top: -9999px;position: absolute;"
 	></w-painter>
 </template>
 
@@ -354,8 +355,8 @@ const tapCreateImg = async () => {
 
 // 图片生成完成
 const createImgOk = e => {
-	uni.hideLoading();
 	saveImageToPhotosAlbum(e.detail.path).then(() => {
+		uni.hideLoading();
 		// 分享图片
 		uni.showShareImageMenu({
 			path: e.detail.path
