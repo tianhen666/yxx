@@ -111,7 +111,7 @@
 		:use2D="true"
 		:dirty="false"
 		:LRU="false"
-		:scaleRatio="3"
+		:scaleRatio="2"
 		customStyle="left: -9999px; top: -9999px;position: absolute;"
 	></w-painter>
 </template>
@@ -415,10 +415,11 @@ const tapCreateImg = async () => {
 		const resImgInfo = await getImageInfo(dataObj.value.postPic);
 		// console.log(resImgInfo)
 
-		//  海报宽度为310px高度，自动
+		// 基础宽度310px宽度
+		const baseWidth = 310;
 		posterData.value = {
-			width: '310px',
-			height: resImgInfo.height / (resImgInfo.width / 310) + 'px',
+			width: baseWidth + 'px',
+			height: resImgInfo.height / (resImgInfo.width / baseWidth) + 'px',
 			background: resImgInfo.path,
 			views: [
 				{
@@ -426,19 +427,79 @@ const tapCreateImg = async () => {
 					type: 'image',
 					url: imgPath,
 					css: {
-						right: '13px',
-						bottom: '13px',
-						width: '106px',
-						height: '106px'
+						right: '8px',
+						bottom: '8px',
+						width: baseWidth * 0.18 + 'px',
+						height: baseWidth * 0.18 + 'px'
 					}
 				}
 			]
 		};
 	} else {
+		const h_padding = 10; // 内边距
+		const h_width = 310; // 宽度
+		let mh_height = 800; //最大高度
+
+		// 头像
+		const h_1_1_width = 30;
+		const h_1_1_height = 30;
+		const h_1_1_left = 0 + h_padding;
+		const h_1_1_top = 0 + h_padding;
+
+		// 昵称
+		const h_1_2_left = 0 + h_padding + h_1_1_width + 10;
+		const h_1_2_top = 0 + h_padding + 7;
+		const h_1_2_height = 30;
+		const h_1_2_width = h_width - h_1_2_left - h_padding;
+		const h_1_2_fz = 14;
+
+		// 图片
+		const h_2_top = h_1_1_height + h_1_1_top + 10;
+		const h_2_left = h_padding;
+		const h_2_width = h_width - h_padding * 2;
+		const h_2_height = h_2_width * 0.8;
+
+		//二维码
+		const h_3_1_top = h_2_top + h_2_height + 10;
+		const h_3_1_right = h_padding + 10;
+		const h_3_1_width = h_width * 0.3;
+		const h_3_1_height = h_width * 0.3;
+
+		// 商品标题
+		const h_3_2_top = h_2_top + h_2_height + 20;
+		const h_3_2_left = h_padding;
+		const h_3_2_width = h_width - h_padding - h_3_1_right - h_3_1_width - 10;
+		const h_3_2_height = 24;
+		const h_3_2_fz = 16;
+
+		//商品价格
+		const h_4_top = h_3_2_top + h_3_2_height + 10;
+		const h_4_left = h_padding;
+		const h_4_width = h_width - h_padding * 2;
+		const h_4_height = 30;
+		const h_4_fz = 24;
+
+		// 电话
+		const h_5_1_top = h_4_top + h_4_height + 20;
+		const h_5_1_left = h_padding;
+		const h_5_1_width = h_width - h_padding * 2;
+		const h_5_1_height = 25;
+		const h_5_1_fz = 14;
+
+		//地址
+		const h_5_2_top = h_5_1_top + h_5_1_height;
+		const h_5_2_left = h_padding;
+		const h_5_2_width = h_width - h_padding * 2;
+		const h_5_2_height = 25;
+		const h_5_2_fz = 14;
+
+		//重置高度
+		mh_height = h_5_2_top + 60 + h_padding;
+
 		// 没有海报
 		posterData.value = {
-			width: '750px',
-			height: '1100px',
+			width: `${h_width}px`,
+			height: `${mh_height}px`,
 			background: '#FFF',
 			views: [
 				{
@@ -446,10 +507,10 @@ const tapCreateImg = async () => {
 					type: 'image',
 					url: useUserMain.avatar || '/static/images/default_avatar.png',
 					css: {
-						top: '30px',
-						left: '30px',
-						width: '60px',
-						height: '60px',
+						top: `${h_1_1_top}px`,
+						left: `${h_1_1_left}px`,
+						width: `${h_1_1_width}px`,
+						height: `${h_1_1_height}px`,
 						borderRadius: '50%'
 					}
 				},
@@ -459,17 +520,25 @@ const tapCreateImg = async () => {
 					textList: [
 						{
 							text: useUserMain.nickname,
-							css: { fontSize: '28px', color: '#333' }
+							css: {
+								fontSize: `${h_1_2_fz}px`,
+								color: '#333',
+								lineHeight: `${h_1_2_height}px`
+							}
 						},
 						{
 							text: '  为您推荐',
-							css: { fontSize: '28px', color: '#999' }
+							css: {
+								fontSize: `${h_1_2_fz}px`,
+								color: '#999',
+								lineHeight: `${h_1_2_height}px`
+							}
 						}
 					],
 					css: {
-						width: '620px',
-						top: '45px',
-						left: '110px'
+						width: `${h_1_2_width}px`,
+						top: `${h_1_2_top}px`,
+						left: `${h_1_2_left}px`
 					}
 				},
 				{
@@ -477,71 +546,91 @@ const tapCreateImg = async () => {
 					type: 'image',
 					url: dataObj.value.mainPic,
 					css: {
-						top: '120px',
-						left: '30px',
-						width: '690px',
-						height: '552px',
+						top: `${h_2_top}px`,
+						left: `${h_2_left}px`,
+						width: `${h_2_width}px`,
+						height: `${h_2_height}px`,
 						borderRadius: '10px'
 					}
 				},
 				{
-					id: '3',
+					id: '3-1',
+					type: 'image',
+					url: imgPath,
+					css: {
+						top: `${h_3_1_top}px`,
+						right: `${h_3_1_right}px`,
+						width: `${h_3_1_width}px`,
+						height: `${h_3_1_height}px`
+					}
+				},
+				{
+					id: '3-2',
 					type: 'text',
 					text: dataObj.value.title,
-					css: { top: '710px', left: '30px', fontSize: '32px', color: '#333' }
+					css: {
+						top: `${h_3_2_top}px`,
+						left: `${h_3_2_left}px`,
+						width: `${h_3_2_width}px`,
+						fontSize: `${h_3_2_fz}px`,
+						lineHeight: `${h_3_2_height}px`,
+						color: '#333'
+					}
 				},
 				{
 					id: '4',
 					type: 'text',
 					text: dataObj.value.price ? '￥' + dataObj.value.price : '免费活动',
-					css: { top: '780px', left: '30px', fontSize: '38px', color: '#f73639' }
-				},
-				{
-					id: '5-1-1',
-					type: 'inlineText',
-					textList: [
-						{
-							text: `门诊预约：`,
-							css: { fontSize: '28px', color: '#000', lineHeight: '48px' }
-						},
-						{
-							text: `${storeInfo.mobile}`,
-							css: { fontSize: '28px', color: '#666', lineHeight: '48px' }
-						}
-					],
-					css: { top: '880px', left: '30px', width: '440px' }
+					css: {
+						top: `${h_4_top}px`,
+						left: `${h_4_left}px`,
+						width: `${h_4_width}px`,
+						height: `${h_4_height}px`,
+						fontSize: `${h_4_fz}px`,
+						color: '#f73639'
+					}
 				},
 				{
 					id: '5-1',
 					type: 'inlineText',
 					textList: [
 						{
-							text: `门诊地址：`,
-							css: { fontSize: '28px', color: '#000', lineHeight: '48px' }
+							text: `门诊预约：`,
+							css: { fontSize: `${h_5_1_fz}px`, color: '#000' }
 						},
 						{
-							text: `${storeInfo.address}${storeInfo.addressDetail}`,
-							css: { fontSize: '28px', color: '#666', lineHeight: '48px' }
+							text: `${storeInfo.mobile}`,
+							css: { fontSize: `${h_5_1_fz}px`, color: '#666' }
 						}
 					],
-					css: { top: '940px', left: '30px', width: '440px' }
-				},
-				{
-					id: '5-2',
-					type: 'image',
-					url: imgPath,
 					css: {
-						top: '710px',
-						right: '38px',
-						width: '200px',
-						height: '200px'
+						top: `${h_5_1_top}px`,
+						left: `${h_5_1_left}px`,
+						width: `${h_5_1_width}px`
 					}
 				},
 				{
-					id: '6',
-					type: 'text',
-					text: '长按识别查看活动',
-					css: { top: '930px', right: '30px', fontSize: '26px', color: '#333' }
+					id: '5-2',
+					type: 'inlineText',
+					textList: [
+						{
+							text: `门诊地址：`,
+							css: { fontSize: `${h_5_2_fz}px`, color: '#000' }
+						},
+						{
+							text: `${storeInfo.address}${storeInfo.addressDetail}`,
+							css: {
+								fontSize: `${h_5_2_fz}px`,
+								color: '#666',
+								lineHeight: `${h_5_2_height}px`
+							}
+						}
+					],
+					css: {
+						top: `${h_5_2_top}px`,
+						left: `${h_5_2_left}px`,
+						width: `${h_5_2_width}px`
+					}
 				}
 			]
 		};

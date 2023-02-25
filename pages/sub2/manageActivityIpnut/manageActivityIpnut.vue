@@ -1,15 +1,40 @@
 <template>
 	<view class="container">
-		<uni-forms :rules="rules" ref="formObj" :model="formData" label-position="left" label-width="240rpx">
+		<uni-forms
+			:rules="rules"
+			ref="formObj"
+			:model="formData"
+			label-position="left"
+			label-width="240rpx"
+		>
 			<!-- 活动类型 -->
 			<view class="uni-forms-item-wrapper1">
 				<view class="type_title">活动类型</view>
 				<view class="type_name">
-					<view class="type_name_item" v-for="(item, index) in type" :key="index" @tap="formData.type = index">
+					<view
+						class="type_name_item"
+						v-for="(item, index) in type"
+						:key="index"
+						@tap="formData.type = index"
+					>
 						<view class="text1">
-							{{ `类型${index === 0 ? '一' : index === 1 ? '二' : index === 2 ? '三' : index === 3 ? '四' : ''}` }}
+							{{
+								`类型${
+									index === 0
+										? '一'
+										: index === 1
+										? '二'
+										: index === 2
+										? '三'
+										: index === 3
+										? '四'
+										: ''
+								}`
+							}}
 						</view>
-						<view class="text2" :class="{ current: formData.type === index }">{{ item.text }}</view>
+						<view class="text2" :class="{ current: formData.type === index }">
+							{{ item.text }}
+						</view>
 					</view>
 				</view>
 
@@ -30,7 +55,12 @@
 
 			<!-- 活动封面图上传 -->
 			<uni-forms-item :label="rules.mainPic.label" label-position="top" name="mainPic">
-				<htz-image-upload :max="selectNum1" v-model="picList1" mediaType="image" @chooseSuccess="chooseSuccess1" />
+				<htz-image-upload
+					:max="selectNum1"
+					v-model="picList1"
+					mediaType="image"
+					@chooseSuccess="chooseSuccess1"
+				/>
 				<view class="tips"><text>封面图比例5:4，建议宽度750px</text></view>
 			</uni-forms-item>
 			<view class="blank32 blank_bg_color"></view>
@@ -75,7 +105,10 @@
 
 			<!-- 活动标题 -->
 			<uni-forms-item :label="rules.title.label" name="title">
-				<uni-easyinput v-model="formData.title" :placeholder="rules.title.rules[0].errorMessage" />
+				<uni-easyinput
+					v-model="formData.title"
+					:placeholder="rules.title.rules[0].errorMessage"
+				/>
 			</uni-forms-item>
 
 			<!-- 活动数量 -->
@@ -84,8 +117,16 @@
 			</uni-forms-item>
 
 			<!-- 活动价格 -->
-			<uni-forms-item v-if="formData.type !== 0" :label="type[formData.type].text + rules.price.label" name="price">
-				<uni-easyinput type="digit" v-model="formData.price" :placeholder="rules.price.rules[0].errorMessage" />
+			<uni-forms-item
+				v-if="formData.type !== 0"
+				:label="type[formData.type].text + rules.price.label"
+				name="price"
+			>
+				<uni-easyinput
+					type="digit"
+					v-model="formData.price"
+					:placeholder="rules.price.rules[0].errorMessage"
+				/>
 			</uni-forms-item>
 
 			<!-- 原价 -->
@@ -115,14 +156,20 @@
 			</uni-forms-item>
 
 			<!-- 前端是否显示分佣价格 -->
-			<uni-forms-item v-if="formData.type === 1 || formData.type === 2" :label="rules.showShare.label" name="showShare">
+			<uni-forms-item
+				v-if="formData.type === 1 || formData.type === 2"
+				:label="rules.showShare.label"
+				name="showShare"
+			>
 				<switch
 					color="#4b8eff"
 					:checked="parseInt(formData.showShare) === 0"
 					style="transform:scale(0.8)"
 					@change="formData.showShare = Math.abs(parseInt(formData.showShare) - 1)"
 				/>
-				<view class="tips"><text>开启选项，前端显示分佣金额\n关闭选项，前端不显示分佣金额</text></view>
+				<view class="tips">
+					<text>开启选项，前端显示分佣金额\n关闭选项，前端不显示分佣金额</text>
+				</view>
 			</uni-forms-item>
 
 			<!-- 分佣方式 -->
@@ -135,9 +182,13 @@
 					color="#4b8eff"
 					:checked="parseInt(formData.sharePriceType) === 0"
 					style="transform:scale(0.8)"
-					@change="formData.sharePriceType = Math.abs(parseInt(formData.sharePriceType) - 1)"
+					@change="
+						formData.sharePriceType = Math.abs(parseInt(formData.sharePriceType) - 1)
+					"
 				/>
-				<view class="tips"><text>开启选项，分佣给第一邀请人\n关闭选项，分佣给最新邀请人</text></view>
+				<view class="tips">
+					<text>开启选项，分佣给第一邀请人\n关闭选项，分佣给最新邀请人</text>
+				</view>
 			</uni-forms-item>
 
 			<!-- 最低拼团人数 -->
@@ -173,7 +224,10 @@
 
 			<!-- 活动介绍 -->
 			<uni-forms-item label-position="top" :label="rules.content.label" name="content">
-				<fuck-textarea v-model="formData.content" :placeholder="rules.content.rules[0].errorMessage" />
+				<fuck-textarea
+					v-model="formData.content"
+					:placeholder="rules.content.rules[0].errorMessage"
+				/>
 			</uni-forms-item>
 
 			<!-- 活动详情 -->
@@ -196,11 +250,11 @@
 					:max="selectNum3"
 					v-model="picList3"
 					mediaType="image"
-					:action="uploadimageURL3"
+					@chooseSuccess="chooseSuccess3"
 					:formData="{ baseDir: baseDir3 }"
 					@uploadSuccess="uploadSuccess3"
 				/>
-				<view class="tips"><text>生成的海报图，图片体积不能超过2M</text></view>
+				<view class="tips"><text>最大比例100:258，图片体积不能超过2M</text></view>
 			</uni-forms-item>
 			<view class="blank32 blank_bg_color"></view>
 
@@ -216,14 +270,14 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
-import { _enrollformSave, _enrollformGetinfo } from '@/aTemp/apis/activity.js'
-import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
-import dayjs from 'dayjs'
+import { ref } from 'vue';
+import { onLoad } from '@dcloudio/uni-app';
+import { _enrollformSave, _enrollformGetinfo } from '@/aTemp/apis/activity.js';
+import { navigateTo, showToastText } from '@/aTemp/utils/uniAppTools.js';
+import dayjs from 'dayjs';
 
 // 数据ID
-const dataId = ref(0)
+const dataId = ref(0);
 // 表单数据
 const formData = ref({
 	type: 0, //活动类型默认值
@@ -236,9 +290,9 @@ const formData = ref({
 	least: 2, //最低拼团人数
 	sort: 1, //排序
 	sharePriceType: 0 // 0分佣给第一个邀请人，1分佣给最新邀请人
-})
+});
 // 获取表单对象
-const formObj = ref(null)
+const formObj = ref(null);
 /*
 	活动类型
  */
@@ -255,26 +309,21 @@ const type = [
 		text: '限量秒杀',
 		value: 2
 	}
-]
-/*
- {
- 	text: '拼团活动',
- 	value: 3
- }
- */
+];
+
 // 页面开始加载
 onLoad(optios => {
-	dataId.value = parseInt(optios.id) || 0
+	dataId.value = parseInt(optios.id) || 0;
 	// 是否存在活动ID
 	if (dataId.value > 0) {
 		// 拉取数据
 		_enrollformGetinfo({ id: dataId.value }).then(res => {
-			const { data } = res
+			const { data } = res;
 			// 数据赋值
-			formData.value = data.getinfo
-		})
+			formData.value = data.getinfo;
+		});
 	}
-})
+});
 
 // 表单校验
 const rules = {
@@ -316,9 +365,9 @@ const rules = {
 			{
 				validateFunction: function(rule, value, data, callback) {
 					if (parseFloat(value) <= 0) {
-						callback('价格需要大于零')
+						callback('价格需要大于零');
 					}
-					return true
+					return true;
 				}
 			}
 		],
@@ -330,9 +379,9 @@ const rules = {
 			{
 				validateFunction: function(rule, value, data, callback) {
 					if (parseFloat(value) <= 0) {
-						callback('原价需要大于零')
+						callback('原价需要大于零');
 					}
-					return true
+					return true;
 				}
 			}
 		],
@@ -344,13 +393,13 @@ const rules = {
 			{
 				validateFunction: function(rule, value, data, callback) {
 					if (parseFloat(value) < 0) {
-						callback('分佣金额不能小于0')
+						callback('分佣金额不能小于0');
 					}
 					if (parseFloat(value) > parseFloat(data.price) * 0.3) {
-						callback('分佣价格不能高于活动价格的30%')
+						callback('分佣价格不能高于活动价格的30%');
 					}
 
-					return true
+					return true;
 				}
 			}
 		],
@@ -392,31 +441,35 @@ const rules = {
 		rules: [{ required: true, errorMessage: '请选择分佣方式' }],
 		label: '分佣方式'
 	}
-}
+};
 
 /*
  * 保存banenr信息功能
  * 组合式函数引入
  */
-import useSaveApi from '@/aTemp/mixins/useSaveApi.js'
+import useSaveApi from '@/aTemp/mixins/useSaveApi.js';
 // 保存信息
-const { saveClick, loading } = useSaveApi(formObj, formData, _enrollformSave)
+const { saveClick, loading } = useSaveApi(formObj, formData, _enrollformSave);
 
 /*
  * 图片选择功能
  * 组合式函数引入
  */
-import useHtzImageUpload from '@/aTemp/mixins/useHtzImageUpload.js'
+import useHtzImageUpload from '@/aTemp/mixins/useHtzImageUpload.js';
 
 // 活动封面图上传  裁剪
-const { chooseSuccess: chooseSuccess1, picList: picList1, selectNum: selectNum1 } = useHtzImageUpload({
+const {
+	chooseSuccess: chooseSuccess1,
+	picList: picList1,
+	selectNum: selectNum1
+} = useHtzImageUpload({
 	ratio: 5 / 4,
 	url: '/upload-flv/uploadimage',
 	refData: formData,
 	param: 'mainPic',
 	selectNum: 1,
 	baseDir: 'active'
-})
+});
 
 /*
  * 用主图代替
@@ -444,7 +497,34 @@ const {
 	param: 'postPic',
 	selectNum: 1,
 	baseDir: 'active'
-})
+});
+
+const chooseSuccess3 = valList => {
+	uni.getImageInfo({
+		src: valList[0],
+		success: async function(info) {
+			const { size } = await uni.getFileInfo({
+				filePath: valList[0]
+			});
+			if (info.height / info.width > 2.58) {
+				showToastText('图片尺寸比例超过100:258，请调整后上传');
+			} else if (size / (1024 * 1024) > 2) {
+				showToastText('海报体积超过2M，请调整后上传');
+			} else {
+				uni.uploadFile({
+					url: uploadimageURL3, //仅为示例，非真实的接口地址
+					filePath: valList[0],
+					name: 'file',
+					formData: { baseDir: baseDir3 },
+					success: uploadFileRes => {
+						const { data } = JSON.parse(uploadFileRes.data);
+						formData.value.postPic = data;
+					}
+				});
+			}
+		}
+	});
+};
 
 // 活动详情图
 const {
@@ -459,7 +539,7 @@ const {
 	param: 'details',
 	selectNum: 5,
 	baseDir: 'active'
-})
+});
 
 // 活动视频
 const {
@@ -468,14 +548,14 @@ const {
 	selectNum: selectNum5,
 	uploadimageURL: uploadimageURL5,
 	baseDir: baseDir5,
-	uploadFail:uploadFail5
+	uploadFail: uploadFail5
 } = useHtzImageUpload({
 	url: '/upload-flv/uploadVideo',
 	refData: formData,
 	param: 'imgs',
 	selectNum: 1,
 	baseDir: 'active'
-})
+});
 </script>
 
 <style lang="scss" scoped>

@@ -159,4 +159,7 @@ onShow(options => {
 /*colorui css */
 @import '@/common/colorui/main.css';
 @import '@/common/colorui/icon.css';
+
+/* 自定义图片 */
+@import '@/common/font/iconfont.css';
 </style>

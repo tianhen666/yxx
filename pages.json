@@ -399,7 +399,25 @@
 					"enablePullDownRefresh": false
 				}
 
-			}]
+			}    ,{
+                    "path" : "wenAnList/wenAnList",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "文案宣发",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
+                ,{
+                    "path" : "AddWenAnList/AddWenAnList",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "添加文案",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
+            ]
 		},
 		{
 			"root": "pages/sub3",

@@ -47,10 +47,19 @@
 	<uni-popup ref="popup" type="center" :safe-area="false">
 		<view class="popup_box">
 			<image class="close" @tap="popup.close" src="/static/images/close.png"></image>
-			<uni-forms :rules="rules" ref="formObj" v-model="formData" label-width="220rpx" label-position="top">
+			<uni-forms
+				:rules="rules"
+				ref="formObj"
+				v-model="formData"
+				label-width="220rpx"
+				label-position="top"
+			>
 				<!-- 订单编号 -->
 				<uni-forms-item :label="rules.orderNo.label" name="orderNo" label-position="top">
-					<uni-easyinput v-model="formData.orderNo" :placeholder="rules.orderNo.rules[0].errorMessage"></uni-easyinput>
+					<uni-easyinput
+						v-model="formData.orderNo"
+						:placeholder="rules.orderNo.rules[0].errorMessage"
+					></uni-easyinput>
 				</uni-forms-item>
 			</uni-forms>
 
@@ -60,19 +69,19 @@
 </template>
 
 <script setup>
-import mFun from './m-fun/m-fun.vue'
-import mOption from './m-option/m-option.vue'
-import mVip from './m-vip/m-vip.vue'
-import { showToastText, navigateTo } from '@/aTemp/utils/uniAppTools.js'
-import { _debounce } from '@/aTemp/utils/tools.js'
-import { ref } from 'vue'
+import mFun from './m-fun/m-fun.vue';
+import mOption from './m-option/m-option.vue';
+import mVip from './m-vip/m-vip.vue';
+import { showToastText, navigateTo } from '@/aTemp/utils/uniAppTools.js';
+import { _debounce } from '@/aTemp/utils/tools.js';
+import { ref } from 'vue';
 
 // 全局登录信息
-import { _useUserMain } from '@/aTemp/store/userMain.js'
-const useUserMain = _useUserMain()
+import { _useUserMain } from '@/aTemp/store/userMain.js';
+const useUserMain = _useUserMain();
 
 // 订单核销
-import { _orderVerificationSheet } from '@/aTemp/apis/order.js'
+import { _orderVerificationSheet } from '@/aTemp/apis/order.js';
 
 // 权限
 // const optionPower = [
@@ -129,7 +138,7 @@ const module1 = {
 			power: [1, 2]
 		}
 	]
-}
+};
 
 const module2 = {
 	title: '数据统计',
@@ -159,7 +168,7 @@ const module2 = {
 			power: [1, 2]
 		}
 	]
-}
+};
 const module3 = {
 	title: '订单管理',
 	sub: [
@@ -182,7 +191,7 @@ const module3 = {
 			power: [1, 2, 5]
 		}
 	]
-}
+};
 
 const module4 = {
 	title: '营销助手',
@@ -201,7 +210,7 @@ const module4 = {
 		{
 			imgUrl: '/static/images/u-wenanxuanfa.png',
 			name: '文案宣发',
-			path: ''
+			path: '/pages/sub2/wenAnList/wenAnList'
 		},
 		{
 			imgUrl: '/static/images/u-kepuwenzhang.png',
@@ -209,20 +218,14 @@ const module4 = {
 			path: '/pages/sub2/newsList/newsList'
 		}
 	]
-}
+};
 const yxzsTap = (item, index) => {
 	if (Array.isArray(item.power) && !item.power.includes(useUserMain.power)) {
-		showToastText('没有权限~')
-		return
+		showToastText('没有权限~');
+		return;
 	}
-	
-	
-	if (index == 2) {
-		showToastText('功能陆续更新中...')
-	} else {
-		navigateTo(item.path)
-	}
-}
+	navigateTo(item.path);
+};
 
 // 表单校验
 const rules = {
@@ -230,53 +233,52 @@ const rules = {
 		rules: [{ required: true, errorMessage: '请输入订单编号' }],
 		label: '订单编号'
 	}
-}
+};
 // 弹出层
-const popup = ref(null)
+const popup = ref(null);
 // 表单数据
-const formData = ref({})
+const formData = ref({});
 // 获取表单对象
-const formObj = ref(null)
+const formObj = ref(null);
 // 加载中
-const loading = ref(false)
+const loading = ref(false);
 
 // 调用核销接口
 const orderVerificationSheet = orderNo => {
 	_orderVerificationSheet({ orderNo })
 		.then(res => {
-			const { msg, data, code } = res
-			showToastText('核销成功')
+			const { msg, data, code } = res;
+			showToastText('核销成功');
 		})
 		.catch(err => {
-			showToastText(err?.msg || '核销失败')
-		})
-}
+			showToastText(err?.msg || '核销失败');
+		});
+};
 
 const module3Fun = listIndex => {
 	// 扫码核销
 	if (listIndex === 0) {
-		uni
-			.scanCode({
-				onlyFromCamera: true
-			})
+		uni.scanCode({
+			onlyFromCamera: true
+		})
 			.then(res => {
 				if (res.scanType !== 'QR_CODE') {
-					showToastText('请扫描核销码~')
-					return
+					showToastText('请扫描核销码~');
+					return;
 				}
 				// console.log('条码内容：' + res.result)
 				// 调用订单核销接口
-				orderVerificationSheet(res.result)
+				orderVerificationSheet(res.result);
 			})
 			.catch(err => {
-				showToastText(err?.msg || '核销失败')
-			})
+				showToastText(err?.msg || '核销失败');
+			});
 	}
 	// 手动核销
 	if (listIndex === 1) {
-		popup.value.open()
+		popup.value.open();
 	}
-}
+};
 
 const secretKeyClick = _debounce(
 	() => {
@@ -284,21 +286,21 @@ const secretKeyClick = _debounce(
 			.validate()
 			.then(formRes => {
 				// 调用订单核销接口
-				orderVerificationSheet(formData.value.orderNo)
+				orderVerificationSheet(formData.value.orderNo);
 
 				// 关闭弹出框
-				popup.value.close()
-				loading.value = false
+				popup.value.close();
+				loading.value = false;
 			})
 			.catch(err => {
-				loading.value = false
-				showToastText(err[0].errorMessage)
-				console.log('表单错误信息：', err)
-			})
+				loading.value = false;
+				showToastText(err[0].errorMessage);
+				console.log('表单错误信息：', err);
+			});
 	},
 	500,
 	loading
-)
+);
 
 const module5 = {
 	title: '其他选项',
@@ -329,7 +331,7 @@ const module5 = {
 			path: '/pages/sub2/switchStore/switchStore'
 		}
 	]
-}
+};
 </script>
 
 <style lang="scss" scoped>
