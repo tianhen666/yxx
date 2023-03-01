@@ -399,25 +399,28 @@
 					"enablePullDownRefresh": false
 				}
 
-			}    ,{
-                    "path" : "wenAnList/wenAnList",
-                    "style" :                                                                                    
-                {
-                    "navigationBarTitleText": "文案宣发",
-                    "enablePullDownRefresh": false
-                }
-                
-                }
-                ,{
-                    "path" : "AddWenAnList/AddWenAnList",
-                    "style" :                                                                                    
-                {
-                    "navigationBarTitleText": "添加文案",
-                    "enablePullDownRefresh": false
-                }
-                
-                }
-            ]
+			}, {
+				"path": "wenAnList/wenAnList",
+				"style": {
+					"navigationBarTitleText": "文案宣发",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "AddWenAnList/AddWenAnList",
+				"style": {
+					"navigationBarTitleText": "添加/编辑文案",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "wenAnSearch/wenAnSearch",
+				"style": {
+					"navigationBarTitleText": "文案搜索",
+					"enablePullDownRefresh": false
+				}
+
+			}]
 		},
 		{
 			"root": "pages/sub3",
@@ -470,7 +473,7 @@
 			}, {
 				"path": "addPoster/addPoster",
 				"style": {
-					"navigationBarTitleText": "添加海报",
+					"navigationBarTitleText": "添加/修改海报",
 					"enablePullDownRefresh": false,
 					"usingComponents": {
 						// #ifdef APP-PLUS || H5 || MP-WEIXIN || MP-QQ
@@ -478,6 +481,18 @@
 						// #endif
 					}
 				}
+			}, {
+				"path": "wenAnPosterInfo/wenAnPosterInfo",
+				"style": {
+					"navigationBarTitleText": "海报详情",
+					"enablePullDownRefresh": false,
+					"usingComponents": {
+						// #ifdef APP-PLUS || H5 || MP-WEIXIN || MP-QQ
+						"w-painter": "/wxcomponents/painter/painter"
+						// #endif
+					}
+				}
+
 			}]
 		},
 		{

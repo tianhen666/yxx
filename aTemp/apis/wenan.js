@@ -4,6 +4,14 @@ import http from '@/aTemp/request';
  文案接口
  */
 
+// 复制文案
+export function _storeCopyWriterCopyInfo(params) {
+	return http.post({
+		url: '/store-copy-writer/copyInfo',
+		params
+	})
+}
+
 // 获取文案列表
 export function _storeCopyWriterGetinfo(params) {
 	return http.post({
@@ -16,14 +24,6 @@ export function _storeCopyWriterGetinfo(params) {
 export function _storeCopyWriterGetHistory(data) {
 	return http.post({
 		url: '/store-copy-writer/getHistory',
-		data
-	})
-}
-
-// 删除文案
-export function _storeCopyWriterDel(data) {
-	return http.post({
-		url: '/store-copy-writer/del',
 		data
 	})
 }
@@ -41,5 +41,21 @@ export function _storeCopyWriterGetClassify(data) {
 	return http.post({
 		url: '/store-copy-writer/getClassify',
 		data
+	})
+}
+
+// 获取文案详情
+export function _storeCopyWriterGetStoreCopyWriter(params) {
+	return http.post({
+		url: '/store-copy-writer/getStoreCopyWriter',
+		params
+	})
+}
+
+// 获取文案详情
+export function _storeCopyWriterDel(params) {
+	return http.post({
+		url: '/store-copy-writer/del',
+		params
 	})
 }

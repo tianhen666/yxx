@@ -2,11 +2,14 @@
 	<m-page-loading v-if="loading"></m-page-loading>
 	<z-paging-swiper safe-area-inset-bottom>
 		<template #top>
-			<view class="blank30"></view>
-
 			<!-- 搜索框 -->
 			<view class="search-box">
-				<uni-search-bar placeholder="自定义背景色" bgColor="#EEEEEE" @confirm="search" />
+				<uni-search-bar
+					@tap="navigateTo('/pages/sub2/wenAnSearch/wenAnSearch')"
+					readonly
+					placeholder="输入关键字搜索文案"
+					bgColor="#EEEEEE"
+				/>
 			</view>
 
 			<!-- 分类按钮 -->
@@ -17,16 +20,17 @@
 					:scroll-into-view="scrollIntoView"
 					scroll-with-animation
 				>
-					<view
-						:id="'scrollViewItem' + index"
-						:class="{ current: tabIndex === index }"
-						class="scroll-view-item uni-bg-red"
-						v-for="(item, index) in tabListObj"
-						:key="index"
-						@tap="onClickItem(index)"
-					>
-						{{ item.classifyName }}
-					</view>
+					<template v-for="(item, index) in tabListObj" :key="index">
+						<view
+							v-if="item"
+							:id="'scrollViewItem' + index"
+							:class="{ current: tabIndex === index }"
+							class="scroll-view-item uni-bg-red"
+							@tap="onClickItem(index)"
+						>
+							{{ item.classifyNmae }}
+						</view>
+					</template>
 				</scroll-view>
 			</view>
 			<view class="blank30"></view>
@@ -42,6 +46,7 @@
 			<swiper-item class="swiper-item" v-for="(item, index) in tabListObj" :key="index">
 				<!-- z-paging start -->
 				<swiper-list-item
+					v-if="item"
 					:currentTabIndex="tabIndex"
 					:tabIndex="index"
 					:tabListObj="tabListObj"

@@ -3,14 +3,27 @@
 		<template v-for="(item, index) in listData" :key="index">
 			<view
 				class="item"
-				@tap.stop="navigateTo(`/pages/sub3/posterInfo/posterInfo?id=${item.id}`)"
+				@tap.stop="
+					useStoreWenAn.isChosePoster
+						? chosePosterTap(item)
+						: navigateTo(`/pages/sub3/posterInfo/posterInfo?id=${item.id}`)
+				"
 				v-if="maxNumber === -1 ? true : index < maxNumber"
 			>
 				<image class="image" :src="item.posterurl" mode="aspectFill"></image>
 				<button
 					class="edit"
-					@tap.stop="navigateTo(`/pages/sub3/addPoster/addPoster?id=${item.id}&parentClassId=${parentClassId}`)"
-					v-if="(useUserMain.storeId == 1 || useUserMain.storeId == 11) && useUserMain.power != -1"
+					@tap.stop="
+						navigateTo(
+							`/pages/sub3/addPoster/addPoster?id=${
+								item.id
+							}&parentClassId=${parentClassId}`
+						)
+					"
+					v-if="
+						(useUserMain.storeId == 1 || useUserMain.storeId == 11) &&
+							useUserMain.power != -1
+					"
 				>
 					编辑
 				</button>
@@ -21,11 +34,15 @@
 </template>
 
 <script setup>
-import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
+import { navigateTo, navigateBack } from '@/aTemp/utils/uniAppTools.js';
 
 // 全局登录信息
-import { _useUserMain } from '@/aTemp/store/userMain.js'
-const useUserMain = _useUserMain()
+import { _useUserMain } from '@/aTemp/store/userMain.js';
+const useUserMain = _useUserMain();
+
+// 选择海报
+import { _useStoreWenAn } from '@/aTemp/store/storeWenAn.js';
+const useStoreWenAn = _useStoreWenAn();
 
 const props = defineProps({
 	listData: {
@@ -46,7 +63,13 @@ const props = defineProps({
 		type: Number,
 		default: 3
 	}
-})
+});
+
+const chosePosterTap = item => {
+	useStoreWenAn.$patch({ isChosePoster: false, posterID: item.id, posterCover: item.posterurl });
+	const pages = getCurrentPages();
+	navigateBack(pages.length - 3);
+};
 </script>
 
 <style lang="scss">

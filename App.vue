@@ -78,13 +78,13 @@ onLaunch(async options => {
 		'目标ID：' + targetId
 	);
 
-	// 从朋友圈打开小程序
+	// 从朋友圈打开小程序,预览页面
 	if (options.scene == 1154) {
 		useUserMain.$patch({ storeId: storeId });
 		// 放行同步方法
 		proxy.$isResolve();
-	} else if (options.scene == 1155 && options.path != 'pages/main/index/index') {
-		// 从朋友圈进入小程序
+	} else if (options.path != 'pages/main/index/index') {
+		// 直接打开页面 别的页面
 
 		// 获取登录的code
 		let wxCode = '';

@@ -33,10 +33,6 @@ import { base64ToPath } from 'image-tools';
 import { _useUserMain } from '@/aTemp/store/userMain.js';
 const useUserMain = _useUserMain();
 
-// 海报ID
-const posterId = ref(0);
-provide('posterId', posterId);
-
 // 海报图片数据
 const posterData = reactive({ value: {} });
 provide('posterData', posterData);
@@ -45,70 +41,30 @@ provide('posterData', posterData);
 const posterOtherData = reactive({ value: {} });
 provide('posterOtherData', posterOtherData);
 
-// 是否门诊草稿箱
-const drafts = ref(0);
-provide('drafts', drafts);
+// 文案进入
+const wenAn = ref(true);
+provide('wenAn', wenAn);
 
 onLoad(options => {
-	// 是否从草稿箱进入
-	drafts.value = parseInt(options.drafts) || 0;
-	// 海报ID
-	posterId.value = parseInt(options.id) || 0;
-
 	// 获取海报数据
 	posterGetPostercontent();
 });
 
+import { _useStoreWenAn } from '@/aTemp/store/storeWenAn.js';
+const useStoreWenAn = _useStoreWenAn();
 // 获取海报数据
 const posterGetPostercontent = async () => {
 	showLoading('海报数据加载中');
+	const initPosterData = { width: '', height: '', background: '', views: [] };
+	const getImgInfo = await getImageInfo(useStoreWenAn.posterCover);
+	const { height: imgHeight, width: imgWidth, path: imgPath } = getImgInfo;
 
-	// 获取海报数据
-	let res = {};
-	if (drafts.value === 1) {
-		// 获取门诊草稿箱中的海报
-		res = await _posterDraftsOne({
-			id: posterId.value
-		});
-	} else {
-		// 获取海报数据
-		res = await _posterGetPostercontent({
-			id: posterId.value
-		});
-	}
-
-	const { code, data, msg } = res;
-	if (!data) {
-		uni.hideLoading();
-		showToastText('此海报已被删除');
-		setTimeout(() => {
-			navigateBack();
-		}, 500);
-		return;
-	}
-
-	// 赋值海报其他参数
-	posterOtherData.value = data;
-	// 获取海报中json数据
-	let getPosterData = JSON.parse(data.posterImg);
-
-	// 如果获取海报内容为空，则自动填充配置信息
-	if (!getPosterData) {
-		console.log('海报信息', posterOtherData);
-		console.log('海报数据json数据', getPosterData);
-
-		const initPosterData = { width: '', height: '', background: '', views: [] };
-		const getImgInfo = await getImageInfo(posterOtherData.value.posterurl);
-		const { height: imgHeight, width: imgWidth, path: imgPath } = getImgInfo;
-
-		initPosterData.height = imgHeight / (imgWidth / 310) + 'px';
-		initPosterData.width = '310px';
-		initPosterData.background = posterOtherData.value.posterurl;
-		getPosterData = initPosterData;
-	}
+	initPosterData.height = imgHeight / (imgWidth / 310) + 'px';
+	initPosterData.width = '310px';
+	initPosterData.background = useStoreWenAn.posterCover;
 
 	// 设置海报中的json数据
-	posterData.value = getPosterData;
+	posterData.value = initPosterData;
 
 	// 获取邀请码
 	const wxWxqrCode = await _wxWxqrCode({
@@ -125,8 +81,8 @@ const posterGetPostercontent = async () => {
 	// 添加二维码
 	posterData.value.views.push({
 		css: {
-			top: parseInt(posterData.value.height) - 85 + 'px',
-			left: parseInt(posterData.value.width) - 85 + 'px',
+			top: parseInt(posterData.value.height) - 75 + 'px',
+			left: parseInt(posterData.value.width) - 75 + 'px',
 			width: '65px',
 			height: '65px'
 		},
@@ -139,7 +95,6 @@ const posterGetPostercontent = async () => {
 
 // 海报是否初始化完成
 const firstComplete = ref(false);
-
 // 图片生成完成
 const createImgOk = e => {
 	console.log(e.detail.path);

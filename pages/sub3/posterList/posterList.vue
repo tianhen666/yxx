@@ -19,17 +19,28 @@
 				v-for="(item, index) in posterTypeList"
 				:key="index"
 				@tap="
-					navigateTo('/pages/sub3/posterListSub/posterListSub?parentClassId=' + item.id + '&parentClassName=' + item.posterName)
+					navigateTo(
+						'/pages/sub3/posterListSub/posterListSub?parentClassId=' +
+							item.id +
+							'&parentClassName=' +
+							item.posterName
+					)
 				"
 			>
 				<view class="img_box">
-					<image class="image" :src="`/static/images/poster${index}.png`" mode="aspectFill"></image>
+					<image
+						class="image"
+						:src="`/static/images/poster${index}.png`"
+						mode="aspectFill"
+					></image>
 				</view>
 				<!-- <text class="text">{{ item.posterName }}</text> -->
 			</view>
 
 			<view class="box1_item" @tap="navigateTo('/pages/sub3/posterDrafts/posterDrafts')">
-				<view class="img_box"><image class="image" src="/static/images/poster3.png" mode="aspectFill"></image></view>
+				<view class="img_box">
+					<image class="image" src="/static/images/poster3.png" mode="aspectFill"></image>
+				</view>
 				<!-- <text class="text">门诊素材</text> -->
 			</view>
 		</view>
@@ -40,10 +51,19 @@
 	<view class="box box2" v-for="(item, index) in posterTypeList" :key="index">
 		<m-title2
 			:title="item.posterName"
-			:path="'/pages/sub3/posterListSub/posterListSub?parentClassId=' + item.id + '&parentClassName=' + item.posterName"
+			:path="
+				'/pages/sub3/posterListSub/posterListSub?parentClassId=' +
+					item.id +
+					'&parentClassName=' +
+					item.posterName
+			"
 		></m-title2>
 		<!-- 子分类 -->
-		<m-sub-fenlei :listData="item.children" :parentClassId="item.id" :parentClassName="item.posterName"></m-sub-fenlei>
+		<m-sub-fenlei
+			:listData="item.children"
+			:parentClassId="item.id"
+			:parentClassName="item.posterName"
+		></m-sub-fenlei>
 		<!-- 列表  -->
 		<m-poster-list :listData="item.posterDataList" :parentClassId="item.id"></m-poster-list>
 	</view>
@@ -63,37 +83,37 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
-import { navigateTo } from '@/aTemp/utils/uniAppTools.js'
-import { mSubFenlei } from '../components/m-sub-fenlei/m-sub-fenlei.vue'
-import { mPosterList } from '../components/m-poster-list/m-poster-list.vue'
+import { ref } from 'vue';
+import { onLoad } from '@dcloudio/uni-app';
+import { navigateTo } from '@/aTemp/utils/uniAppTools.js';
+import { mSubFenlei } from '../components/m-sub-fenlei/m-sub-fenlei.vue';
+import { mPosterList } from '../components/m-poster-list/m-poster-list.vue';
 
-import { _posterGetPostType, _posterGetPostTypeId } from '@/aTemp/apis/poster.js'
+import { _posterGetPostType, _posterGetPostTypeId } from '@/aTemp/apis/poster.js';
 
 // 全局登录信息
-import { _useUserMain } from '@/aTemp/store/userMain.js'
-const useUserMain = _useUserMain()
+import { _useUserMain } from '@/aTemp/store/userMain.js';
+const useUserMain = _useUserMain();
 
 // 海报数据列表
-const posterTypeList = ref([])
-const loading = ref(true)
+const posterTypeList = ref([]);
+const loading = ref(true);
 onLoad(options => {
-	_posterGetPostType().then( async res => {
-		const { code, data, msg } = res
-		
-		for(let i = 0;i<data.length;i++){
-			if(data[i].children){
-				const posterDataList = await _posterGetPostTypeId({ id: data[i].children[0].id })
-				data[i].posterDataList = posterDataList.data[0].posterImgList
+	_posterGetPostType().then(async res => {
+		const { code, data, msg } = res;
+
+		for (let i = 0; i < data.length; i++) {
+			if (data[i].children) {
+				const posterDataList = await _posterGetPostTypeId({ id: data[i].children[0].id });
+				data[i].posterDataList = posterDataList.data[0].posterImgList;
 			}
 		}
-		posterTypeList.value = data
+		posterTypeList.value = data;
 		setTimeout(() => {
-			loading.value = false
-		}, 1000)
-	})
-})
+			loading.value = false;
+		}, 1000);
+	});
+});
 </script>
 
 <style lang="scss">

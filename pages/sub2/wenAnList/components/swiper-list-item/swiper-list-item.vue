@@ -1,7 +1,6 @@
 <!-- 在这个文件对每个tab对应的列表进行渲染 -->
 <template>
 	<view class="content">
-		<!--  :enable-back-to-top="currentIndex===tabIndex" 在微信小程序上可以多加这一句，因为默认是允许点击返回顶部的，但是这个页面有多个scroll-view，会全部返回顶部，所以需要控制是当前index才允许点击返回顶部 -->
 		<z-paging
 			ref="pagingObj"
 			v-model="dataList"
@@ -11,6 +10,33 @@
 			:empty-view-center="false"
 			min-delay="1000"
 		>
+			<template #top v-if="search">
+				<div class="blank30"></div>
+				<!-- 搜索框 -->
+				<view class="search-box">
+					<uni-search-bar
+						v-model="searchName"
+						placeholder="输入关键字搜索文案"
+						bgColor="#EEEEEE"
+						focus
+						@confirm="searchHandle"
+					/>
+				</view>
+
+				<view class="hot_name">
+					<view class="box1">热搜榜单</view>
+					<view class="box2">
+						<view
+							class="box2_item"
+							@tap="tapHotSearch(item)"
+							v-for="(item, index) in hotSearchList"
+							:key="index"
+						>
+							{{ item }}
+						</view>
+					</view>
+				</view>
+			</template>
 			<!-- 如果希望其他view跟着页面滚动，可以放在z-paging标签内 -->
 			<view class="container_item" v-for="(item, index) in dataList" :key="index">
 				<!-- 头像,时间 -->
@@ -34,29 +60,26 @@
 				</view>
 
 				<!-- 图片 -->
-				<view class="image_wrapper">
-					<image class="image" :src="item.mainPic" mode="aspectFill"></image>
+				<view class="image_wrapper" @tap="downPoster(item)">
+					<image class="image" :src="JSON.parse(item.icon).url" mode="aspectFit"></image>
 				</view>
 
 				<view class="btn">
-					<view
-						class="btn_item"
-						style="margin-right: 40rpx;"
-						@tap="setClipboardData(item.content)"
-					>
+					<view class="btn_item" style="margin-right: 40rpx;" @tap="copy(item)">
 						<uni-icons customPrefix="iconfont" type="icon-fuzhi" size="18"></uni-icons>
-						<text class="text">复制文案({{ item.views }})</text>
+						<text class="text">复制文案({{ item.views || 0 }})</text>
 					</view>
 
-					<view class="btn_item">
+					<view class="btn_item" @tap="downPoster(item)">
 						<uni-icons customPrefix="iconfont" type="icon-xiazai" size="18"></uni-icons>
-						<text class="text">一键保存图片</text>
+						<text class="text">制作海报</text>
 					</view>
 				</view>
 
 				<!-- 编辑 -->
 				<view
 					class="edit"
+					@tap="navigateTo(`/pages/sub2/AddWenAnList/AddWenAnList?id=${item.id}`)"
 					v-if="
 						(useUserMain.storeId == 1 || useUserMain.storeId == 11) &&
 							useUserMain.power != -1
@@ -72,7 +95,13 @@
 <script setup>
 import { ref, watch } from 'vue';
 import dayjs from 'dayjs';
-import { _storeCopyWriterGetinfo, _storeCopyWriterDel } from '@/aTemp/apis/wenan.js';
+import {
+	_storeCopyWriterGetinfo,
+	_storeCopyWriterDel,
+	_storeCopyWriterCopyInfo,
+	_storeCopyWriterGetStoreCopyWriter,
+	_storeCopyWriterGetHistory
+} from '@/aTemp/apis/wenan.js';
 import { navigateTo, showModal, setClipboardData } from '@/aTemp/utils/uniAppTools.js';
 
 // 全局登录信息
@@ -85,6 +114,9 @@ const firstLoaded = ref(false);
 const dataList = ref([]);
 // 插件对象
 const pagingObj = ref(null);
+
+// 搜索关键词
+const searchName = ref('');
 
 const props = defineProps({
 	tabListObj: {
@@ -100,6 +132,10 @@ const props = defineProps({
 	currentTabIndex: {
 		type: Number,
 		default: 0
+	},
+	search: {
+		type: Boolean,
+		default: false
 	}
 });
 
@@ -123,8 +159,8 @@ const queryList = (pageNo, pageSize) => {
 	const params = {
 		pageNum: pageNo,
 		pageSize: pageSize,
-		stoName: '',
-		classify: props.tabListObj[props.tabIndex].classify
+		stoName: searchName.value,
+		classify: props.tabListObj[props.tabIndex].id
 	};
 	_storeCopyWriterGetinfo(params)
 		.then(res => {
@@ -146,14 +182,72 @@ const Adel = (item, index) => {
 		}
 	});
 };
-
 // 复制
-const copy = text => {
-	setClipboardData(text);
+const copy = item => {
+	_storeCopyWriterCopyInfo({
+		userId: useUserMain.userid,
+		sceneId: item.id
+	}).then(res => {
+		setClipboardData(item.content);
+		item.views++;
+	});
+};
+// 选择海报
+import { _useStoreWenAn } from '@/aTemp/store/storeWenAn.js';
+const useStoreWenAn = _useStoreWenAn();
+
+// 去制作海报页面
+const downPoster = item => {
+	const { id, url } = JSON.parse(item.icon);
+	useStoreWenAn.$patch({ posterID: id, posterCover: url });
+	navigateTo('/pages/sub3/wenAnPosterInfo/wenAnPosterInfo');
+};
+
+// 搜索事件
+const searchHandle = () => {
+	pagingObj.value.reload(true);
+};
+
+const hotSearchList = ref([]);
+// 搜索历史记录
+const storeCopyWriterGetHistory = () => {
+	_storeCopyWriterGetHistory().then(res => {
+		hotSearchList.value = res.data;
+	});
+};
+if (props.search) {
+	storeCopyWriterGetHistory();
+}
+
+// 点击热搜榜单
+const tapHotSearch = item => {
+	searchName.value = item;
+	pagingObj.value.reload(true);
 };
 </script>
 
 <style scoped lang="scss">
+.hot_name {
+	padding: 20rpx;
+	margin: 20rpx;
+	margin-top: 0;
+	background: #fff;
+	.box1 {
+		color: #666;
+		font-size: 26rpx;
+		margin-bottom: 30rpx;
+	}
+	.box2 {
+		display: flex;
+		.box2_item {
+			background-color: #eee;
+			font-size: 22rpx;
+			color: #666;
+			padding: 10rpx 20rpx;
+			margin-right: 20rpx;
+		}
+	}
+}
 /* 注意:父节点需要固定高度，z-paging的height:100%才会生效 */
 .content {
 	height: 100%;
@@ -203,6 +297,19 @@ const copy = text => {
 		margin-top: 30rpx;
 		line-height: 1.8;
 	}
+
+	.image_wrapper {
+		width: 350rpx;
+		height: 623rpx;
+		margin-left: 120rpx;
+		margin-top: 30rpx;
+		border: 1px dotted #ddd;
+		.image {
+			width: 100%;
+			height: 100%;
+		}
+	}
+
 	.btn {
 		display: flex;
 		padding-left: 120rpx;
