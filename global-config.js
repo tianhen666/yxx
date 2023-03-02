@@ -2,10 +2,10 @@
  *  全局配置文件
  */
 export default {
-	// BASE_URL: process.env.NODE_ENV === 'development' ? 'https://yxxapi.lechiwl.com/api1' :
-	// 	'https://yxxapi.lechiwl.com/api1',
-	BASE_URL: process.env.NODE_ENV === 'development' ? 'http://192.168.5.108:8089/api1' :
+	BASE_URL: process.env.NODE_ENV === 'development' ? 'https://yxxapi.lechiwl.com/api1' :
 		'https://yxxapi.lechiwl.com/api1',
+	// BASE_URL: process.env.NODE_ENV === 'development' ? 'http://192.168.5.108:8089/api1' :
+	// 'https://yxxapi.lechiwl.com/api1',
 	debug: false, //是否是调试,调试输出console.log
 
 	// 路由相关begin====================================>

@@ -20,7 +20,7 @@
 						{{
 							dayjs(item.createDt).add(5, 'minute') - dayjs() > 0
 								? '待支付'
-								: '已过期'
+								: '已关闭'
 						}}
 					</view>
 					<view class="order_status style2" v-else-if="item.status === 2">待使用</view>
@@ -68,8 +68,8 @@
 				>
 					{{
 						dayjs(item.createDt).add(5, 'minute') - dayjs() > 0
-							? '待支付：剩余' + _getMinutes(item.createDt, 30) + '分钟'
-							: '订单已过期，请重新下单'
+							? '待支付：剩余' + _getMinutes(item.createDt, 5) + '分钟'
+							: '订单已关闭，请重新下单'
 					}}
 				</view>
 				<view

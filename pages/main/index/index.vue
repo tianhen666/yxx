@@ -199,11 +199,12 @@ onLoad(async options => {
 		Mscene = codeParamsObj['s'];
 		targetId = codeParamsObj['t'];
 	}
+	console.log(invitationCode, storeId, Mscene, targetId);
 	console.log(
-		'首页---' + '邀请人ID：' + invitationCode,
-		'店铺id：' + storeId,
-		'场景值：' + Mscene,
-		'目标ID：' + targetId
+		'首页---' + '邀请人ID：' + Number(invitationCode),
+		'店铺id：' + Number(storeId),
+		'场景值：' + Number(Mscene),
+		'目标ID：' + Number(targetId)
 	);
 
 	try {
@@ -221,14 +222,14 @@ onLoad(async options => {
 		const resData = await _wxLogin(
 			{
 				code: wxCode.code,
-				storeId: storeId || 0,
-				invitationCode: invitationCode || 0,
-				scene: Mscene || 0,
-				targetId: targetId || 0,
+				storeId: Number(storeId) || 0,
+				invitationCode: Number(invitationCode) || 0,
+				scene: Number(Mscene) || 0,
+				targetId: Number(targetId) || 0,
 				appId: appId
 			},
 			{
-				storeId: storeId || 0
+				storeId: Number(storeId) || 0
 			}
 		);
 		const { code, data, msg } = resData;
