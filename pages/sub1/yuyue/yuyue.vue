@@ -25,7 +25,12 @@
 
 			<!-- 就诊时间 -->
 			<uni-forms-item :label="rules.doctortime.label" name="doctortime">
-				<picker @change="bindPickerChange" :value="doctortimeIndex" :range="doctortimeArray" mode="multiSelector">
+				<picker
+					@change="bindPickerChange"
+					:value="doctortimeIndex"
+					:range="doctortimeArray"
+					mode="multiSelector"
+				>
 					<uni-easyinput
 						v-model="formData.doctortime"
 						:inputBorder="false"
@@ -49,7 +54,12 @@
 							@tap="formData.doctorproject = item.text"
 							:class="{ current: formData?.doctorproject === item.text }"
 						>
-							<image v-if="item.hot" class="hot" src="@/static/images/hot.png" mode="aspectFill"></image>
+							<image
+								v-if="item.hot"
+								class="hot"
+								src="@/static/images/hot.png"
+								mode="aspectFill"
+							></image>
 							<view class="text">{{ item.text }}</view>
 						</view>
 					</template>
@@ -64,7 +74,10 @@
 				</view>
 				<view class="doctorproject_content">
 					<view class="textarea" style="width: 100%;flex: none;margin-top: 30rpx;">
-						<fuck-textarea v-model="formData.remark" :placeholder="rules.remark.rules[0].errorMessage"></fuck-textarea>
+						<fuck-textarea
+							v-model="formData.remark"
+							:placeholder="rules.remark.rules[0].errorMessage"
+						></fuck-textarea>
 					</view>
 				</view>
 			</view>
@@ -73,26 +86,25 @@
 		<!-- 保存 -->
 		<m-btn-fix-bottom :loading="btnLoading" text="立即提交" @btnClick="saveClick" />
 	</view>
-	
 </template>
 
 <script setup>
-import { ref, computed, reactive, getCurrentInstance } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
-import { _outpatientAppointmentMenuSave } from '@/aTemp/apis/yuyue'
-import dayjs from 'dayjs'
-import '@/node_modules/dayjs/locale/zh-cn'
-dayjs.locale('zh-cn')
+import { ref, computed, reactive, getCurrentInstance } from 'vue';
+import { onLoad } from '@dcloudio/uni-app';
+import { _outpatientAppointmentMenuSave } from '@/aTemp/apis/yuyue';
+import dayjs from 'dayjs';
+import '@/node_modules/dayjs/locale/zh-cn';
+dayjs.locale('zh-cn');
 
 // 全局登录信息
-import { _useUserMain } from '@/aTemp/store/userMain.js'
-const useUserMain = _useUserMain()
+import { _useUserMain } from '@/aTemp/store/userMain.js';
+const useUserMain = _useUserMain();
 
 // 分享 (onShareAppMessage,onShare111Timeline) 不能删,必要 https://github.com/dcloudio/uni-app/issues/3097
-import useShare from '@/aTemp/mixins/useShare.js'
-const shareInfo = reactive({ title: '', path: '', imageUrl: '', query: '' })
+import useShare from '@/aTemp/mixins/useShare.js';
+const shareInfo = reactive({ title: '', path: '', imageUrl: '', query: '' });
 // 设置分享
-useShare(shareInfo)
+useShare(shareInfo);
 
 // 表单校验
 const rules = {
@@ -119,7 +131,7 @@ const rules = {
 		rules: [{ errorMessage: '请输入备注' }],
 		label: '备注'
 	}
-}
+};
 
 const doctorproject = [
 	{ text: '种植检查', hot: true },
@@ -144,61 +156,62 @@ const doctorproject = [
 	{ text: '乳牙拔除' },
 	{ text: '儿童补牙' },
 	{ text: '儿童矫正' }
-]
+];
 
 // 表单数据
-const formData = ref({})
+const formData = ref({});
 // 获取表单对象
-const formObj = ref(null)
-
+const formObj = ref(null);
 
 // 页面加载
 onLoad(async optios => {
 	// 等待onLaunch中放行后执行
-	const { proxy } = getCurrentInstance()
-	await proxy.$onLaunched
+	const { proxy } = getCurrentInstance();
+	await proxy.$onLaunched;
 
 	// 设置页面分享参数
-	shareInfo.title = computed(() => `${useUserMain.nickname} - 邀请您，填写预约信息`)
+	shareInfo.title = computed(() => `${useUserMain.nickname} - 邀请您，填写预约信息`);
 	// 分享图片
-	shareInfo.imageUrl = `https://imgs.lechiwl.com/store/tooth/invitbg.png`
+	shareInfo.imageUrl = `https://imgs.lechiwl.com/store/tooth/invitbg.png`;
 
 	// 分享到聊天框用到
 	shareInfo.path = computed(
 		() =>
-			`/pages/main/index/index?invitationCode=${useUserMain.userid}&storeId=${useUserMain.storeId}&Mscene=7&targetId=0`
-	)
+			`/pages/main/index/index?invitationCode=${useUserMain.userid}&storeId=${
+				useUserMain.storeId
+			}&Mscene=7&targetId=0`
+	);
 
 	// 设置填表人
-	formData.value.userid = computed(() => useUserMain.userid)
+	formData.value.userid = computed(() => useUserMain.userid);
 
 	// 判断24小时内是否提交过表单
-	const yuyue = uni.getStorageSync('yuyue')
+	const yuyue = uni.getStorageSync('yuyue');
 	if (Date.now() - (yuyue || 0) <= 24 * 60 * 60 * 1000) {
 		uni.showModal({
 			title: '提示',
 			content: '已经预约成功！',
-			showCancel:false,
-			success: function (res) {
+			showCancel: false,
+			success: function(res) {
 				if (res.confirm) {
-					navigateBack()
+					navigateBack();
 				} else if (res.cancel) {
 					console.log('用户点击取消');
 				}
 			}
 		});
 	}
-})
+});
 
 // 选择时间
-const doctortimeIndex = ref([0, 0])
-const time1 = dayjs().add(1, 'day')
-const time2 = dayjs().add(2, 'day')
-const time3 = dayjs().add(3, 'day')
-const time4 = dayjs().add(4, 'day')
-const time5 = dayjs().add(5, 'day')
-const time6 = dayjs().add(6, 'day')
-const time7 = dayjs().add(7, 'day')
+const doctortimeIndex = ref([0, 0]);
+const time1 = dayjs().add(1, 'day');
+const time2 = dayjs().add(2, 'day');
+const time3 = dayjs().add(3, 'day');
+const time4 = dayjs().add(4, 'day');
+const time5 = dayjs().add(5, 'day');
+const time6 = dayjs().add(6, 'day');
+const time7 = dayjs().add(7, 'day');
 const doctortimeArray = [
 	[
 		time1.format('YYYY-MM-DD [星期]dd'),
@@ -210,23 +223,26 @@ const doctortimeArray = [
 		time7.format('YYYY-MM-DD [星期]dd')
 	],
 	['上午', '下午']
-]
+];
 
 // 预约时间
 formData.value.doctortime = computed(
-	() => doctortimeArray[0][doctortimeIndex.value[0]] + ' ' + doctortimeArray[1][doctortimeIndex.value[1]]
-)
+	() =>
+		doctortimeArray[0][doctortimeIndex.value[0]] +
+		' ' +
+		doctortimeArray[1][doctortimeIndex.value[1]]
+);
 
 const bindPickerChange = e => {
-	doctortimeIndex.value = e.detail.value
-}
+	doctortimeIndex.value = e.detail.value;
+};
 
 /*
  * 请求后端保存接口
  */
-import { _debounce } from '@/aTemp/utils/tools.js'
-import { navigateBack, showToastText } from '@/aTemp/utils/uniAppTools'
-const btnLoading = ref(false)
+import { _debounce } from '@/aTemp/utils/tools.js';
+import { navigateBack, showToastText } from '@/aTemp/utils/uniAppTools';
+const btnLoading = ref(false);
 const saveClick = _debounce(
 	() => {
 		formObj.value
@@ -234,22 +250,25 @@ const saveClick = _debounce(
 			.then(formRes => {
 				// 保存信息接口
 				_outpatientAppointmentMenuSave(formData.value).then(res => {
-					btnLoading.value = false
-					// 返回上一级并且重载noload
-					navigateBack()
-					showToastText('提交成功~')
-					uni.setStorageSync('yuyue', Date.now() + 24 * 60 * 60 * 1000)
-				})
+					btnLoading.value = false;
+					showToastText('预约提交成功~');
+					uni.setStorageSync('yuyue', Date.now() + 24 * 60 * 60 * 1000);
+
+					setTimeout(() => {
+						// 返回上一级并且重载noload
+						navigateBack();
+					}, 2000);
+				});
 			})
 			.catch(err => {
-				btnLoading.value = false
-				console.log('表单错误信息：', err)
-				showToastText(err[0].errorMessage)
-			})
+				btnLoading.value = false;
+				console.log('表单错误信息：', err);
+				showToastText(err[0].errorMessage);
+			});
 	},
 	1000,
 	btnLoading
-)
+);
 </script>
 
 <style lang="scss" scoped>

@@ -66,7 +66,12 @@ const props = defineProps({
 });
 
 const chosePosterTap = item => {
-	useStoreWenAn.$patch({ isChosePoster: false, posterID: item.id, posterCover: item.posterurl });
+	const posterImg = JSON.parse(item.posterImg);
+	useStoreWenAn.$patch({
+		isChosePoster: false,
+		posterID: item.id,
+		posterCover: posterImg.background
+	});
 	const pages = getCurrentPages();
 	navigateBack(pages.length - 3);
 };

@@ -14,9 +14,17 @@ export function _outpatientAppointmentMenuSave(data) {
 
 
 // 预约列表
-export function _outpatientAppointmentMenuList(data) {
+export function _outpatientAppointmentMenuList(params) {
 	return http.get({
 		url: '/outpatient-appointment/menuList',
-		data
+		params
+	})
+}
+
+//标识已处理
+export function _outpatientAppointmentDispose(params) {
+	return http.post({
+		url: '/outpatient-appointment/dispose',
+		params
 	})
 }

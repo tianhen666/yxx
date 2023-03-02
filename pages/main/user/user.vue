@@ -13,11 +13,10 @@
 		ref="paging"
 		use-page-scroll
 		@query="storeGetinfo"
-		:loading-full-fixed="true"
 		hide-empty-view
 		:loading-more-enabled="false"
-		created-reload
 		min-delay="1000"
+		:auto="false"
 	>
 		<!-- z-ping头部固定 -->
 		<template #top>
@@ -49,7 +48,7 @@ import mHeader from './components/m-header/m-header.vue';
 import pUser from './components/p-user.vue';
 import sUser from './components/s-user.vue';
 import { onLoad, onShow } from '@dcloudio/uni-app';
-import { reactive, computed, ref, provide } from 'vue';
+import { reactive, computed, ref, provide, getCurrentInstance } from 'vue';
 import { _storeGetinfo } from '@/aTemp/apis/store.js';
 import { navigateTo, showModal } from '@/aTemp/utils/uniAppTools.js';
 
@@ -78,8 +77,17 @@ const loading = ref(true);
 const storeInfo = ref({});
 provide('storeInfo', storeInfo);
 
-onLoad(options => {});
-onShow(() => {
+onLoad(async options => {
+	// 等待onLaunch中放行后执行
+	const { proxy } = getCurrentInstance();
+	await proxy.$onLaunched;
+
+	paging.value.reload();
+});
+onShow(async () => {
+	// 等待onLaunch中放行后执行
+	const { proxy } = getCurrentInstance();
+	await proxy.$onLaunched;
 	if (!useUserMain.avatar || !useUserMain.nickname) {
 		showModal('请完善用户头像，和昵称').then(res => {
 			const { confirm } = res;

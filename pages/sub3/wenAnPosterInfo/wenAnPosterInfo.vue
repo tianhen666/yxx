@@ -69,9 +69,7 @@ const posterGetPostercontent = async () => {
 	// 获取邀请码
 	const wxWxqrCode = await _wxWxqrCode({
 		page: 'pages/main/index/index',
-		scene: `i=${useUserMain.userid}&sd=${useUserMain.storeId}&s=4&t=${
-			posterOtherData.value.id
-		}`,
+		scene: `i=${useUserMain.userid}&sd=${useUserMain.storeId}&s=4&t=${useStoreWenAn.posterID}`,
 		width: 430
 	});
 

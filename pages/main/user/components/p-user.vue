@@ -13,26 +13,29 @@
 </template>
 
 <script setup>
-import mFun from './m-fun/m-fun.vue'
-import mOption from './m-option/m-option.vue'
-import mProfit from './m-profit/m-profit.vue'
-import { reactive, ref } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
-import { _userPersonagedata } from '@/aTemp/apis/user.js'
+import mFun from './m-fun/m-fun.vue';
+import mOption from './m-option/m-option.vue';
+import mProfit from './m-profit/m-profit.vue';
+import { reactive, ref, onMounted, getCurrentInstance } from 'vue';
+import { _userPersonagedata } from '@/aTemp/apis/user.js';
 
 // 全局登录信息
-import { _useUserMain } from '@/aTemp/store/userMain.js'
-const useUserMain = _useUserMain()
+import { _useUserMain } from '@/aTemp/store/userMain.js';
+const useUserMain = _useUserMain();
 
 // 收益统计
-const statistics = ref({})
-onLoad(options => {
+const statistics = ref({});
+onMounted(async options => {
+	// 等待onLaunch中放行后执行
+	const { proxy } = getCurrentInstance();
+	await proxy.$onLaunched;
+
 	// 个人邀请数据统计
 	_userPersonagedata({ inviteUserId: useUserMain.userid }).then(res => {
-		const { msg, data, code } = res
-		statistics.value = data
-	})
-})
+		const { msg, data, code } = res;
+		statistics.value = data;
+	});
+});
 
 const myFunItems = {
 	title: '其他选项',
@@ -53,7 +56,7 @@ const myFunItems = {
 			path: '/pages/sub2/switchStore/switchStore'
 		}
 	]
-}
+};
 
 const myOrder = reactive({
 	title: '我的订单',
@@ -80,7 +83,7 @@ const myOrder = reactive({
 			path: '/pages/sub1/orderList/orderList?current=3'
 		}
 	]
-})
+});
 </script>
 
 <style lang="scss" scoped></style>

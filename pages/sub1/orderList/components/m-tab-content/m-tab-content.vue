@@ -15,9 +15,13 @@
 					<view
 						class="order_status"
 						v-if="item.status === 1"
-						:class="{ style1: dayjs(item.createDt).add(30, 'minute') - dayjs() > 0 }"
+						:class="{ style1: dayjs(item.createDt).add(5, 'minute') - dayjs() > 0 }"
 					>
-						{{ dayjs(item.createDt).add(30, 'minute') - dayjs() > 0 ? '待支付' : '已过期' }}
+						{{
+							dayjs(item.createDt).add(5, 'minute') - dayjs() > 0
+								? '待支付'
+								: '已过期'
+						}}
 					</view>
 					<view class="order_status style2" v-else-if="item.status === 2">待使用</view>
 					<view class="order_status  style3" v-else-if="item.status === 3">已完成</view>
@@ -29,7 +33,11 @@
 			<view class="container_item_box1">
 				<view class="container_item_box1_left">
 					<image
-						:src="item.productPic ? item.productPic.split(',')[0] : '/static/images/no_img.jpg'"
+						:src="
+							item.productPic
+								? item.productPic.split(',')[0]
+								: '/static/images/no_img.jpg'
+						"
 						mode="aspectFill"
 						class="goods_img"
 					></image>
@@ -56,17 +64,17 @@
 				<view
 					class="time"
 					v-if="item.status === 1"
-					:class="{ timeStyle1: dayjs(item.createDt).add(30, 'minute') - dayjs() > 0 }"
+					:class="{ timeStyle1: dayjs(item.createDt).add(5, 'minute') - dayjs() > 0 }"
 				>
 					{{
-						dayjs(item.createDt).add(30, 'minute') - dayjs() > 0
+						dayjs(item.createDt).add(5, 'minute') - dayjs() > 0
 							? '待支付：剩余' + _getMinutes(item.createDt, 30) + '分钟'
 							: '订单已过期，请重新下单'
 					}}
 				</view>
 				<view
 					class="item_btn style1"
-					v-if="item.status === 1 && dayjs(item.createDt).add(30, 'minute') - dayjs() > 0"
+					v-if="item.status === 1 && dayjs(item.createDt).add(5, 'minute') - dayjs() > 0"
 					@tap.stop.prevent="orderPayment(item)"
 				>
 					去付款
@@ -90,59 +98,58 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import dayjs from 'dayjs'
-import { _getMinutes, _debounce } from '@/aTemp/utils/tools.js'
-import { navigateTo, showToastText } from '@/aTemp/utils/uniAppTools.js'
-import { _orderPayment } from '@/aTemp/apis/order.js'
-import { _wxpayWxNotifys } from '@/aTemp/apis/store.js'
+import { ref } from 'vue';
+import dayjs from 'dayjs';
+import { _getMinutes, _debounce } from '@/aTemp/utils/tools.js';
+import { navigateTo, showToastText } from '@/aTemp/utils/uniAppTools.js';
+import { _orderPayment } from '@/aTemp/apis/order.js';
+import { _wxpayWxNotifys } from '@/aTemp/apis/store.js';
 const props = defineProps({
 	listData: {
 		type: Array,
 		required: true,
 		default() {
-			return []
+			return [];
 		}
 	}
-})
+});
 
 // 重新付款
 const orderPayment = _debounce(item => {
-	const orderNo = item.orderNo
+	const orderNo = item.orderNo;
 
 	_orderPayment({ orderNo: orderNo })
 		.then(res => {
 			// 获取唤醒支付必要条件
-			const { data } = res
-			const payInfo = JSON.parse(data)
+			const { data } = res;
+			const payInfo = JSON.parse(data);
 			// 唤醒支付
-			uni
-				.requestPayment({
-					timeStamp: payInfo.timeStamp,
-					nonceStr: payInfo.nonceStr,
-					package: payInfo.package,
-					signType: payInfo.signType,
-					paySign: payInfo.sign
-				})
+			uni.requestPayment({
+				timeStamp: payInfo.timeStamp,
+				nonceStr: payInfo.nonceStr,
+				package: payInfo.package,
+				signType: payInfo.signType,
+				paySign: payInfo.sign
+			})
 				.then(val => {
-					showToastText('支付成功~')
+					showToastText('支付成功~');
 
 					// 支付成功回调，并且分账 status: 2 //2表示已经支付完成，待使用
-					const myParameter = { orderNumExternal: orderNo, status: 2 }
+					const myParameter = { orderNumExternal: orderNo, status: 2 };
 					_wxpayWxNotifys(myParameter).then(resData => {
 						// 修改订单状态
-						item.status = 2
-					})
+						item.status = 2;
+					});
 				})
 				.catch(err => {
-					showToastText('取消支付~')
-				})
+					showToastText('取消支付~');
+				});
 		})
 		.catch(err => {
-			console.log(err)
-			showToastText('支付失败')
-		})
-}, 1000)
+			console.log(err);
+			showToastText('支付失败');
+		});
+}, 1000);
 </script>
 
 <style lang="scss" scoped>

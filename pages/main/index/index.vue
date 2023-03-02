@@ -223,8 +223,8 @@ onLoad(async options => {
 				code: wxCode.code,
 				storeId: storeId || 0,
 				invitationCode: invitationCode || 0,
-				scene: Mscene,
-				targetId,
+				scene: Mscene || 0,
+				targetId: targetId || 0,
 				appId: appId
 			},
 			{
