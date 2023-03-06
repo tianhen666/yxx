@@ -2,7 +2,9 @@
 	<m-page-loading v-if="loading"></m-page-loading>
 	<view class="container" v-else>
 		<!-- 背景 -->
-		<view class="pageBg"><image class="image" src="/static/images/bg.png" mode="aspectFill"></image></view>
+		<view class="pageBg">
+			<image class="image" src="/static/images/bg.png" mode="aspectFill"></image>
+		</view>
 		<!-- #ifndef H5 -->
 		<!-- 标题栏 -->
 		<uni-nav-bar
@@ -22,7 +24,11 @@
 			<view class="box1_flex">
 				<!-- 图文信息 -->
 				<image
-					:src="orderDetail.productPic ? orderDetail.productPic.split(',')[0] : '/static/images/no_img.jpg'"
+					:src="
+						orderDetail.productPic
+							? orderDetail.productPic.split(',')[0]
+							: '/static/images/no_img.jpg'
+					"
 					mode="aspectFill"
 					class="goods_img"
 				></image>
@@ -79,7 +85,10 @@
 				<view class="left" @tap="setClipboardData(orderDetail.payPrice)">订单金额</view>
 				<view class="right">￥{{ orderDetail.payPrice }}</view>
 			</view>
-			<view class="box2_item" @tap="setClipboardData(orderDetail.nickname || orderDetail.remarkname)">
+			<view
+				class="box2_item"
+				@tap="setClipboardData(orderDetail.nickname || orderDetail.remarkname)"
+			>
 				<view class="left">购买人</view>
 				<view class="right">{{ user.nickname || user.remarkname }}</view>
 			</view>
@@ -93,12 +102,18 @@
 			</view>
 			<view class="box2_item">
 				<view class="left">下单时间</view>
-				<view class="right">{{ dayjs(orderDetail.createDt).format('YYYY-MM-DD HH:mm:ss') }}</view>
+				<view class="right">
+					{{ dayjs(orderDetail.createDt).format('YYYY-MM-DD HH:mm:ss') }}
+				</view>
 			</view>
 			<view class="box2_item">
 				<view class="left">支付时间</view>
 				<view class="right">
-					{{ orderDetail.payDt ? dayjs(orderDetail.payDt).format('YYYY-MM-DD HH:mm:ss') : '未支付' }}
+					{{
+						orderDetail.payDt
+							? dayjs(orderDetail.payDt).format('YYYY-MM-DD HH:mm:ss')
+							: '未支付'
+					}}
 				</view>
 			</view>
 		</view>
@@ -107,13 +122,22 @@
 		<view class="blank40"></view>
 
 		<!-- 剩余支付时间 -->
-		<view class="syzfsj" v-if="dayjs(orderDetail.createDt).add(30, 'minute') - dayjs() > 0 && orderDetail.status === 1">
+		<view
+			class="syzfsj"
+			v-if="
+				dayjs(orderDetail.createDt).add(5, 'minute') - dayjs() > 0 &&
+					orderDetail.status === 1
+			"
+		>
 			<view class="left">剩余支付时间</view>
 			<view class="right">{{ `${djs}` }}</view>
 		</view>
 		<!-- 底部按钮 -->
 		<m-btn-fix-bottom
-			v-if="dayjs(orderDetail.createDt).add(30, 'minute') - dayjs() > 0 && orderDetail.status === 1"
+			v-if="
+				dayjs(orderDetail.createDt).add(5, 'minute') - dayjs() > 0 &&
+					orderDetail.status === 1
+			"
 			:loading="btnLoading"
 			:text="'立即支付'"
 			@btnClick="orderPayment(orderDetail)"
@@ -122,106 +146,105 @@
 </template>
 
 <script setup>
-import dayjs from 'dayjs'
-import { showToastText, setClipboardData } from '@/aTemp/utils/uniAppTools.js'
-import { _debounce, _countDown } from '@/aTemp/utils/tools.js'
-import { _orderGetinfo } from '@/aTemp/apis/order.js'
-import { _wxpayWxNotifys } from '@/aTemp/apis/store.js'
-import { _orderPayment } from '@/aTemp/apis/order.js'
-import { navigateBack } from '@/aTemp/utils/uniAppTools.js'
-import { onLoad, onUnload } from '@dcloudio/uni-app'
-import { ref } from 'vue'
-import uQrcode from '../components/Sansnn-uQRCode/components/u-qrcode/u-qrcode.vue'
+import dayjs from 'dayjs';
+import { showToastText, setClipboardData } from '@/aTemp/utils/uniAppTools.js';
+import { _debounce, _countDown } from '@/aTemp/utils/tools.js';
+import { _orderGetinfo } from '@/aTemp/apis/order.js';
+import { _wxpayWxNotifys } from '@/aTemp/apis/store.js';
+import { _orderPayment } from '@/aTemp/apis/order.js';
+import { navigateBack } from '@/aTemp/utils/uniAppTools.js';
+import { onLoad, onUnload } from '@dcloudio/uni-app';
+import { ref } from 'vue';
+import uQrcode from '../components/Sansnn-uQRCode/components/u-qrcode/u-qrcode.vue';
 
 // 订单编号
-const orderNo = ref('')
+const orderNo = ref('');
 // 加载中
-const loading = ref(true)
+const loading = ref(true);
 // 订单详情
-const orderDetail = ref({})
+const orderDetail = ref({});
 // 邀请人
-const userInvite = ref({})
+const userInvite = ref({});
 // 下单用户
-const user = ref({})
+const user = ref({});
 // 页面加载
 onLoad(options => {
 	// 在传递的参数中获取订单编号
-	orderNo.value = options.orderNo || ''
+	orderNo.value = options.orderNo || '';
 
 	// 获取订单详情信息
 	_orderGetinfo({
 		orderNo: orderNo.value
 	}).then(res => {
-		loading.value = false
-		const { data, code, msg } = res
-		orderDetail.value = data.orderDetail
-		user.value = data.user
-		userInvite.value = data.userInvite
+		loading.value = false;
+		const { data, code, msg } = res;
+		orderDetail.value = data.orderDetail;
+		user.value = data.user;
+		userInvite.value = data.userInvite;
 
-		const timeAdd30 = dayjs(orderDetail['createDt']).add(30, 'minute')
-		djsFun(timeAdd30)
-	})
-})
+		const timeAdd5 = dayjs(orderDetail['createDt']).add(5, 'minute');
+		djsFun(timeAdd5);
+	});
+});
 
 // 倒计时
-const djs = ref('')
-let djsIndex = 0
+const djs = ref('');
+let djsIndex = 0;
 const djsFun = time => {
 	djsIndex = setInterval(() => {
 		// console.log("定时器执行")
-		djs.value = _countDown(time, djsIndex)
-	}, 50)
-}
+		djs.value = _countDown(time, djsIndex);
+	}, 50);
+};
 //页面卸载执行
 onUnload(() => {
 	// console.log('页面卸载')
 	// 移除定时器
-	clearInterval(djsIndex)
-})
+	clearInterval(djsIndex);
+});
 // 重新付款
-const btnLoading = ref(false)
+const btnLoading = ref(false);
 const orderPayment = _debounce(
 	item => {
-		const orderNo = item.orderNo
+		const orderNo = item.orderNo;
 
 		_orderPayment({ orderNo: orderNo })
 			.then(res => {
-				btnLoading.value = false
+				btnLoading.value = false;
 				// 获取唤醒支付必要条件
-				const { data } = res
-				const payInfo = JSON.parse(data)
+				const { data } = res;
+				const payInfo = JSON.parse(data);
 				// 唤醒支付
-				uni
-					.requestPayment({
-						timeStamp: payInfo.timeStamp,
-						nonceStr: payInfo.nonceStr,
-						package: payInfo.package,
-						signType: payInfo.signType,
-						paySign: payInfo.sign
-					})
+				uni.requestPayment({
+					timeStamp: payInfo.timeStamp,
+					nonceStr: payInfo.nonceStr,
+					package: payInfo.package,
+					signType: payInfo.signType,
+					paySign: payInfo.sign
+				})
 					.then(val => {
-						showToastText('支付成功~')
+						showToastText('支付成功~');
 
 						// 支付成功回调，并且分账 status: 2 //2表示已经支付完成，待使用
-						const myParameter = { orderNumExternal: orderNo, status: 2 }
+						const myParameter = { orderNumExternal: orderNo, status: 2 };
 						_wxpayWxNotifys(myParameter).then(resData => {
 							// 修改订单状态
-							item.status = 2
-						})
+							item.status = 2;
+						});
 					})
 					.catch(err => {
-						btnLoading.value = false
-						showToastText('取消支付~')
-					})
+						btnLoading.value = false;
+						showToastText('取消支付~');
+					});
 			})
 			.catch(err => {
-				console.log(err)
-				showToastText('支付失败')
-			})
+				console.log(err);
+				showToastText('支付失败');
+			});
 	},
 	1000,
 	btnLoading
-)
+);
 </script>
 
 <style lang="scss" scoped>
@@ -230,7 +253,7 @@ const orderPayment = _debounce(
 	z-index: 78;
 	bottom: 192rpx;
 	font-size: 26rpx;
-	right: 30rpx;
+	right: 29rpx;
 	color: #ff4b4b;
 	@include mFlex;
 	.left {
