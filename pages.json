@@ -420,6 +420,27 @@
 					"enablePullDownRefresh": false
 				}
 
+			}, {
+				"path": "dataDetails/dataDetails",
+				"style": {
+					"navigationBarTitleText": "数据详情",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "dataDetailsItem/dataDetailsItem",
+				"style": {
+					"navigationBarTitleText": "数据详情",
+					"enablePullDownRefresh": false
+				}
+
+			}, {
+				"path": "dataDetailsItem2/dataDetailsItem2",
+				"style": {
+					"navigationBarTitleText": "数据详情",
+					"enablePullDownRefresh": false
+				}
+
 			}]
 		},
 		{

@@ -24,6 +24,7 @@ import {
 	getImageInfo,
 	navigateBack
 } from '@/aTemp/utils/uniAppTools.js';
+import { _browseInfo, _shareInfo } from '@/aTemp/apis/operate.js';
 import { _wxWxqrCode } from '@/aTemp/apis/login.js';
 import { _posterGetPostercontent, _posterDraftsOne } from '@/aTemp/apis/poster.js';
 // base64转图片路径
@@ -54,6 +55,9 @@ onLoad(options => {
 	drafts.value = parseInt(options.drafts) || 0;
 	// 海报ID
 	posterId.value = parseInt(options.id) || 0;
+
+	// 浏览数据埋点  1/文案宣发 2/活动 3/商品 4/海报 /5科普文章
+	_browseInfo({ scene: 4, sceneId: posterId.value });
 
 	// 获取海报数据
 	posterGetPostercontent();
@@ -145,6 +149,12 @@ const createImgOk = e => {
 	console.log(e.detail.path);
 
 	if (firstComplete.value) {
+		// 活动生成海报数据埋点
+		_shareInfo({
+			scene: 4,
+			sceneId: posterId.value,
+			type: 3
+		});
 		saveImageToPhotosAlbum(e.detail.path).then(() => {
 			uni.hideLoading();
 			previewImage([e.detail.path]);

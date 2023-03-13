@@ -77,6 +77,9 @@
 			<view class="blank40"></view>
 		</view>
 	</z-paging>
+
+	<!-- 在线客服 -->
+	<m-online-service style="display: none;"></m-online-service>
 </template>
 
 <script setup>
@@ -262,7 +265,7 @@ onLoad(async options => {
 
 	// 开始加载
 	loading.value = true;
-	// 解决onLoad不能通过ref获取到组件对象
+	// 解决onLoad不能通过 vue3中ref获取对象
 	proxy.$refs.paging.reload();
 
 	/*
@@ -274,7 +277,7 @@ onLoad(async options => {
 	 * targetId 场景来源ID
 	 */
 
-	Mscene = parseInt(Mscene);
+	Mscene = Number(Mscene);
 	const parmsStr = `invitationCode=${invitationCode}&storeId=${storeId}&Mscene=${Mscene}&targetId=${targetId}`;
 	if (Mscene === 0) {
 		// 跳转到目标--首页--页面

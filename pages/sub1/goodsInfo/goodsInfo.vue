@@ -101,6 +101,7 @@ import {
 	getImageInfo
 } from '@/aTemp/utils/uniAppTools.js';
 import { _wxWxqrCode } from '@/aTemp/apis/login.js';
+import { _browseInfo, _shareInfo } from '@/aTemp/apis/operate.js';
 
 // 全局登录信息
 import { _useUserMain } from '@/aTemp/store/userMain.js';
@@ -129,6 +130,9 @@ onLoad(async options => {
 	// 获取商品ID
 	let { targetId } = options;
 	dataId.value = parseInt(targetId) || 0;
+
+	// 浏览数据埋点  1/文案宣发 2/活动 3/商品 4/海报 /5科普文章
+	_browseInfo({ scene: 3, sceneId: dataId.value });
 
 	// 发起商品详情请求
 	_storeproductGetinfo({ id: dataId.value }).then(res => {
@@ -170,6 +174,10 @@ onLoad(async options => {
 					useUserMain.storeId
 				}&Mscene=2&targetId=${dataObj.value.id}`
 		);
+
+		// 设置场景
+		shareInfo.scene = 3;
+		shareInfo.sceneId = dataObj.value.id;
 	});
 
 	// 弹出登录组件
@@ -443,6 +451,12 @@ const tapCreateImg = async () => {
 
 // 图片生成完成
 const createImgOk = e => {
+	// 活动生成海报数据埋点
+	_shareInfo({
+		scene: 3,
+		sceneId: dataObj.value.id,
+		type: 3
+	});
 	saveImageToPhotosAlbum(e.detail.path).then(() => {
 		uni.hideLoading();
 		// 分享图片

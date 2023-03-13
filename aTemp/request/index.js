@@ -35,7 +35,8 @@ instance.interceptors.request.use(
 		const userMain = uni.getStorageSync("userMain")
 		const {
 			storeId,
-			token
+			token,
+			userid
 		} = userMain
 
 		/* 
@@ -43,8 +44,10 @@ instance.interceptors.request.use(
 		 */
 		// console.log(config)
 		if (storeId && config.url != "/wx/login" && config.url != "/user/changeUserId") {
-			config.data.storeId = parseInt(storeId)
-			config.params.storeId = parseInt(storeId)
+			config.data.userId = Number(userid) || 0
+			config.params.userId = Number(userid) || 0
+			config.data.storeId = Number(storeId) || 0
+			config.params.storeId = Number(storeId) || 0
 		}
 
 		// 设置token

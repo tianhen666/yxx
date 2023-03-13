@@ -124,6 +124,7 @@ import {
 	_enrollformEnpayment,
 	_enrollformWxNotifys
 } from '@/aTemp/apis/activity.js';
+import { _browseInfo, _shareInfo } from '@/aTemp/apis/operate.js';
 import { _debounce, _countDown } from '@/aTemp/utils/tools.js';
 import { _wxWxqrCode } from '@/aTemp/apis/login.js';
 // base64转图片路径
@@ -150,7 +151,14 @@ const mLogin = ref(null);
 
 // 分享 (onShareAppMessage,onShareTimeline) 不能删,必要 https://github.com/dcloudio/uni-app/issues/3097
 import useShare from '@/aTemp/mixins/useShare.js';
-const shareInfo = reactive({ title: '', path: '', imageUrl: '', query: '' });
+const shareInfo = reactive({
+	title: '',
+	path: '',
+	imageUrl: '',
+	query: '',
+	scene: 2,
+	sceneId: 0
+});
 // 设置分享
 useShare(shareInfo);
 
@@ -176,6 +184,9 @@ onLoad(async options => {
 	if (!useUserMain.isLogin) {
 		mLogin.value.popupfun();
 	}
+
+	// 浏览数据埋点  1/文案宣发 2/活动 3/商品 4/海报 /5科普文章
+	_browseInfo({ scene: 2, sceneId: dataId.value });
 });
 // 获取活动详情
 const enrollformGetinfo = () => {
@@ -227,6 +238,10 @@ const enrollformGetinfo = () => {
 					useUserMain.storeId
 				}&Mscene=1&targetId=${dataObj.value.id}`
 		);
+
+		// 设置场景
+		shareInfo.scene = 2;
+		shareInfo.sceneId = dataObj.value.id;
 	});
 };
 
@@ -397,7 +412,6 @@ const tapCreateImg = async () => {
 		mLogin.value.popupfun();
 		return;
 	}
-
 	showLoading('海报数据加载中');
 
 	// 获取小程序码
@@ -638,6 +652,12 @@ const tapCreateImg = async () => {
 };
 // 图片生成完成
 const createImgOk = e => {
+	// 活动生成海报数据埋点
+	_shareInfo({
+		scene: 2,
+		sceneId: dataObj.value.id,
+		type: 3
+	});
 	saveImageToPhotosAlbum(e.detail.path).then(res => {
 		uni.hideLoading();
 		// 分享图片

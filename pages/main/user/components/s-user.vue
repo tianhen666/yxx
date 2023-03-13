@@ -166,6 +166,12 @@ const module2 = {
 			name: '预约列表',
 			path: '/pages/sub1/yuyueList/yuyueList',
 			power: [1, 2]
+		},
+		{
+			imgUrl: '/static/images/u-huiyuan.png',
+			name: '数据详情',
+			path: '/pages/sub2/dataDetails/dataDetails',
+			power: [1, 2]
 		}
 	]
 };

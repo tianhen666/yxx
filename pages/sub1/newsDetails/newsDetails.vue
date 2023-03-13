@@ -33,9 +33,9 @@
 
 <script setup>
 import { onLoad } from '@dcloudio/uni-app';
-import { ref, computed, reactive } from 'vue';
+import { ref, computed, reactive, getCurrentInstance } from 'vue';
 import { _freePublishGetInfo } from '@/aTemp/apis/wx.js';
-
+import { _browseInfo, _shareInfo } from '@/aTemp/apis/operate.js';
 // 分享 (onShareAppMessage,onShareTimeline) 不能删,必要 https://github.com/dcloudio/uni-app/issues/3097
 import useShare from '@/aTemp/mixins/useShare.js';
 const shareInfo = reactive({
@@ -65,8 +65,15 @@ const tagStyle = {
 	td: 'border-right: 1px solid #dfe2e5; border-bottom: 1px solid #dfe2e5;',
 	li: 'margin: 5px 0;'
 };
-onLoad(options => {
+onLoad(async options => {
+	const { proxy } = getCurrentInstance();
+	// 等待onLaunch中放行后执行
+	await proxy.$onLaunched;
+
 	articleId.value = decodeURIComponent(options.targetId || '');
+
+	// 浏览数据埋点  1/文案宣发 2/活动 3/商品 4/海报 /5科普文章
+	_browseInfo({ scene: 5, sceneId: articleId.value });
 
 	_freePublishGetInfo({
 		freeId: articleId.value
@@ -94,11 +101,15 @@ onLoad(options => {
 				}&Mscene=8&targetId=${articleObj.value.id}`
 		);
 
-		// 弹出登录组件
-		if (!useUserMain.isLogin) {
-			mLogin.value.popupfun();
-		}
+		// 设置场景
+		shareInfo.scene = 5;
+		shareInfo.sceneId = articleObj.value.id;
 	});
+
+	// 弹出登录组件
+	if (!useUserMain.isLogin) {
+		mLogin.value.popupfun();
+	}
 });
 
 // 富文本渲染完成

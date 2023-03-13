@@ -41,7 +41,8 @@ onLaunch(async options => {
 	 * invitationCode 邀请人id
 	 * storeId 店铺ID
 	 * Mscene 0直接邀请 1活动 2商品 3服务 4海报 5员工邀请 6店铺入驻邀请 7预约分享 8文章邀请
-	 * const Mscene = ["直接邀请","活动邀请","商品邀请","服务邀请","海报邀请","员工邀请","店铺入驻邀请","预约分享","文章邀请"]
+	 * const Mscene = ["直接邀请",
+	 * "活动邀请","商品邀请","服务邀请","海报邀请","员工邀请","店铺入驻邀请","预约分享","文章邀请"]
 	 * targetId 场景来源ID
 	 */
 	// console.log(options.query)
@@ -79,68 +80,66 @@ onLaunch(async options => {
 		'目标ID：' + Number(targetId)
 	);
 
-	// 从朋友圈打开小程序,预览页面
-	if (options.scene == 1154) {
-		useUserMain.$patch({ storeId: storeId });
-		// 放行同步方法
-		proxy.$isResolve();
-	} else if (options.path != 'pages/main/index/index') {
-		// 直接打开页面 别的页面
+	// 设置全局变量中的值
+	useUserMain.$patch({
+		storeId: Number(storeId) || 0
+	});
 
-		// 获取登录的code
-		let wxCode = '';
-		wxCode = await uni.login();
+	try {
+		if (options.path != 'pages/main/index/index') {
+			// 直接打开页面 别的页面
 
-		// 获取AppID 最低基础库版本2.2.2
-		const accountInfo = uni.getAccountInfoSync();
-		const extConfig = uni.getExtConfigSync ? uni.getExtConfigSync() : {};
-		// console.log(accountInfo)
-		// console.log(extConfig)
-		const appId = extConfig.appId || accountInfo.miniProgram.appId;
-		console.log('appId', appId);
+			// 获取登录的code
+			let wxCode = '';
+			wxCode = await uni.login();
 
-		// 调用登录接口
-		const resData = await _wxLogin(
-			{
-				code: wxCode.code,
-				storeId: Number(storeId) || 0,
-				invitationCode: Number(invitationCode) || 0,
-				scene: Number(Mscene) || 0,
-				targetId: Number(targetId) || 0,
-				appId: appId
-			},
-			{
-				storeId: Number(storeId) || 0
-			}
-		);
-		const { code, data, msg } = resData;
-		const { power, token, user, store } = data;
+			// 获取AppID 最低基础库版本2.2.2
+			const accountInfo = uni.getAccountInfoSync();
+			// 获取小程序自定义的配置ext信息
+			const extConfig = uni.getExtConfigSync ? uni.getExtConfigSync() : {};
+			// 获取当前小程序的APPID
+			const appId = extConfig.appId || accountInfo.miniProgram.appId;
+			console.log('appId', appId);
 
-		// 获取到数据后赋值给全局变量
-		useUserMain.$patch({
-			openId: user.openid,
-			unionId: user.unionid,
-			token: token,
-			mobile: user.mobile,
-			power: power,
-			avatar: user.avatar,
-			nickname: user.nickname,
-			remarkname: user.remarkname,
-			userid: user.id,
-			storeId: user.storeId,
-			// headPortrait: store.headPortrait  // 登陆授权组件是否需要头像昵称，0，需要 1，不需要
-			headPortrait: 1
-		});
+			// 调用登录接口
+			const resData = await _wxLogin(
+				{
+					code: wxCode.code,
+					storeId: Number(storeId) || 0,
+					invitationCode: Number(invitationCode) || 0,
+					scene: Number(Mscene) || 0,
+					targetId: Number(targetId) || 0,
+					appId: appId
+				},
+				{
+					storeId: Number(storeId) || 0
+				}
+			);
+			const { code, data, msg } = resData;
+			const { power, token, user, store } = data;
 
+			// 获取到数据后赋值给全局变量
+			useUserMain.$patch({
+				openId: user.openid,
+				unionId: user.unionid,
+				token: token,
+				mobile: user.mobile,
+				power: power,
+				avatar: user.avatar,
+				nickname: user.nickname,
+				remarkname: user.remarkname,
+				userid: user.id,
+				storeId: user.storeId,
+				// headPortrait: store.headPortrait  // 登陆授权组件是否需要头像昵称，0，需要 1，不需要
+				headPortrait: 1
+			});
+		}
+	} catch (e) {
+		console.log(e);
+	} finally {
 		// 路由拦截
 		// router(options)
-
-		// 放行同步方法
-		proxy.$isResolve();
-	} else {
-		// 路由拦截
-		// router(options)
-
+		console.log('ddddddddd');
 		// 放行同步方法
 		proxy.$isResolve();
 	}
