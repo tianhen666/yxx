@@ -11,22 +11,30 @@
 		>
 			<view class="item" v-for="(item, index) in dataList" :key="index">
 				<view class="touxiang">
-					<image class="image" :src="item.avatar || '/static/images/default_avatar.png'" mode="aspectFill"></image>
+					<image
+						class="image"
+						:src="item.avatar || 'https://imgs.lechiwl.com/fileyxx/imgs/thIcon.png'"
+						mode="aspectFill"
+					></image>
 				</view>
 				<view class="item_right">
 					<view class="left">
 						<view class="name">
-							<text>{{ item.nickname }}</text>
+							<text>{{ item.nickname || '微信用户' }}</text>
 							<text class="text2">{{ item.mobile }}</text>
 						</view>
-						<view class="source">
-							<text>{{ item.enrollId === 1 ? '活动' : '商品' }}</text>
-							<text class="text2">【{{ item.productName }}】</text>
+						<view class="source" style="margin-top: 8px;">
+							<text>订单来源: {{ item.enrollId === 1 ? '活动' : '商品' }}</text>
+						</view>
+						<view class="time">
+							支付时间: {{ dayjs(item.payDt).format('YYYY-M-D HH:mm:ss') }}
+						</view>
+						<view class="source" style="margin-top: 2px;">
+							<text class="text2">{{ item.productName }}</text>
 						</view>
 					</view>
 					<view class="right">
 						<view class="money">+{{ item.payPrice }}</view>
-						<view class="time">{{ dayjs(item.payDt).format('YYYY-M-D HH:mm:ss') }}</view>
 					</view>
 				</view>
 			</view>
@@ -35,29 +43,29 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
-import { _enrollformEarningsport } from '@/aTemp/apis/store.js'
-import dayjs from 'dayjs'
+import { ref } from 'vue';
+import { onLoad } from '@dcloudio/uni-app';
+import { _enrollformEarningsport } from '@/aTemp/apis/store.js';
+import dayjs from 'dayjs';
 // 数据列表
-const dataList = ref([])
+const dataList = ref([]);
 // 插件对象
-const paging = ref(null)
+const paging = ref(null);
 
 // 后台获取数据
 const queryList = (pageNo, pageSize) => {
 	const params = {
 		pageNum: pageNo,
 		pageSize: pageSize
-	}
+	};
 	_enrollformEarningsport(params)
 		.then(res => {
-			paging.value.complete(res.data.userlist)
+			paging.value.complete(res.data.userlist);
 		})
 		.catch(res => {
-			paging.value.complete(false)
-		})
-}
+			paging.value.complete(false);
+		});
+};
 </script>
 
 <style lang="scss" scoped>
@@ -96,7 +104,7 @@ const queryList = (pageNo, pageSize) => {
 		border-bottom: 1px solid #eee;
 		padding-bottom: 32rpx;
 		margin-left: 32rpx;
-		:last-of-type{
+		:last-of-type {
 			border: none;
 		}
 		> .left {
@@ -112,23 +120,25 @@ const queryList = (pageNo, pageSize) => {
 			}
 			.source {
 				color: #aaa;
-				font-size: 26rpx;
+				font-size: 24rpx;
 				margin-top: 10rpx;
 				.text2 {
+					line-height: 1.8;
 				}
+			}
+			.time {
+				font-size: 24rpx;
+				color: #aaa;
+				margin-top: 14rpx;
 			}
 		}
 		> .right {
 			text-align: right;
+			flex: none;
 			.money {
 				font-weight: bold;
 				color: $sub-color;
 				font-size: 32rpx;
-			}
-			.time {
-				font-size: 26rpx;
-				color: #aaa;
-				margin-top: 32rpx;
 			}
 		}
 	}
