@@ -91,6 +91,9 @@
 			</view>
 		</view>
 
+		<!-- 更多信息 -->
+		<m-info-a :activitId="dataId"></m-info-a>
+
 		<!-- 技术支持 -->
 		<m-technical-support></m-technical-support>
 	</view>
@@ -117,6 +120,7 @@
 </template>
 
 <script setup>
+import mInfoA from './components/m-info-a/m-info-a.vue';
 import { ref, reactive, computed, getCurrentInstance, watch } from 'vue';
 import { onLoad, onUnload, onPageScroll } from '@dcloudio/uni-app';
 import {
@@ -533,7 +537,7 @@ const tapCreateImg = async () => {
 					type: 'inlineText',
 					textList: [
 						{
-							text: useUserMain.nickname,
+							text: useUserMain.nickname || '微信用户',
 							css: {
 								fontSize: `${h_1_2_fz}px`,
 								color: '#333',

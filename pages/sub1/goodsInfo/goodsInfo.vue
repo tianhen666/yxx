@@ -331,7 +331,7 @@ const tapCreateImg = async () => {
 					type: 'inlineText',
 					textList: [
 						{
-							text: useUserMain.nickname,
+							text: useUserMain.nickname || '微信用户',
 							css: {
 								fontSize: `${h_1_2_fz}px`,
 								color: '#333',

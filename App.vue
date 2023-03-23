@@ -139,7 +139,6 @@ onLaunch(async options => {
 	} finally {
 		// 路由拦截
 		// router(options)
-		console.log('ddddddddd');
 		// 放行同步方法
 		proxy.$isResolve();
 	}
