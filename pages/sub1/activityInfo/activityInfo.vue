@@ -662,6 +662,7 @@ const createImgOk = e => {
 		sceneId: dataObj.value.id,
 		type: 3
 	});
+	console.log(e.detail.path);
 	saveImageToPhotosAlbum(e.detail.path).then(res => {
 		uni.hideLoading();
 		// 分享图片
@@ -675,8 +676,6 @@ const createImgOk = e => {
 				console.log(err);
 			});
 	});
-
-	console.log(e.detail.path);
 };
 // 图片生成失败
 const imgErr = e => {

@@ -23,13 +23,13 @@
 							<text>{{ item.nickname || '微信用户' }}</text>
 							<text class="text2">{{ item.mobile }}</text>
 						</view>
-						<view class="source" style="margin-top: 8px;">
+						<view class="source" style="margin-top: 16rpx;">
 							<text>订单来源: {{ item.enrollId === 1 ? '活动' : '商品' }}</text>
 						</view>
 						<view class="time">
 							支付时间: {{ dayjs(item.payDt).format('YYYY-M-D HH:mm:ss') }}
 						</view>
-						<view class="source" style="margin-top: 2px;">
+						<view class="source" style="margin-top: 10rpx;">
 							<text class="text2">{{ item.productName }}</text>
 						</view>
 					</view>
@@ -129,7 +129,7 @@ const queryList = (pageNo, pageSize) => {
 			.time {
 				font-size: 24rpx;
 				color: #aaa;
-				margin-top: 14rpx;
+				margin-top: 16rpx;
 			}
 		}
 		> .right {

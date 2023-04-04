@@ -430,7 +430,7 @@ const tapCreateImg = async () => {
 							css: { fontSize: `${h_5_2_fz}px`, color: '#000' }
 						},
 						{
-							text: `${storeInfo.address}${storeInfo.addressDetail}`,
+							text: `${storeInfo.address}  ${storeInfo.addressDetail}`,
 							css: {
 								fontSize: `${h_5_2_fz}px`,
 								color: '#666',
@@ -470,8 +470,6 @@ const createImgOk = e => {
 				console.log(err);
 			});
 	});
-
-	console.log(e.detail.path);
 };
 // 图片生成失败
 const imgErr = e => {
