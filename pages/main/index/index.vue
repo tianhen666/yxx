@@ -266,7 +266,8 @@ onLoad(async options => {
 	// 开始加载
 	loading.value = true;
 	// 解决onLoad不能通过 vue3中ref获取对象
-	proxy.$refs.paging.reload();
+	// proxy.$refs.paging.reload();
+	paging.value.reload();
 
 	/*
 	 * 获取进入小程序参数

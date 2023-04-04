@@ -592,6 +592,7 @@ const tapCreateImg = async () => {
 						width: `${h_3_2_width}px`,
 						fontSize: `${h_3_2_fz}px`,
 						lineHeight: `${h_3_2_height}px`,
+						maxLines: 1,
 						color: '#333'
 					}
 				},
@@ -647,7 +648,8 @@ const tapCreateImg = async () => {
 					css: {
 						top: `${h_5_2_top}px`,
 						left: `${h_5_2_left}px`,
-						width: `${h_5_2_width}px`
+						width: `${h_5_2_width}px`,
+						maxLines: 2
 					}
 				}
 			]
