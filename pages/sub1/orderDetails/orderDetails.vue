@@ -182,7 +182,7 @@ onLoad(options => {
 		user.value = data.user;
 		userInvite.value = data.userInvite;
 
-		const timeAdd5 = dayjs(orderDetail['createDt']).add(5, 'minute');
+		const timeAdd5 = dayjs(orderDetail.value['createDt']).add(5, 'minute');
 		djsFun(timeAdd5);
 	});
 });
@@ -239,6 +239,7 @@ const orderPayment = _debounce(
 			})
 			.catch(err => {
 				console.log(err);
+				btnLoading.value = false;
 				showToastText('支付失败');
 			});
 	},

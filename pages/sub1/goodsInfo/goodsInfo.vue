@@ -132,7 +132,7 @@ onLoad(async options => {
 	dataId.value = parseInt(targetId) || 0;
 
 	// 浏览数据埋点  1/文案宣发 2/活动 3/商品 4/海报 /5科普文章
-	_browseInfo({ scene: 3, sceneId: dataId.value });
+	// _browseInfo({ scene: 3, sceneId: dataId.value });
 
 	// 发起商品详情请求
 	_storeproductGetinfo({ id: dataId.value }).then(res => {
@@ -248,7 +248,7 @@ const tapCreateImg = async () => {
 			]
 		};
 	} else {
-		const h_padding = 10; // 内边距
+		const h_padding = 16; // 内边距
 		const h_width = 310; // 宽度
 		let mh_height = 800; //最大高度
 
@@ -386,6 +386,7 @@ const tapCreateImg = async () => {
 						width: `${h_3_2_width}px`,
 						fontSize: `${h_3_2_fz}px`,
 						lineHeight: `${h_3_2_height}px`,
+						maxLines: 1,
 						color: '#333'
 					}
 				},
@@ -430,7 +431,7 @@ const tapCreateImg = async () => {
 							css: { fontSize: `${h_5_2_fz}px`, color: '#000' }
 						},
 						{
-							text: `${storeInfo.address}  ${storeInfo.addressDetail}`,
+							text: `${storeInfo.address}${storeInfo.addressDetail}`,
 							css: {
 								fontSize: `${h_5_2_fz}px`,
 								color: '#666',
@@ -441,7 +442,8 @@ const tapCreateImg = async () => {
 					css: {
 						top: `${h_5_2_top}px`,
 						left: `${h_5_2_left}px`,
-						width: `${h_5_2_width}px`
+						width: `${h_5_2_width}px`,
+						maxLines: 2
 					}
 				}
 			]
@@ -452,11 +454,11 @@ const tapCreateImg = async () => {
 // 图片生成完成
 const createImgOk = e => {
 	// 活动生成海报数据埋点
-	_shareInfo({
-		scene: 3,
-		sceneId: dataObj.value.id,
-		type: 3
-	});
+	// _shareInfo({
+	// 	scene: 3,
+	// 	sceneId: dataObj.value.id,
+	// 	type: 3
+	// });
 	saveImageToPhotosAlbum(e.detail.path).then(() => {
 		uni.hideLoading();
 		// 分享图片

@@ -190,7 +190,7 @@ onLoad(async options => {
 	}
 
 	// 浏览数据埋点  1/文案宣发 2/活动 3/商品 4/海报 /5科普文章
-	_browseInfo({ scene: 2, sceneId: dataId.value });
+	// _browseInfo({ scene: 2, sceneId: dataId.value });
 });
 // 获取活动详情
 const enrollformGetinfo = () => {
@@ -454,7 +454,7 @@ const tapCreateImg = async () => {
 			]
 		};
 	} else {
-		const h_padding = 10; // 内边距
+		const h_padding = 16; // 内边距
 		const h_width = 310; // 宽度
 		let mh_height = 800; //最大高度
 
@@ -657,11 +657,11 @@ const tapCreateImg = async () => {
 // 图片生成完成
 const createImgOk = e => {
 	// 活动生成海报数据埋点
-	_shareInfo({
-		scene: 2,
-		sceneId: dataObj.value.id,
-		type: 3
-	});
+	// _shareInfo({
+	// 	scene: 2,
+	// 	sceneId: dataObj.value.id,
+	// 	type: 3
+	// });
 	console.log(e.detail.path);
 	saveImageToPhotosAlbum(e.detail.path).then(res => {
 		uni.hideLoading();

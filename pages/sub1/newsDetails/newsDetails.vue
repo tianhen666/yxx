@@ -73,7 +73,7 @@ onLoad(async options => {
 	articleId.value = decodeURIComponent(options.targetId || '');
 
 	// 浏览数据埋点  1/文案宣发 2/活动 3/商品 4/海报 /5科普文章
-	_browseInfo({ scene: 5, sceneId: articleId.value });
+	// _browseInfo({ scene: 5, sceneId: articleId.value });
 
 	_freePublishGetInfo({
 		freeId: articleId.value
