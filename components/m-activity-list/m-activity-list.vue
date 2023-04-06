@@ -1,5 +1,5 @@
 <template>
-	<view class="activity">
+	<view class="activity" :class="{ infoPage: infoPage }">
 		<template v-for="(item, index) in listData" :key="index">
 			<view
 				class="activity_item"
@@ -134,6 +134,10 @@ const props = defineProps({
 		}
 	},
 	more: {
+		type: Boolean,
+		default: false
+	},
+	infoPage: {
 		type: Boolean,
 		default: false
 	}
@@ -385,6 +389,41 @@ const videoTap = index => {
 				> .style3 {
 					color: #4685fb;
 					background: linear-gradient(to right, transparent, rgba(70, 133, 251, 0.3));
+				}
+			}
+		}
+	}
+}
+
+.infoPage {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+
+	.activity_item {
+		width: 48%;
+		.a_wrapper {
+			.title {
+				font-size: 22rpx;
+			}
+			.b_wrapper {
+				flex-wrap: nowrap;
+				> .time {
+					font-size: 18rpx;
+					width: 190rpx;
+				}
+			}
+			.add_wrapper {
+				flex-wrap: wrap;
+				> .left {
+					flex-wrap: wrap;
+					margin-bottom: 20rpx;
+					> .img_wrapper {
+						margin-bottom: 20rpx;
+					}
+					> .text {
+						font-size: 22rpx;
+					}
 				}
 			}
 		}

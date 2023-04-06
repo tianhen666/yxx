@@ -26,7 +26,7 @@
 
 		<view v-if="activityListData.length > 0">
 			<view class="title1">门诊其他热门活动推荐</view>
-			<view><m-activity-list :listData="activityListData"></m-activity-list></view>
+			<view><m-activity-list :listData="activityListData" infoPage></m-activity-list></view>
 		</view>
 	</view>
 </template>
