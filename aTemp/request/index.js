@@ -40,39 +40,35 @@ instance.interceptors.request.use(
 		} = userMain
 
 		/* 
-		 * 设置默认请求参数,url,body中,排除 "/wx/login" "/user/changeUserId"
+		 * 设置默认请求参数storeId,url,body中,排除 "/wx/login" "/user/changeUserId"
 		 */
-		// console.log(config)
+		// 判断是否传递的有值
 		if (
-			config.data.storeId != 0 &&
-			config.params.storeId != 0 &&
-			storeId &&
-			config.url != "/wx/login" &&
-			config.url != "/user/changeUserId"
+			config.data.storeId != undefined ||
+			config.params.storeId != undefined
 		) {
+			const mVal = (config.params.storeId === undefined) ? config.data.storeId : config.params.storeId
+			config.data.storeId = mVal
+			config.params.storeId = mVal
+		} else {
 			config.data.storeId = Number(storeId) || 0
 			config.params.storeId = Number(storeId) || 0
-		} else {
-			config.data.storeId = 0
-			config.params.storeId = 0
 		}
 
 		/*
-		 * 设置默认请求参数,url,body中,排除 "/wx/login" "/user/changeUserId"
+		 * 设置默认请求参数userId
 		 */
-		if (
-			config.data.userId != 0 &&
-			config.params.userId != 0 &&
-			userid &&
-			config.url != "/wx/login" &&
-			config.url != "/user/changeUserId"
-		) {
-			config.data.userId = Number(userid) || 0
-			config.params.userId = Number(userid) || 0
-		} else {
-			config.data.userId = 0
-			config.params.userId = 0
-		}
+		// if (
+		// 	config.data.userId != undefined ||
+		// 	config.params.userId != undefined
+		// ) {
+		// 	const mVal = (config.params.userId === undefined) ? config.data.userId : config.params.userId
+		// 	config.data.userId = mVal
+		// 	config.params.userId = mVal
+		// } else {
+		// 	config.data.userId = Number(userid) || 0
+		// 	config.params.userId = Number(userid) || 0
+		// }
 
 		// 设置token
 		if (token) {
