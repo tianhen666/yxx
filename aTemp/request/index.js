@@ -43,11 +43,35 @@ instance.interceptors.request.use(
 		 * 设置默认请求参数,url,body中,排除 "/wx/login" "/user/changeUserId"
 		 */
 		// console.log(config)
-		if (storeId && config.url != "/wx/login" && config.url != "/user/changeUserId") {
-			config.data.userId = Number(userid) || 0
-			config.params.userId = Number(userid) || 0
+		if (
+			config.data.storeId != 0 &&
+			config.params.storeId != 0 &&
+			storeId &&
+			config.url != "/wx/login" &&
+			config.url != "/user/changeUserId"
+		) {
 			config.data.storeId = Number(storeId) || 0
 			config.params.storeId = Number(storeId) || 0
+		} else {
+			config.data.storeId = 0
+			config.params.storeId = 0
+		}
+
+		/*
+		 * 设置默认请求参数,url,body中,排除 "/wx/login" "/user/changeUserId"
+		 */
+		if (
+			config.data.userId != 0 &&
+			config.params.userId != 0 &&
+			userid &&
+			config.url != "/wx/login" &&
+			config.url != "/user/changeUserId"
+		) {
+			config.data.userId = Number(userid) || 0
+			config.params.userId = Number(userid) || 0
+		} else {
+			config.data.userId = 0
+			config.params.userId = 0
 		}
 
 		// 设置token
