@@ -14,7 +14,7 @@
 			<text class="desc" user-select>{{ storeInfo.descData }}</text>
 		</view>
 
-		<view class="box2" style="margin-top: 30px;" v-if="storeInfo.descData">
+		<view class="box2" style="margin-top: 30px;" v-if="storeInfo.innerPics">
 			<text class="title">舒适温馨的就诊环境</text>
 			<view class="line"></view>
 			<view class="picList">
@@ -24,7 +24,7 @@
 			</view>
 		</view>
 
-		<view>
+		<view v-if="activityListData.length > 0">
 			<view class="title1">门诊其他热门活动推荐</view>
 			<view><m-activity-list :listData="activityListData"></m-activity-list></view>
 		</view>
