@@ -32,11 +32,11 @@ export default function(shareInfo) {
 	/* 分享到聊天框 */
 	onShareAppMessage(() => {
 		// 分享到聊天框埋点 
-		_shareInfo({
-			scene: shareInfo.scene,
-			sceneId: shareInfo.sceneId,
-			type: 1
-		});
+		// _shareInfo({
+		// 	scene: shareInfo.scene,
+		// 	sceneId: shareInfo.sceneId,
+		// 	type: 1
+		// });
 
 		// console.log("分享到聊天框")
 		return {
@@ -49,11 +49,11 @@ export default function(shareInfo) {
 	/* 分享到朋友圈 */
 	onShareTimeline(() => {
 		// 分享到朋友圈框埋点
-		_shareInfo({
-			scene: shareInfo.scene,
-			sceneId: shareInfo.sceneId,
-			type: 2
-		});
+		// _shareInfo({
+		// 	scene: shareInfo.scene,
+		// 	sceneId: shareInfo.sceneId,
+		// 	type: 2
+		// });
 
 		// console.log("分享到朋友圈")
 		// console.log(shareInfo.query)
