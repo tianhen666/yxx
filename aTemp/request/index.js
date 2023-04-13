@@ -47,7 +47,7 @@ instance.interceptors.request.use(
 			config.data.storeId != undefined ||
 			config.params.storeId != undefined
 		) {
-			const mVal = (config.params.storeId === undefined) ? config.data.storeId : config.params.storeId
+			const mVal = (config.params.storeId != undefined) ? config.params.storeId : config.data.storeId
 			config.data.storeId = mVal
 			config.params.storeId = mVal
 		} else {

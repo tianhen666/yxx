@@ -18,7 +18,9 @@
 				</view>
 
 				<!-- 数据导出 -->
-				<view class="box1_options_item"><button class="button" @tap.stop="enrollformExport">数据导出</button></view>
+				<view class="box1_options_item">
+					<button class="button" @tap.stop="enrollformExport">数据导出</button>
+				</view>
 			</view>
 		</view>
 		<view class="blank40"></view>
@@ -30,9 +32,9 @@
 
 			<view class="time">
 				{{
-					`(统计时间：${dayjs(categoryOption1[activityId]?.startDt).format('YYYY年MM月DD日')} - ${dayjs(
-						categoryOption1[activityId]?.endDt
-					).format('YYYY年MM月DD日')})`
+					`(统计时间：${dayjs(categoryOption1[activityId]?.startDt).format(
+						'YYYY年MM月DD日'
+					)} - ${dayjs(categoryOption1[activityId]?.endDt).format('YYYY年MM月DD日')})`
 				}}
 			</view>
 			<view class="blank32"></view>
@@ -94,9 +96,9 @@
 
 			<view class="time">
 				{{
-					`(统计时间：${dayjs(categoryOption1[activityId]?.startDt).format('YYYY年MM月DD日')} - ${dayjs(
-						categoryOption1[activityId]?.endDt
-					).format('YYYY年MM月DD日')})`
+					`(统计时间：${dayjs(categoryOption1[activityId]?.startDt).format(
+						'YYYY年MM月DD日'
+					)} - ${dayjs(categoryOption1[activityId]?.endDt).format('YYYY年MM月DD日')})`
 				}}
 			</view>
 
@@ -127,15 +129,18 @@
 
 			<view class="time">
 				{{
-					`(统计时间：${dayjs(categoryOption1[activityId]?.startDt).format('YYYY年MM月DD日')} - ${dayjs(
-						categoryOption1[activityId]?.endDt
-					).format('YYYY年MM月DD日')})`
+					`(统计时间：${dayjs(categoryOption1[activityId]?.startDt).format(
+						'YYYY年MM月DD日'
+					)} - ${dayjs(categoryOption1[activityId]?.endDt).format('YYYY年MM月DD日')})`
 				}}
 			</view>
 			<view class="blank32"></view>
 
 			<!-- 排行榜数据 -->
-			<m-ranking-list :listData="yaoqingpaihang" @popFun="storeproductActivityPopup"></m-ranking-list>
+			<m-ranking-list
+				:listData="yaoqingpaihang"
+				@popFun="storeproductActivityPopup"
+			></m-ranking-list>
 		</view>
 		<view class="blank40"></view>
 		<view class="blank40"></view>
@@ -153,46 +158,50 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
-import qiunDataCharts from '@/pages/sub2/components/qiun-data-charts/components/qiun-data-charts/qiun-data-charts.vue'
-import dayjs from 'dayjs'
-import { _enrollformGetlist, _storeproductActivityPopup, _enrollformExport } from '@/aTemp/apis/activity.js'
-import { _storeproductActivitystatistics } from '@/aTemp/apis/store.js'
-import { showToastText, showLoading } from '@/aTemp/utils/uniAppTools.js'
+import { ref, watch, computed } from 'vue';
+import { onLoad } from '@dcloudio/uni-app';
+import qiunDataCharts from '@/pages/sub2/components/qiun-data-charts/components/qiun-data-charts/qiun-data-charts.vue';
+import dayjs from 'dayjs';
+import {
+	_enrollformGetlist,
+	_storeproductActivityPopup,
+	_enrollformExport
+} from '@/aTemp/apis/activity.js';
+import { _storeproductActivitystatistics } from '@/aTemp/apis/store.js';
+import { showToastText, showLoading } from '@/aTemp/utils/uniAppTools.js';
 
 // 活动数据列表
-const categoryOption1 = ref([])
+const categoryOption1 = ref([]);
 // 当前活动索引
-const activityId = ref(0)
+const activityId = ref(0);
 // 当前活动id
 const productid = computed(() =>
 	categoryOption1.value[activityId.value] ? categoryOption1.value[activityId.value].id : ''
-)
+);
 // 每页数量
 // const pageSize = ref(6)
 // 有多少页面
 // const pageNum = ref(1)
 // 是否加载完成
-const pageLoadStatus = ref('loading')
+const pageLoadStatus = ref('loading');
 
 // 数据统计
-const totleData = ref({})
+const totleData = ref({});
 // 折线图表数据
-const zLineData = ref([])
+const zLineData = ref([]);
 // 漏斗数据
-const zLouDouData = ref([])
+const zLouDouData = ref([]);
 
-const yaoqingpaihang = ref([])
+const yaoqingpaihang = ref([]);
 
 onLoad(options => {
-	getListData()
-})
+	getListData();
+});
 
 // 获取活动列表
-const getListData = data => {
-	_enrollformGetlist(data).then(res => {
-		const { code, data, msg } = res
+const getListData = () => {
+	_enrollformGetlist().then(res => {
+		const { code, data, msg } = res;
 		categoryOption1.value = data.map((item, index) => {
 			return {
 				value: index,
@@ -200,55 +209,57 @@ const getListData = data => {
 				id: item.id,
 				startDt: item.startDt,
 				endDt: item.endDt
-			}
-		})
+			};
+		});
 		// 获取数据统计
-		storeproductActivitystatistics()
-	})
-}
+		storeproductActivitystatistics();
+	});
+};
 
 // 获取统计数据
 const storeproductActivitystatistics = () => {
-	pageLoadStatus.value = 'loading'
+	pageLoadStatus.value = 'loading';
 
 	_storeproductActivitystatistics({ productid: productid.value })
 		.then(res => {
-			const { code, msg, data } = res
+			const { code, msg, data } = res;
 
 			totleData.value = {
 				eicount: data[0].activityStatistics[0].eicount,
 				spocoalesce: data[0].activityStatistics[0].spocoalesce,
 				stcount: data[0].activityStatistics[0].stcount
-			}
+			};
 			// 折线图
-			zLineData.value = data[0].activityCount || []
+			zLineData.value = data[0].activityCount || [];
 			// 漏斗图
-			zLouDouData.value = data[0].activityEnrollInfoNum[0] || {}
-			// 邀请排行
-			yaoqingpaihang.value = data[0].activityNum || {}
-
-			pageLoadStatus.value = 'noMore'
+			zLouDouData.value = data[0].activityEnrollInfoNum[0] || {};
+			// 邀请排行,,按邀请人数量排序
+			yaoqingpaihang.value =
+				data[0].activityNum.sort((a, b) => {
+					return b.participate - a.participate;
+				}) || {};
+			pageLoadStatus.value = 'noMore';
 		})
 		.catch(err => {
-			zLineData.value.length = 0
-			zLouDouData.value.length = 0
-			pageLoadStatus.value = 'noMore'
-		})
-}
+			zLineData.value.length = 0;
+			zLouDouData.value.length = 0;
+			pageLoadStatus.value = 'noMore';
+		});
+};
 
 // 监听选择活动的变化,重新获取数据
 watch(activityId, (newVal, oldVal) => {
 	if (newVal >= 0) {
-		zLineData.value.length = 0
-		zLouDouData.value.length = 0
-		storeproductActivitystatistics()
+		zLineData.value.length = 0;
+		zLouDouData.value.length = 0;
+		storeproductActivitystatistics();
 	}
-})
+});
 
 /*
  * 折线图
  */
-import UseLineChart from './UseLineChart.js'
+import UseLineChart from './UseLineChart.js';
 const {
 	chartData: chartData1,
 	opts: opts1,
@@ -257,86 +268,86 @@ const {
 	chartsError: chartsError1
 } = UseLineChart({
 	zData: zLineData
-})
+});
 
 /*
  * 漏斗图
  */
-import UseFunnelChart from './UseFunnelChart.js'
+import UseFunnelChart from './UseFunnelChart.js';
 const {
 	chartData: chartData2,
 	opts: opts2,
 	errorMessage: errorMessage2,
 	chartsComplete: chartsComplete2,
 	chartsError: chartsError2
-} = UseFunnelChart({ zData: zLouDouData })
+} = UseFunnelChart({ zData: zLouDouData });
 
 /**
  * 获取排行榜详情数据
  * */
-const popupRef = ref(null)
-const popupRefListData = ref([])
-const popupStatus = ref(false)
+const popupRef = ref(null);
+const popupRefListData = ref([]);
+const popupStatus = ref(false);
 const storeproductActivityPopup = (userId, index) => {
 	_storeproductActivityPopup({ productid: productid.value, userId: userId }).then(res => {
 		if (index === 0) {
-			popupRefListData.value = res.data.activityPopupAllUser
+			popupRefListData.value = res.data.activityPopupAllUser;
 		} else if (index === 1) {
-			popupRefListData.value = res.data.activityPopup
+			popupRefListData.value = res.data.activityPopup;
 		} else if (index === 2) {
-			popupRefListData.value = res.data.activityPopupParticipate
+			popupRefListData.value = res.data.activityPopupParticipate;
 		}
 
 		if (popupRefListData.value.length === 0) {
-			showToastText('没有数据')
-			return
+			showToastText('没有数据');
+			return;
 		}
-		popupRef.value.open()
-	})
-}
+		popupRef.value.open();
+	});
+};
 const popupRefChange = e => {
-	popupStatus.value = e.show
-}
+	popupStatus.value = e.show;
+};
 
 /**
  * 会员数据导出
  */
 const enrollformExport = () => {
-	showLoading('数据导出中')
+	showLoading('数据导出中');
 	try {
 		_enrollformExport({ enrollId: productid.value }).then(res => {
-			const { code, data, msg } = res
+			const { code, data, msg } = res;
 			uni.downloadFile({
 				url: data,
 				success: res => {
-					const filePath = res.tempFilePath
+					const filePath = res.tempFilePath;
 					if (res.statusCode === 200) {
 						uni.openDocument({
 							filePath: filePath,
 							showMenu: true,
 							success: function(res) {
-								uni.hideLoading()
+								uni.hideLoading();
 							},
 							fail: error => {
-								console.log(error)
-								uni.hideLoading()
-								showToastText('导出失败，请联系我们客服')
+								console.log(error);
+								uni.hideLoading();
+								showToastText('导出失败，请联系我们客服');
 							}
-						})
+						});
 					}
 				},
 				fail: error => {
-					console.log(error)
-					uni.hideLoading()
-					showToastText('导出失败，请联系我们客服')
+					console.log(error);
+					uni.hideLoading();
+					showToastText('导出失败，请联系我们客服');
 				}
-			})
-		})
+			});
+		});
 	} catch (e) {
-		console.log(e)
-		uni.hideLoading()
+		console.log(e);
+		uni.hideLoading();
 	}
-}
+};
 </script>
 
 <style lang="scss" scoped>

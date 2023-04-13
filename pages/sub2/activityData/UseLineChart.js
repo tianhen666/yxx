@@ -21,15 +21,15 @@ export default function(paramsObj) {
 
 
 	watch(zData, (newVal, oldVal) => {
-		console.log(newVal)
+		// console.log(newVal)
 		// console.log(oldVal)
-		
+
 		chartData.value = {
 			categories: [],
 			series: []
 		}
 		errorMessage.value = ""
-		
+
 		setTimeout(() => {
 			if (newVal.length > 0) {
 				const dataObj = {
