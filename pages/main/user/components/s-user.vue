@@ -3,18 +3,6 @@
 	<m-vip></m-vip>
 	<view class="blank30"></view>
 
-	<!-- 门诊管理 -->
-	<m-fun :listData="module1"></m-fun>
-	<view class="blank30"></view>
-
-	<!-- 数据统计 -->
-	<m-fun :listData="module2"></m-fun>
-	<view class="blank30"></view>
-
-	<!-- 订单管理 -->
-	<m-fun :listData="module3" @moduleFun="module3Fun"></m-fun>
-	<view class="blank30"></view>
-
 	<!-- 营销助手 -->
 	<view class="box">
 		<m-title2 :title="module4.title"></m-title2>
@@ -27,6 +15,18 @@
 			</template>
 		</view>
 	</view>
+	<view class="blank30"></view>
+
+	<!-- 门诊管理 -->
+	<m-fun :listData="module1"></m-fun>
+	<view class="blank30"></view>
+
+	<!-- 数据统计 -->
+	<m-fun :listData="module2"></m-fun>
+	<view class="blank30"></view>
+
+	<!-- 订单管理 -->
+	<m-fun :listData="module3" @moduleFun="module3Fun"></m-fun>
 	<view class="blank30"></view>
 
 	<!-- 选项 -->
