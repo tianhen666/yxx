@@ -1,7 +1,16 @@
 <template>
 	<view class="container">
 		<slot name="title"></slot>
-		<view class="box2_item_box" v-for="(item, index) in infoList" :key="index">
+		<view
+			class="box2_item_box"
+			v-for="(item, index) in infoList"
+			:key="index"
+			@tap.stop="
+				useUserMain.storeId !== item.storeId
+					? reLaunch(`/pages/main/index/index?storeId=${item.storeId}`)
+					: ''
+			"
+		>
 			<view class="box2_item_box_left">
 				<image
 					class="image"
