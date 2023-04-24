@@ -63,7 +63,7 @@
 
 <script setup>
 import shopList from './components/shop-list/shop-list.vue';
-import { ref, watch, getCurrentInstance } from 'vue';
+import { ref, reactive, computed, watch, getCurrentInstance } from 'vue';
 import { onLoad } from '@dcloudio/uni-app';
 import { _serveGetinfo } from '@/aTemp/apis/service';
 import { previewImage } from '@/aTemp/utils/uniAppTools.js';
@@ -74,6 +74,18 @@ const loading = ref(true);
 // 全局登录信息
 import { _useUserMain } from '@/aTemp/store/userMain.js';
 const useUserMain = _useUserMain();
+
+// 分享 (onShareAppMessage,onShareTimeline) 不能删,必要 https://github.com/dcloudio/uni-app/issues/3097
+import useShare from '@/aTemp/mixins/useShare.js';
+const shareInfo = reactive({
+	title: '',
+	path: '',
+	imageUrl: '',
+	query: ''
+});
+// 设置分享
+useShare(shareInfo);
+
 // 登录弹出对象
 const mLogin = ref(null);
 
@@ -95,6 +107,26 @@ onLoad(async options => {
 			dataObj.value = data;
 
 			loading.value = false;
+
+			// 设置分享参数
+			shareInfo.title = computed(
+				() => `${useUserMain.nickname || ''} 邀请您体验【${dataObj.value.title}】`
+			);
+			shareInfo.path = computed(
+				() =>
+					`/pages/main/index/index?invitationCode=${useUserMain.userid}&storeId=${
+						useUserMain.storeId
+					}&Mscene=3&targetId=${dataObj.value.id}`
+			);
+			shareInfo.imageUrl =
+				dataObj.value.pic || `https://imgs.lechiwl.com/store/tooth/invitbg.png`;
+			// 分享到朋友圈用到
+			shareInfo.query = computed(
+				() =>
+					`invitationCode=${useUserMain.userid}&storeId=${
+						useUserMain.storeId
+					}&Mscene=3&targetId=${dataObj.value.id}`
+			);
 		});
 	}
 

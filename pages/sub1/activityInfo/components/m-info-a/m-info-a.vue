@@ -18,7 +18,11 @@
 			<text class="title">舒适温馨的就诊环境</text>
 			<view class="line"></view>
 			<view class="picList">
-				<view class="item" v-for="(item, index) in storeInfo.innerPics.split(',')">
+				<view
+					class="item"
+					v-for="(item, index) in storeInfo.innerPics.split(',')"
+					@click="previewImage(storeInfo.innerPics.split(','))"
+				>
 					<image :src="item" mode="aspectFill" style="width: 100%;height: 100%;"></image>
 				</view>
 			</view>
@@ -34,6 +38,7 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import { _enrollformGetlist } from '@/aTemp/apis/activity.js';
+import { previewImage } from '@/aTemp/utils/uniAppTools.js';
 const props = defineProps({
 	activitId: {
 		required: false,

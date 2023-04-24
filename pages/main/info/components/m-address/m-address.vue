@@ -1,7 +1,13 @@
 <template>
 	<view class="container">
 		<view class="box_type">
-			<view class="img_box"><image class="image" :src="info.pics || '/static/images/no_img.jpg'" mode="aspectFill"></image></view>
+			<view class="img_box">
+				<image
+					class="image"
+					:src="info.pics || '/static/images/no_img.jpg'"
+					mode="aspectFill"
+				></image>
+			</view>
 
 			<!-- 门诊名称 -->
 			<view class="title">{{ info.name }}</view>
@@ -9,7 +15,11 @@
 			<!-- 地址 -->
 			<view class="address">
 				<view class="address_box" @tap="daohang()">
-					<image class="image" src="/static/images/daohang2.png" mode="aspectFill"></image>
+					<image
+						class="image"
+						src="/static/images/daohang2.png"
+						mode="aspectFill"
+					></image>
 					{{ `${info.address}${info.addressDetail}` }}
 				</view>
 			</view>
@@ -17,14 +27,14 @@
 			<!-- 按钮 -->
 			<view class="button_container">
 				<button class="btn" @tap="makePhoneCall(info.mobile)">电话咨询</button>
-				<button class="btn" @tap="navigateTo('/pages/sub1/yuyue/yuyue')">门诊预约</button>
+				<button class="btn" @tap="makePhoneCall(info.mobile)">门诊预约</button>
 			</view>
 		</view>
 	</view>
 </template>
 
 <script setup>
-import { makePhoneCall, openLocation, navigateTo } from '@/aTemp/utils/uniAppTools.js'
+import { makePhoneCall, openLocation, navigateTo } from '@/aTemp/utils/uniAppTools.js';
 
 const props = defineProps({
 	// 当前店铺信息
@@ -33,14 +43,16 @@ const props = defineProps({
 		required: true,
 		default: () => {}
 	}
-})
+});
 
 // 打开内置地图
 const daohang = () => {
-	openLocation(props.info.lat, props.info.lng, props.info.addressDetail, props.info.address).then(res => {
-		console.log(res)
-	})
-}
+	openLocation(props.info.lat, props.info.lng, props.info.addressDetail, props.info.address).then(
+		res => {
+			console.log(res);
+		}
+	);
+};
 </script>
 <style lang="scss" scoped>
 .container {
@@ -53,11 +65,11 @@ const daohang = () => {
 	padding: $padding;
 	border-radius: 16rpx;
 	.box_type {
-		>.img_box{
+		> .img_box {
 			width: 100%;
 			padding-top: 80%;
 			position: relative;
-			.image{
+			.image {
 				position: absolute;
 				top: 0;
 				left: 0;
@@ -71,7 +83,6 @@ const daohang = () => {
 			color: #333333;
 			line-height: 32rpx;
 			padding: 30rpx 0;
-			
 		}
 		> .address {
 			padding: 20rpx;
@@ -99,7 +110,7 @@ const daohang = () => {
 				border-right-color: transparent;
 			}
 			.address_box {
-				text-indent:-26rpx;
+				text-indent: -26rpx;
 				padding-left: 26rpx;
 				.image {
 					vertical-align: middle;
