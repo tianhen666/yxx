@@ -14,9 +14,9 @@
 							info.businessDt.split(',')[0] + '-' + info.businessDt.split(',')[1]
 						}}
 					</view>
-					<view class="distance">
+					<view class="distance" @tap.stop="tapGetDistance">
 						<uni-icons color="#929292" type="location" size="28rpx" />
-						<text>距离{{ distance }}</text>
+						<text>{{ distance }}</text>
 					</view>
 				</view>
 			</view>
@@ -41,7 +41,7 @@
 			<!-- 预约服务  根据业务要求 -->
 			<button class="addWx" @tap="makePhoneCall(info.mobile)">
 				<image class="image" src="/static/images/shijian.png" mode="aspectFill"></image>
-				<text>预约服务</text>
+				<text>电话预约</text>
 			</button>
 		</view>
 	</view>
@@ -84,23 +84,33 @@ const rad = d => {
 	return (d * Math.PI) / 180.0;
 };
 
-const distance = ref('计算中...');
+const distance = ref('点击获取距离');
+
+const tapGetDistance = () => {
+	// 获取当前位置，计算距离
+	getLocation()
+		.then(res => {
+			let distance_a = algorithm(
+				[res.latitude, res.longitude],
+				[props.info.lat, props.info.lng]
+			);
+			distance.value = `距离 ${Math.floor((distance_a / 1000) * 100) / 100}km`;
+		})
+		.catch(() => {
+			distance.value = '计算失败';
+		});
+};
 
 watch(
 	() => props.info,
 	(newValue, oldValue) => {
 		// 获取当前位置，计算距离
-		getLocation()
-			.then(res => {
-				let distance_a = algorithm(
-					[res.latitude, res.longitude],
-					[props.info.lat, props.info.lng]
-				);
-				distance.value = Math.floor((distance_a / 1000) * 100) / 100 + 'km';
-			})
-			.catch(() => {
-				distance.value = '计算失败';
-			});
+		uni.getSetting().then(res => {
+			console.log(res.authSetting);
+			if (res.authSetting['scope.userLocation']) {
+				tapGetDistance();
+			}
+		});
 	}
 );
 
