@@ -65,7 +65,9 @@
 						</template>
 					</view>
 				</view>
-				<button class="jion_right" @tap="payConfirm">参与活动</button>
+				<button class="jion_right" @tap="payConfirm">
+					{{ dataObj.myJionCount > 0 ? '已参与' : '参与活动' }}
+				</button>
 			</view>
 
 			<!-- 购买须知 -->
@@ -185,9 +187,9 @@ onLoad(async options => {
 	enrollformGetinfo();
 
 	// 弹出登录组件
-	// if (!useUserMain.isLogin) {
-	// 	mLogin.value.popupfun();
-	// }
+	if (!useUserMain.isLogin) {
+		mLogin.value.popupfun();
+	}
 
 	// 浏览数据埋点  1/文案宣发 2/活动 3/商品 4/海报 /5科普文章
 	// _browseInfo({ scene: 2, sceneId: dataId.value });
