@@ -30,6 +30,7 @@ if (old) {
 
 // 小程序启动时执行
 onLaunch(async options => {
+	console.log(options);
 	// 获取vue3全局对象
 	const { proxy } = getCurrentInstance();
 
@@ -116,7 +117,7 @@ onLaunch(async options => {
 				}
 			);
 			const { code, data, msg } = resData;
-			const { power, token, user, store } = data;
+			const { overdue, power, token, user, store } = data;
 
 			// 获取到数据后赋值给全局变量
 			useUserMain.$patch({
@@ -131,7 +132,8 @@ onLaunch(async options => {
 				userid: user.id,
 				storeId: user.storeId,
 				// headPortrait: store.headPortrait  // 登陆授权组件是否需要头像昵称，0，需要 1，不需要
-				headPortrait: 1
+				headPortrait: 1,
+				overdue: overdue
 			});
 		}
 	} catch (e) {

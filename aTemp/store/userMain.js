@@ -16,6 +16,7 @@ export const _useUserMain = defineStore('main', {
 			avatar: '', //用户头像
 			nickname: '', //用户昵称
 			headPortrait: 1, //是否有收集头像弹窗 0收集，1不收集
+			overdue: 0, // 1过期 0正常
 		}
 	},
 	getters: {

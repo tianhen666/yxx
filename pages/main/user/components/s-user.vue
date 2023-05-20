@@ -226,6 +226,11 @@ const module4 = {
 	]
 };
 const yxzsTap = (item, index) => {
+	if (useUserMain.overdue === 1) {
+		showToastText('当前店铺已到期');
+		return;
+	}
+
 	if (Array.isArray(item.power) && !item.power.includes(useUserMain.power)) {
 		showToastText('没有权限~');
 		return;

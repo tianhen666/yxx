@@ -1,16 +1,7 @@
 <template>
 	<view class="container">
 		<slot name="title"></slot>
-		<view
-			class="box2_item_box"
-			v-for="(item, index) in infoList"
-			:key="index"
-			@tap.stop="
-				useUserMain.storeId !== item.storeId
-					? reLaunch(`/pages/main/index/index?storeId=${item.storeId}`)
-					: ''
-			"
-		>
+		<view class="box2_item_box" v-for="(item, index) in infoList" :key="item.storeId">
 			<view class="box2_item_box_left">
 				<image
 					class="image"
@@ -25,13 +16,7 @@
 					<button class="btn style1" v-if="useUserMain.storeId === item.storeId">
 						当前门诊
 					</button>
-					<button
-						class="btn"
-						v-else
-						@tap.stop="reLaunch(`/pages/main/index/index?storeId=${item.storeId}`)"
-					>
-						进入门店
-					</button>
+					<button class="btn" v-else @tap.stop="switchStore(item)">进入门店</button>
 				</view>
 			</view>
 		</view>
@@ -58,6 +43,18 @@ const props = defineProps({
 		default: () => {}
 	}
 });
+
+const switchStore = item => {
+	// 处理跳转到不同小程序
+	if (props.info.apppid != item.appid) {
+		uni.navigateToMiniProgram({
+			appId: item.appid,
+			path: `/pages/main/index/index?storeId=${item.storeId}`
+		});
+	} else {
+		reLaunch(`/pages/main/index/index?storeId=${item.storeId}`);
+	}
+};
 </script>
 
 <style lang="scss" scoped>

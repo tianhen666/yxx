@@ -2,7 +2,11 @@
 	<view class="container">
 		<view class="c_wrapper">
 			<!-- 更多 -->
-			<m-title2 :title="props.listData.title" moreText="查看全部" :path="props.listData.path"></m-title2>
+			<m-title2
+				:title="props.listData.title"
+				moreText="查看全部"
+				:path="props.listData.path"
+			></m-title2>
 
 			<!-- 按钮 -->
 			<view class="btn_box">
@@ -25,37 +29,42 @@
 
 <script setup>
 // 全局登录信息
-import { _useUserMain } from '@/aTemp/store/userMain.js'
-const useUserMain = _useUserMain()
+import { _useUserMain } from '@/aTemp/store/userMain.js';
+const useUserMain = _useUserMain();
 
-import {showToastText} from '@/aTemp/utils/uniAppTools.js'
+import { showToastText } from '@/aTemp/utils/uniAppTools.js';
 
 const props = defineProps({
 	listData: {
 		type: Object,
 		required: true,
 		default() {
-			return {}
+			return {};
 		}
 	}
-})
+});
 
-const emits = defineEmits(['moduleFun'])
+const emits = defineEmits(['moduleFun']);
 const itemClick = (item, index) => {
-	if(Array.isArray(item.power)&&!(item.power.includes(useUserMain.power))){
-		showToastText('没有权限~')
-		return
+	if (props.listData.title === '门诊管理' && useUserMain.overdue === 1) {
+		showToastText('当前店铺已到期');
+		return;
 	}
-	
+
+	if (Array.isArray(item.power) && !item.power.includes(useUserMain.power)) {
+		showToastText('没有权限~');
+		return;
+	}
+
 	if (item.path) {
 		uni.navigateTo({
 			url: item.path
-		})
+		});
 	}
 	if (item.fun) {
-		emits('moduleFun', index)
+		emits('moduleFun', index);
 	}
-}
+};
 </script>
 
 <style lang="scss" scoped>
