@@ -5,22 +5,22 @@
 	<!-- 加载提示 -->
 	<m-page-loading v-if="loading"></m-page-loading>
 
-	<z-paging
-		ref="paging"
-		v-model="listData"
-		@query="queryList"
-		:loading-full-fixed="true"
-		:loading-more-enabled="false"
-		created-reload
-		min-delay="1000"
-	>
+	<z-paging ref="paging" v-model="listData" @query="queryList" created-reload min-delay="1000">
 		<!-- 固定顶部 -->
 		<template v-slot:top>
 			<!-- 背景 -->
-			<view class="pageBg"><image class="image" src="/static/images/bg.png" mode="aspectFill"></image></view>
+			<view class="pageBg">
+				<image class="image" src="/static/images/bg.png" mode="aspectFill"></image>
+			</view>
 			<!-- #ifndef H5 -->
 			<!-- 标题栏 -->
-			<uni-nav-bar statusBar fixed :title="'商城'" color="#ffffff" :border="false"></uni-nav-bar>
+			<uni-nav-bar
+				statusBar
+				fixed
+				:title="'商城'"
+				color="#ffffff"
+				:border="false"
+			></uni-nav-bar>
 			<view class="blank20"></view>
 			<!-- #endif -->
 		</template>
@@ -37,32 +37,32 @@
 </template>
 
 <script setup>
-import { _storeproductGetlist } from '@/aTemp/apis/shop.js'
-import { onLoad, onShow } from '@dcloudio/uni-app'
-import { ref, nextTick } from 'vue'
-import mShopList1 from './components/m-shop-list-1/m-shop-list-1.vue'
-import { _bannerList } from '@/aTemp/apis/banner'
+import { _storeproductGetlist } from '@/aTemp/apis/shop.js';
+import { onLoad, onShow } from '@dcloudio/uni-app';
+import { ref, nextTick } from 'vue';
+import mShopList1 from './components/m-shop-list-1/m-shop-list-1.vue';
+import { _bannerList } from '@/aTemp/apis/banner';
 
 // 全局登录信息
-import { _useUserMain } from '@/aTemp/store/userMain.js'
-const useUserMain = _useUserMain()
+import { _useUserMain } from '@/aTemp/store/userMain.js';
+const useUserMain = _useUserMain();
 
 // 插件对象
-const paging = ref(null)
+const paging = ref(null);
 
 // 加载中
-const loading = ref(true)
+const loading = ref(true);
 // 数据列表
-const listData = ref([])
+const listData = ref([]);
 
 // 轮播图
-const bannerListData = ref([])
+const bannerListData = ref([]);
 
 onLoad(options => {
 	_bannerList({ sfuse: 0, exhibition: 1 }).then(res => {
-		bannerListData.value = res.data
-	})
-})
+		bannerListData.value = res.data;
+	});
+});
 
 // 后台获取数据
 const queryList = (pageNo, pageSize) => {
@@ -70,26 +70,25 @@ const queryList = (pageNo, pageSize) => {
 		pageNum: pageNo,
 		pageSize: pageSize,
 		status: 0
-	}
+	};
 	_storeproductGetlist(params)
 		.then(res => {
-			const { code, data, msg } = res
+			const { code, data, msg } = res;
 			// 将返回数据中的商品图片转化为数组
-			const resData = data.map((item, index, arr) => {
-				item.pics = item.pics ? item.pics.split(',') : []
-				return item
-			})
-
+			const resData = data.records.map((item, index, arr) => {
+				item.pics = item.pics ? item.pics.split(',') : [];
+				return item;
+			});
+			paging.value.complete(resData);
 			setTimeout(() => {
-				loading.value = false
-			}, 1000)
-
-			paging.value.complete(resData)
+				loading.value = false;
+			}, 1000);
 		})
 		.catch(res => {
-			paging.value.complete(false)
-		})
-}
+			loading.value = false;
+			paging.value.complete(false);
+		});
+};
 </script>
 <style lang="scss" scoped>
 :global(page) {

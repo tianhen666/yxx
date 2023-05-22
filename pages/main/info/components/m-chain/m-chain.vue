@@ -45,8 +45,10 @@ const props = defineProps({
 });
 
 const switchStore = item => {
+	console.log('当前小程序appid' + props.info.appid);
+	console.log('目标小程序appid' + item.appid);
 	// 处理跳转到不同小程序
-	if (props.info.apppid != item.appid) {
+	if (props.info.appid !== item.appid) {
 		uni.navigateToMiniProgram({
 			appId: item.appid,
 			path: `/pages/main/index/index?storeId=${item.storeId}`

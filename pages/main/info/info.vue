@@ -13,10 +13,9 @@
 		ref="paging"
 		use-page-scroll
 		@query="queryall"
-		:loading-full-fixed="true"
 		hide-empty-view
 		:loading-more-enabled="false"
-		created-reload
+		:auto="false"
 		min-delay="1000"
 	>
 		<!-- 固定顶部 -->
@@ -71,10 +70,11 @@ import mChain from './components/m-chain/m-chain.vue';
 import mAddress from './components/m-address/m-address.vue';
 import mAbout from './components/m-about/m-about.vue';
 import mDentist from './components/m-dentist/m-dentist.vue';
-import { ref, reactive, computed } from 'vue';
+import { ref, reactive, computed, getCurrentInstance } from 'vue';
 import { onLoad } from '@dcloudio/uni-app';
 import { _storedoctorGetlist } from '@/aTemp/apis/doctor.js';
 import { _storeGetinfolist, _storeGetinfo } from '@/aTemp/apis/store.js';
+
 // 全局登录信息
 import { _useUserMain } from '@/aTemp/store/userMain.js';
 const useUserMain = _useUserMain();
@@ -123,7 +123,7 @@ const queryall = () => {
 		// 分享到聊天框用到
 		shareInfo.path = computed(
 			() =>
-				`/pages/main/index/index?invitationCode=${useUserMain.userid}&storeId=${
+				`/pages/main/info/info?invitationCode=${useUserMain.userid}&storeId=${
 					useUserMain.storeId
 				}&Mscene=0&targetId=0`
 		);
@@ -141,5 +141,13 @@ const queryall = () => {
 		}, 1000);
 	});
 };
+
+onLoad(async options => {
+	// 等待onLaunch中放行后执行
+	const { proxy } = getCurrentInstance();
+	await proxy.$onLaunched;
+
+	paging.value.reload();
+});
 </script>
 <style lang="scss" scoped></style>

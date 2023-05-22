@@ -4,7 +4,11 @@
 
 		<!-- 收益总计 -->
 		<view class="box1 box">
-			<m-title2 title="累计收益" moreText="查看明细" path="/pages/sub2/storeProfitDetailed/storeProfitDetailed" />
+			<m-title2
+				title="累计收益"
+				moreText="查看明细"
+				path="/pages/sub2/storeProfitDetailed/storeProfitDetailed"
+			/>
 
 			<!-- 累计收益 -->
 			<view class="total">
@@ -60,7 +64,12 @@
 
 			<!-- 日期选择 -->
 			<view class="box2_p" v-if="timeType === 3">
-				<uni-datetime-picker :clearIcon="false" v-model="rangeTime" :end="Date.now()" type="daterange" />
+				<uni-datetime-picker
+					:clearIcon="false"
+					v-model="rangeTime"
+					:end="Date.now()"
+					type="daterange"
+				/>
 			</view>
 
 			<!-- 图表显示 -->
@@ -110,62 +119,62 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
-import qiunDataCharts from '@/pages/sub2/components/qiun-data-charts/components/qiun-data-charts/qiun-data-charts.vue'
-import dayjs from 'dayjs'
-import { _storeproductStatistics, _enrollformEarningsportexport } from '@/aTemp/apis/store.js'
-import { showToastText, showLoading } from '@/aTemp/utils/uniAppTools.js'
+import { ref, watch, computed } from 'vue';
+import { onLoad } from '@dcloudio/uni-app';
+import qiunDataCharts from '@/pages/sub2/components/qiun-data-charts/components/qiun-data-charts/qiun-data-charts.vue';
+import dayjs from 'dayjs';
+import { _storeproductStatistics, _enrollformEarningsportexport } from '@/aTemp/apis/store.js';
+import { showToastText, showLoading } from '@/aTemp/utils/uniAppTools.js';
 // 开始时间
-const startTime = computed(() => rangeTime.value[0])
-// 结束时间 
-const endTime = computed(() => rangeTime.value[1])
+const startTime = computed(() => rangeTime.value[0]);
+// 结束时间
+const endTime = computed(() => rangeTime.value[1]);
 
 // 每页数量
 // const pageSize = ref(6)
 // 有多少页面
 // const pageNum = ref(1)
 // 是否加载完成
-const pageLoadStatus = ref('loading')
+const pageLoadStatus = ref('loading');
 
 // 数据统计
-const totleData = ref({})
+const totleData = ref({});
 // 折线图表数据
-const zLineData = ref([])
+const zLineData = ref([]);
 // 柱状图表数据
-const zColumnData = ref([])
+const zColumnData = ref([]);
 
 const storeproductStatistics = () => {
-	pageLoadStatus.value = 'loading'
+	pageLoadStatus.value = 'loading';
 	_storeproductStatistics({
 		startTime: startTime.value,
 		endTime: endTime.value
 	})
 		.then(res => {
-			const { code, msg, data } = res
+			const { code, msg, data } = res;
 			totleData.value = {
 				totalRevenue: data[0].totalRevenue,
 				monthEarnings: data[0].monthEarnings,
 				todayEarnings: data[0].todayEarnings,
 				weekEarnings: data[0].weekEarnings
-			}
-			zLineData.value = data[0].customTime || []
-			zColumnData.value = data[0].customCount || []
-			pageLoadStatus.value = 'noMore'
+			};
+			zLineData.value = data[0].customTime || [];
+			zColumnData.value = data[0].customCount || [];
+			pageLoadStatus.value = 'noMore';
 		})
 		.catch(err => {
-			zLineData.value = []
-			zColumnData.value = []
-			pageLoadStatus.value = 'noMore'
-		})
-}
+			zLineData.value = [];
+			zColumnData.value = [];
+			pageLoadStatus.value = 'noMore';
+		});
+};
 
 onLoad(options => {
-	storeproductStatistics()
-})
+	storeproductStatistics();
+});
 
 // 店铺筛选
-const storeId = ref(1)
+const storeId = ref(1);
 const categoryOption1 = ref([
 	{
 		value: 1,
@@ -175,7 +184,7 @@ const categoryOption1 = ref([
 		value: 2,
 		text: '门诊二'
 	}
-])
+]);
 
 // 时间选择
 const categoryOption2 = ref([
@@ -191,34 +200,43 @@ const categoryOption2 = ref([
 		value: 3,
 		text: '自定义'
 	}
-])
+]);
 
-const nowTime = dayjs()
-const timeType = ref(1)
-let rangeTime = ref([nowTime.subtract(7, 'day').format('YYYY-MM-DD'), nowTime.format('YYYY-MM-DD')])
+const nowTime = dayjs();
+const timeType = ref(1);
+let rangeTime = ref([
+	nowTime.subtract(7, 'day').format('YYYY-MM-DD'),
+	nowTime.format('YYYY-MM-DD')
+]);
 const timeChange = e => {
 	if (e === 1 && timeType.value != 1) {
-		rangeTime.value = [nowTime.subtract(7, 'day').format('YYYY-MM-DD'), nowTime.format('YYYY-MM-DD')]
+		rangeTime.value = [
+			nowTime.subtract(7, 'day').format('YYYY-MM-DD'),
+			nowTime.format('YYYY-MM-DD')
+		];
 	} else if (e === 2 && timeType.value != 2) {
-		rangeTime.value = [nowTime.subtract(1, 'month').format('YYYY-MM-DD'), nowTime.format('YYYY-MM-DD')]
+		rangeTime.value = [
+			nowTime.subtract(1, 'month').format('YYYY-MM-DD'),
+			nowTime.format('YYYY-MM-DD')
+		];
 	} else {
-		rangeTime.value = []
+		rangeTime.value = [];
 	}
-}
+};
 // 监听选择时间的变化重新获取数据
 watch(rangeTime, (newVal, oldVal) => {
 	if (newVal.length > 0) {
-		pageLoadStatus.value = 'loading'
-		zLineData.value.length = 0
-		zColumnData.value.length = 0
-		storeproductStatistics()
+		pageLoadStatus.value = 'loading';
+		zLineData.value.length = 0;
+		zColumnData.value.length = 0;
+		storeproductStatistics();
 	}
-})
+});
 
 /*
  * 折线图
  */
-import UseLineChart from './UseLineChart.js'
+import UseLineChart from './UseLineChart.js';
 const {
 	chartData: chartData1,
 	opts: opts1,
@@ -227,12 +245,12 @@ const {
 	chartsError: chartsError1
 } = UseLineChart({
 	zData: zLineData
-})
+});
 
 /*
  * 柱状图
  */
-import UseColumnChart from './UseColumnChart.js'
+import UseColumnChart from './UseColumnChart.js';
 const {
 	chartData: chartData2,
 	opts: opts2,
@@ -241,47 +259,48 @@ const {
 	chartsError: chartsError2
 } = UseColumnChart({
 	zData: zColumnData
-})
+});
 
 /**
  * 门诊数据导出
  */
 const enrollformEarningsportexport = () => {
-	showLoading('数据导出中')
+	showLoading('数据导出中');
 	try {
 		_enrollformEarningsportexport().then(res => {
-			const { code, data, msg } = res
+			const { code, data, msg } = res;
 			uni.downloadFile({
 				url: data,
 				success: res => {
-					const filePath = res.tempFilePath
+					const filePath = res.tempFilePath;
 					if (res.statusCode === 200) {
 						uni.openDocument({
 							filePath: filePath,
+							fileType: 'xlsx',
 							showMenu: true,
 							success: function(res) {
-								uni.hideLoading()
+								uni.hideLoading();
 							},
 							fail: error => {
-								console.log(error)
-								uni.hideLoading()
-								showToastText('导出失败，请联系我们客服')
+								console.log(error);
+								uni.hideLoading();
+								showToastText('导出失败，请联系我们客服');
 							}
-						})
+						});
 					}
 				},
 				fail: error => {
-					console.log(error)
-					uni.hideLoading()
-					showToastText('导出失败，请联系我们客服')
+					console.log(error);
+					uni.hideLoading();
+					showToastText('导出失败，请联系我们客服');
 				}
-			})
-		})
+			});
+		});
 	} catch (e) {
-		console.log(e)
-		uni.hideLoading()
+		console.log(e);
+		uni.hideLoading();
 	}
-}
+};
 </script>
 
 <style lang="scss" scoped>

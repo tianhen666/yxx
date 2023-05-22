@@ -89,7 +89,7 @@ import mFuwu from './components/m-fuwu/m-fuwu.vue';
 
 // 模块
 import { ref, reactive, computed, getCurrentInstance } from 'vue';
-import { onLoad, onShow } from '@dcloudio/uni-app';
+import { onLoad } from '@dcloudio/uni-app';
 import { _bannerList } from '@/aTemp/apis/banner';
 import { _storeGetinfo } from '@/aTemp/apis/store.js';
 import { _enrollformGetlist } from '@/aTemp/apis/activity.js';
