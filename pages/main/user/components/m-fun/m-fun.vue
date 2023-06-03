@@ -14,7 +14,7 @@
 					class="btn_box_item"
 					v-for="(item, index) in props.listData.sub"
 					:key="index"
-					@tap="itemClick(item, index)"
+					@tap="itemClick(item)"
 				>
 					<image class="image" :src="item.imgUrl" mode="heightFix"></image>
 					<text class="text">{{ item.name }}</text>
@@ -45,7 +45,7 @@ const props = defineProps({
 });
 
 const emits = defineEmits(['moduleFun']);
-const itemClick = (item, index) => {
+const itemClick = item => {
 	if (useUserMain.overdue === 1 && !item.expiredAvailable) {
 		showToastText('当前店铺已到期');
 		return;
@@ -62,7 +62,7 @@ const itemClick = (item, index) => {
 		});
 	}
 	if (item.fun) {
-		emits('moduleFun', index);
+		emits('moduleFun', item);
 	}
 };
 </script>
@@ -71,7 +71,9 @@ const itemClick = (item, index) => {
 .container {
 	position: relative;
 	z-index: 1;
+	overflow: visible;
 	.c_wrapper {
+		box-shadow: 0 0 20px 5px #eee;
 		width: $main-width;
 		padding: $padding;
 		margin: auto;

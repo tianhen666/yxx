@@ -25,10 +25,6 @@
 	<m-fun :listData="module2"></m-fun>
 	<view class="blank30"></view>
 
-	<!-- 订单管理 -->
-	<m-fun :listData="module3"></m-fun>
-	<view class="blank30"></view>
-
 	<!-- 选项 -->
 	<m-option :listData="module5"></m-option>
 	<view class="blank40"></view>
@@ -83,59 +79,15 @@ const useUserMain = _useUserMain();
 // 订单核销
 import { _orderVerificationSheet } from '@/aTemp/apis/order.js';
 
-// 权限
-// const optionPower = [
-// 	{ value: 1, text: '创建者', disable: true },
-// 	{ value: 2, text: '管理员' },
-// 	{ value: 3, text: '商品管理' },
-// 	{ value: 4, text: '活动管理' },
-// 	{ value: 0, text: '无权限' }
-// ]
-
 const module1 = {
 	title: '门诊管理',
 	sub: [
 		{
-			imgUrl: '/static/images/u-huodong.png',
-			name: '活动管理',
-			path: '/pages/sub2/manageActivityList/manageActivityList',
-			power: [1, 2, 4]
-		},
-		{
-			imgUrl: '/static/images/u-shangpin.png',
-			name: '商品管理',
-			path: '/pages/sub2/manageShopList/manageShopList',
-			power: [1, 2, 3]
-		},
-		{
-			imgUrl: '/static/images/u-fuwu.png',
-			name: '服务项目',
-			path: '/pages/sub2/manageServiceList/manageServiceList',
-			power: [1, 2]
-		},
-		// {
-		// 	imgUrl: '/static/images/u-anli.png',
-		// 	name: '案例管理',
-		// 	path: '/pages/sub2/manageCaseList/manageCaseList',
-		// 	power: [1, 2]
-		// },
-		{
-			imgUrl: '/static/images/u-lunbo.png',
-			name: '轮播图管理',
-			path: '/pages/sub2/manageBannerList/manageBannerList',
-			power: [1, 2]
-		},
-		{
-			imgUrl: '/static/images/u-mzxinxi.png',
-			name: '门诊信息',
-			path: '/pages/sub2/manageInfoInput/manageInfoInput',
-			power: [1, 2]
-		},
-		{
-			imgUrl: '/static/images/u-yisheng.png',
-			name: '医生管理',
-			path: '/pages/sub2/manageDoctorList/manageDoctorList',
-			power: [1, 2]
+			imgUrl: '/static/images/u-dingdan.png',
+			name: '全部订单',
+			path: '/pages/sub2/orderList/orderList?current=0',
+			power: [1, 2, 5],
+			expiredAvailable: true
 		},
 		{
 			imgUrl: '/static/images/u-shaoma.png',
@@ -150,6 +102,37 @@ const module1 = {
 			fun: true, // 执行函数
 			power: [1, 2, 5], // 权限验证
 			expiredAvailable: true // 到期可用
+		},
+		{
+			imgUrl: '/static/images/u-huodong.png',
+			name: '活动管理',
+			path: '/pages/sub2/manageActivityList/manageActivityList',
+			power: [1, 2, 4]
+		},
+		{
+			imgUrl: '/static/images/u-shangpin.png',
+			name: '商品管理',
+			path: '/pages/sub2/manageShopList/manageShopList',
+			power: [1, 2, 3]
+		},
+		{
+			imgUrl: '/static/images/u-mzxinxi.png',
+			name: '门诊信息',
+			path: '/pages/sub2/manageInfoInput/manageInfoInput',
+			power: [1, 2]
+		},
+		{
+			imgUrl: '/static/images/u-yisheng.png',
+			name: '医生管理',
+			path: '/pages/sub2/manageDoctorList/manageDoctorList',
+			power: [1, 2]
+		},
+		{
+			imgUrl: '/static/images/more.png',
+			name: '更多功能',
+			path: '/pages/sub2/manageFunctionUser/manageFunctionUser',
+			power: [1, 2],
+			expiredAvailable: true
 		}
 	]
 };
@@ -191,18 +174,6 @@ const module2 = {
 		// 	path: '/pages/sub2/dataDetails/dataDetails',
 		// 	power: [1, 2]
 		// }
-	]
-};
-const module3 = {
-	title: '订单管理',
-	sub: [
-		{
-			imgUrl: '/static/images/u-dingdan.png',
-			name: '全部订单',
-			path: '/pages/sub2/orderList/orderList?current=0',
-			power: [1, 2, 5],
-			expiredAvailable: true
-		}
 	]
 };
 
@@ -273,12 +244,10 @@ const orderVerificationSheet = orderNo => {
 		});
 };
 
-const module3Fun = listIndex => {
+const module3Fun = item => {
 	// 扫码核销
-	if (listIndex === 6) {
-		uni.scanCode({
-			onlyFromCamera: true
-		})
+	if (item.name === '扫码核销') {
+		uni.scanCode({ onlyFromCamera: true })
 			.then(res => {
 				if (res.scanType !== 'QR_CODE') {
 					showToastText('请扫描核销码~');
@@ -289,11 +258,11 @@ const module3Fun = listIndex => {
 				orderVerificationSheet(res.result);
 			})
 			.catch(err => {
-				showToastText(err?.msg || '核销失败');
+				showToastText('取消核销');
 			});
 	}
 	// 手动核销
-	if (listIndex === 7) {
+	if (item.name === '手动核销') {
 		popup.value.open();
 	}
 };
