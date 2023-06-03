@@ -46,7 +46,7 @@ const props = defineProps({
 
 const emits = defineEmits(['moduleFun']);
 const itemClick = (item, index) => {
-	if (props.listData.title === '门诊管理' && useUserMain.overdue === 1) {
+	if (useUserMain.overdue === 1 && !item.expiredAvailable) {
 		showToastText('当前店铺已到期');
 		return;
 	}

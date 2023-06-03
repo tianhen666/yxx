@@ -18,7 +18,7 @@
 	<view class="blank30"></view>
 
 	<!-- 门诊管理 -->
-	<m-fun :listData="module1"></m-fun>
+	<m-fun :listData="module1" @moduleFun="module3Fun"></m-fun>
 	<view class="blank30"></view>
 
 	<!-- 数据统计 -->
@@ -26,7 +26,7 @@
 	<view class="blank30"></view>
 
 	<!-- 订单管理 -->
-	<m-fun :listData="module3" @moduleFun="module3Fun"></m-fun>
+	<m-fun :listData="module3"></m-fun>
 	<view class="blank30"></view>
 
 	<!-- 选项 -->
@@ -136,6 +136,20 @@ const module1 = {
 			name: '医生管理',
 			path: '/pages/sub2/manageDoctorList/manageDoctorList',
 			power: [1, 2]
+		},
+		{
+			imgUrl: '/static/images/u-shaoma.png',
+			name: '扫码核销',
+			fun: true,
+			power: [1, 2, 5],
+			expiredAvailable: true
+		},
+		{
+			imgUrl: '/static/images/u-shoudong.png', // 菜单图标
+			name: '手动核销', // 菜单名称
+			fun: true, // 执行函数
+			power: [1, 2, 5], // 权限验证
+			expiredAvailable: true // 到期可用
 		}
 	]
 };
@@ -147,26 +161,30 @@ const module2 = {
 			imgUrl: '/static/images/u-shouyi.png',
 			name: '门诊收益',
 			path: '/pages/sub2/storeProfit/storeProfit',
-			power: [1, 2]
+			power: [1, 2],
+			expiredAvailable: true
 		},
 		{
 			imgUrl: '/static/images/u-huodong1.png',
 			name: '活动数据',
 			path: '/pages/sub2/activityData/activityData',
-			power: [1, 2]
+			power: [1, 2],
+			expiredAvailable: true
 		},
 		{
 			imgUrl: '/static/images/u-huiyuan.png',
 			name: '会员管理',
 			path: '/pages/sub2/manageMemberList/manageMemberList',
-			power: [1, 2]
-		},
-		{
-			imgUrl: '/static/images/u-huiyuan.png',
-			name: '预约列表',
-			path: '/pages/sub1/yuyueList/yuyueList',
-			power: [1, 2]
+			power: [1, 2],
+			expiredAvailable: true
 		}
+		// {
+		// 	imgUrl: '/static/images/u-huiyuan.png',
+		// 	name: '预约列表',
+		// 	path: '/pages/sub1/yuyueList/yuyueList',
+		// 	power: [1, 2],
+		// 	expiredAvailable: true
+		// },
 		// {
 		// 	imgUrl: '/static/images/u-huiyuan.png',
 		// 	name: '数据详情',
@@ -179,22 +197,11 @@ const module3 = {
 	title: '订单管理',
 	sub: [
 		{
-			imgUrl: '/static/images/u-shaoma.png',
-			name: '扫码核销',
-			fun: true,
-			power: [1, 2, 5]
-		},
-		{
-			imgUrl: '/static/images/u-shoudong.png',
-			name: '手动核销',
-			fun: true,
-			power: [1, 2, 5]
-		},
-		{
 			imgUrl: '/static/images/u-dingdan.png',
 			name: '全部订单',
 			path: '/pages/sub2/orderList/orderList?current=0',
-			power: [1, 2, 5]
+			power: [1, 2, 5],
+			expiredAvailable: true
 		}
 	]
 };
@@ -268,7 +275,7 @@ const orderVerificationSheet = orderNo => {
 
 const module3Fun = listIndex => {
 	// 扫码核销
-	if (listIndex === 0) {
+	if (listIndex === 6) {
 		uni.scanCode({
 			onlyFromCamera: true
 		})
@@ -286,7 +293,7 @@ const module3Fun = listIndex => {
 			});
 	}
 	// 手动核销
-	if (listIndex === 1) {
+	if (listIndex === 7) {
 		popup.value.open();
 	}
 };
