@@ -60,8 +60,6 @@
 			></image>
 		</view>
 
-		<!-- 技术支持 -->
-		<m-technical-support></m-technical-support>
 		<view class="blank40"></view>
 
 		<!-- 底部按钮 -->

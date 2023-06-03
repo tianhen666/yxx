@@ -95,9 +95,6 @@
 
 		<!-- 更多信息 -->
 		<m-info-a :activitId="dataId"></m-info-a>
-
-		<!-- 技术支持 -->
-		<m-technical-support></m-technical-support>
 	</view>
 	<view class="blank24"></view>
 	<!-- 底部按钮 -->

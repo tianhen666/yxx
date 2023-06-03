@@ -14,8 +14,7 @@
 		use-anchor
 		:tag-style="tagStyle"
 	/>
-	<!-- 技术支持 -->
-	<m-technical-support></m-technical-support>
+
 	<view class="blank40"></view>
 
 	<!-- 分享 -->
