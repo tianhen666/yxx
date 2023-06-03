@@ -441,6 +441,13 @@
 					"enablePullDownRefresh": false
 				}
 
+			}, {
+				"path": "manageFunctionUser/manageFunctionUser",
+				"style": {
+					"navigationBarTitleText": "更多功能",
+					"enablePullDownRefresh": false
+				}
+
 			}]
 		},
 		{

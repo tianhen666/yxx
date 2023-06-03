@@ -18,15 +18,11 @@
 	<view class="blank30"></view>
 
 	<!-- 门诊管理 -->
-	<m-fun :listData="module1"></m-fun>
+	<m-fun :listData="module1" @moduleFun="module3Fun"></m-fun>
 	<view class="blank30"></view>
 
 	<!-- 数据统计 -->
 	<m-fun :listData="module2"></m-fun>
-	<view class="blank30"></view>
-
-	<!-- 订单管理 -->
-	<m-fun :listData="module3" @moduleFun="module3Fun"></m-fun>
 	<view class="blank30"></view>
 
 	<!-- 选项 -->
@@ -83,18 +79,30 @@ const useUserMain = _useUserMain();
 // 订单核销
 import { _orderVerificationSheet } from '@/aTemp/apis/order.js';
 
-// 权限
-// const optionPower = [
-// 	{ value: 1, text: '创建者', disable: true },
-// 	{ value: 2, text: '管理员' },
-// 	{ value: 3, text: '商品管理' },
-// 	{ value: 4, text: '活动管理' },
-// 	{ value: 0, text: '无权限' }
-// ]
-
 const module1 = {
 	title: '门诊管理',
 	sub: [
+		{
+			imgUrl: '/static/images/u-dingdan.png',
+			name: '全部订单',
+			path: '/pages/sub2/orderList/orderList?current=0',
+			power: [1, 2, 5],
+			expiredAvailable: true
+		},
+		{
+			imgUrl: '/static/images/u-shaoma.png',
+			name: '扫码核销',
+			fun: true,
+			power: [1, 2, 5],
+			expiredAvailable: true
+		},
+		{
+			imgUrl: '/static/images/u-shoudong.png', // 菜单图标
+			name: '手动核销', // 菜单名称
+			fun: true, // 执行函数
+			power: [1, 2, 5], // 权限验证
+			expiredAvailable: true // 到期可用
+		},
 		{
 			imgUrl: '/static/images/u-huodong.png',
 			name: '活动管理',
@@ -108,24 +116,6 @@ const module1 = {
 			power: [1, 2, 3]
 		},
 		{
-			imgUrl: '/static/images/u-fuwu.png',
-			name: '服务项目',
-			path: '/pages/sub2/manageServiceList/manageServiceList',
-			power: [1, 2]
-		},
-		// {
-		// 	imgUrl: '/static/images/u-anli.png',
-		// 	name: '案例管理',
-		// 	path: '/pages/sub2/manageCaseList/manageCaseList',
-		// 	power: [1, 2]
-		// },
-		{
-			imgUrl: '/static/images/u-lunbo.png',
-			name: '轮播图管理',
-			path: '/pages/sub2/manageBannerList/manageBannerList',
-			power: [1, 2]
-		},
-		{
 			imgUrl: '/static/images/u-mzxinxi.png',
 			name: '门诊信息',
 			path: '/pages/sub2/manageInfoInput/manageInfoInput',
@@ -136,6 +126,13 @@ const module1 = {
 			name: '医生管理',
 			path: '/pages/sub2/manageDoctorList/manageDoctorList',
 			power: [1, 2]
+		},
+		{
+			imgUrl: '/static/images/more.png',
+			name: '更多功能',
+			path: '/pages/sub2/manageFunctionUser/manageFunctionUser',
+			power: [1, 2],
+			expiredAvailable: true
 		}
 	]
 };
@@ -147,55 +144,36 @@ const module2 = {
 			imgUrl: '/static/images/u-shouyi.png',
 			name: '门诊收益',
 			path: '/pages/sub2/storeProfit/storeProfit',
-			power: [1, 2]
+			power: [1, 2],
+			expiredAvailable: true
 		},
 		{
 			imgUrl: '/static/images/u-huodong1.png',
 			name: '活动数据',
 			path: '/pages/sub2/activityData/activityData',
-			power: [1, 2]
+			power: [1, 2],
+			expiredAvailable: true
 		},
 		{
 			imgUrl: '/static/images/u-huiyuan.png',
 			name: '会员管理',
 			path: '/pages/sub2/manageMemberList/manageMemberList',
-			power: [1, 2]
-		},
-		{
-			imgUrl: '/static/images/u-huiyuan.png',
-			name: '预约列表',
-			path: '/pages/sub1/yuyueList/yuyueList',
-			power: [1, 2]
+			power: [1, 2],
+			expiredAvailable: true
 		}
+		// {
+		// 	imgUrl: '/static/images/u-huiyuan.png',
+		// 	name: '预约列表',
+		// 	path: '/pages/sub1/yuyueList/yuyueList',
+		// 	power: [1, 2],
+		// 	expiredAvailable: true
+		// },
 		// {
 		// 	imgUrl: '/static/images/u-huiyuan.png',
 		// 	name: '数据详情',
 		// 	path: '/pages/sub2/dataDetails/dataDetails',
 		// 	power: [1, 2]
 		// }
-	]
-};
-const module3 = {
-	title: '订单管理',
-	sub: [
-		{
-			imgUrl: '/static/images/u-shaoma.png',
-			name: '扫码核销',
-			fun: true,
-			power: [1, 2, 5]
-		},
-		{
-			imgUrl: '/static/images/u-shoudong.png',
-			name: '手动核销',
-			fun: true,
-			power: [1, 2, 5]
-		},
-		{
-			imgUrl: '/static/images/u-dingdan.png',
-			name: '全部订单',
-			path: '/pages/sub2/orderList/orderList?current=0',
-			power: [1, 2, 5]
-		}
 	]
 };
 
@@ -266,12 +244,10 @@ const orderVerificationSheet = orderNo => {
 		});
 };
 
-const module3Fun = listIndex => {
+const module3Fun = item => {
 	// 扫码核销
-	if (listIndex === 0) {
-		uni.scanCode({
-			onlyFromCamera: true
-		})
+	if (item.name === '扫码核销') {
+		uni.scanCode({ onlyFromCamera: true })
 			.then(res => {
 				if (res.scanType !== 'QR_CODE') {
 					showToastText('请扫描核销码~');
@@ -282,11 +258,11 @@ const module3Fun = listIndex => {
 				orderVerificationSheet(res.result);
 			})
 			.catch(err => {
-				showToastText(err?.msg || '核销失败');
+				showToastText('取消核销');
 			});
 	}
 	// 手动核销
-	if (listIndex === 1) {
+	if (item.name === '手动核销') {
 		popup.value.open();
 	}
 };
