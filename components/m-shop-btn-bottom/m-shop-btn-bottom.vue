@@ -3,9 +3,14 @@
 		<view class="btn_fix">
 			<view class="btn_container">
 				<view class="left">
+					<image
+						src="/static/images/wx.png"
+						mode="aspectFit"
+						style="width: 30px;height: 30px;"
+					></image>
 					<button class="btn" v-if="!useUserMain.isLogin" @tap="tapShare">
 						<view class="text">
-							分享{{ dataObj.myType === '活动' ? '活动' : '商品' }}
+							分享{{ dataObj.myType === '活动' ? '链接到微信群' : '链接到微信群' }}
 						</view>
 						<view
 							class="price"
@@ -17,7 +22,7 @@
 
 					<button class="btn" open-type="share" v-else>
 						<view class="text">
-							分享{{ dataObj.myType === '活动' ? '活动' : '商品' }}
+							分享{{ dataObj.myType === '活动' ? '链接到微信群' : '链接到微信群' }}
 						</view>
 						<view
 							class="price"
@@ -28,8 +33,13 @@
 					</button>
 				</view>
 				<view class="center" @tap="tapCreateImg">
+					<image
+						src="/static/images/pyq.png"
+						mode="aspectFit"
+						style="width: 30px;height: 30px;"
+					></image>
 					<button class="btn">
-						<view class="text">分享海报</view>
+						<view class="text">分享海报到朋友圈</view>
 						<view
 							class="price"
 							v-if="dataObj.showShare === 0 && dataObj.sharePrice > 0"
@@ -80,22 +90,22 @@ const tapShare = () => {
 <style lang="scss" scoped>
 /* 底部按钮 */
 .btn_fix_wrapper {
-	height: 160rpx;
-	padding-bottom: 40rpx;
+	height: 200rpx;
 	.btn_fix {
 		position: fixed;
 		z-index: 88;
 		bottom: 0;
 		width: 100%;
-		height: 160rpx;
+		height: 200rpx;
+		box-sizing: border-box;
+		padding-bottom: 20rpx;
 		background: #fff;
-		padding-bottom: 40rpx;
 		border-top: 1px solid #ddd;
 		.btn_container {
 			height: 100%;
 			@include mFlex;
 			justify-content: space-around;
-			align-items: stretch;
+			align-items: flex-end;
 			text-align: center;
 			.left {
 				@include mFlex;
@@ -103,8 +113,7 @@ const tapShare = () => {
 				flex: none;
 				.btn {
 					padding: 10rpx;
-					font-weight: bold;
-					font-size: 32rpx;
+					font-size: 24rpx;
 					border-radius: 0;
 					color: $main-color;
 					background-color: transparent;
@@ -128,8 +137,7 @@ const tapShare = () => {
 				font-size: 32rpx;
 				.btn {
 					padding: 10rpx;
-					font-weight: bold;
-					font-size: 32rpx;
+					font-size: 24rpx;
 					border-radius: 0;
 					color: $main-color;
 					background-color: transparent;
@@ -137,10 +145,6 @@ const tapShare = () => {
 					&:after {
 						border: none;
 					}
-				}
-				.text {
-					font-size: 32rpx;
-					font-weight: bold;
 				}
 				.price {
 					padding-top: 15rpx;
@@ -166,7 +170,7 @@ const tapShare = () => {
 						border: none;
 					}
 					.text {
-						font-size: 32rpx;
+						font-size: 26rpx;
 						font-weight: bold;
 					}
 					.price {
