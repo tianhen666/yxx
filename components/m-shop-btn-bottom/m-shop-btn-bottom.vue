@@ -113,9 +113,9 @@ const tapShare = () => {
 				flex: none;
 				.btn {
 					padding: 10rpx;
-					font-size: 24rpx;
+					font-size: 22rpx;
 					border-radius: 0;
-					color: $main-color;
+					color: #bbb;
 					background-color: transparent;
 					line-height: 1;
 					&:after {
@@ -126,7 +126,7 @@ const tapShare = () => {
 					color: $main-color;
 					padding-top: 15rpx;
 					font-weight: normal;
-					font-size: 26rpx;
+					font-size: 28rpx;
 				}
 			}
 			.center {
@@ -137,9 +137,9 @@ const tapShare = () => {
 				font-size: 32rpx;
 				.btn {
 					padding: 10rpx;
-					font-size: 24rpx;
+					font-size: 22rpx;
 					border-radius: 0;
-					color: $main-color;
+					color: #bbb;
 					background-color: transparent;
 					line-height: 1;
 					&:after {
@@ -147,9 +147,10 @@ const tapShare = () => {
 					}
 				}
 				.price {
+					color: $main-color;
 					padding-top: 15rpx;
 					font-weight: normal;
-					font-size: 26rpx;
+					font-size: 28rpx;
 				}
 			}
 			.right {
@@ -158,6 +159,7 @@ const tapShare = () => {
 				width: 33.3%;
 				color: #fff;
 				.right_btn {
+					margin-bottom: 20rpx;
 					width: 100%;
 					height: 100rpx;
 					@include mFlex;
@@ -176,7 +178,7 @@ const tapShare = () => {
 					.price {
 						padding-top: 15rpx;
 						font-weight: normal;
-						font-size: 28rpx;
+						font-size: 30rpx;
 					}
 				}
 			}
