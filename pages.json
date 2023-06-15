@@ -532,6 +532,13 @@
 					"enablePullDownRefresh": false
 				}
 
+			}, {
+				"path": "downH5Video/downH5Video",
+				"style": {
+					"navigationBarTitleText": "视频下载",
+					"enablePullDownRefresh": false
+				}
+
 			}]
 		}
 	],

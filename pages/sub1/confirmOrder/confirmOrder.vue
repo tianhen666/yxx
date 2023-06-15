@@ -187,7 +187,7 @@ const confirm = _debounce(
 					} catch (e) {
 						// 错误信息
 						console.log(e);
-						showToastText(msg || '支付失败');
+						showToastText(data || '支付失败');
 					}
 				}
 			})
