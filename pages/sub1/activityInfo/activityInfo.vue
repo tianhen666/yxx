@@ -298,11 +298,11 @@ const btnLoading = ref(false);
 const payConfirm = _debounce(
 	async () => {
 		// 判断是否授权登录
-		if (!useUserMain.isLogin) {
-			mLogin.value.popupfun();
-			btnLoading.value = false;
-			return;
-		}
+		// if (!useUserMain.isLogin) {
+		// 	mLogin.value.popupfun();
+		// 	btnLoading.value = false;
+		// 	return;
+		// }
 
 		// 判断是否限购
 		if (dataObj.value.limitCount > 0 && dataObj.value.limitCount <= dataObj.value.myJionCount) {
@@ -414,10 +414,11 @@ const storeInfo = uni.getStorageSync('storeInfo');
 // 生成海报函数
 const tapCreateImg = async () => {
 	// 判断是否授权登录
-	if (!useUserMain.isLogin) {
-		mLogin.value.popupfun();
-		return;
-	}
+	// if (!useUserMain.isLogin) {
+	// 	mLogin.value.popupfun();
+	// 	return;
+	// }
+
 	showLoading('海报数据加载中');
 
 	// 获取小程序码

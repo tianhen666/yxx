@@ -130,11 +130,11 @@ const btnLoading = ref(false);
 const confirm = _debounce(
 	() => {
 		// 判断是否授权登录
-		if (!useUserMain.isLogin) {
-			mLogin.value.popupfun();
-			btnLoading.value = false;
-			return;
-		}
+		// if (!useUserMain.isLogin) {
+		// 	mLogin.value.popupfun();
+		// 	btnLoading.value = false;
+		// 	return;
+		// }
 
 		_wxpayPayment({ count: quantity.value, productId: dataId.value, enrollId: 0 })
 			.then(res => {

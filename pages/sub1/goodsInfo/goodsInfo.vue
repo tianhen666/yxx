@@ -181,9 +181,9 @@ onLoad(async options => {
 	});
 
 	// 弹出登录组件
-	if (!useUserMain.isLogin) {
-		mLogin.value.popupfun();
-	}
+	// if (!useUserMain.isLogin) {
+	// 	mLogin.value.popupfun();
+	// }
 });
 
 /**
@@ -192,10 +192,10 @@ onLoad(async options => {
  * */
 const goPayPage = () => {
 	// 判断是否授权登录
-	if (!useUserMain.isLogin) {
-		mLogin.value.popupfun();
-		return;
-	}
+	// if (!useUserMain.isLogin) {
+	// 	mLogin.value.popupfun();
+	// 	return;
+	// }
 	navigateTo(`/pages/sub1/confirmOrder/confirmOrder?id=${dataId.value}`);
 };
 
@@ -208,10 +208,10 @@ const storeInfo = uni.getStorageSync('storeInfo');
 // 生成海报函数
 const tapCreateImg = async () => {
 	// 判断是否授权登录
-	if (!useUserMain.isLogin) {
-		mLogin.value.popupfun();
-		return;
-	}
+	// if (!useUserMain.isLogin) {
+	// 	mLogin.value.popupfun();
+	// 	return;
+	// }
 
 	showLoading('海报数据加载中');
 

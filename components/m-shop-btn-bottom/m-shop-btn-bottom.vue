@@ -3,7 +3,7 @@
 		<view class="btn_fix">
 			<view class="btn_container">
 				<view class="left">
-					<button
+					<!-- <button
 						class="btn"
 						hover-class="bb"
 						v-if="!useUserMain.isLogin"
@@ -23,9 +23,9 @@
 						>
 							赚￥{{ dataObj.sharePrice }}
 						</view>
-					</button>
+					</button> -->
 
-					<button class="btn" hover-class="bb" open-type="share" v-else>
+					<button class="btn" hover-class="bb" open-type="share">
 						<image
 							src="/static/images/wx.png"
 							mode="aspectFit"
