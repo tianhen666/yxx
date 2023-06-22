@@ -131,9 +131,9 @@ onLoad(async options => {
 	}
 
 	// 弹出登录组件
-	if (!useUserMain.isLogin) {
-		mLogin.value.popupfun();
-	}
+	// if (!useUserMain.isLogin) {
+	// 	mLogin.value.popupfun();
+	// }
 });
 </script>
 
