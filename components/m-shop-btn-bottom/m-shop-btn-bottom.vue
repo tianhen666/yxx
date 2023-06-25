@@ -3,9 +3,19 @@
 		<view class="btn_fix">
 			<view class="btn_container">
 				<view class="left">
-					<button class="btn" v-if="!useUserMain.isLogin" @tap="tapShare">
+					<button
+						class="btn"
+						hover-class="bb"
+						v-if="!useUserMain.isLogin"
+						@tap="tapShare"
+					>
+						<image
+							src="/static/images/wx.png"
+							mode="aspectFit"
+							style="width: 30px;height: 30px;"
+						></image>
 						<view class="text">
-							分享{{ dataObj.myType === '活动' ? '活动' : '商品' }}
+							分享{{ dataObj.myType === '活动' ? '链接到微信群' : '链接到微信群' }}
 						</view>
 						<view
 							class="price"
@@ -15,9 +25,14 @@
 						</view>
 					</button>
 
-					<button class="btn" open-type="share" v-else>
+					<button class="btn" hover-class="bb" open-type="share" v-else>
+						<image
+							src="/static/images/wx.png"
+							mode="aspectFit"
+							style="width: 30px;height: 30px;"
+						></image>
 						<view class="text">
-							分享{{ dataObj.myType === '活动' ? '活动' : '商品' }}
+							分享{{ dataObj.myType === '活动' ? '链接到微信群' : '链接到微信群' }}
 						</view>
 						<view
 							class="price"
@@ -28,8 +43,13 @@
 					</button>
 				</view>
 				<view class="center" @tap="tapCreateImg">
-					<button class="btn">
-						<view class="text">分享海报</view>
+					<button class="btn" hover-class="bb">
+						<image
+							src="/static/images/pyq.png"
+							mode="aspectFit"
+							style="width: 30px;height: 30px;"
+						></image>
+						<view class="text">分享海报到朋友圈</view>
 						<view
 							class="price"
 							v-if="dataObj.showShare === 0 && dataObj.sharePrice > 0"
@@ -80,74 +100,54 @@ const tapShare = () => {
 <style lang="scss" scoped>
 /* 底部按钮 */
 .btn_fix_wrapper {
-	height: 160rpx;
-	padding-bottom: 40rpx;
+	height: 200rpx;
 	.btn_fix {
 		position: fixed;
 		z-index: 88;
 		bottom: 0;
 		width: 100%;
-		height: 160rpx;
+		height: 200rpx;
+		box-sizing: border-box;
 		background: #fff;
-		padding-bottom: 40rpx;
 		border-top: 1px solid #ddd;
 		.btn_container {
 			height: 100%;
 			@include mFlex;
 			justify-content: space-around;
-			align-items: stretch;
+			align-items: center;
 			text-align: center;
+
 			.left {
-				@include mFlex;
-				flex-direction: column;
 				flex: none;
-				.btn {
-					padding: 10rpx;
-					font-weight: bold;
-					font-size: 32rpx;
-					border-radius: 0;
-					color: $main-color;
-					background-color: transparent;
-					line-height: 1;
-					&:after {
-						border: none;
-					}
-				}
-				.price {
-					color: $main-color;
-					padding-top: 15rpx;
-					font-weight: normal;
-					font-size: 26rpx;
-				}
 			}
 			.center {
-				@include mFlex;
-				flex-direction: column;
 				flex: none;
-				color: $main-color;
-				font-size: 32rpx;
-				.btn {
-					padding: 10rpx;
-					font-weight: bold;
-					font-size: 32rpx;
-					border-radius: 0;
-					color: $main-color;
-					background-color: transparent;
-					line-height: 1;
-					&:after {
-						border: none;
-					}
+			}
+			.btn {
+				display: flex;
+				align-items: center;
+				flex-direction: column;
+				margin: 0;
+				padding: 0;
+				font-size: 22rpx;
+				border-radius: 0;
+				color: #bbb;
+				background-color: transparent;
+				&:after {
+					border: none;
 				}
 				.text {
-					font-size: 32rpx;
-					font-weight: bold;
+					margin: 16rpx 0;
+					line-height: 1;
 				}
 				.price {
-					padding-top: 15rpx;
+					color: $main-color;
 					font-weight: normal;
-					font-size: 26rpx;
+					font-size: 28rpx;
+					line-height: 1;
 				}
 			}
+
 			.right {
 				@include mFlex;
 				flex: none;
@@ -166,13 +166,13 @@ const tapShare = () => {
 						border: none;
 					}
 					.text {
-						font-size: 32rpx;
+						font-size: 26rpx;
 						font-weight: bold;
 					}
 					.price {
 						padding-top: 15rpx;
 						font-weight: normal;
-						font-size: 28rpx;
+						font-size: 32rpx;
 					}
 				}
 			}
