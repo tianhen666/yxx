@@ -269,6 +269,8 @@ const enrollformEarningsportexport = () => {
 	try {
 		_enrollformEarningsportexport().then(res => {
 			const { code, data, msg } = res;
+			console.log(data);
+
 			uni.downloadFile({
 				url: data,
 				success: res => {
@@ -276,9 +278,9 @@ const enrollformEarningsportexport = () => {
 					if (res.statusCode === 200) {
 						uni.openDocument({
 							filePath: filePath,
-							fileType: 'xlsx',
 							showMenu: true,
 							success: function(res) {
+								console.log(res);
 								uni.hideLoading();
 							},
 							fail: error => {
