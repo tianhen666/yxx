@@ -44,6 +44,9 @@
 				</view>
 				<view class="container_item_box1_right">
 					<view class="title">{{ item.productName }}</view>
+					<view class="source">
+						来源:{{ item.enrollId == 1 ? '活动' : item.enrollId == 0 ? '商品' : '' }}
+					</view>
 
 					<view class="container_item_box1_right_box">
 						<!-- 价格 -->
@@ -210,9 +213,13 @@ const orderPayment = _debounce(item => {
 					color: $text-color;
 					font-size: 26rpx;
 					@include singleLineTextOverHidden;
-					margin-bottom: 40rpx;
-					margin-top: 10rpx;
 					text-align: justify;
+				}
+				> .source {
+					font-size: 25rpx;
+					font-weight: normal;
+					color: $text-color-grey;
+					margin: 20rpx 0;
 				}
 				&_box {
 					@include mFlex;

@@ -448,6 +448,13 @@
 					"enablePullDownRefresh": false
 				}
 
+			}, {
+				"path": "mySales/mySales",
+				"style": {
+					"navigationBarTitleText": "我邀请的人购买的订单",
+					"enablePullDownRefresh": false
+				}
+
 			}]
 		},
 		{

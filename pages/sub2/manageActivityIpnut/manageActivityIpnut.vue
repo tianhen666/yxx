@@ -220,6 +220,18 @@
 			<uni-forms-item :label="rules.views.label" name="views">
 				<uni-number-box :min="0" :max="255" v-model="formData.views" />
 			</uni-forms-item>
+
+			<!-- 是否新用户才能购买 -->
+			<uni-forms-item :label="rules.newUser.label" name="newUser">
+				<switch
+					color="#4b8eff"
+					:checked="parseInt(formData.newUser) == 1"
+					style="transform:scale(0.8)"
+					@change="formData.newUser = parseInt(formData.newUser) == 1 ? 0 : 1"
+				/>
+				<view class="tips"><text>开启选项，是新用户才能购买\n关闭选项，无限制</text></view>
+			</uni-forms-item>
+
 			<view class="blank32 blank_bg_color"></view>
 
 			<!-- 活动介绍 -->
@@ -289,7 +301,8 @@ const formData = ref({
 	showShare: 1, //是否显示分佣
 	least: 2, //最低拼团人数
 	sort: 1, //排序
-	sharePriceType: 0 // 0分佣给第一个邀请人，1分佣给最新邀请人
+	sharePriceType: 0, // 0分佣给第一个邀请人，1分佣给最新邀请人
+	newUser: 0 // 0全部可以购买, 1新用户可以购买
 });
 // 获取表单对象
 const formObj = ref(null);
@@ -440,6 +453,10 @@ const rules = {
 	sharePriceType: {
 		rules: [{ required: true, errorMessage: '请选择分佣方式' }],
 		label: '分佣方式'
+	},
+	newUser: {
+		rules: [{ required: true, errorMessage: '请选择新用户购买按钮' }],
+		label: '新用户购买'
 	}
 };
 

@@ -46,6 +46,11 @@ const myFunItems = {
 			path: '/pages/sub1/invitationList/invitationList'
 		},
 		{
+			imgUrl: '/static/images/u-huiyuan.png',
+			name: '我邀请的人购买的订单',
+			path: '/pages/sub2/mySales/mySales'
+		},
+		{
 			imgUrl: '/static/images/u-wddingdan.png',
 			name: '我的推广收益',
 			path: '/pages/sub1/profitList/profitList'

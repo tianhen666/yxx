@@ -45,7 +45,7 @@ export function _userUpdate(data) {
 }
 
 // 修改用户所属门诊
-export function _userChangeUserId(data,params) {
+export function _userChangeUserId(data, params) {
 	return http.post({
 		url: '/user/changeUserId',
 		data,
@@ -89,6 +89,14 @@ export function _userInviteGetlist(params) {
 export function _userEarningData(params) {
 	return http.post({
 		url: '/user/earningData',
+		params
+	})
+}
+
+// 获取我邀请的人,购买的订单
+export function _userMySell(params) {
+	return http.get({
+		url: '/user/mySell',
 		params
 	})
 }
