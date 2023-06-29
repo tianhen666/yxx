@@ -12,7 +12,7 @@
 			<view class="box2_item_box_right">
 				<view class="name">{{ item.name }}</view>
 				<view class="address">{{ `${item.address}${item.addressDetail}` }}</view>
-				<view class="btn_box">
+				<view class="btn_box" v-if="extensionField.chainGoTO">
 					<button class="btn style1" v-if="useUserMain.storeId === item.storeId">
 						当前门诊
 					</button>
@@ -24,10 +24,21 @@
 </template>
 
 <script setup>
+import { computed } from 'vue';
 import { reLaunch } from '@/aTemp/utils/uniAppTools.js';
 // 全局登录信息
 import { _useUserMain } from '@/aTemp/store/userMain.js';
 const useUserMain = _useUserMain();
+
+// 店铺扩展字段
+const extensionField = computed(() => {
+	try {
+		return JSON.parse(useUserMain.extensionField);
+	} catch (e) {
+		console.log('扩展字段解析失败', e);
+		return {};
+	}
+});
 
 const props = defineProps({
 	// 当前店铺信息

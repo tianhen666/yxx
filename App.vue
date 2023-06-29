@@ -133,7 +133,8 @@ onLaunch(async options => {
 				storeId: user.storeId,
 				// headPortrait: store.headPortrait  // 登陆授权组件是否需要头像昵称，0，需要 1，不需要
 				headPortrait: 1,
-				overdue: overdue
+				overdue: overdue,
+				extensionField: store.extensionField
 			});
 		}
 	} catch (e) {

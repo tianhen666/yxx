@@ -106,7 +106,6 @@ watch(
 	(newValue, oldValue) => {
 		// 获取当前位置，计算距离
 		uni.getSetting().then(res => {
-			console.log(res.authSetting);
 			if (res.authSetting['scope.userLocation']) {
 				tapGetDistance();
 			}
