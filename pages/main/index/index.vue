@@ -146,6 +146,7 @@ const getData = () => {
 	ListData.then(res => {
 		bannerListData.value = res[0].data;
 		storeInfo.value = res[1].data;
+		console.log(res[1].data);
 		uni.setStorageSync('storeInfo', res[1].data);
 		activityListData.value = res[2].data.filter(item => item.productId != '1');
 		serveListData.value = res[3].data.slice(0, 6);

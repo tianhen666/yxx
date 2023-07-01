@@ -324,7 +324,6 @@ const enrollformExport = () => {
 					if (res.statusCode === 200) {
 						uni.openDocument({
 							filePath: filePath,
-							fileType: 'xlsx',
 							showMenu: true,
 							success: function(res) {
 								uni.hideLoading();
@@ -345,7 +344,6 @@ const enrollformExport = () => {
 			});
 		});
 	} catch (e) {
-		console.log(e);
 		uni.hideLoading();
 	}
 };
