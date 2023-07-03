@@ -317,7 +317,6 @@ const userInviteUserEx = () => {
 					if (res.statusCode === 200) {
 						uni.openDocument({
 							filePath: filePath,
-							fileType: 'xlsx',
 							showMenu: true,
 							success: function(res) {
 								uni.hideLoading();
