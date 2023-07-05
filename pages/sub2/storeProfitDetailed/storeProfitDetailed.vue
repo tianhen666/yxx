@@ -6,10 +6,14 @@
 			@query="queryList"
 			use-page-scroll
 			created-reload
-			min-delay="1000"
 			show-loading-more-when-reload
 		>
-			<view class="item" v-for="(item, index) in dataList" :key="index">
+			<view
+				class="item"
+				v-for="(item, index) in dataList"
+				:key="index"
+				@click="clickFun(item)"
+			>
 				<view class="touxiang">
 					<image
 						class="image"
@@ -20,8 +24,8 @@
 				<view class="item_right">
 					<view class="left">
 						<view class="name">
-							<text>{{ item.nickname || '微信用户' }}</text>
-							<text class="text2">{{ item.mobile }}</text>
+							<text>{{ item.remarkname || item.nickname || '微信用户' }}</text>
+							<text class="text2">{{ item.mobile || '无手机号' }}</text>
 						</view>
 						<view class="source" style="margin-top: 16rpx;">
 							<text>订单来源: {{ item.enrollId === 1 ? '活动' : '商品' }}</text>
@@ -45,6 +49,7 @@
 <script setup>
 import { ref } from 'vue';
 import { onLoad } from '@dcloudio/uni-app';
+import { navigateTo } from '@/aTemp/utils/uniAppTools.js';
 import { _enrollformEarningsport } from '@/aTemp/apis/store.js';
 import dayjs from 'dayjs';
 // 数据列表
@@ -65,6 +70,11 @@ const queryList = (pageNo, pageSize) => {
 		.catch(res => {
 			paging.value.complete(false);
 		});
+};
+
+const clickFun = item => {
+	console.log(123);
+	navigateTo(`/pages/sub2/orderDetails/orderDetails?orderNo=${item.orderNo}`);
 };
 </script>
 
