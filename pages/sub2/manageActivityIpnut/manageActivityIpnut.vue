@@ -523,8 +523,8 @@ const chooseSuccess3 = valList => {
 			const { size } = await uni.getFileInfo({
 				filePath: valList[0]
 			});
-			if (info.width < 1200 && info.height / info.width > 1.87) {
-				showToastText('图片尺寸比例超过700px:1400px，请调整后上传');
+			if (info.width > 1200 || info.height / info.width > 1.87) {
+				showToastText('图片尺寸比例超过750px:1400px，请调整后上传');
 			} else if (size / (1024 * 1024) > 2) {
 				showToastText('海报体积超过2M，请调整后上传');
 			} else {
