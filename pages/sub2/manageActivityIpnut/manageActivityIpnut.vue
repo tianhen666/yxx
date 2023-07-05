@@ -266,7 +266,7 @@
 					:formData="{ baseDir: baseDir3 }"
 					@uploadSuccess="uploadSuccess3"
 				/>
-				<view class="tips"><text>最大比例100:258，图片体积不能超过2M</text></view>
+				<view class="tips"><text>最大比例-宽750px,高1400px，图片体积不能超过2M</text></view>
 			</uni-forms-item>
 			<view class="blank32 blank_bg_color"></view>
 
@@ -523,13 +523,13 @@ const chooseSuccess3 = valList => {
 			const { size } = await uni.getFileInfo({
 				filePath: valList[0]
 			});
-			if (info.height / info.width > 2.58) {
-				showToastText('图片尺寸比例超过100:258，请调整后上传');
+			if (info.width < 1200 && info.height / info.width > 1.87) {
+				showToastText('图片尺寸比例超过700px:1400px，请调整后上传');
 			} else if (size / (1024 * 1024) > 2) {
 				showToastText('海报体积超过2M，请调整后上传');
 			} else {
 				uni.uploadFile({
-					url: uploadimageURL3, //仅为示例，非真实的接口地址
+					url: uploadimageURL3,
 					filePath: valList[0],
 					name: 'file',
 					formData: { baseDir: baseDir3 },
