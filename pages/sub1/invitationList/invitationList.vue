@@ -47,8 +47,8 @@
 			show-loading-more-when-reload
 		>
 			<template v-for="(item, index) in dataList" :key="index">
-				<view style="border-bottom: 1px solid #eee;padding: 30rpx 0;">
-					<view class="box2_item" v-if="item?.user">
+				<view style="border-bottom: 1px solid #eee;padding: 30rpx 0;" v-if="item?.user">
+					<view class="box2_item">
 						<view class="left">
 							<view class="wrapper">
 								<image
@@ -264,6 +264,7 @@ const jsonToObj = str => {
 const popupTap = item => {
 	// 保存当前编辑的对象
 	pupItem = item;
+
 	// 赋值表单数据
 	formData.value = {
 		id: item['id'],
