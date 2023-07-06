@@ -151,7 +151,7 @@ const module2 = {
 			imgUrl: '/static/images/u-huodong1.png',
 			name: '活动数据',
 			path: '/pages/sub2/activityData/activityData',
-			power: [1, 2],
+			power: [1, 2, 3, 4, 5],
 			expiredAvailable: true
 		},
 		{
